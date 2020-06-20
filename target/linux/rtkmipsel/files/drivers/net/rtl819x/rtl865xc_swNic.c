@@ -39,10 +39,6 @@
 #include <linux/ip.h>
 #endif
 
-#if defined(CONFIG_RTL_DNS_TRAP)
-extern int dns_filter_enable;
-#endif
-
 extern void (*_dma_cache_wback_inv)(unsigned long start, unsigned long size);
 
 /* RX Ring */
@@ -1041,11 +1037,7 @@ static inline int get_protocol_type2(struct sk_buff *skb)
 static inline int get_protocol_type(struct sk_buff *skb, struct rtl_pktHdr *pPkthdr)
 {
 	struct iphdr *iph=NULL;
-	#ifdef CONFIG_IPV6
-	uint8 proto_type=PKTHDR_ETHERNET;
-	uint8 next_header;
-	#endif
-
+	   
 	pPkthdr->ph_vlanTagged = 0;
 	pPkthdr->ph_pppeTagged = 0;
 	if(*(int16 *)(skb->data+12)==(int16)htons(ETH_P_IP)) {
@@ -1053,85 +1045,37 @@ static inline int get_protocol_type(struct sk_buff *skb, struct rtl_pktHdr *pPkt
 	}
 	else if ((*(int16 *)(skb->data+12)==(int16)htons(ETH_P_PPP_SES)) ||
 			 (*(int16 *)(skb->data+12)==(int16)htons(ETH_P_PPP_DISC)) ) {
-		pPkthdr->ph_pppeTagged = 1;
 		if(*(int16 *)(skb->data+12+8)==(int16)htons(0x0021)) {
 			iph=(struct iphdr *)(skb->data+12+10);
+			pPkthdr->ph_pppeTagged = 1;
 		}
-		#ifdef CONFIG_IPV6
-		else if(*(int16 *)(skb->data+12+8)==(int16)htons(0x0057)) {
-			proto_type = PKTHDR_IPV6;
-			next_header = *(uint8 *)(skb->data+12+8+2+6);
-		}
-		#endif
-
+		else
+			return PKTHDR_ETHERNET;
 	}
 	else if(*(int16 *)(skb->data+12)==(int16)htons(ETH_P_8021Q)) {
 		pPkthdr->ph_vlanTagged = 1;
 		if(*(int16 *)(skb->data+12+4)==(int16)htons(ETH_P_IP)) {
 			iph=(struct iphdr *)(skb->data+12+4+2);
-		} 
-		#ifdef CONFIG_IPV6
-		else if(*(int16 *)(skb->data+12+4)==(int16)htons(ETH_P_IPV6)) {
-			proto_type = PKTHDR_IPV6;
-			next_header = *(uint8 *)(skb->data+12+4+2+6);
 		}
-		#endif
 		else if ((*(int16 *)(skb->data+12+4)==(int16)htons(ETH_P_PPP_SES)) ||
 			 (*(int16 *)(skb->data+12+4)==(int16)htons(ETH_P_PPP_DISC)) ) {
-			pPkthdr->ph_pppeTagged = 1;
 			if(*(int16 *)(skb->data+12+4+8)==(int16)htons(0x0021)) {
+				pPkthdr->ph_pppeTagged = 1;
 				iph=(struct iphdr *)(skb->data+12+4+10);
 			}
-			#ifdef CONFIG_IPV6
-			else if(*(int16 *)(skb->data+12+4+8)==(int16)htons(0x0057)) {
-				proto_type = PKTHDR_IPV6;
-				next_header = *(uint8 *)(skb->data+12+4+8+2+6);
-			}
-			#endif
+			else
+				return PKTHDR_ETHERNET;
+		}
+		else {
+			return PKTHDR_ETHERNET;
 		}
 	}
-	#ifdef CONFIG_IPV6
 	else if(*(int16 *)(skb->data+12)==(int16)htons(ETH_P_IPV6)) {
-		proto_type = PKTHDR_IPV6;
-		next_header = *(uint8 *)(skb->data+12+2+6);
+		return PKTHDR_IPV6;
 	}
-	#endif
-
-	#if defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
-	#ifdef CONFIG_IPV6
-	if (proto_type == PKTHDR_IPV6) {
-			pPkthdr->ph_ipIpv6 = 1;
-			pPkthdr->ph_ipIpv6HdrLen = 40;
-			//IPv4 fileds should be 0
-			pPkthdr->ph_ipIpv4 = 0;
-			pPkthdr->ph_ipIpv4_1st = 0;
-			
-		if (next_header == IPPROTO_TCP )
-			return PKTHDR_TCP;
-		else if(next_header == IPPROTO_UDP )
-			return PKTHDR_UDP;
-		else if(next_header == IPPROTO_ICMP )
-			return PKTHDR_ICMP;
-		else if(next_header == IPPROTO_IGMP )
-			return PKTHDR_IGMP;
-		else if(next_header == IPPROTO_GRE )
-			return PKTHDR_PPTP;	
-		else
-			return PKTHDR_IPV6;
-	} else 
-	#endif
-	{
-			pPkthdr->ph_ipIpv4 = 1;
-			pPkthdr->ph_ipIpv4_1st = 1;
-			//IPv6 fileds should be 0
-			pPkthdr->ph_ipIpv6 = 0;
-			pPkthdr->ph_ipIpv6HdrLen = 0;
-	}
-	#endif
+	else
+		return PKTHDR_ETHERNET;
 	
-        if (iph == NULL)
-                return PKTHDR_ETHERNET;
-
 	if (iph->protocol == IPPROTO_TCP )
 		return PKTHDR_TCP;
 	else if(iph->protocol == IPPROTO_UDP )
@@ -1247,26 +1191,13 @@ __IRAM_FWD  inline int32 _swNic_send(void *skb, void * output, uint32 len,rtl_ni
 	if (*((unsigned short *)((unsigned char*)output+ETH_ALEN*2)) != __constant_htons(ETH_P_8021Q))
 	{
 		#if defined(CONFIG_RTL_8021Q_VLAN_SUPPORT_SRC_TAG)
-		extern int rtl865x_curOpMode;
-		if(rtl865x_curOpMode == 0)
-			pPkthdr->ph_txCVlanTagAutoAdd = RTL_WANPORT_MASK & rtk_get_vlan_tagmask(pPkthdr->ph_vlanId);
-		else
-			pPkthdr->ph_txCVlanTagAutoAdd = 0x3f & rtk_get_vlan_tagmask(pPkthdr->ph_vlanId);
+		pPkthdr->ph_txCVlanTagAutoAdd = RTL_WANPORT_MASK & rtk_get_vlan_tagmask(pPkthdr->ph_vlanId);
 		#else
 		pPkthdr->ph_txCVlanTagAutoAdd = 0x3f & rtk_get_vlan_tagmask(pPkthdr->ph_vlanId);
 		#endif
 	}
-	else{
-		#if defined(CONFIG_RTL_DNS_TRAP)
-		if (dns_filter_enable && ((struct sk_buff *)skb)->is_dns_pkt){
-			//packets tagged here
-			pPkthdr->ph_vlanTagged = 1;
-			pPkthdr->ph_txCVlanTagAutoAdd = 0x3f & rtk_get_vlan_tagmask(pPkthdr->ph_vlanId);
-			//printk("%s %d pPkthdr->ph_vlanTagged=0x%x pPkthdr->ph_txCVlanTagAutoAdd=0x%x pPkthdr->ph_vlanId=0x%x \n", __func__, __LINE__, pPkthdr->ph_vlanTagged, pPkthdr->ph_txCVlanTagAutoAdd, pPkthdr->ph_vlanId);
-		}else
-		#endif
-			pPkthdr->ph_txCVlanTagAutoAdd = 0;
-	}
+	else
+		pPkthdr->ph_txCVlanTagAutoAdd = 0;
 
 	#if defined(CONFIG_RTL_QOS_8021P_SUPPORT)
 	#if defined(CONFIG_RTL_HW_QOS_SUPPORT)
@@ -1296,7 +1227,7 @@ __IRAM_FWD  inline int32 _swNic_send(void *skb, void * output, uint32 len,rtl_ni
 	if (*((unsigned short *)((unsigned char*)output+ETH_ALEN*2)) != __constant_htons(ETH_P_8021Q))
 	{
 #ifdef  CONFIG_RTL_HW_VLAN_SUPPORT_HW_NAT
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT) //mark_8367		
+#ifdef CONFIG_RTL_8367R_SUPPORT //mark_8367		
 	 		rtk_get_real_nicTxVid((struct sk_buff *)skb , &nicTx->vid);
 			pPkthdr->ph_vlanId = nicTx->vid;
 #endif
@@ -1313,7 +1244,12 @@ __IRAM_FWD  inline int32 _swNic_send(void *skb, void * output, uint32 len,rtl_ni
 	if (((struct sk_buff *)skb)->ip_summed == CHECKSUM_PARTIAL)
 	{
 		pPkthdr->ph_proto = get_protocol_type(skb, pPkthdr);
-		pPkthdr->ph_flags= (PKTHDR_USED|PKT_OUTGOING|CSUM_TCPUDP|CSUM_IP);		
+		pPkthdr->ph_flags= (PKTHDR_USED|PKT_OUTGOING|CSUM_TCPUDP|CSUM_IP);
+		
+		#if defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
+		pPkthdr->ph_ipIpv4 = 1;
+		pPkthdr->ph_ipIpv4_1st = 1;
+		#endif
 	}	
 	else {
 		// set these fields to 0 which we may used before.
@@ -1323,8 +1259,6 @@ __IRAM_FWD  inline int32 _swNic_send(void *skb, void * output, uint32 len,rtl_ni
 		#if defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
 		pPkthdr->ph_ipIpv4 = 0;
 		pPkthdr->ph_ipIpv4_1st = 0;
-		pPkthdr->ph_ipIpv6 = 0;
-		pPkthdr->ph_ipIpv6HdrLen = 0;
 		#endif
 	}
 #endif
@@ -1407,7 +1341,7 @@ __IRAM_FWD  inline int32 _swNic_send(void *skb, void * output, uint32 len,rtl_ni
 #endif
 
 	/* Set TXFD bit to start send */
-	#if 0 //defined(CONFIG_RTL_8197F)
+	#if defined(CONFIG_RTL_8197F)
         REG32(CPUICR)=REG32(CPUICR)&(~(0x1<<29));
 	#endif
 	REG32(CPUICR) |= TXFD;
@@ -1618,6 +1552,38 @@ void swNic_freeRxBuf(void)
 	}
 }
 
+#if defined(REINIT_SWITCH_CORE)
+
+#if defined(DELAY_REFILL_ETH_RX_BUF) || defined(ALLOW_RX_RING_PARTIAL_EMPTY)
+int swNic_refillRxRing(void)
+{
+	unsigned long flags=0;
+	unsigned int i;
+	void *skb;
+	unsigned char *buf;
+
+	SMP_LOCK_ETH_RECV(flags);
+	for(i =  0; i <RTL865X_SWNIC_RXRING_MAX_PKTDESC; i++)
+	{
+		while (return_to_rxing_check(i)) {
+			skb=NULL;
+			buf = alloc_rx_buf(&skb, size_of_cluster);
+
+			if ((buf == NULL) ||(skb==NULL) ) {
+				SMP_UNLOCK_ETH_RECV(flags);
+				return -1;
+			}
+
+			release_pkthdr(skb, i);
+		}
+		REG32(CPUIISR) = (MBUF_DESC_RUNOUT_IP_ALL|PKTHDR_DESC_RUNOUT_IP_ALL);
+	}
+
+	SMP_UNLOCK_ETH_RECV(flags);
+	return 0;
+}
+#endif
+
 void swNic_freeTxRing(void)
 {
 	struct rtl_pktHdr	*pPkthdr;
@@ -1670,38 +1636,6 @@ void swNic_freeTxRing(void)
 	SMP_UNLOCK_ETH_XMIT(flags);
 	return ; //free_num;
 }
-
-#if defined(REINIT_SWITCH_CORE)
-
-#if defined(DELAY_REFILL_ETH_RX_BUF) || defined(ALLOW_RX_RING_PARTIAL_EMPTY)
-int swNic_refillRxRing(void)
-{
-	unsigned long flags=0;
-	unsigned int i;
-	void *skb;
-	unsigned char *buf;
-
-	SMP_LOCK_ETH_RECV(flags);
-	for(i =  0; i <RTL865X_SWNIC_RXRING_MAX_PKTDESC; i++)
-	{
-		while (return_to_rxing_check(i)) {
-			skb=NULL;
-			buf = alloc_rx_buf(&skb, size_of_cluster);
-
-			if ((buf == NULL) ||(skb==NULL) ) {
-				SMP_UNLOCK_ETH_RECV(flags);
-				return -1;
-			}
-
-			release_pkthdr(skb, i);
-		}
-		REG32(CPUIISR) = (MBUF_DESC_RUNOUT_IP_ALL|PKTHDR_DESC_RUNOUT_IP_ALL);
-	}
-
-	SMP_UNLOCK_ETH_RECV(flags);
-	return 0;
-}
-#endif
 
 int32 swNic_reConfigRxTxRing(void)
 {

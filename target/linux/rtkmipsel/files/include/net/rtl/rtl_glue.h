@@ -250,4 +250,13 @@ static inline void rtl_free(void *APTR)
 
 void memDump (void *start, uint32 size, int8 * strHeader);
 
+static inline unsigned compare_ether_addr(const u8 *addr1, const u8 *addr2)
+{
+        const u16 *a = (const u16 *) addr1;
+        const u16 *b = (const u16 *) addr2;
+
+        return ((a[0] ^ b[0]) | (a[1] ^ b[1]) | (a[2] ^ b[2])) != 0;
+}
+
+
 #endif

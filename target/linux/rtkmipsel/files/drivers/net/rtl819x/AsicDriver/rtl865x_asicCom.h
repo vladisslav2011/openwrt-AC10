@@ -12,11 +12,11 @@
 #include <linux/seq_file.h>
 
 #if defined(CONFIG_RTL_8197F)
-#define CONFIG_FINETUNE_RUNOUT_IRQ 1
+//#define CONFIG_FINETUNE_RUNOUT_IRQ 1
 #endif 
 
 // note: CONFIG_RTL_CPU_TAG should NOT be defined when CONFIG_RTL_8370_SUPPORT is chose.
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT)
+#if defined(CONFIG_RTL_8367R_SUPPORT)
 #define CONFIG_RTL_CPU_TAG		1
 #endif
 
@@ -1084,14 +1084,9 @@ int32 rtl865xC_dumpAsicDiagCounter(char *page, int *len);
 
 int32 rtl865xC_dumpAsicCounter(void);
 
-#if defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
+#if 1//defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
 extern int rtl819x_setSwEthPvid(uint16 port, uint16 pvid);
 extern int rtl819x_getSwEthPvid(uint16 port, uint16* pvid);
 #endif
-
-//#define EN_STROM_CTRL_BEFORE_SYS_SETTLED  1
-//#define EN_RTL_INTERRUPT_MIGRATION		1
-#define LOW_FIFO_MARK_VLAUE			(0xA0)
-#define HIGH_FIFO_MARK_VLAUE		(0xA0)
 
 #endif

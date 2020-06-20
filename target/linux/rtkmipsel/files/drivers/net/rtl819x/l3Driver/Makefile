@@ -20,13 +20,10 @@ endif
 	
 	obj-$(CONFIG_RTL_HARDWARE_MULTICAST) := rtl865x_multicast.o
 
-ifdef CONFIG_IPV6
-ifneq ($(CONFIG_RTL_8198C)_$(CONFIG_RTL_8197F),_)
-ifndef CONFIG_OPENWRT_SDK
-                obj-y += rtl8198c_routeIpv6.o rtl8198c_arpIpv6.o rtl8198c_nexthopIpv6.o
+ifdef CONFIG_RTL_HARDWARE_IPV6_SUPPORT
+		obj-y += rtl8198c_routeIpv6.o rtl8198c_arpIpv6.o rtl8198c_nexthopIpv6.o
 endif
-endif
-endif
+
 ifdef CONFIG_RTL_LAYERED_DRIVER_L3
 		obj-y += rtl865x_arp.o rtl865x_ip.o rtl865x_ppp.o rtl865x_nexthop.o rtl865x_route.o 
 endif

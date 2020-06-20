@@ -36,7 +36,7 @@ ifeq ($(CONFIG_RTL_819XD), y)
 endif
 
 ifeq ($(CONFIG_RTL_8197F), y)
-	ifeq (y, $(filter y, $(CONFIG_RTL_8367R_SUPPORT) $(CONFIG_RTL_83XX_SUPPORT)))
+	ifeq ($(CONFIG_RTL_8367R_SUPPORT), y)
 		obj-y += smi.o gpio.o
 	endif
 endif

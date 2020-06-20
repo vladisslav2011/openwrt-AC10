@@ -2068,16 +2068,16 @@ int rtl_check_ext_port_napt_entry(uint32 sip, uint16 sport, uint32 dip, uint16 d
 
 	//printk("sip is 0x%x, sport is %d, dip is 0x%x, dport is %d\n", sip, sport, dip, dport);
 	//outbound
-	hash = rtl8651_naptTcpUdpTableIndex((uint8)nat_tuple->proto, htonl(nat_tuple->int_host.ip), htons(nat_tuple->int_host.port), 
-											htonl(nat_tuple->rem_host.ip), htons(nat_tuple->rem_host.port));
+	hash = rtl8651_naptTcpUdpTableIndex((uint8)nat_tuple->proto, nat_tuple->int_host.ip, nat_tuple->int_host.port, 
+											nat_tuple->rem_host.ip, nat_tuple->rem_host.port);
 	//panic_printk("hash:%d,[%s]:[%d].\n",hash,__FUNCTION__,__LINE__);
 	if(rtl865x_enableNaptFourWay==TRUE)
 	{
 		for(i=0; i<4; i++)
 		{
 			nat_out = &nat_tbl.nat_bucket[hash];
-			if (((htonl(sip)==nat_out->int_ip_)&&(htons(sport)==nat_out->int_port_)
-				&&(htonl(dip)==nat_out->rem_ip_)&&(htons(dport)==nat_out->rem_port_)
+			if (((sip==nat_out->int_ip_)&&(sport==nat_out->int_port_)
+				&&(dip==nat_out->rem_ip_)&&(dport==nat_out->rem_port_)
 				&&(nat_tuple->proto==nat_out->proto_)&&(nat_out->flags&NAT_OUTBOUND)) 
 			 )
 			{
@@ -2091,8 +2091,8 @@ int rtl_check_ext_port_napt_entry(uint32 sip, uint16 sport, uint32 dip, uint16 d
 	{
 		nat_out = &nat_tbl.nat_bucket[hash];
 		if(
-			((htonl(sip)==nat_out->int_ip_)&&(htons(sport)==nat_out->int_port_)
-			&&(htonl(dip)==nat_out->rem_ip_)&&(htons(dport)==nat_out->rem_port_)
+			((sip==nat_out->int_ip_)&&(sport==nat_out->int_port_)
+			&&(dip==nat_out->rem_ip_)&&(dport==nat_out->rem_port_)
 			&&(nat_tuple->proto==nat_out->proto_)&&(nat_out->flags&NAT_OUTBOUND)) 
 		 )
 		 {

@@ -212,14 +212,7 @@ static int32 _rtl865x_synNxtHopToAsic(rtl865x_nextHopEntry_t *entry_t)
 		
 
 		retval =rtl865x_Lookup_fdb_entry(fid, (pppoe.valid)? &pppoe.server_mac : &reservedMac, FDB_DYNAMIC, &columIdx,&asic_l2);
-
-		#if defined(CONFIG_RTL_CUSTOM_PASSTHRU_PPPOE)
-		if (retval == FAILED) {
-			retval =rtl865x_Lookup_fdb_entry(fid, (pppoe.valid)? &pppoe.server_mac : &reservedMac, FDB_STATIC, &columIdx, &asic_l2);
-			//panic_printk("1: rtl865x_Lookup_fdb_entry ret is %d.....\n", retval);
-		}
-		#endif
-		
+			
 		asic.nextHopRow = rtl8651_filterDbIndex( (pppoe.valid)? &pppoe.server_mac : &reservedMac, fid);
 		asic.nextHopColumn = (pppoe.valid)? columIdx: 0;
 		asic.isPppoe = (pppoe.type == IF_PPPOE)? TRUE: FALSE;

@@ -326,62 +326,6 @@ int32 rtl865x_getPortNum(const unsigned char *addr){
 	return port_num;
 }
 
-int32 rtl865x_getPortMaskByMac(const unsigned char *addr, uint32 fid)
-{
-	ether_addr_t *macAddr;
-	int32 column;
-	rtl865x_tblAsicDrv_l2Param_t	fdbEntry;
-	//int8 port_num = -1;
-	//fdb->ageing_timer = 300*HZ;
-	macAddr = (ether_addr_t *)(addr);
-	//fid = ff, search lan and wan fid group
-	if (fid == 0xff){
-		if (rtl865x_Lookup_fdb_entry(RTL_LAN_FID, macAddr, FDB_DYNAMIC, &column,&fdbEntry) == SUCCESS){
-			return (fdbEntry.memberPortMask);
-		}
-		else if (rtl865x_Lookup_fdb_entry(RTL_WAN_FID, macAddr, FDB_DYNAMIC, &column,&fdbEntry) == SUCCESS){
-			return (fdbEntry.memberPortMask);
-		}
-		else {
-			return -1;
-		}
-	}
-	else if (rtl865x_Lookup_fdb_entry(fid, macAddr, FDB_DYNAMIC, &column,&fdbEntry) == SUCCESS)
-	{
-		/*find the fdb entry*/
-		return (fdbEntry.memberPortMask);
-	} else {
-		/*can't find */
-		return -1;
-	}
-	return -1;
-}
-
-#ifdef CONFIG_RTL_NIC_QUEUE
-int32 rtl865x_getSwPortNum(const unsigned char *mac, uint32 fid)
-{
-	rtl865x_filterDbTable_t *fdb_t = &sw_FDB_Table.filterDB[fid];
-	rtl865x_filterDbTableEntry_t * l2entry_t ;
-	uint32 rowIdx;
-	
-	rowIdx = rtl8651_filterDbIndex((ether_addr_t *)mac, fid);
-
-	if (SLIST_FIRST(&(fdb_t->database[rowIdx]))) 
-	{	
-		SLIST_FOREACH(l2entry_t, &(fdb_t->database[rowIdx]), nextFDB) 
-		{
-			if (memcmp(&(l2entry_t->macAddr), mac, 6)== 0)
-			{
-				return rtl865x_ConvertPortMasktoPortNum(l2entry_t->memberPortMask);
-					
-			}			
-		}
-	}
-	
-	return -1;
-}
-#endif
-
 int32 rtl865x_Lookup_fdb_entry(uint32 fid, ether_addr_t *mac, uint32 flags, uint32 *col_num, rtl865x_tblAsicDrv_l2Param_t *L2buff)
 {
 	uint32 rowIdx;
@@ -1042,7 +986,7 @@ void update_hw_l2table(const char *srcName,const unsigned char *addr)
 		}
 #endif
 
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT)
+#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT)
 		{
 		extern void del_83XX_L2(const unsigned char *addr);
 		del_83XX_L2(addr);	

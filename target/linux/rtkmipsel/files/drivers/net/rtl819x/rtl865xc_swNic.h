@@ -87,14 +87,14 @@
   	#endif
 	#define NUM_TX_PKTHDR_DESC			1024
 	#define	ETH_REFILL_THRESHOLD		8	// must < NUM_RX_PKTHDR_DESC
-#elif defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT) ||defined(CONFIG_RTL_83XX_SUPPORT)
+#elif defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT) 
 	#ifndef CONFIG_RTL_SHRINK_MEMORY_SIZE	
 	#if defined(SKIP_ALLOC_RX_BUFF)
 	#define MAX_PRE_ALLOC_RX_SKB			0
 	#define NUM_RX_PKTHDR_DESC			1412
 	#else
-	#if defined(CONFIG_WLAN_HAL_8814AE) || defined(CONFIG_WLAN_HAL_8822BE)
-	#define MAX_PRE_ALLOC_RX_SKB		2048 
+	#if defined(CONFIG_WLAN_HAL_8822BE)
+	#define MAX_PRE_ALLOC_RX_SKB		768 
 	#define NUM_RX_PKTHDR_DESC			900 
 	#else
 	#define MAX_PRE_ALLOC_RX_SKB		512
@@ -140,7 +140,7 @@
 	#if defined(DELAY_REFILL_ETH_RX_BUF)
 	#define MAX_PRE_ALLOC_RX_SKB			512
 	#else
-	#if defined(CONFIG_WLAN_HAL_8814AE) || defined(CONFIG_WLAN_HAL_8822BE)
+	#if defined(CONFIG_WLAN_HAL_8814AE)
 	#define MAX_PRE_ALLOC_RX_SKB			2048
 	#else
 	#define MAX_PRE_ALLOC_RX_SKB			1024
@@ -173,11 +173,7 @@
 	#if defined(DELAY_REFILL_ETH_RX_BUF)
 	#define MAX_PRE_ALLOC_RX_SKB			512
 	#else
-	#if defined(CONFIG_RTL_8211F_SUPPORT) && defined(CONFIG_WLAN_HAL_8822BE)
-	#define MAX_PRE_ALLOC_RX_SKB			2048
-	#else
 	#define MAX_PRE_ALLOC_RX_SKB			512
-	#endif
 	#endif
 	
 	#define NUM_RX_PKTHDR_DESC			900
@@ -322,9 +318,7 @@
 /* rxPreProcess */
 #define	RTL8651_CPU_PORT                0x07 /* in rtl8651_tblDrv.h */
 #define	_RTL865XB_EXTPORTMASKS   7
-#ifndef CONFIG_OPENWRT_SDK
 #define CONFIG_RTL_CUSTOM_PASSTHRU
-#endif
 
 typedef struct {
 	uint16			vid;
@@ -335,7 +329,7 @@ typedef struct {
 	void* 			input;
 	struct dev_priv*	priv;
 	uint32			isPdev;
-#if defined(CONFIG_RTL_STP) && !defined(CONFIG_RTL_MULTI_LAN_DEV)
+#if 0//defined(CONFIG_RTL_STP)
 	int8				isStpVirtualDev;
 #endif
 
@@ -488,7 +482,6 @@ int32 swNic_send(void *skb, void * output, uint32 len, rtl_nicTx_info *nicTx);
 //__MIPS16
 int32 swNic_txDone(int idx);
 void swNic_freeRxBuf(void);
-void swNic_freeTxRing(void);
 int32	swNic_txRunout(void);
 #if defined(DELAY_REFILL_ETH_RX_BUF) || defined(ALLOW_RX_RING_PARTIAL_EMPTY)
 extern int check_rx_pkthdr_ring(int idx, int *return_idx);
@@ -554,34 +547,6 @@ struct ring_que {
 	struct sk_buff **ring;
 };
 
-#if defined(CONFIG_RTL_NIC_QUEUE)
-#define TX_QUEUE_NUM 6
-#define TX_DEV_NUM 5
-
-struct rtk_tx_tbf {
-	unsigned int token; /*in bytes*/
-	unsigned int buffer;
-};
-
-struct rtk_tx_queue {
-	unsigned char used;	
-	struct net_device *dev;
-	struct sk_buff_head list;
-	struct rtk_tx_tbf tbf;
-	int phyPort;
-};
-
-struct rtk_tx_dev {
-	unsigned int hit_count;
-	unsigned int hit_flag;
-#ifdef CONFIG_RTL_MULTI_LAN_DEV
-	struct net_device *dev;
-#else
-	int dport;
-#endif
-};
-#endif
-
 static inline void *UNCACHED_MALLOC(int size)
 {
 	return ((void *)(((uint32)kmalloc(size, GFP_ATOMIC)) | UNCACHE_MASK));
@@ -591,40 +556,5 @@ static inline void *CACHED_MALLOC(int size)
 {
 	return ((void *)(((uint32)kmalloc(size, GFP_ATOMIC))));
 }
-
-#ifdef CONFIG_RTL_SWITCH_NEW_DESCRIPTOR
-//#define UDP_FRAGMENT_PKT_QUEUEING			1 /* for wifi 802.11AC LOGO (sigma) test */
-#endif
-
-#ifdef UDP_FRAGMENT_PKT_QUEUEING
-
-#define UF_QUE_SKB_NUM		20
-#define UF_TIMEOUT_VALUE	3
-#define UF_START_QUEUEING	80
-//#define _UF_DEBUG			1
-
-typedef struct uf_s
-{
-	rtl_nicTx_info uf_tx_info;
-	struct sk_buff *uf_skb_list[UF_QUE_SKB_NUM]; // use Linux link list later
-	//uint32 uf_next_offset;
-	uint16 uf_ip_id;
-	uint8 uf_expired_timer;
-	uint8 que_num;
-} uf_t;
-
-extern uint8 uf_enabled;
-extern uint8 uf_start;
-extern uint16 uf_tx_desc_low;
-extern uf_t udp_frag[];
-
-#ifdef _UF_DEBUG
-extern int _uf_cntr_tx_group_pkt, _uf_cntr_free_group_pkt, _uf_cntr_timer_timeout;
-extern int _uf_cntr_tx_unfinished_group_pkt, _uf_cntr_queue_end;
-#endif
-				
-extern int32 process_udp_fragment_pkt(struct sk_buff *skb, rtl_nicTx_info *nicTx);
-extern void uf_timeout_check(void);
-#endif
 
 #endif /* _SWNIC_H */

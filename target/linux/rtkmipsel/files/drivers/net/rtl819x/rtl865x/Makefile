@@ -74,11 +74,6 @@ ifdef CONFIG_RTL_8367R_SUPPORT
 	subdir-y += ../rtl8367r
 endif
 
-ifdef CONFIG_RTL_83XX_SUPPORT
-	obj-y += ../rtl83xx/built-in.o
-	subdir-y += ../rtl83xx
-endif
-
 ifdef CONFIG_RTL_8325D_SUPPORT
 	obj-y += ../rtl8325d/built-in.o
 	subdir-y += ../rtl8325d

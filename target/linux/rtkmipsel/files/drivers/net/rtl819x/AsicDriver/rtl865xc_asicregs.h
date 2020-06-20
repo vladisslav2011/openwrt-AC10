@@ -176,17 +176,9 @@ extern int8						*pVirtualSWTable;
 
 #define RTL8197D_RGMII_PORT	0
 #if defined(CONFIG_RTL_EXCHANGE_PORTMASK)
-#if defined(CONFIG_RTL_8363NB_SUPPORT) || defined(CONFIG_RTL_8364NB_SUPPORT)
-#define RTL83XX_WAN			1		// WAN port is set to 83XX port 1
-#else
 #define RTL83XX_WAN			0		// WAN port is set to 8367R port 0
-#endif
-#else
-#if defined(CONFIG_RTL_8363NB_SUPPORT) || defined(CONFIG_RTL_8366SC_SUPPORT) || defined(CONFIG_RTL_8365MB_SUPPORT) || defined(CONFIG_RTL_8364NB_SUPPORT)
-#define RTL83XX_WAN			3		// WAN port is set to 83XX port 3
 #else
 #define RTL83XX_WAN			4		// WAN port is set to 8367R port 4
-#endif
 #endif
 
 #ifdef CONFIG_RTL_8370_SUPPORT
@@ -291,12 +283,6 @@ enum FDB_FLAGS
 #define DMA_CR3						(0x068 + CPU_IFACE_BASE)		/* DMA Control Register 3 */
 #define TXRINGCR					(0x078 + CPU_IFACE_BASE)		/* CPU Tx Packet Header Ring Control Register */
 
-#define CPUIMCR						(0x080 + CPU_IFACE_BASE)
-#define CPUIMTTR0					(0x084 + CPU_IFACE_BASE)
-#define CPUIMTTR2					(0x08c + CPU_IFACE_BASE)
-#define CPUIMPNTR0					(0x094 + CPU_IFACE_BASE)
-#define CPUIMPNTR2					(0x09c + CPU_IFACE_BASE)
-
 #define DMA_CR4						(0x0a0 + CPU_IFACE_BASE)		/* DMA Control Register 4 */
 #define CPUICR1						(0x0a4 + CPU_IFACE_BASE)		/* CPU Interface Control Register 1 */
 
@@ -370,7 +356,7 @@ enum FDB_FLAGS
 
 #define TX_DONE_IE0						(1 << 9)			/* Tx Descript Ring 0 one packet done interrupt enable */
 #define TX_DONE_IE1						(1 << 10)			/* Tx Descript Ring 1 one packet done interrupt enable */
-//#define TX_DONE_IE_ALL					(0x3 << 9)			/* Any Tx Descript Ring one packet done interrupt enable */
+#define TX_DONE_IE_ALL					(0x3 << 9)			/* Any Tx Descript Ring one packet done interrupt enable */
 
 #define RX_DONE_IE0						(1 << 3)			/* Rx Descript Ring 0 one packet done interrupt enable */
 #define RX_DONE_IE1						(1 << 4)			/* Rx Descript Ring 1 one packet done interrupt enable */
@@ -385,7 +371,6 @@ enum FDB_FLAGS
 
 #if (defined(CONFIG_RTL_819XD) || defined(CONFIG_RTL_8196E)) || defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
 #define TX_ALL_DONE_IE_ALL				(TX_ALL_DONE_IE0|TX_ALL_DONE_IE1|TX_ALL_DONE_IE2|TX_ALL_DONE_IE3)
-#define TX_DONE_IE_ALL					(TX_DONE_IE0 | TX_DONE_IE1 | TX_DONE_IE2 | TX_DONE_IE3)
 #else
 #define TX_ALL_DONE_IE_ALL				(0x3 << 1)			/* Any Tx Descript Ring all packets done interrupt enable */
 #endif
@@ -426,7 +411,7 @@ enum FDB_FLAGS
 
 #define TX_DONE_IP0						(1 << 9)			/* Tx one packet done interrupt for descriptor 0 pending */
 #define TX_DONE_IP1						(1 << 10)			/* Tx one packet done interrupt for descriptor 1 pending */
-//#define TX_DONE_IP_ALL					(0x3 << 9)			/* Tx one packet done interrupt for any descriptor pending */
+#define TX_DONE_IP_ALL					(0x3 << 9)			/* Tx one packet done interrupt for any descriptor pending */
 #define TX_DONE_IP(idx)					(1 << (9+(idx)))	/* Tx one packet done interrupt for descriptor [IDX] pending */
 
 #define RX_DONE_IP0						(1 << 3)			/* Rx one packet done 0 interrupt pending */
@@ -442,7 +427,6 @@ enum FDB_FLAGS
 #define TX_ALL_DONE_IP1					(1 << 2)			/* Tx all packets done interrupt 1 pending */
 
 #if (defined(CONFIG_RTL_819XD) || defined(CONFIG_RTL_8196E)) || defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
-#define TX_DONE_IP_ALL				    (TX_DONE_IP0|TX_DONE_IP1|TX_DONE_IP2|TX_DONE_IP3)
 #define TX_ALL_DONE_IP_ALL				(TX_ALL_DONE_IP0|TX_ALL_DONE_IP1|TX_ALL_DONE_IP2|TX_ALL_DONE_IP3)
 #else
 #define TX_ALL_DONE_IP_ALL				(0x03 << 1)			/* Tx all packets done any interrupt pending */
@@ -1495,13 +1479,6 @@ to forward packet to the unauthorized node. Otherwise, it is not allowed.
 #define V4VLDSCPCR6				(0x7C+ALE_BASE)       /* V4 VLAN and DSCP remarking control register for Port 6 */
 #define V4VLDSCPCR7				(0x80+ALE_BASE)       /* V4 VLAN and DSCP remarking control register for Port 7 */
 #define V4VLDSCPCR8				(0x84+ALE_BASE)       /* V4 VLAN and DSCP remarking control register for Port 8 */
-#define VidRemarkModeMask					0x3
-#define VidRemarkModeOffset					12
-#define VidRemarkValueMask 					0xFFF
-#define VID_REMOVE							0x0
-#define VID_BYPASS							0x1
-#define VID_REMARK							0x2
-#define VID_ADDTAG							0x3
 
 /* TEACR - Table Entry Aging Control Register */
 #define IPv6McastAgingDisable               (1<<9)                /* 0=Enable IPv6 Multicast table aging. 1=disable */
@@ -2860,13 +2837,6 @@ to forward packet to the unauthorized node. Otherwise, it is not allowed.
 #define TCR9                                (0x044 + TACI_BASE)     /* Table Access Control 6 */
 #define TCR10                               (0x048 + TACI_BASE)     /* Table Access Control 7 */
 #endif
-
-/* PTP control registers */
-#define PTP_BASE                 			(SWCORE_BASE + 0x00004E00)
-#define PTPCR								(0x000 + PTP_BASE)
-#define STR0								(0x008 + PTP_BASE)
-#define STR1								(0x00C + PTP_BASE)
-
 /* Table access control register field definitions
 */
 #define ACTION_MASK                 	1

@@ -100,7 +100,6 @@ static int32 _rtl865x_initMCastFwdDescPool(void)
 	
 	if(rtl865x_mcastFwdDescPool!=NULL)
 	{
-	
 		memset( rtl865x_mcastFwdDescPool, 0, MAX_MCAST_FWD_DESCRIPTOR_CNT * sizeof(rtl865x_mcast_fwd_descriptor_t));	
 	}
 	else
@@ -108,7 +107,6 @@ static int32 _rtl865x_initMCastFwdDescPool(void)
 		return FAILED;
 	}
 	
-
 	for(i = 0; i<MAX_MCAST_FWD_DESCRIPTOR_CNT;i++)
 	{
 		MC_LIST_INSERT_HEAD(&free_mcast_fwd_descriptor_head, &rtl865x_mcastFwdDescPool[i], next);
@@ -254,7 +252,6 @@ static int32 _rtl865x_initMCastEntryPool(void)
 {
 	int32 index;
 	rtl865x_tblDrv_mCast_t *multiCast_t;
-	struct MCast_hash_head *mCast_hash_head;
 	
 	TBL_MEM_ALLOC(multiCast_t, rtl865x_tblDrv_mCast_t ,MAX_MCAST_TABLE_ENTRY_CNT);
 	TAILQ_INIT(&mCastTbl.freeList.freeMultiCast);
@@ -264,10 +261,9 @@ static int32 _rtl865x_initMCastEntryPool(void)
 		TAILQ_INSERT_HEAD(&mCastTbl.freeList.freeMultiCast, &multiCast_t[index], nextMCast);
 	}
 
-	//TBL_MEM_ALLOC(multiCast_t, rtl865x_tblDrv_mCast_t, RTL8651_MULTICASTTBL_SIZE);
-	TBL_MEM_ALLOC(mCast_hash_head, struct MCast_hash_head, RTL8651_MULTICASTTBL_SIZE);
-	memset(mCast_hash_head, 0,RTL8651_MULTICASTTBL_SIZE* sizeof(struct MCast_hash_head));
-	mCastTbl.inuseList.mCastTbl = (void *)mCast_hash_head;
+	TBL_MEM_ALLOC(multiCast_t, rtl865x_tblDrv_mCast_t, RTL8651_MULTICASTTBL_SIZE);
+	memset(multiCast_t, 0,RTL8651_MULTICASTTBL_SIZE* sizeof(rtl865x_tblDrv_mCast_t));
+	mCastTbl.inuseList.mCastTbl = (void *)multiCast_t;
 
 	for(index=0; index<RTL8651_MULTICASTTBL_SIZE; index++)
 	{
@@ -3025,7 +3021,6 @@ static int32 _rtl8198C_initMCastv6EntryPool(void)
 {
 	int32 index;
 	rtl8198c_tblDrv_mCastv6_t *multiCast_t;
-	struct MCast6_hash_head *mCast6_hash_head;
 	
 	TBL_MEM_ALLOC(multiCast_t, rtl8198c_tblDrv_mCastv6_t ,MAX_MCASTV6_TABLE_ENTRY_CNT);
 	TAILQ_INIT(&mCastTbl6.freeList.freeMultiCast);
@@ -3035,9 +3030,9 @@ static int32 _rtl8198C_initMCastv6EntryPool(void)
 		TAILQ_INSERT_HEAD(&mCastTbl6.freeList.freeMultiCast, &multiCast_t[index], nextMCast);
 	}
 
-	TBL_MEM_ALLOC(mCast6_hash_head, struct MCast6_hash_head, RTL8651_MULTICASTTBL_SIZE);
-	memset(mCast6_hash_head, 0,RTL8651_MULTICASTTBL_SIZE* sizeof(struct MCast6_hash_head));
-	mCastTbl6.inuseList.mCastTbl = (void *)mCast6_hash_head;
+	TBL_MEM_ALLOC(multiCast_t, rtl8198c_tblDrv_mCastv6_t, RTL8651_MULTICASTTBL_SIZE);
+	memset(multiCast_t, 0,RTL8651_MULTICASTTBL_SIZE* sizeof(rtl8198c_tblDrv_mCastv6_t));
+	mCastTbl6.inuseList.mCastTbl = (void *)multiCast_t;
 
 	for(index=0; index<RTL8651_MULTICASTTBL_SIZE; index++)
 	{

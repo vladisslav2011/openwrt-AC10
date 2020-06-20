@@ -87,7 +87,8 @@ static void _rtl8651_asicTableAccessForward(uint32 tableType, uint32 eidx, void 
 {
 	ASSERT_CSP(entryContent_P);
 
-	while ( (READ_MEM32(SWTACR) & ACTION_MASK) != ACTION_DONE );//Wait for command done
+	while ( (READ_MEM32(SWTACR) & ACTION_MASK) != ACTION_DONE )
+		;//Wait for command done
 
 #ifdef RTL865X_FAST_ASIC_ACCESS
 
@@ -244,7 +245,8 @@ int32 _rtl8651_readAsicEntry(uint32 tableType, uint32 eidx, void *entryContent_P
 		(uint32) rtl8651_asicTableAccessAddrBase(tableType) + (eidx<<5 /*RTL8651_ASICTABLE_ENTRY_LENGTH*/) ) ;
 		/*(uint32) rtl8651_asicTableAccessAddrBase(tableType) + eidx * RTL8651_ASICTABLE_ENTRY_LENGTH);*/
 
-	while ( (READ_MEM32(SWTACR) & ACTION_MASK) != ACTION_DONE );//Wait for command ready
+	while ( (READ_MEM32(SWTACR) & ACTION_MASK) != ACTION_DONE )
+		;//Wait for command ready
     
 #ifdef RTL865X_READ_MULTIPLECHECK
 		do
@@ -447,7 +449,8 @@ int32 _rtl8651_delAsicEntry(uint32 tableType, uint32 startEidx, uint32 endEidx)
 {
 	uint32 eidx = startEidx;
 
-	while ( (READ_MEM32(SWTACR) & ACTION_MASK) != ACTION_DONE );//Wait for command done
+	while ( (READ_MEM32(SWTACR) & ACTION_MASK) != ACTION_DONE )
+		;//Wait for command done
 
 #ifdef RTL865X_FAST_ASIC_ACCESS
 	{

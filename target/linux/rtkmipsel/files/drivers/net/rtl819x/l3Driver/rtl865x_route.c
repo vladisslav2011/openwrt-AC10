@@ -180,24 +180,7 @@ static int32 _rtl865x_synRouteToAsic(rtl865x_route_t *rt_t)
 		ret = rtl865x_Lookup_fdb_entry(fid, (ether_addr_t *)rt_t->un.pppoe.macInfo, FDB_DYNAMIC, &columIdx,&asic_l2);
 
 		if(ret != SUCCESS)
-		{
 			printk("can't get l2 entry by mac.....\n");
-			
-			#if defined(CONFIG_RTL_CUSTOM_PASSTHRU_PPPOE)
-			/*pppoe passthru will set pppoe pkt vid=100, then pppoe server mac
- * 			will be learnt on fid=0.Here we need to add it to fid=1 too.*/
-			if (rtl865x_Lookup_fdb_entry(RTL_LAN_FID, (ether_addr_t *)rt_t->un.pppoe.macInfo, FDB_DYNAMIC, &columIdx,&asic_l2) == SUCCESS) {
-				//ret = rtl865x_addFilterDatabaseEntry(fid, (ether_addr_t *)rt_t->un.pppoe.macInfo, asic_l2.memberPortMask, FDB_TYPE_FWD);
-				if (rt_t->un.pppoe.macInfo != NULL)
-				{
-        			ret = _rtl865x_addFilterDatabaseEntry(RTL865x_L2_TYPEII, fid,  (ether_addr_t *)rt_t->un.pppoe.macInfo, FDB_TYPE_FWD, asic_l2.memberPortMask, FALSE, FALSE);
-				}
-				
-				ret = rtl865x_Lookup_fdb_entry(fid, (ether_addr_t *)rt_t->un.pppoe.macInfo, FDB_STATIC, &columIdx,&asic_l2);
-				//panic_printk("rtl865x_Lookup_fdb_entry ret is %d.....\n", ret);
-			}
-			#endif			
-		}
 		
 		/*FIXME_hyking: update mac/fdb table reference count*/
 		asic_t.nextHopRow = rtl8651_filterDbIndex( rt_t->un.pppoe.macInfo,fid);
@@ -855,9 +838,6 @@ static int32 _rtl865x_delRoute( ipaddr_t ipAddr, ipaddr_t ipMask )
 	int32 dsltIndex = FAILED;
 #endif
 #endif
-#if defined(CONFIG_RTL_CUSTOM_PASSTHRU_PPPOE)
-	int32 fid = 0;
-#endif
 
 	entry = _rtl865x_getRouteEntry(ipAddr, ipMask);
 
@@ -908,14 +888,6 @@ static int32 _rtl865x_delRoute( ipaddr_t ipAddr, ipaddr_t ipMask )
 					if(ppp)
 						rtl865x_deReferPpp(ppp->sessionId);
 				}
-			
-				#if defined(CONFIG_RTL_CUSTOM_PASSTHRU_PPPOE)
-				rtl865x_getVlanFilterDatabaseId(entry->dstNetif->vid, &fid);
-				//rtl865x_delFilterDatabaseEntry(RTL865x_L2_TYPEII, fid, (ether_addr_t *)entry->un.pppoe.macInfo);
-				if (entry->un.pppoe.macInfo != NULL)
-					_rtl865x_delFilterDatabaseEntry(RTL865x_L2_TYPEII, fid, (ether_addr_t *)entry->un.pppoe.macInfo);
-				#endif
-				
 				break;
 			case RT_L2:
 				/*

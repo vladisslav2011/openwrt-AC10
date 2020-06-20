@@ -189,7 +189,7 @@ int32 rtl8651_setAsicPvid(uint32 port, uint32 pvid)
 		regValue =  (pvid &0xfff) | (regValue &~0xFFF);
 	}
 	
-#if defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
+#if 1//defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
 	rtl819x_setSwEthPvid(port, pvid);
 #endif
 
@@ -1394,9 +1394,6 @@ int32 rtl8651_getAsicAgingFunction(int8 * l2Enable, int8 * l4Enable) {
 }
 
    #define BSP_SW_IE           (1 << 15)
-#if defined(EN_STROM_CTRL_BEFORE_SYS_SETTLED)
-extern uint32 _1s_count;
-#endif
 void rtl865x_start(void)
 {
 	/* set "Lexra Bus Burst Size" to 128
@@ -1408,7 +1405,7 @@ void rtl865x_start(void)
 
 #if defined(CONFIG_RTL_8197F)
 	// the HiFifoMark value will be reset to default value (0x57) after updated the burst size field of CPUICR
-	REG32(DMA_CR0) = (REG32(DMA_CR0) & ~(LowFifoMark_MASK|HiFifoMark_MASK)) | ((LOW_FIFO_MARK_VLAUE<<LowFifoMark_OFFSET)|HIGH_FIFO_MARK_VLAUE);
+	REG32(DMA_CR0) = (REG32(DMA_CR0) & ~(LowFifoMark_MASK|HiFifoMark_MASK)) | ((0xA0<<LowFifoMark_OFFSET)|0xA0);
 #endif
 
 #if defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
@@ -1416,28 +1413,14 @@ void rtl865x_start(void)
 #endif
 
 	REG32(CPUIISR) = REG32(CPUIISR);
-#if defined(CONFIG_RTL_8197F) && defined(EN_RTL_INTERRUPT_MIGRATION)
-	REG32(CPUIMCR) |=  (BIT(0) | BIT(8));
-	REG32(CPUIMTTR0) |= 0x3FF; 
-	REG32(CPUIMTTR2) |= 0x3FF; 	
-	REG32(CPUIMPNTR0) |= 0x3F; 
-	REG32(CPUIMPNTR2) |= 0x3F; 
-#endif
 #if 1
-#if defined(EN_RTL_INTERRUPT_MIGRATION)
-	REG32(CPUIIMR) = RX_DONE_IE_ALL | TX_DONE_IE_ALL | LINK_CHANGE_IE | PKTHDR_DESC_RUNOUT_IE_ALL;
-#else
 	REG32(CPUIIMR) = RX_DONE_IE_ALL | TX_ALL_DONE_IE_ALL | LINK_CHANGE_IE | PKTHDR_DESC_RUNOUT_IE_ALL;
-#endif
 #else
 	//REG32(CPUIIMR) = RX_DONE_IE_ALL | LINK_CHANGE_IE | PKTHDR_DESC_RUNOUT_IE_ALL | MBUF_DESC_RUNOUT_IE_ALL | TX_ALL_DONE_IE_ALL;
 	REG32(CPUIIMR) = RX_DONE_IE_ALL | LINK_CHANGE_IE | PKTHDR_DESC_RUNOUT_IE_ALL | MBUF_DESC_RUNOUT_IE_ALL;
 #endif
 	REG32(SIRR) = TRXRDY;
 	REG32(GIMR) |= (BSP_SW_IE);
-#if defined(EN_STROM_CTRL_BEFORE_SYS_SETTLED)
-	_1s_count = 1; // for reinit case, like "init.sh gw all"
-#endif
 }
 
 void rtl865x_down(void)

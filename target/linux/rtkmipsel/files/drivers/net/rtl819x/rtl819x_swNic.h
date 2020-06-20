@@ -588,6 +588,7 @@ struct tx_desc{
 #define tx_extspa		opts5.bit.extspa
 
 };
+uint32 rtk_get_vlan_tagmask(uint16 vid);
 
 typedef struct dma_tx_desc {
 	uint32		opts1;
@@ -618,6 +619,9 @@ int32 New_swNic_txDone(int idx);
 void New_swNic_freeRxBuf(void);
 void New_dumpTxRing(struct seq_file *s);
 void New_dumpRxRing(struct seq_file *s);
+void New_swNic_freeTxRing(void);
+int32 New_swNic_receive(rtl_nicRx_info *info, int retryCount);
+int32 New_swNic_send_tso_sg(void *skb, void	* output, uint32 len, rtl_nicTx_info *nicTx);
 
 extern uint32  size_of_cluster;
 

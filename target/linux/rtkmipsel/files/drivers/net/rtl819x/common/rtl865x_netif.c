@@ -1573,11 +1573,6 @@ static int32 _rtl865x_setAsicNetif(rtl865x_netif_local_t *entry)
 	extern void set_8367r_L2(uint8 *mac, int intf_wan, int is_static);
 	set_8367r_L2(&entry->macAddr.octet[0], entry->is_wan, 1);
 	}
-#elif defined(CONFIG_RTL_83XX_SUPPORT)
-	{
-	extern void set_83XX_L2(uint8 *mac, int intf_wan, int is_static);
-	set_83XX_L2(&entry->macAddr.octet[0], entry->is_wan, 1);
-	}
 #endif
 
 	retval = rtl8651_setAsicNetInterface( entry->asicIdx, &asicEntry);

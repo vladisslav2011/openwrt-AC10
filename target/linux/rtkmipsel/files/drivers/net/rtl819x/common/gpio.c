@@ -172,14 +172,15 @@ static uint32 regGpioInterruptEnable[] =
 
 static uint32 bitStartGpioInterruptEnable[] =
 {
-	0,  /* Port A */
-	16, /* Port B */
-	0,  /* Port C */
+	16, /* Port A */
+	0,  /* Port B */
+	16, /* Port C */
 	16, /* Port D */
 	0,  /* Port E */
 	16, /* Port F */
 	0,  /* Port G */
 	16, /* Port H */
+	0,  /* Port I */
 };
 
 #undef rtlglue_printf

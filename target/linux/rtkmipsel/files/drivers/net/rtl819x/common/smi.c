@@ -13,12 +13,10 @@
 //#include "rtk_error.h"
 
 // used in gpio.h
-//typedef unsigned int uint32;
-//typedef int int32;
+typedef unsigned int uint32;
+typedef int int32;
 
 #include <linux/version.h>
-#include <linux/irqflags.h>
-#include <net/rtl/rtl_types.h>
 
 #include "gpio.h"
 
@@ -291,43 +289,9 @@ rtk_int32 smi_init(rtk_uint32 port, rtk_uint32 pinSCK, rtk_uint32 pinSDA)
 
 
 
-rtk_int32 smi_init_83xx(rtk_uint32 port_sck, rtk_uint32 port_sda, rtk_uint32 pinSCK, rtk_uint32 pinSDA)
-{
-#if defined(MDC_MDIO_OPERATION) || defined(SPI_OPERATION)
-
-#else
-    gpioID gpioId;
-    rtk_int32 res;
-
-    /* change GPIO pin to Input only */
-    /* Initialize GPIO port C, pin 0 as SMI SDA0 */
-    gpioId = GPIO_ID(port_sda, pinSDA);
-    res = _rtl865x_initGpioPin(gpioId, GPIO_PERI_GPIO, GPIO_DIR_OUT, GPIO_INT_DISABLE);
-    if (res != RT_ERR_OK)
-        return res;
-    smi_SDA = gpioId;
-
-
-    /* Initialize GPIO port C, pin 1 as SMI SCK0 */
-    gpioId = GPIO_ID(port_sck, pinSCK);
-    res = _rtl865x_initGpioPin(gpioId, GPIO_PERI_GPIO, GPIO_DIR_OUT, GPIO_INT_DISABLE);
-    if (res != RT_ERR_OK)
-        return res;
-    smi_SCK = gpioId;
-
-
-    _rtl865x_setGpioDataBit(smi_SDA, 1);
-    _rtl865x_setGpioDataBit(smi_SCK, 1);
-#endif
-    return RT_ERR_OK;
-}
-
-
 
 rtk_int32 smi_read(rtk_uint32 mAddrs, rtk_uint32 *rData)
 {
-    unsigned long flags = 0;
-
 #if defined(MDC_MDIO_OPERATION)
 
     /* Write Start command to register 29 */
@@ -373,8 +337,7 @@ rtk_int32 smi_read(rtk_uint32 mAddrs, rtk_uint32 *rData)
 
     /*Disable CPU interrupt to ensure that the SMI operation is atomic.
       The API is based on RTL865X, rewrite the API if porting to other platform.*/
-    SMP_LOCK_ETH_SMI(flags);
-    //rtlglue_drvMutexLock();
+    rtlglue_drvMutexLock();
 
     _smi_start();                                /* Start SMI */
 
@@ -469,8 +432,7 @@ rtk_int32 smi_read(rtk_uint32 mAddrs, rtk_uint32 *rData)
 
     _smi_stop();
 
-    //rtlglue_drvMutexUnlock();/*enable CPU interrupt*/
-    SMP_UNLOCK_ETH_SMI(flags);
+    rtlglue_drvMutexUnlock();/*enable CPU interrupt*/
 
     return ret;
 #endif /* end of #if defined(MDC_MDIO_OPERATION) */
@@ -480,8 +442,6 @@ rtk_int32 smi_read(rtk_uint32 mAddrs, rtk_uint32 *rData)
 
 rtk_int32 smi_write(rtk_uint32 mAddrs, rtk_uint32 rData)
 {
-    unsigned long flags = 0;
-
 #if defined(MDC_MDIO_OPERATION)
 
     /* Write Start command to register 29 */
@@ -530,8 +490,7 @@ rtk_int32 smi_write(rtk_uint32 mAddrs, rtk_uint32 rData)
 
     /*Disable CPU interrupt to ensure that the SMI operation is atomic.
       The API is based on RTL865X, rewrite the API if porting to other platform.*/
-    SMP_LOCK_ETH_SMI(flags);
-    //rtlglue_drvMutexLock();
+       rtlglue_drvMutexLock();
 
     _smi_start();                                /* Start SMI */
 
@@ -645,8 +604,7 @@ rtk_int32 smi_write(rtk_uint32 mAddrs, rtk_uint32 rData)
 
     _smi_stop();
 
-    //rtlglue_drvMutexUnlock();/*enable CPU interrupt*/
-    SMP_UNLOCK_ETH_SMI(flags);
+    rtlglue_drvMutexUnlock();/*enable CPU interrupt*/
 
     return ret;
 #endif /* end of #if defined(MDC_MDIO_OPERATION) */

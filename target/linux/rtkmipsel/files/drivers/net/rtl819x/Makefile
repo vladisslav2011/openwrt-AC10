@@ -32,7 +32,6 @@ endif
 
 obj-y += rtl865xc_swNic.o
 obj-y += rtl_nic.o
-obj-y += ethtool.o
 obj-$(CONFIG_RTL_ROMEPERF_24K) += m24kctrl.o
 
 
@@ -64,7 +63,7 @@ obj-y  += rtl865x/built-in.o
 subdir-y += rtl865x
 
 EXTRA_CFLAGS += -DRTL865X_OVER_KERNEL -DRTL865X_OVER_LINUX -D__KERNEL__ -Wno-implicit 
-ifeq (y, $(filter y, $(CONFIG_RTL_8367R_SUPPORT) $(CONFIG_RTL_83XX_SUPPORT)))
+ifeq ($(CONFIG_RTL_8367R_SUPPORT), y)
 else
 ifeq ($(CONFIG_RTL_AP_PACKAGE), y)
 else

@@ -64,7 +64,7 @@
 #define DEFAULT_MAX_FLOW_COUNT			256
 
 #define DEFAULT_LAST_MEMBER_AGINTGTIME 2
-#define DEFAULT_GROUP_MEMBER_INTERVAL 600             /* IGMP group member interval, default is 260 seconds */
+#define DEFAULT_GROUP_MEMBER_INTERVAL 260             /* IGMP group member interval, default is 260 seconds */
 #define DEFAULT_LAST_MEMBER_INTERVAL  10             /* IGMP last member query time, default is 2 seconds */
 #define DEFAULT_QUERIER_PRESENT_TIMEOUT 260             /* IGMP  querier present timeout, default is 260 seconds */
 

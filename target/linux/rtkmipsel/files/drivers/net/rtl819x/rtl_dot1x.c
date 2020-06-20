@@ -1448,7 +1448,7 @@ int rtl_init802dot1x(void)
     return 0;    
 }
 
-int rtl_is802dot1xFrame(uint8 *macFrame)
+inline int rtl_is802dot1xFrame(uint8 *macFrame)
 {
     
 	uint8 *ptr;

@@ -728,32 +728,6 @@ int32 rtl8651_getAsicMulticastEnable(uint32 *enable)
 
 	return SUCCESS;
 }
-
-int32 rtl865x_setAsicMulticastVlanRemark(int8 port, uint8 mode, int32 vid)
-{
-	uint32 regValue, reg;
-	if ((port < 0) || (port > 4) || (vid < 0) || (vid > 4096))
-		return FAILED;
-
-	reg = V4VLDSCPCR0+4*port;
-	
-	regValue = READ_MEM32(reg)&(~((VidRemarkModeMask<<VidRemarkModeOffset)|VidRemarkValueMask));
-	switch(mode)
-	{
-		case VID_REMARK:
-		case VID_ADDTAG:
-			regValue |= vid;
-		case VID_REMOVE:
-		case VID_BYPASS:
-			regValue |= (mode<<VidRemarkModeOffset);
-			break;
-		default:
-			break;
-	}
-	WRITE_MEM32(reg,regValue);
-
-	return SUCCESS;
-}
 #if defined(CONFIG_RTL_8196E) || defined(CONFIG_RTL_8881A) || defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F)
 
 int32 rtl865x_set_mcastMacClone(uint32 enabled, unsigned char * macAddr)

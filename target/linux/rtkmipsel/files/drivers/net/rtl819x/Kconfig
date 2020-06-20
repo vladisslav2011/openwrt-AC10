@@ -16,44 +16,45 @@ config DEFAULTS_KERNEL_2_6
 	default y
 
 config AUTO_DHCP_CHECK
-	bool "Auto DHCP Check"
+	#bool "Auto DHCP Check"
+	bool
 	default n
 	
 config NEW_PCI
-	bool "NEW_PCI"
+	bool 
 	default y 
 	depends on PCI
 
 config RTL_IGMP_PROXY
-	bool "RTL_IGMP_PROXY"
+	bool
 	default y
 
 config RTL_IGMP_SNOOPING
-	bool "RTL_IGMP_SNOOPING"
+	bool
 	default y
 	depends on BRIDGE
 	depends on !BRIDGE_IGMP_SNOOPING
 
 config RTL_MLD_SNOOPING
-	bool "RTL_MLD_SNOOPING"
+	bool 
 	default y
 	depends on RTL_IGMP_SNOOPING
 
 config RTL_QUERIER_SELECTION
-	bool "RTL_QUERIER_SELECTION"
+	bool
 	default y
 	depends on RTL_IGMP_SNOOPING
 
 config RTL_MLD_PROXY
-    bool "RTL_MLD_PROXY"
+    bool
     default y
 
 config RTL_LINKCHG_PROCESS
-	bool "RTL_LINKCHG_PROCESS"
+	bool
 	default y
 
 config RTL_DEBUG_TOOL
-	bool "RTL_DEBUG_TOOL"
+	bool
 	default y
 
 menu "Config MIPS16-Inst Option for Kernel Modules"
@@ -234,6 +235,9 @@ menu "Config for Layered Driver Features"
         	bool "Support hw multiast for eth+wlan client"
         	depends on RTL_HARDWARE_MULTICAST  
 	
+#	config RTL_PROCESS_PPPOE_IGMP_FOR_BRIDGE_FORWARD 
+#			bool "Enable process igmp for bridge pppoe connection"
+#			default n 
 		
 	config RTL_EXT_PORT_SUPPORT
 		bool "Enable extension port support"
@@ -299,14 +303,6 @@ menu "Config for Layered Driver Features"
 #		depends on RTL_8198C && !OPENWRT_SDK
 	
 endmenu
-
-menu "Config Multicast Options"
-	depends on RTL_IGMP_SNOOPING
-
-	config RTL_PROCESS_PPPOE_IGMP_FOR_BRIDGE_FORWARD
-		bool "IGMP/MLD Support for PPPoE Connection"
-		default y 
-endmenu
 	
 #config RTK_KERNEL_MIPS16
 #        bool "Encode Kernel Code with MIPS16 Instruction Set"
@@ -327,6 +323,11 @@ config RTL865X_MBUF_HEADROOM
 	int
 	range 0 256
 	default "128"
+	depends on RTL_819X
+
+config WIRELESS_LAN_MODULE
+	bool "Enable iwirelesslan module support"
+	default n
 	depends on RTL_819X
 
 config RTL_ETH_PRIV_SKB
@@ -404,7 +405,7 @@ config RTL_HW_QOS_BRIDGE_FWD_SUPPORT
 config RTL_8367_QOS_SUPPORT
 	bool "Hw QoS support for 8367"
 	default y
-	depends on RTL_HW_QOS_SUPPORT && (RTL_8367R_SUPPORT || RTL_83XX_SUPPORT)
+	depends on RTL_HW_QOS_SUPPORT && RTL_8367R_SUPPORT
 
 config RTL_HARDWARE_MULTICAST
 	bool
@@ -413,11 +414,12 @@ config RTL_HARDWARE_MULTICAST
 	depends on RTL_IGMP_SNOOPING
 
 config RTL_HARDWARE_MULTICAST_CAM
-    bool "HW multicast cam support"
+    #bool "HW multicast cam support"
+    bool
 	default n
     depends on RTL_LAYERED_DRIVER
     depends on RTL_HARDWARE_MULTICAST
-#	depends on RTL_8196E || RTL_819XD
+	depends on RTL_8196E || RTL_819XD
 
 config RTL_HARDWARE_NAT
 	bool
@@ -451,10 +453,11 @@ config RTL_PROC_DEBUG
 	default n
 	depends on RTL_819X
 
-config RTL_JUMBO_FRAME
-	bool "Enable JUMBO frame support"
-	default n
-	depends on RTL_819X && !OPENWRT_SDK
+#config RTL_JUMBO_FRAME
+#	bool "Enable JUMBO frame support"
+#	default n
+#	depends on RTL_819X && !OPENWRT_SDK
+#	depends on RTL_819X
 
 #config RTL_LOG_DEBUG
 #	bool "Enable log print system for debug"
@@ -474,6 +477,7 @@ config RTL_ROMEPERF_24K
 #config RTK_VLAN_SUPPORT
 #	bool "Support rtk vlan feature"
 #	default y
+#	depends on RTL_819X && !RTL_8370_SUPPORT
 #	depends on RTL_819X && !RTL_8370_SUPPORT && !OPENWRT_SDK
 
 #config RTK_VLAN_WAN_TAG_SUPPORT
@@ -535,8 +539,8 @@ config RTL_ENABLE_RATELIMIT_TABLE
 
 config RTL_MULTI_LAN_DEV
 	bool "Multiple lan dev support"
-	default n
-	depends on (RTL_8198C || RTL_8197F) && !RTL_8021Q_VLAN_SUPPORT_SRC_TAG
+	default y
+	depends on (RTL_8198C || RTL_8197F) && !VLAN_8021Q
 
 config RTL_EEE_DISABLED
 	bool "Disable 802.3az EEE feature"
@@ -668,60 +672,20 @@ config RTL_8198C_8211F
 	default n
 	depends on RTL_8198C
 
-choice
-	prompt "External Switch/PHY support"
-	default RTL_ESW_NONE
+config RTL_8211F_SUPPORT
+	bool "Enable RTL8211F support"
+	default n
+	depends on RTL_8197F
+
+config RTL_8367R_SUPPORT
+	bool "Enable RTL8367RB support"
+	default n
 	depends on RTL_8197F || RTL_819XD || RTL_819XDT || RTL_8881A
-
-	config RTL_ESW_NONE
-		bool "None"
-		depends on RTL_8197F || RTL_819XD || RTL_819XDT || RTL_8881A
-
-	config RTL_8211F_SUPPORT
-		bool "Enable RTL8211F support"
-		depends on RTL_8197F
-
-	config RTL_8367R_SUPPORT
-		bool "Enable RTL8367RB support"
-		depends on RTL_8197F || RTL_819XD || RTL_819XDT || RTL_8881A
-
-	config RTL_8366SC_SUPPORT
-		bool "Enable RTL8366SC support"
-		depends on RTL_8197F
-
-	config RTL_8363NB_SUPPORT
-		bool "Enable RTL8363NB support"
-		depends on RTL_8197F	
-
-	config RTL_8365MB_SUPPORT
-		bool "Enable RTL8365MB support"
-		depends on RTL_8197F
-
-	config RTL_8364NB_SUPPORT
-		bool "Enable RTL8364NB support"
-		depends on RTL_8197F	
-
-	config RTL_8367SB_SUPPORT
-		bool "Enable RTL8367SB support"
-		depends on RTL_8197F
-endchoice
-
-config RTL_83XX_SUPPORT
-	bool 
-	default y if (RTL_8366SC_SUPPORT || RTL_8363NB_SUPPORT || RTL_8365MB_SUPPORT || RTL_8364NB_SUPPORT || RTL_8367SB_SUPPORT)
-	depends on RTL_8197F	
 
 #config RTL_LINK_AGGREGATION
 #	bool "link aggregation support"
 #	default n
 #	depends on RTL_819X
-
-
-config RTL_NIC_QUEUE
-	bool "nic sw queue"
-	default n
-	depends on !(RTL_8367R_SUPPORT || RTL_83XX_SUPPORT)
-	select RTL_EXT_TC0		
 
 endif #RTL_819X_SWCORE
 #endmenu

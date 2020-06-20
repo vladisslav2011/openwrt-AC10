@@ -227,17 +227,9 @@ static int32 _rtl865x_addVlanPortMember(uint16 vid, uint32 portMask)
 static int32 _rtl865x_addVlanPortMember2(uint16 vid, uint32 portMask, uint32 untagPortMask)
 {
 	int32 retval = FAILED;
-	rtl865x_vlan_entry_t *vlanEntry = NULL;
-
-#if defined(CONFIG_RTL_8196E) || defined(CONFIG_RTL_819XD)	
-	vlanEntry = rtl_getVlanEntryByVid(vid);
-
-	if(vlanEntry == NULL)
-		return RTL_EENTRYNOTFOUND;
-#else
+	rtl865x_vlan_entry_t *vlanEntry;
+	
 	vlanEntry = &vlanTbl[vid];
-#endif
-
 	if(vlanEntry->valid == 0)
 		return RTL_EINVALIDVLANID;
 

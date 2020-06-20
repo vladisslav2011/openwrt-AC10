@@ -63,8 +63,6 @@
 #include <net/rtl/rtl865x_outputQueue.h>
 #endif
 
-#include <linux/netdevice.h>
-#include <linux/skbuff.h>
 #include "rtl865xc_swNic.h"
 #if defined(CONFIG_RTL_ETH_PRIV_SKB_DEBUG)
 #include <linux/netdevice.h>
@@ -85,41 +83,15 @@ extern int32 rtl8651_setAsicEthernetPHYAutoNeg( uint32 port, uint32 autoneg);
 extern int32 rtl8651_setAsicEthernetPHYAdvCapality(uint32 port, uint32 capality);
 extern int32 mmd_read(uint32 phyId, uint32 devId, uint32 regId, uint32 *rData);
 extern int32 mmd_write(uint32 phyId, uint32 devId, uint32 regId, uint32 wData);
-#if defined(CONFIG_RTL_8367R_SUPPORT)
-extern int32 rtl_mirror_portBased_set(uint32 mirroring_port, uint32 Mirrored_rx_portmask, uint32 Mirrored_tx_portmask);
-extern int32 rtl_mirror_portBased_get(uint32 *mirroring_port, uint32 *Mirrored_rx_portmask, uint32 *Mirrored_tx_portmask);
-extern int32 rtl_mirror_portIso_set(uint32 isolation);
-extern int32 rtl_mirror_portIso_get(uint32 *isolation);
-#endif
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8198C_8367RB)
+
+#ifdef CONFIG_RTL_8367R_SUPPORT
+extern int rtl8367b_getAsicPHYReg(uint32 phyNo, uint32 phyAddr, uint32 *pRegData );
 extern int rtl8367b_setAsicPHYReg(uint32 phyNo, uint32 phyAddr, uint32 phyData );
-#define rtl83xx_setAsicPHYReg(phyNo, phyAddr, phyData)	rtl8367b_setAsicPHYReg(phyNo, phyAddr, phyData)
 extern int rtl8367b_getAsicReg(uint32 reg, uint32 *pValue);
-#define rtl83xx_getAsicReg(reg, pValue)	rtl8367b_getAsicReg(reg, pValue)
 extern int rtl8367b_setAsicReg(uint32 reg, uint32 value);	
-#define rtl83xx_setAsicReg(reg, value)	rtl8367b_setAsicReg(reg, value)
 extern int rtk_vlan_get(uint32 vid, uint32 *pMbrmsk, uint32 *pUntagmsk, uint32 *pFid);
 extern int rtk_vlan_portPvid_get(uint32 port, uint32 *pPvid, uint32 *pPriority);
-extern int rtl8367b_getAsicPHYOCPReg(uint32 phyNo, uint32 ocpAddr, uint32 *pRegData);
-extern int rtl8367b_setAsicPHYOCPReg(uint32 phyNo, uint32 ocpAddr, uint32 ocpData);
-#define rtl83xx_getAsicPHYOCPReg(phyId, regId, regData) rtl8367b_getAsicPHYOCPReg(phyId, regId, regData)
-#define rtl83xx_setAsicPHYOCPReg(phyId, regId, regData) rtl8367b_setAsicPHYOCPReg(phyId, regId, regData)
-#elif defined(CONFIG_RTL_83XX_SUPPORT)
-#include "./rtl83xx/vlan.h"
-extern int rtl8367c_setAsicPHYReg(uint32 phyNo, uint32 phyAddr, uint32 phyData );
-#define rtl83xx_setAsicPHYReg(phyNo, phyAddr, phyData)	rtl8367c_setAsicPHYReg(phyNo, phyAddr, phyData)
-extern int rtl8367c_getAsicReg(uint32 reg, uint32 *pValue);
-#define rtl83xx_getAsicReg(reg, pValue)	rtl8367c_getAsicReg(reg, pValue)
-extern int rtl8367c_setAsicReg(uint32 reg, uint32 value);
-#define rtl83xx_setAsicReg(reg, value)	rtl8367c_setAsicReg(reg, value)
-extern int rtk_vlan_get(uint32 vid, rtk_vlan_cfg_t *pVlanCfg);
-extern int rtk_vlan_portPvid_get(uint32 port, uint32 *pPvid, uint32 *pPriority);
-extern int rtl8367c_getAsicPHYOCPReg(uint32 phyNo, uint32 ocpAddr, uint32 *pRegData);
-extern int rtl8367c_setAsicPHYOCPReg(uint32 phyNo, uint32 ocpAddr, uint32 ocpData);
-#define rtl83xx_getAsicPHYOCPReg(phyId, regId, regData) rtl8367c_getAsicPHYOCPReg(phyId, regId, regData)
-#define rtl83xx_setAsicPHYOCPReg(phyId, regId, regData) rtl8367c_setAsicPHYOCPReg(phyId, regId, regData)
 #endif
-extern void rtl_get_83xx_snr(void);
 
 #if defined(CONFIG_RTL_PROC_DEBUG)||defined(CONFIG_RTL_DEBUG_TOOL)
 extern unsigned int rx_noBuffer_cnt;
@@ -199,10 +171,6 @@ static struct proc_dir_entry *mmd_entry,	*mem_entry, *diagnostic_entry,
 extern int32 mmd_read(uint32 phyId, uint32 devId, uint32 regId, uint32 *rData);
 extern int32 mmd_write(uint32 phyId, uint32 devId, uint32 regId, uint32 wData);
 
-#if 0
-extern int rtl_mdio_read(unsigned int mdio_phyaddr, unsigned int reg, unsigned int *pdata);
-extern int rtl_mdio_write(unsigned int mdio_phyaddr, unsigned int reg, unsigned int data);
-#endif
 
 #if defined(CONFIG_RTL_HARDWARE_IPV6_SUPPORT)
 //#define CONFIG_RTL_PROC_NEW
@@ -217,7 +185,8 @@ static struct proc_dir_entry *l3v6_entry,	*arp6_entry, *nexthop6_entry,
 #define	PROC_READ_RETURN_VALUE		0
 #endif
 
-void ntohl_array(u32 *org_buf, u32 *dst_buf, unsigned int words)
+#if defined(CONFIG_OPENWRT_SDK) && (defined(CONFIG_RTL_8198C) || defined(CONFIG_RTL_8197F))
+static void ntohl_array(u32 *org_buf, u32 *dst_buf, unsigned int words)
 {
 	int i = 0;
 	
@@ -230,6 +199,7 @@ void ntohl_array(u32 *org_buf, u32 *dst_buf, unsigned int words)
 
 	return;
 }
+#endif
 
 #if defined CONFIG_RTL_DEBUG_TOOL	//debug tool flag
 #ifndef CONFIG_RTL_PROC_DEBUG
@@ -4235,56 +4205,33 @@ static int32 pvid_write( struct file *filp, const char *buff,unsigned long len, 
 	return len;
 }
 
+
 #ifdef CONFIG_RTL_PROC_NEW
 static int32 mirrorPort_read(struct seq_file *s, void *v)
 {
 	uint32 mirrorRx, mirrorTx, mirrorPort;
-	
-	#if defined(CONFIG_RTL_8367R_SUPPORT)
-	uint32 isolation;
-	uint32 tmp_mirrorRx, tmp_mirrorTx, tmp_mirrorPort;
-	rtl_mirror_portBased_get(&mirrorPort,&mirrorRx,&mirrorTx);
-	rtl8651_getAsicPortMirror(&tmp_mirrorRx, &tmp_mirrorTx, &tmp_mirrorPort);
-	if(tmp_mirrorRx&RTL_WANPORT_MASK)
-		mirrorRx=tmp_mirrorRx;
-	#else
+
 	rtl8651_getAsicPortMirror(&mirrorRx, &mirrorTx, &mirrorPort);
-	#endif
 	seq_printf(s,">>Mirror Control Register:\n\n");
 	seq_printf(s,"  Mirror Rx: 0x%x\n", mirrorRx);
 	seq_printf(s,"  Mirror Tx: 0x%x\n", mirrorTx);
 	seq_printf(s,"  Mirror Port: 0x%x\n", mirrorPort);
-	#if defined(CONFIG_RTL_8367R_SUPPORT)
-	rtl_mirror_portIso_get(&isolation);
-	seq_printf(s,"  Port isolation: %u\n", isolation);
-	#endif
+
 	return 0;
 }
 #else
 static int32 mirrorPort_read( char *page, char **start, off_t off, int count, int *eof, void *data )
 {
 	uint32 mirrorRx, mirrorTx, mirrorPort;
-	
 	int	len;
+
 	len = 0;
-#if defined(CONFIG_RTL_8367R_SUPPORT)
-	uint32 tmp_mirrorRx, tmp_mirrorTx, tmp_mirrorPort;
-	uint32 isolation;
-	rtl_mirror_portBased_get(&mirrorPort,&mirrorRx,&mirrorTx);
-	rtl8651_getAsicPortMirror(&tmp_mirrorRx, &tmp_mirrorTx, &tmp_mirrorPort);
-	if(tmp_mirrorRx&RTL_WANPORT_MASK)
-		mirrorRx=tmp_mirrorRx;
-#else
 	rtl8651_getAsicPortMirror(&mirrorRx, &mirrorTx, &mirrorPort);
-#endif
 	len += sprintf(page+len,">>Mirror Control Register:\n\n");
 	len += sprintf(page+len,"  Mirror Rx: 0x%x\n", mirrorRx);
 	len += sprintf(page+len,"  Mirror Tx: 0x%x\n", mirrorTx);
 	len += sprintf(page+len,"  Mirror Port: 0x%x\n", mirrorPort);
-	#if defined(CONFIG_RTL_8367R_SUPPORT)
-	rtl_mirror_portIso_get(&isolation);
-	len += sprintf(page+len,"  Port isolation: %u\n", isolation);
-	#endif
+
 	if (len <= off+count) *eof = 1;
 	*start = page + off;
 	len -= off;
@@ -4304,9 +4251,6 @@ static int32 mirrorPort_write( struct file *filp, const char *buff,unsigned long
 	uint32	rx_mask,tx_mask,port_mask;
 	char		*strptr, *cmd_addr;
 	char		*tokptr;
-	#if defined(CONFIG_RTL_8367R_SUPPORT)
-	uint32 iso_port_enable;
-	#endif
 	if(len>64)
 	{
 		goto errout;
@@ -4329,37 +4273,8 @@ static int32 mirrorPort_write( struct file *filp, const char *buff,unsigned long
 
 		if (!memcmp(cmd_addr, "mirror", 6))
 		{
-		#if defined(CONFIG_RTL_8367R_SUPPORT)
 			rx_mask=simple_strtol(tokptr, NULL, 0);
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			tx_mask = simple_strtol(tokptr,NULL,0);
 
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			port_mask = simple_strtol(tokptr, NULL, 0);
-			if(rx_mask&RTL_WANPORT_MASK){
-				rtl8651_setAsicPortMirror(rx_mask,0,port_mask);
-				if(rtl_mirror_portBased_set(port_mask,0,tx_mask) == 0)
-					rtlglue_printf("mirror rx port mask(0x%x) tx port mask(0x%x), mirror port mask(0x%x)\n",rx_mask,tx_mask,port_mask);
-				else
-					rtlglue_printf("set failed\n");
-			}
-			else{
-				rtl8651_setAsicPortMirror(0,0,port_mask);
-				if(rtl_mirror_portBased_set(port_mask,rx_mask,tx_mask) == 0)
-					rtlglue_printf("mirror rx port mask(0x%x) tx port mask(0x%x), mirror port mask(0x%x)\n",rx_mask,tx_mask,port_mask);
-				else
-					rtlglue_printf("set failed\n");
-			}
-		#else
-			rx_mask=simple_strtol(tokptr, NULL, 0);
 			tokptr = strsep(&strptr," ");
 			if (tokptr==NULL)
 			{
@@ -4375,14 +4290,7 @@ static int32 mirrorPort_write( struct file *filp, const char *buff,unsigned long
 			port_mask = simple_strtol(tokptr, NULL, 0);
 			rtlglue_printf("mirror rx port mask(0x%x) tx port mask(0x%x), mirror port mask(0x%x)\n",rx_mask,tx_mask,port_mask);
 			rtl8651_setAsicPortMirror(rx_mask,tx_mask,port_mask);
-		#endif
 		}
-		#if defined(CONFIG_RTL_8367R_SUPPORT)
-		else if(!memcmp(cmd_addr, "port_isolation", 14)){
-			iso_port_enable = simple_strtol(tokptr, NULL, 0);
-			rtl_mirror_portIso_set(iso_port_enable);
-		}
-		#endif
 		else
 		{
 			goto errout;
@@ -6011,21 +5919,6 @@ extern int freeSkbThreshold;
 extern int get_buf_in_poll(void);
 extern int get_buf_in_rx_skb_queue(void);
 #endif
-unsigned int statistic_udp_frag_rx;
-unsigned int statistic_udp_frag_ps;
-unsigned int statistic_udp_frag_tbl_full;
-unsigned int statistic_udp_frag_add;
-unsigned int statistic_udp_frag_free;
-
-#if defined(CONFIG_RTL_EXT_PORT_SUPPORT)
-unsigned int statistic_wlan_out_napt_exist;
-unsigned int statistic_wlan_xmit_to_eth;
-unsigned int statistic_wlan_rx_unicast_pkt;
-unsigned int statistic_eth_xmit_to_wlan;
-unsigned int statistic_eth_rx_ext_fwd_failed_pkt;
-unsigned int statistic_eth_rx_unicast_pkt;
-
-#endif
 
 #ifdef CONFIG_RTL_PROC_NEW
 static int32 stats_debug_entry_read(struct seq_file *s, void *v)
@@ -6073,21 +5966,7 @@ static int32 stats_debug_entry_read(struct seq_file *s, void *v)
 	}
 	seq_printf(s,"    freeSkbThreshold:	%d\n",freeSkbThreshold);
 #endif
-	seq_printf(s,"    statistic_udp_frag_rx %u\n", statistic_udp_frag_rx);
-	seq_printf(s,"    statistic_udp_frag_ps %u\n", statistic_udp_frag_ps);
-	seq_printf(s,"    statistic_udp_frag_tbl_full  %u\n", statistic_udp_frag_tbl_full);
-	seq_printf(s,"    statistic_udp_frag_add %u\n", statistic_udp_frag_add);
-	seq_printf(s,"    statistic_udp_frag_free %u\n", statistic_udp_frag_free);
-	#if defined(CONFIG_RTL_EXT_PORT_SUPPORT)
-	seq_printf(s,"    statistic_wlan_rx_unicast_pkt %u\n", statistic_wlan_rx_unicast_pkt);
-	seq_printf(s,"    statistic_wlan_out_napt_exist %u\n", statistic_wlan_out_napt_exist);
-	seq_printf(s,"    statistic_wlan_xmit_to_eth %u\n", statistic_wlan_xmit_to_eth);
-	seq_printf(s,"    statistic_eth_rx_unicast_pkt  %u\n", statistic_eth_rx_unicast_pkt);
-	seq_printf(s,"    statistic_eth_xmit_to_wlan  %u\n", statistic_eth_xmit_to_wlan);
-	seq_printf(s,"    statistic_eth_rx_ext_fwd_failed_pkt %u\n", statistic_eth_rx_ext_fwd_failed_pkt);
-	
-	#endif
-	
+
 	return 0;
 }
 #else
@@ -6119,19 +5998,6 @@ static int32 stats_debug_entry_read( char *page, char **start, off_t off, int co
 	len += sprintf(page+len,"	  cnt_swcore_rx:	%d\n",cnt_swcore_rx);
 	len += sprintf(page+len,"	  cnt_swcore_link:	%d\n",cnt_swcore_link);
 	len += sprintf(page+len,"	  cnt_swcore_err:	%d\n",cnt_swcore_err);	
-#endif
-	len += sprintf(page+len,"    statistic_udp_frag_rx %u\n", statistic_udp_frag_rx);
-	len += sprintf(page+len,"    statistic_udp_frag_ps %u\n", statistic_udp_frag_ps);
-	len += sprintf(page+len,"    statistic_udp_frag_tbl_full  %u\n", statistic_udp_frag_tbl_full);
-	len += sprintf(page+len,"    statistic_udp_frag_add %u\n", statistic_udp_frag_add);
-	len += sprintf(page+len,"    statistic_udp_frag_free %u\n", statistic_udp_frag_free);
-#if defined(CONFIG_RTL_EXT_PORT_SUPPORT)
-	len += sprintf(page+len,"    statistic_wlan_rx_unicast_pkt %u\n", statistic_wlan_rx_unicast_pkt);
-	len += sprintf(page+len,"    statistic_wlan_out_napt_exist %u\n", statistic_wlan_out_napt_exist);
-	len += sprintf(page+len,"    statistic_wlan_xmit_to_eth %u\n", statistic_wlan_xmit_to_eth);
-	len += sprintf(page+len,"    statistic_eth_rx_unicast_pkt  %u\n", statistic_eth_rx_unicast_pkt);
-	len += sprintf(page+len,"    statistic_eth_xmit_to_wlan  %u\n", statistic_eth_xmit_to_wlan);
-	len += sprintf(page+len,"    statistic_eth_rx_ext_fwd_failed_pkt %u\n", statistic_eth_rx_ext_fwd_failed_pkt);
 #endif
 
 	return len;
@@ -6176,11 +6042,6 @@ static int32 stats_debug_entry_write(struct file *file, const char *buffer,
 
 		if(strncmp(cmd_addr, "clear",5) == 0)
 		{
-			statistic_udp_frag_rx = 0;
-			statistic_udp_frag_ps = 0;
-			statistic_udp_frag_tbl_full = 0;
-			statistic_udp_frag_add = 0;
-			statistic_udp_frag_free = 0;
 			rx_noBuffer_cnt=0;
 			tx_ringFull_cnt=0;
 			tx_drop_cnt=0;
@@ -6192,14 +6053,6 @@ static int32 stats_debug_entry_write(struct file *file, const char *buffer,
 			statistic_fastpath = 0;
 			#else
 			statistic_fp = 0;
-			#endif
-			#if defined(CONFIG_RTL_EXT_PORT_SUPPORT)
-			statistic_wlan_rx_unicast_pkt = 0;
-			statistic_wlan_out_napt_exist = 0;
-			statistic_wlan_xmit_to_eth = 0;
-			statistic_eth_rx_unicast_pkt = 0;
-			statistic_eth_xmit_to_wlan = 0;
-			statistic_eth_rx_ext_fwd_failed_pkt = 0;
 			#endif
 			
 #ifdef CONFIG_RTL_ROMEPERF_24K
@@ -6226,39 +6079,6 @@ static int32 stats_debug_entry_write(struct file *file, const char *buffer,
 			
 			rtlglue_printf("_debug_flag= 0x%x\n", _debug_flag);
 		}
-#ifdef UDP_FRAGMENT_PKT_QUEUEING
-		else if(strncmp(cmd_addr, "help", 4) == 0)
-		{
-			rtlglue_printf(">> usage:\n");
-			rtlglue_printf("   echo uf_queue > /proc/rtl865x/stats\n");
-			rtlglue_printf("   echo uf_queue enable > /proc/rtl865x/stats\n");
-			rtlglue_printf("   echo uf_queue disable > /proc/rtl865x/stats\n");
-		}
-		else if(strncmp(cmd_addr, "uf_queue", 8) == 0)
-		{
-			tokptr = strsep(&strptr," ");
-			if (tokptr) {
-				if (strncmp(tokptr, "enable", 6) == 0)
-					uf_enabled = 1;
-				else if (strncmp(tokptr, "disable", 7) == 0)
-					uf_enabled = 0;
-				else
-					uf_tx_desc_low = simple_strtoul(tokptr, NULL, 10);
-			}
-			rtlglue_printf("udp fragment queueing: %sabled\n", (uf_enabled)? "en" : "dis");
-			rtlglue_printf("uf_tx_desc_low (tx desc low-water mark)= %d\n", uf_tx_desc_low);
-			
-			#ifdef _UF_DEBUG
-			rtlglue_printf("uf_start= %d\n", uf_start);
-			rtlglue_printf("_uf_cntr_tx_group_pkt= %d\n", _uf_cntr_tx_group_pkt);
-			rtlglue_printf("_uf_cntr_free_group_pkt= %d\n", _uf_cntr_free_group_pkt);
-			rtlglue_printf("_uf_cntr_timer_timeout= %d\n", _uf_cntr_timer_timeout);
-			rtlglue_printf("_uf_cntr_tx_unfinished_group_pkt= %d\n", _uf_cntr_tx_unfinished_group_pkt);
-			rtlglue_printf("_uf_cntr_queue_end= %d\n", _uf_cntr_queue_end);
-			#endif
-		}
-#endif
-
 #if defined(CONFIG_RTL_8197F) &&  defined(CONFIG_FINETUNE_RUNOUT_IRQ)
 		else if(strncmp(cmd_addr, "freeSkbThreshold",16) == 0)
 		{
@@ -6596,126 +6416,6 @@ static int32 diagnostic_write( struct file *filp, const char *buff,unsigned long
 	return len;
 }
 
-#if defined(CONFIG_RTL_NIC_QUEUE)
-extern  int need_queue;
-extern int hit_count_th;
-extern int tp_th;
-extern int acc_count_th;
-extern int sw_buf_th;
-extern int max_res_th;
-extern int max_q_Len;
-extern int dequeueMethod;
-extern int tp_count;
-extern int extra_token;
-extern struct rtk_tx_queue  tx_skb_queue[TX_QUEUE_NUM];
-extern struct rtk_tx_dev tx_dev_stats[TX_DEV_NUM];
-
-static int32 tx_queue_read(struct seq_file *s, void *v)
-{
-	int i;
-	seq_printf(s, "nic tx queue:\n");
-	seq_printf(s, "need_queue %d dequeueMethod=%d tp_count=%d \n",need_queue,dequeueMethod, tp_count);
-	seq_printf(s, "acc_count_th %d hit_count_th %d tp_th %d\n",acc_count_th,hit_count_th,tp_th);	
-	seq_printf(s, "buffer %d extra_token %d\n",tx_skb_queue[0].tbf.buffer,extra_token);
-	seq_printf(s,"\n");
-	for(i=0;i<TX_QUEUE_NUM;i++) {
-		seq_printf(s,"entry %d:\n",i);
-		seq_printf(s,"used %d dev(%p)=%s phyPort=%d \n",tx_skb_queue[i].used,tx_skb_queue[i].dev,(tx_skb_queue[i].dev) ? tx_skb_queue[i].dev->name : "", tx_skb_queue[i].phyPort);
-		if(tx_skb_queue[i].used)
-			seq_printf(s,"skb queue len %d\n",skb_queue_len(&tx_skb_queue[i].list));
-		seq_printf(s,"\n");
-	}
-	for(i=0;i<TX_DEV_NUM;i++) {
-		seq_printf(s,"tx dev entry %d:\n",i);
-#ifdef 	CONFIG_RTL_MULTI_LAN_DEV
-		seq_printf(s,"hitcount %u dev(%p)=%s \n",tx_dev_stats[i].hit_count,tx_dev_stats[i].dev,(tx_dev_stats[i].dev) ? tx_dev_stats[i].dev->name : "");
-#else
-		seq_printf(s,"hitcount %u dport(%d) \n",tx_dev_stats[i].hit_count,tx_dev_stats[i].dport);
-#endif
-		seq_printf(s,"\n");
-	}
-	
-	return 0;
-}
-
-static int32 tx_queue_write(struct file *filp, const char *buff,unsigned long len, void *data )
-{
-	char tmpbuf[64];	
-	char *strptr, *tokeptr, *cmd_addr;
-	int value;
-	if (buff && !copy_from_user(tmpbuf, buff, len)) {
-		tmpbuf[len] = '\0';
-		strptr=tmpbuf;
-		cmd_addr = strsep(&strptr," ");
-		if (cmd_addr==NULL)
-		{
-			goto errout;
-		}
-	
-		if(!memcmp(cmd_addr, "qth", 3)) {	
-			
-			tokeptr = strsep(&strptr," ");
-			if (tokeptr==NULL)
-			{
-				goto errout;
-			}	
-			value=simple_strtol(tokeptr, NULL, 0);
-			if(value)
-				acc_count_th=value;
-
-			tokeptr = strsep(&strptr," ");
-			if (tokeptr==NULL)
-			{
-				goto errout;
-			}
-			value=simple_strtol(tokeptr, NULL, 0);
-			if(value)
-				hit_count_th=value;
-
-			tokeptr = strsep(&strptr," ");
-			if (tokeptr==NULL)
-			{
-				goto errout;
-			}
-			value=simple_strtol(tokeptr, NULL, 0);
-			if(value)
-				tp_th=value;
-
-
-			tokeptr = strsep(&strptr," ");
-			if (tokeptr==NULL)
-			{
-				goto errout;
-			}
-			value=simple_strtol(tokeptr, NULL, 0);
-			if(value)
-			{
-				int i;
-				for(i=0;i<TX_QUEUE_NUM;i++)
-				{
-					tx_skb_queue[i].tbf.buffer=value;
-				}
-			}
-
-
-			tokeptr = strsep(&strptr," ");
-			if (tokeptr==NULL)
-			{
-				goto errout;
-			}
-			value=simple_strtol(tokeptr, NULL, 0);
-			extra_token=value;
-
-			rtlglue_printf("acc_count_th %d  hit_count_th %d tp_th %d tbf.buffer %d extra_token %d\n",acc_count_th,hit_count_th,tp_th,tx_skb_queue[0].tbf.buffer,extra_token);		
-			return len;
-		}
- 	}
-errout:
-
-	rtlglue_printf("tcp_queue_write qth/[acc_count_th] [hit_count_th] [tp_th] [tbf buffer] [tbf extra token]\n");
-	return len;
-}
-#endif
 
 
 #ifdef CONFIG_RTL_PROC_NEW
@@ -6813,7 +6513,7 @@ static int32 port_status_read(struct seq_file *s, void *v)
 {
 	int		port;
 	
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT)
+#if defined(CONFIG_RTL_8367R_SUPPORT)
 	seq_printf(s, "Dump Port Status:\n");
 
 	for(port=PHY0;port<=PHY4;port++)
@@ -6874,30 +6574,12 @@ static int32 port_status_read(struct seq_file *s, void *v)
 		regData = READ_MEM32(PSRP0+((port)<<2));
 		data0 = regData & PortStatusLinkUp;
 
-#if 0
-		if ((port == PHY0) && gpio_simulate_mdc_mdio) {
-			int rp;
-			uint32 regData2;
-
-			for (rp = 0; rp < 2; rp++)
-				rtl_mdio_read(PORT0_RGMII_PHYID, 1, &regData2);
-
-			if (regData2 & (1<<2))
-				seq_printf(s, "LinkUp | ");
-			else {
-				seq_printf(s, "LinkDown\n\n");
-				continue;
-			}
-		} else
-#endif
+		if (data0)
+			seq_printf(s, "LinkUp | ");
+		else
 		{
-			if (data0)
-				seq_printf(s, "LinkUp | ");
-			else
-			{
-				seq_printf(s, "LinkDown\n\n");
-				continue;
-			}
+			seq_printf(s, "LinkDown\n\n");
+			continue;
 		}
 		data0 = regData & PortStatusNWayEnable;
 		seq_printf(s, "NWay Mode %s\n", data0?"Enabled":"Disabled");
@@ -6976,7 +6658,7 @@ static int32 port_status_read( char *page, char **start, off_t off, int count, i
 {
 	int		len, port;
 	
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT)
+#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT)
 	len = sprintf(page, "Dump Port Status:\n");
 
 	for(port=PHY0;port<EXT_SWITCH_MAX_PHY_PORT;port++)
@@ -7090,7 +6772,7 @@ static int32 port_status_write( struct file *filp, const char *buff,unsigned lon
 	char		*tokptr;
 	int 	type;
 	int 		port;
-#if !defined(CONFIG_RTL_8367R_SUPPORT) && !defined(CONFIG_RTL_8370_SUPPORT) && !defined(CONFIG_RTL_83XX_SUPPORT)
+#if !defined(CONFIG_RTL_8367R_SUPPORT) && !defined(CONFIG_RTL_8370_SUPPORT)
 	int forceMode = 0;
 	int forceLink = 0;
 	int forceLinkSpeed = 0;
@@ -7145,14 +6827,10 @@ static int32 port_status_write( struct file *filp, const char *buff,unsigned lon
 				type = PORT_DOWN;
 			else if(strcmp(tokptr,"up") == 0)
 				type = PORT_UP;
-			else if(strcmp(tokptr,"an_10m") == 0)
-				type = AN_10M;
-			else if(strcmp(tokptr,"an_100m") == 0)
-				type = AN_100M;
 			else
 				type = PORT_AUTO;
 
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT)
+#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT)
 			for(port = 0; port < EXT_SWITCH_MAX_PHY_PORT; port++)
 			{
 				extern int set_83XX_speed_mode(int port, int type);
@@ -7162,23 +6840,6 @@ static int32 port_status_write( struct file *filp, const char *buff,unsigned lon
 				}
 			}
 #else
-			/* keep CONFIG_FORCE_10M_100M_FULL_REFINE for backward compatible */
-			/* design note:
-  			1. When user force port to 100MF, we still set to AN mode but disable 1000MF ability.
-  			2. When user force port to 10MF, we still set to AN mode but disable 100MF/100MH/1000MF ability.
-  			3. When user force port to 10MF/100MF, we process it as old way.
- 			 */
-			#ifdef CONFIG_FORCE_10M_100M_FULL_REFINE
-			if (type == DUPLEX_10M)
-				type = AN_10M;
-			else if (type == DUPLEX_100M)
-				type = AN_100M;
-			else if (type == DUPLEX_1000M)
-				type = AN_AUTO;
-			else if (type == PORT_AUTO)
-				type = AN_AUTO;
-			#endif
-			
 			switch(type)
 			{
 				case HALF_DUPLEX_10M:
@@ -7235,27 +6896,6 @@ static int32 port_status_write( struct file *filp, const char *buff,unsigned lon
 					advCapability=(1<<DUPLEX_1000M);
 					break;
 				}	
-				case AN_10M:
-				{
-					forceMode=FALSE;
-					forceLinkSpeed=NwayAbility10MF | NwayAbility10MH;
-					advCapability=(1<<HALF_DUPLEX_10M) | (1<<DUPLEX_10M);
-					break;
-				}	
-				case AN_100M:
-				{
-					forceMode=FALSE;
-					forceLinkSpeed=NwayAbility10MF | NwayAbility10MH | NwayAbility100MF | NwayAbility100MH;
-					advCapability=(1<<PORT_AUTO);
-					break;
-				}	
-				case AN_AUTO:
-				{
-					forceMode=FALSE;
-					forceLinkSpeed=NwayAbility10MF | NwayAbility10MH | NwayAbility100MF | NwayAbility100MH |NwayAbility1000MF;
-					advCapability=(1<<PORT_AUTO);
-					break;
-				}
 				default:
 				{
 					forceMode=FALSE;
@@ -7275,40 +6915,49 @@ static int32 port_status_write( struct file *filp, const char *buff,unsigned lon
 			}
 #endif
 
-			#if defined(CONFIG_RTL_FE_AUTO_DOWN_SPEED)
-			local_bh_disable();
-			for(port = 0; port < CPU; port++)
-			{
-				if ((1<<port) & port_mask) {
-					fe_ads[port].force_speed_by_nway = 0;
-				}
-			}
-			local_bh_enable();
-			#endif
-
-			if ((type == AN_10M) || (type == AN_100M) || (type == AN_AUTO)) {
+#ifdef CONFIG_FORCE_10M_100M_FULL_REFINE
+			/* design note:
+  			1. When user force port to 100MF, we still set to AN mode but disable 1000MF ability.
+  			2. When user force port to 10MF, we still set to AN mode but disable 100MF/100MH/1000MF ability.
+  			3. When user force port to 10MF/100MF, we process it as old way.
+ 			 */
+			 
+			if (type == DUPLEX_10M) {
 				for(port = 0; port < CPU; port++)
 				{
 					if ((1<<port) & port_mask) {
-						rtl8651_setAsicEthernetPHYAutoNeg(port,forceMode?FALSE:TRUE);
-						rtl8651_setAsicEthernetPHYAdvCapality(port,advCapability);
-						REG32(PCRP0 + (port * 4)) = (REG32(PCRP0 + (port * 4)) & ~(EnForceMode | PollLinkStatus | AutoNegoSts_MASK)) | forceLinkSpeed;
-
-						#if defined(CONFIG_RTL_LONG_ETH_CABLE_REFINE) ||defined(CONFIG_RTL_FE_AUTO_DOWN_SPEED)
-						if (type == AN_10M) {
-							local_bh_disable();
-							fe_ads[port].down_speed_renway = 1;
-							fe_ads[port].force_speed_by_nway = 1;
-							local_bh_enable();
-						}
-						#endif
+						rtl8651_setAsicEthernetPHYAutoNeg(port, TRUE);
+						rtl8651_setAsicEthernetPHYAdvCapality(port, ((1<<HALF_DUPLEX_10M) | (1<<DUPLEX_10M)));
+						REG32(PCRP0 + (port * 4)) = (REG32(PCRP0 + (port * 4)) | AutoNegoSts_MASK) & ~(EnForceMode | PollLinkStatus | NwayAbility100MF | NwayAbility100MH |NwayAbility1000MF);
 					
 						rtl8651_restartAsicEthernetPHYNway(port);
-						mdelay(10);
 					}
 				}				
-			}
-			else
+			} else if (type == DUPLEX_100M) {
+				for(port = 0; port < CPU; port++)
+				{
+					if ((1<<port) & port_mask) {
+						rtl8651_setAsicEthernetPHYAutoNeg(port, TRUE);
+						rtl8651_setAsicEthernetPHYAdvCapality(port, ((1<<HALF_DUPLEX_10M) | (1<<DUPLEX_10M) |(1<<HALF_DUPLEX_100M) | (1<<DUPLEX_100M)));
+						REG32(PCRP0 + (port * 4)) = (REG32(PCRP0 + (port * 4)) | AutoNegoSts_MASK) & ~(EnForceMode | PollLinkStatus |NwayAbility1000MF);
+					
+						rtl8651_restartAsicEthernetPHYNway(port);
+					}
+				}				
+			} else if ((type == DUPLEX_1000M) ||(type == PORT_AUTO)) {
+				for(port = 0; port < CPU; port++)
+				{
+					if ((1<<port) & port_mask) {
+						rtl8651_setAsicEthernetPHYAutoNeg(port, TRUE);
+						rtl8651_setAsicEthernetPHYAdvCapality(port, ((1<<HALF_DUPLEX_10M) | (1<<DUPLEX_10M) |(1<<HALF_DUPLEX_100M) | (1<<DUPLEX_100M) |(1<<DUPLEX_1000M)));
+						REG32(PCRP0 + (port * 4)) = (REG32(PCRP0 + (port * 4)) | AutoNegoSts_MASK) & ~(EnForceMode | PollLinkStatus);
+					
+						rtl8651_restartAsicEthernetPHYNway(port);
+					}
+				}				
+			} else
+#endif
+
 			for(port = 0; port < CPU; port++)
 			{
 				#if defined(CONFIG_RTL_8198C_8367RB)
@@ -7326,11 +6975,6 @@ static int32 port_status_write( struct file *filp, const char *buff,unsigned lon
 					}
 					else {
 						/*Set PHY Register*/
-#if 0 && defined(CONFIG_RTL_EXCHANGE_PORTMASK)
-						if((type == PORT_AUTO) && (port == 0) && gpio_simulate_mdc_mdio){
-							forceLinkSpeed = SPEED1000M;
-						}
-#endif						
 						rtl8651_setAsicEthernetPHYSpeed(port,forceLinkSpeed);
 						rtl8651_setAsicEthernetPHYDuplex(port,forceDuplex);
 						rtl8651_setAsicEthernetPHYAutoNeg(port,forceMode?FALSE:TRUE);
@@ -7365,61 +7009,7 @@ static int32 port_status_write( struct file *filp, const char *buff,unsigned lon
 				ads_debug();
 			}
 #endif
-
-#if defined(CONFIG_RTL_FORCE_MDIX)
-			if (!memcmp(tokptr, "fmx", 3)) {
-				extern void fmx_debug(void);
-				fmx_debug();
-			}
-#endif
 		}
-#ifdef CONFIG_RTL_FORCE_MDIX
-		else if (!memcmp(cmd_addr, "setfmx", 6))
-		{
-			extern int link_up_down_interval;
-			extern int thres_chg_force_mdix;
-			extern int timeout_FORCEMDIX;
-			
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			link_up_down_interval=simple_strtol(tokptr, NULL, 0);
-
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			thres_chg_force_mdix=simple_strtol(tokptr, NULL, 0);
-
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			timeout_FORCEMDIX=simple_strtol(tokptr, NULL, 0);
-
-			rtlglue_printf("link_up_down_interval= %d, thres_chg_force_mdix= %d, timeout_FORCEMDIX= %d\n",
-				link_up_down_interval, thres_chg_force_mdix, timeout_FORCEMDIX);
-		}
-		else if (!memcmp(cmd_addr, "fmxmode", 7))
-		{
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			port_mask=simple_strtol(tokptr, NULL, 0);
-
-			for (port = ADS_PORT_START; port < RTL8651_PHY_NUMBER; port++) {
-				if (port_mask & BIT(port))
-					fe_fmx[port].mdimode = 1;
-				else 
-					fe_fmx[port].mdimode = 0;
-			}
-
-		}
-#endif		
 		else
 		{
 			goto errout;
@@ -7533,7 +7123,7 @@ static int32 rtl865x_proc_mibCounter_read( char *page, char **start, off_t off, 
 }
 #endif
 
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8198C_8367RB) || defined(CONFIG_RTL_83XX_SUPPORT)
+#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8198C_8367RB)
 extern uint32 r8367_cpu_port;
 extern rtk_stat_port_cntr_t  port_cntrs;
 
@@ -7563,9 +7153,6 @@ void display_8367r_port_stat(uint32 port, rtk_stat_port_cntr_t *pPort_cntrs)
 	rtlglue_printf("   etherStatsUndersizePkts  %u\n", pPort_cntrs->etherStatsUndersizePkts);
 	rtlglue_printf("   etherStatsOversizePkts  %u\n", pPort_cntrs->etherStatsOversizePkts);
 
-	rtlglue_printf("   dot1dTpPortInDiscards  %u\n", pPort_cntrs->dot1dTpPortInDiscards);
-	rtlglue_printf("   inOampduPkts  %u\n", pPort_cntrs->inOampduPkts);
-	
 	rtlglue_printf("   Len= 64: %u pkts, 65 - 127: %u pkts, 128 - 255: %u pkts\n",
 		pPort_cntrs->etherStatsPkts64Octets,
 		pPort_cntrs->etherStatsPkts65to127Octets,
@@ -7581,9 +7168,7 @@ void display_8367r_port_stat(uint32 port, rtk_stat_port_cntr_t *pPort_cntrs)
 	rtlglue_printf("   ifOutUcastPkts  %u\n", pPort_cntrs->ifOutUcastPkts);
 	rtlglue_printf("   ifOutMulticastPkts  %u\n", pPort_cntrs->ifOutMulticastPkts);
 	rtlglue_printf("   ifOutBrocastPkts  %u\n", pPort_cntrs->ifOutBrocastPkts);
-#ifdef CONFIG_RTL_83XX_SUPPORT
-	rtlglue_printf("   ifOutDiscards  %u\n", pPort_cntrs->ifOutDiscards);
-#endif
+	
 	rtlglue_printf("   StatsSingleCollisionFrames  %u\n", pPort_cntrs->dot3StatsSingleCollisionFrames);
 	rtlglue_printf("   StatsMultipleCollisionFrames  %u\n", pPort_cntrs->dot3StatsMultipleCollisionFrames);
 	rtlglue_printf("   StatsDeferredTransmissions  %u\n", pPort_cntrs->dot3StatsDeferredTransmissions);
@@ -7592,8 +7177,9 @@ void display_8367r_port_stat(uint32 port, rtk_stat_port_cntr_t *pPort_cntrs)
 	rtlglue_printf("   StatsExcessiveCollisions  %u\n", pPort_cntrs->dot3StatsExcessiveCollisions);
 	rtlglue_printf("   OutPauseFrames  %u\n", pPort_cntrs->dot3OutPauseFrames);
 	rtlglue_printf("   dot1dBasePortDelayExceededDiscards  %u\n", pPort_cntrs->dot1dBasePortDelayExceededDiscards);
-
+	rtlglue_printf("   dot1dTpPortInDiscards  %u\n", pPort_cntrs->dot1dTpPortInDiscards);
 	rtlglue_printf("   outOampduPkts  %u\n", pPort_cntrs->outOampduPkts);
+	rtlglue_printf("   inOampduPkts  %u\n", pPort_cntrs->inOampduPkts);
 	rtlglue_printf("   pktgenPkts  %u\n", pPort_cntrs->pktgenPkts);
 
 }
@@ -7675,7 +7261,7 @@ static int32 rtl865x_proc_mibCounter_write( struct file *filp, const char *buff,
 		{
 			rtl8651_clearAsicCounter();
 
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT) || defined(CONFIG_RTL_8325D_SUPPORT) || defined(CONFIG_RTL_8198C_8367RB) || defined(CONFIG_RTL_83XX_SUPPORT)
+#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT) || defined(CONFIG_RTL_8325D_SUPPORT) || defined(CONFIG_RTL_8198C_8367RB)
 			rtk_stat_global_reset();
 #endif
 		}
@@ -7687,11 +7273,10 @@ static int32 rtl865x_proc_mibCounter_write( struct file *filp, const char *buff,
 				goto errout;
 			}
 
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8198C_8367RB) || defined(CONFIG_RTL_83XX_SUPPORT)
-			if(strncmp(cmdptr, "8367",4) == 0 || strncmp(cmdptr, "83xx",4) == 0) {
+#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8198C_8367RB)
+			if(strncmp(cmdptr, "8367",4) == 0) {
 
-				for (portNum=0; portNum<19; portNum++) {
-
+				for (portNum=0; portNum<7; portNum++) {
 					if ((portNum > 4) && (portNum != r8367_cpu_port))	// skip port 6 in 8367R; skip port 5 in 8367RB
 						continue;
 
@@ -8125,18 +7710,8 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 				goto errout;
 			}
 			regId=simple_strtol(tokptr, NULL, 0);
-#if 0
-			if (gpio_simulate_mdc_mdio){
-				if ((8 > phyId) && (phyId > 4))
-					ret = rtl_mdio_read(phyId, regId, &regData);
-				else
-					ret=rtl8651_getAsicEthernetPHYReg(phyId, regId, &regData);
-			}else
-#endif
-			{
-				ret=rtl8651_getAsicEthernetPHYReg(phyId, regId, &regData);
-			}
 
+			ret=rtl8651_getAsicEthernetPHYReg(phyId, regId, &regData);
 			if(ret==SUCCESS)
 			{
 				rtlglue_printf("read phyId(%d), regId(%d),regData:0x%x\n", phyId, regId, regData);
@@ -8168,17 +7743,8 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 				goto errout;
 			}
 			regData=simple_strtol(tokptr, NULL, 0);
-#if 0
-			if (gpio_simulate_mdc_mdio){
-				if ((8 > phyId) && (phyId > 4))
-					ret = rtl_mdio_write(phyId, regId,regData);
-				else
-					ret=rtl8651_setAsicEthernetPHYReg(phyId, regId, regData);
-			}else
-#endif
-			{
-				ret=rtl8651_setAsicEthernetPHYReg(phyId, regId, regData);
-			}
+
+			ret=rtl8651_setAsicEthernetPHYReg(phyId, regId, regData);
 			if(ret==SUCCESS)
 			{
 				rtlglue_printf("Write phyId(%d), regId(%d), regData:0x%x\n", phyId, regId, regData);
@@ -8236,27 +7802,30 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 			}
 		}
 #endif
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8198C_8367RB) || defined(CONFIG_RTL_83XX_SUPPORT)
-		else if (!memcmp(cmd_addr, "8367read", 8) || !memcmp(cmd_addr, "83xxread", 8))
+#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8198C_8367RB)
+		else if (!memcmp(cmd_addr, "8367read", 8))
 		{
+			extern int rtl8367b_getAsicReg(unsigned int reg, unsigned int *pValue);
 			tokptr = strsep(&strptr," ");
 			if (tokptr==NULL)
 			{
 				goto errout;
 			}
 			regId=simple_strtol(tokptr, NULL, 16);
-			ret = rtl83xx_getAsicReg(regId, &regData);
+			ret = rtl8367b_getAsicReg(regId, &regData);
+
 			if(ret==0)
 			{
-				rtlglue_printf("rtl83xx_getAsicReg: reg= %x, data= %x\n", regId, regData);
+				rtlglue_printf("rtl8367b_getAsicReg: reg= %x, data= %x\n", regId, regData);
 			}
 			else
 			{
 				rtlglue_printf("get fail %d\n", ret);
 			}
 		}
-		else if (!memcmp(cmd_addr, "8367write", 9) || !memcmp(cmd_addr, "83xxwrite", 9))
+		else if (!memcmp(cmd_addr, "8367write", 9))
 		{
+			extern int rtl8367b_setAsicReg(unsigned int reg, unsigned int pValue);
 			tokptr = strsep(&strptr," ");
 			if (tokptr==NULL)
 			{
@@ -8271,18 +7840,21 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 			}
 			regData=simple_strtol(tokptr, NULL, 16);
 
-			ret = rtl83xx_setAsicReg(regId, regData);
+			ret = rtl8367b_setAsicReg(regId, regData);
+
 			if(ret==0)
 			{
-				rtlglue_printf("rtl83xx_setAsicReg: reg= %x, data= %x\n", regId, regData);
+				rtlglue_printf("rtl8367b_setAsicReg: reg= %x, data= %x\n", regId, regData);
 			}
 			else
 			{
 				rtlglue_printf("set fail %d\n", ret);
 			}
 		}
-		else if (!memcmp(cmd_addr, "8367phyr", 8) || !memcmp(cmd_addr, "83xxphyr", 8))
+		else if (!memcmp(cmd_addr, "8367phyr", 8))
 		{
+			extern int rtl8367b_getAsicPHYReg(uint32 phyNo, uint32 phyAddr, uint32 *pRegData );
+
 			tokptr = strsep(&strptr," ");
 			if (tokptr==NULL)
 			{
@@ -8297,18 +7869,20 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 			}
 			regId=simple_strtol(tokptr, NULL, 0);
 
-			ret=rtl83xx_getAsicPHYReg(phyId, regId, &regData);
+			ret=rtl8367b_getAsicPHYReg(phyId, regId, &regData);
 			if(ret==SUCCESS)
 			{
-				rtlglue_printf("read 83XX phyId(%d), regId(%d), regData:0x%x\n", phyId, regId, regData);
+				rtlglue_printf("read 8367R/RB phyId(%d), regId(%d), regData:0x%x\n", phyId, regId, regData);
 			}
 			else
 			{
 				rtlglue_printf("error input!\n");
 			}		
 		}
-		else if (!memcmp(cmd_addr, "8367phyw", 8) || !memcmp(cmd_addr, "83xxphyw", 8))
+		else if (!memcmp(cmd_addr, "8367phyw", 8))
 		{
+			extern int rtl8367b_setAsicPHYReg(uint32 phyNo, uint32 phyAddr, uint32 phyData );
+			
 			tokptr = strsep(&strptr," ");
 			if (tokptr==NULL)
 			{
@@ -8330,76 +7904,17 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 			}
 			regData=simple_strtol(tokptr, NULL, 16);
 
-			ret=rtl83xx_setAsicPHYReg(phyId, regId, regData);
+			ret=rtl8367b_setAsicPHYReg(phyId, regId, regData);
 			if(ret==SUCCESS)
 			{
-				rtlglue_printf("Write 83XX phyId(%d), regId(%d), regData:0x%x\n", phyId, regId, regData);
+				rtlglue_printf("Write 8367R/RB phyId(%d), regId(%d), regData:0x%x\n", phyId, regId, regData);
 			}
 			else
 			{
 				rtlglue_printf("error input!\n");
 			}
 		}
-		else if (!memcmp(cmd_addr, "8367ocpr", 8) || !memcmp(cmd_addr, "83xxocpr", 8))
-		{
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			phyId=simple_strtol(tokptr, NULL, 0);
-
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			regId=simple_strtol(tokptr, NULL, 0);
-
-			ret=rtl83xx_getAsicPHYOCPReg(phyId, regId, &regData);
-			if(ret==SUCCESS)
-			{
-				rtlglue_printf("read 83XX phyId(%d), ocpAddr(0x%x), regData:0x%x\n", phyId, regId, regData);
-			}
-			else
-			{
-				rtlglue_printf("error input!\n");
-			}		
-		}
-		else if (!memcmp(cmd_addr, "8367ocpw", 8) || !memcmp(cmd_addr, "83xxocpw", 8))
-		{
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			phyId=simple_strtol(tokptr, NULL, 0);
-
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			regId=simple_strtol(tokptr, NULL, 0);
-
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout;
-			}
-			regData=simple_strtol(tokptr, NULL, 16);
-
-			ret=rtl83xx_setAsicPHYOCPReg(phyId, regId, regData);
-			if(ret==SUCCESS)
-			{
-				rtlglue_printf("Write 83XX phyId(%d), ocpAddr(0x%x), regData:0x%x\n", phyId, regId, regData);
-			}
-			else
-			{
-				rtlglue_printf("error input!\n");
-			}
-		}
-		else if (!memcmp(cmd_addr, "8367test", 8) || !memcmp(cmd_addr, "83xxtest", 8))
+		else if (!memcmp(cmd_addr, "8367test", 8))
 		{
 			extern int rtk_port_phyTestMode_set(uint32 port, int mode);
 
@@ -8427,7 +7942,7 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 					regId = 3;
 				ret=rtk_port_phyMdx_set(phyId, regId);
 				if(ret==SUCCESS)
-					rtlglue_printf("set 83XX phyId(%d) to mdi mode: %d\n", phyId, regId);
+					rtlglue_printf("set 8367RB phyId(%d) to mdi mode: %d\n", phyId, regId);
 				else
 					rtlglue_printf("rtk_port_phyMdx_set return error\n");
 			}
@@ -8436,28 +7951,17 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 
 				ret=rtk_port_phyTestMode_set(phyId, regId);
 				if(ret==SUCCESS)
-					rtlglue_printf("set 83XX phyId(%d) to mode: %d\n", phyId, regId);
+					rtlglue_printf("set  8367RB phyId(%d) to mode: %d\n", phyId, regId);
 				else
 					rtlglue_printf("rtk_port_phyTestMode_set return error\n");
 			}		
 		}
-		else if (!memcmp(cmd_addr, "8367init", 8) || !memcmp(cmd_addr, "83xxinit", 8))
+		else if (!memcmp(cmd_addr, "8367init", 8))
 		{
-			#ifdef CONFIG_RTL_8367R_SUPPORT
 			extern void init_8367r(void);
 			init_8367r();
-			#elif defined(CONFIG_RTL_83XX_SUPPORT)		
-			extern void init_83XX(void);
-			init_83XX();
-			#endif
-		}
-		else if (!memcmp(cmd_addr, "8367snr", 7) || !memcmp(cmd_addr, "83xxsnr", 7))
-		{
-			/* Show 83xx link up ports' SNR value */
-			rtl_get_83xx_snr();
 		}		
 #endif
-
 #ifdef CONFIG_RTL_8370_SUPPORT
 		else if (!memcmp(cmd_addr, "8370read", 8))
 		{
@@ -8745,71 +8249,25 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 				rtl8651_setAsicEthernetPHYReg( phyId, 30, pageId  );
 			}
 			else 
-#endif
-#if 0
-			if (gpio_simulate_mdc_mdio){
-				if ((8 > phyId) && (phyId > 4)) {
-					if (pageId>0)
-					{
-						rtl_mdio_write(phyId, 31 ,pageId);
-					}
-
-					ret = rtl_mdio_read(phyId, regId, &regData);
-
-					if(ret==SUCCESS)
-					{
-						rtlglue_printf("extRead phyId(%d), pageId(%d), regId(%d), regData:0x%x\n", phyId,pageId, regId, regData);
-					}
-					else
-					{
-						rtlglue_printf("error input!\n");
-					}
-
-					//change back to page 0
-					rtl_mdio_write(phyId, 31 , 0);
-				} else {
-					if (pageId>0)
-					{
-						rtl8651_setAsicEthernetPHYReg( phyId, 31, pageId  );
-					}
-
-					ret=rtl8651_getAsicEthernetPHYReg(phyId, regId, &regData);
-
-					if(ret==SUCCESS)
-					{
-						rtlglue_printf("extRead phyId(%d), pageId(%d), regId(%d), regData:0x%x\n", phyId,pageId, regId, regData);
-					}
-					else
-					{
-						rtlglue_printf("error input!\n");
-					}
-
-					//change back to page 0
-					rtl8651_setAsicEthernetPHYReg(phyId, 31, 0);
-				}
-			} else
-#endif
+#endif				
+			if (pageId>0)
 			{
-				if (pageId>0)
-				{
-					rtl8651_setAsicEthernetPHYReg( phyId, 31, pageId  );
-				}
-
-				ret=rtl8651_getAsicEthernetPHYReg(phyId, regId, &regData);
-
-				if(ret==SUCCESS)
-				{
-					rtlglue_printf("extRead phyId(%d), pageId(%d), regId(%d), regData:0x%x\n", phyId,pageId, regId, regData);
-				}
-				else
-				{
-					rtlglue_printf("error input!\n");
-				}
-
-				//change back to page 0
-				rtl8651_setAsicEthernetPHYReg(phyId, 31, 0);
+				rtl8651_setAsicEthernetPHYReg( phyId, 31, pageId  );
 			}
 
+			ret=rtl8651_getAsicEthernetPHYReg(phyId, regId, &regData);
+
+			if(ret==SUCCESS)
+			{
+				rtlglue_printf("extRead phyId(%d), pageId(%d), regId(%d), regData:0x%x\n", phyId,pageId, regId, regData);
+			}
+			else
+			{
+				rtlglue_printf("error input!\n");
+			}
+
+			//change back to page 0
+			rtl8651_setAsicEthernetPHYReg(phyId, 31, 0);
 
 		}
 		else if (!memcmp(cmd_addr, "extWrite", 8))
@@ -8850,72 +8308,25 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 				rtl8651_setAsicEthernetPHYReg( phyId, 30, pageId  );
 			}
 			else 
-#endif		
-#if 0
-			if (gpio_simulate_mdc_mdio){
-				if ((8 > phyId) && (phyId > 4)){
-					if (pageId>0)
-					{
-						rtl_mdio_write(phyId, 31, pageId);
-					}
-
-					ret = rtl_mdio_write(phyId, regId, regData);
-
-					if(ret==SUCCESS)
-					{
-						rtlglue_printf("extWrite phyId(%d), pageId(%d), regId(%d), regData:0x%x\n", phyId, pageId, regId, regData);
-					}
-					else
-					{
-						rtlglue_printf("error input!\n");
-					}
-
-					//change back to page 0
-					rtl_mdio_write(phyId, 31, 0);
-				 }else {
-					if (pageId>0)
-					{
-						rtl8651_setAsicEthernetPHYReg( phyId, 31, pageId  );
-					}
-
-					ret=rtl8651_setAsicEthernetPHYReg(phyId, regId, regData);
-
-					if(ret==SUCCESS)
-					{
-						rtlglue_printf("extWrite phyId(%d), pageId(%d), regId(%d), regData:0x%x\n", phyId, pageId, regId, regData);
-					}
-					else
-					{
-						rtlglue_printf("error input!\n");
-					}
-
-					//change back to page 0
-					rtl8651_setAsicEthernetPHYReg(phyId, 31, 0);
-				}
-					
-			}else
-#endif
+#endif				
+			if (pageId>0)
 			{
-				if (pageId>0)
-				{
-					rtl8651_setAsicEthernetPHYReg( phyId, 31, pageId  );
-				}
-
-				ret=rtl8651_setAsicEthernetPHYReg(phyId, regId, regData);
-
-				if(ret==SUCCESS)
-				{
-					rtlglue_printf("extWrite phyId(%d), pageId(%d), regId(%d), regData:0x%x\n", phyId, pageId, regId, regData);
-				}
-				else
-				{
-					rtlglue_printf("error input!\n");
-				}
-
-				//change back to page 0
-				rtl8651_setAsicEthernetPHYReg(phyId, 31, 0);
+				rtl8651_setAsicEthernetPHYReg( phyId, 31, pageId  );
 			}
 
+			ret=rtl8651_setAsicEthernetPHYReg(phyId, regId, regData);
+
+			if(ret==SUCCESS)
+			{
+				rtlglue_printf("extWrite phyId(%d), pageId(%d), regId(%d), regData:0x%x\n", phyId, pageId, regId, regData);
+			}
+			else
+			{
+				rtlglue_printf("error input!\n");
+			}
+
+			//change back to page 0
+			rtl8651_setAsicEthernetPHYReg(phyId, 31, 0);
 		}
 #ifdef CONFIG_RTL_8198C
 		else if (!memcmp(cmd_addr, "sram98c", 7))
@@ -9003,92 +8414,6 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 				goto errout;
 		}		
 #endif
-		else if (!memcmp(cmd_addr, "rtct", 4))
-		{
-			extern void RT_cable_test(void);
-			RT_cable_test();
-		}
-		else if (!memcmp(cmd_addr, "diag", 4))
-		{
-			extern void phy_diag(uint8 mdimode, uint32 portmask);
-			uint8 mdimode;
-
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout_diag;
-			}
-			mdimode=simple_strtol(tokptr, NULL, 0);
-
-			if((mdimode == 2) || (mdimode>3)) {
-				printk("wrong input of mdi/mdio mode\n");
-				goto errout_diag;
-			}	
-			
-			phy_diag(mdimode, 0x1f);
-		}
-		else if (!memcmp(cmd_addr, "forcediag", 9))
-		{
-			extern void force100m_phy_diag(uint32 portmask, uint8 mdimode, bool recover);
-			uint32 portmask;
-			uint8 mdimode;
-			bool recover;
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout_forcediag;
-			}
-			portmask=simple_strtol(tokptr, NULL, 0);
-			if (portmask == 0) {
-				printk("wrong input of portmask\n");
-				goto errout_forcediag;
-			}
-
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout_forcediag;
-			}
-			mdimode=simple_strtol(tokptr, NULL, 0);
-			if(mdimode>1) {
-				printk("wrong input of mdi/mdio mode\n");
-				goto errout_forcediag;
-			}				
-
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout_forcediag;
-			}
-			recover=simple_strtol(tokptr, NULL, 0);
-
-			force100m_phy_diag(portmask, mdimode, recover);
-		}
-		else if (!memcmp(cmd_addr, "forcephylink", 12))
-		{
-			extern void force_phy_linkup(uint32 portmask, bool forcelink);
-			uint32 portmask;
-			bool forcelink;
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout_forcephylink;
-			}
-			portmask=simple_strtol(tokptr, NULL, 0);
-			if (portmask == 0) {
-				printk("wrong input of portmask\n");
-				goto errout_forcephylink;
-			}
-
-			tokptr = strsep(&strptr," ");
-			if (tokptr==NULL)
-			{
-				goto errout_forcephylink;
-			}
-			forcelink=simple_strtol(tokptr, NULL, 0);
-
-			force_phy_linkup(portmask, forcelink);
-		}
 		else if (!memcmp(cmd_addr, "snr", 3))
 		{
 			uint32 	sum;
@@ -9163,20 +8488,6 @@ static int32 proc_phyReg_write( struct file *filp, const char *buff,unsigned lon
 	{
 errout:
 		rtlglue_printf("error input!\n");
-		return len;
-errout_diag:
-		rtlglue_printf("echo diag [mdi/mdix mode] >/proc/rtl865x/phyReg\n");		
-		rtlglue_printf("[mdi/mdix mode]=0(force mdix), 1(force mdi), 3(auto mdi/mdix)\n");
-		return len;
-errout_forcediag:
-		rtlglue_printf("echo forcediag [portmask] [mdi/mdix mode] [recover] >/proc/rtl865x/phyReg\n");		
-		rtlglue_printf("[mdi/mdix mode]=0(force mdix), 1(force mdi)\n");
-		rtlglue_printf("[recover]=0(stay in force 100_half and force mdi/force mdix mode), 1(back to AN mode and auto mdi/mdix mode)\n");
-		return len;
-errout_forcephylink:
-		rtlglue_printf("echo forcephylink [portmask] [forcelinkup] >/proc/rtl865x/phyReg\n");		
-		rtlglue_printf("[forcelinkup]=0(set phy forcelink bit to 0), 1(set phy forcelink bit to 1)\n");		
-		return len;
 	}
 
 	return len;
@@ -10673,25 +9984,6 @@ struct file_operations diagnostic_proc_fops= {
         .llseek         = seq_lseek,
         .release        = single_release,
 };
-/*tx queue*/
-#if defined(CONFIG_RTL_NIC_QUEUE)
-int tx_queue_single_open(struct inode *inode, struct file *file)
-{
-        return(single_open(file, tx_queue_read, NULL));
-}
-static ssize_t tx_queue_single_write(struct file * file, const char __user * userbuf,
-		     size_t count, loff_t * off)
-{
-	    return tx_queue_write(file, userbuf,count, off);
-}
-struct file_operations tx_queue_proc_fops= {
-        .open           = tx_queue_single_open,
-        .write		    = tx_queue_single_write,
-        .read           = seq_read,
-        .llseek         = seq_lseek,
-        .release        = single_release,
-};
-#endif
 /*port_status*/
 int port_status_single_open(struct inode *inode, struct file *file)
 {
@@ -10857,7 +10149,7 @@ int sw_arp6_single_open(struct inode *inode, struct file *file)
 static ssize_t sw_arp6_single_write(struct file * file, const char __user * userbuf,
 		     size_t count, loff_t * off)
 {
-	   return sw_arp6_write(file, userbuf,count, off);
+	    return sw_arp6_write(file, userbuf,count, off);
 }
 struct file_operations sw_arp6_proc_fops= {
         .open           = sw_arp6_single_open,
@@ -10966,7 +10258,7 @@ struct file_operations sw_dslite_proc_fops= {
 	
 #endif	// CONFIG_RTL_PROC_NEW
 
-#if (defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT)) && defined(CONFIG_OPENWRT_SDK) //mark_bb
+#if defined(CONFIG_RTL_8367R_SUPPORT) && defined(CONFIG_OPENWRT_SDK) //mark_bb
 
 static int32 vlan_8367_pvid_single_show(struct seq_file *s, void *v)
 {
@@ -11083,7 +10375,7 @@ int32 rtl865x_proc_debug_init(void)
 	if(rtl865x_proc_dir)
 	{
 		#ifdef CONFIG_RTL_PROC_DEBUG
-#if !defined(CONFIG_RTL_8198C) &&  !defined(CONFIG_RTL_8197F) /* "/proc/rtl865x/stats" is duplicated */
+#if 0//!defined(CONFIG_RTL_8198C) &&  !defined(CONFIG_RTL_8197F) /* "/proc/rtl865x/stats" is duplicated */
 		/*stats*/
 		{
 #ifdef CONFIG_RTL_PROC_NEW
@@ -11172,7 +10464,7 @@ int32 rtl865x_proc_debug_init(void)
 #endif
 		}
 		
-#if (defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT)) && defined(CONFIG_OPENWRT_SDK) //mark_bb
+#if defined(CONFIG_RTL_8367R_SUPPORT) && defined(CONFIG_OPENWRT_SDK) //mark_bb
 		{
 			 proc_create_data("8367_vlan",0,rtl865x_proc_dir, &vlan_8367_single_seq_file_operations,NULL);
 
@@ -11937,9 +11229,6 @@ int32 rtl865x_proc_debug_init(void)
 			}
 #endif
 		}
-#ifdef CONFIG_RTL_NIC_QUEUE
-		proc_create_data("tx_sw_queue",0,rtl865x_proc_dir,&tx_queue_proc_fops,NULL);
-#endif
 		/*diagnostic*/
 		{
 #ifdef CONFIG_RTL_PROC_NEW

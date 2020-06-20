@@ -36,7 +36,7 @@
 #define RTL865XC_QOS_OUTPUTQUEUE 1
 
 #if (defined(CONFIG_RTL_8196C) || defined(CONFIG_RTL_819XD) || defined(CONFIG_RTL_8196E) || defined(CONFIG_RTL_8881A) \
-	|| defined(CONFIG_RTL_8197F)) && !(defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT))
+	|| defined(CONFIG_RTL_8197F)) && !defined(CONFIG_RTL_8367R_SUPPORT)
 
 /*
  * fast ethernet auto down speed mechanism
@@ -45,8 +45,6 @@
  */
 #define CONFIG_RTL_FE_AUTO_DOWN_SPEED		1	
 #define CONFIG_RTL_LONG_ETH_CABLE_REFINE 	1	// from Wen-jain 07-17-2015
-//#define CONFIG_RTL_FORCE_MDIX		1	
-//#define CONFIG_RTL_DUPLEX_MISMATCH			1	
 
 #if defined(CONFIG_RTL_8211F_SUPPORT)
 #define ADS_PORT_START		1
@@ -63,8 +61,6 @@ typedef struct autoDownSpeed_s {
 	uint8	down_speed_renway: 1; // CONFIG_RTL_LONG_ETH_CABLE_REFINE
 	uint8	cb_snr_down_speed: 1; // for debug only
 	uint8	cb_snr_cache_lpi_down_speed: 1; // for debug only
-	uint8	force_speed_by_nway: 1; // jwj add
-	uint8	an_to_force_100mf: 1; // for CONFIG_RTL_DUPLEX_MISMATCH
 }	autoDownSpeed_t;
 
 enum ADS_STATE
@@ -74,33 +70,6 @@ enum ADS_STATE
 };
 extern autoDownSpeed_t fe_ads[];
 #endif
-
-#ifdef CONFIG_RTL_FORCE_MDIX
-
-/*
- * ethernet force MDIX mechanism
- */
-
-typedef struct forceMdix_s {
-	uint32	time1;
-	uint8	fail_counter;
-	uint8	state: 3;
-	uint8	mdimode: 1;
-}	forceMdix_t;
-
-
-enum FMX_STATE
-{
-	FMX_IDLE = 0,
-	FMX_LINKUP,
-	FMX_FAILCOUNTING,
-	FMX_FORCEMDIX,
-	FMX_FORCEMDIX_LINKUP
-};
-
-extern forceMdix_t fe_fmx[];
-#endif
-
 
 #if defined(RTL865XC_MNQUEUE_OUTPUTQUEUE) || defined(RTL865XC_QOS_OUTPUTQUEUE)
 typedef struct rtl865xC_outputQueuePara_s {
@@ -138,10 +107,7 @@ enum
 	DUPLEX_100M,
 	DUPLEX_1000M,
 	PORT_AUTO,
-	PORT_UP,
-	AN_10M,
-	AN_100M,
-	AN_AUTO
+	PORT_UP
 };
 
 /* enum for port ID */
@@ -562,84 +528,13 @@ typedef struct rtk_stat_port_cntr_s
     uint32 ifInBroadcastPkts;
 }rtk_stat_port_cntr_t;
 
-/* port statistic counter index */
-typedef enum rtk_stat_port_type_e
-{
-    STAT_IfInOctets = 0,
-    STAT_Dot3StatsFCSErrors,
-    STAT_Dot3StatsSymbolErrors,
-    STAT_Dot3InPauseFrames,
-    STAT_Dot3ControlInUnknownOpcodes,
-    STAT_EtherStatsFragments,
-    STAT_EtherStatsJabbers,
-    STAT_IfInUcastPkts,
-    STAT_EtherStatsDropEvents,
-    STAT_EtherStatsOctets,
-    STAT_EtherStatsUnderSizePkts,
-    STAT_EtherOversizeStats,
-    STAT_EtherStatsPkts64Octets,
-    STAT_EtherStatsPkts65to127Octets,
-    STAT_EtherStatsPkts128to255Octets,
-    STAT_EtherStatsPkts256to511Octets,
-    STAT_EtherStatsPkts512to1023Octets,
-    STAT_EtherStatsPkts1024to1518Octets,
-    STAT_EtherStatsMulticastPkts,
-    STAT_EtherStatsBroadcastPkts,
-    STAT_IfOutOctets,
-    STAT_Dot3StatsSingleCollisionFrames,
-    STAT_Dot3StatsMultipleCollisionFrames,
-    STAT_Dot3StatsDeferredTransmissions,
-    STAT_Dot3StatsLateCollisions,
-    STAT_EtherStatsCollisions,
-    STAT_Dot3StatsExcessiveCollisions,
-    STAT_Dot3OutPauseFrames,
-    STAT_Dot1dBasePortDelayExceededDiscards,
-    STAT_Dot1dTpPortInDiscards,
-    STAT_IfOutUcastPkts,
-    STAT_IfOutMulticastPkts,
-    STAT_IfOutBroadcastPkts,
-    STAT_OutOampduPkts,
-    STAT_InOampduPkts,
-    STAT_PktgenPkts,
-    STAT_InMldChecksumError,
-    STAT_InIgmpChecksumError,
-    STAT_InMldSpecificQuery,
-    STAT_InMldGeneralQuery,
-    STAT_InIgmpSpecificQuery,
-    STAT_InIgmpGeneralQuery,
-    STAT_InMldLeaves,
-    STAT_InIgmpInterfaceLeaves,
-    STAT_InIgmpJoinsSuccess,
-    STAT_InIgmpJoinsFail,
-    STAT_InMldJoinsSuccess,
-    STAT_InMldJoinsFail,
-    STAT_InReportSuppressionDrop,
-    STAT_InLeaveSuppressionDrop,
-    STAT_OutIgmpReports,
-    STAT_OutIgmpLeaves,
-    STAT_OutIgmpGeneralQuery,
-    STAT_OutIgmpSpecificQuery,
-    STAT_OutMldReports,
-    STAT_OutMldLeaves,
-    STAT_OutMldGeneralQuery,
-    STAT_OutMldSpecificQuery,
-    STAT_InKnownMulticastPkts,
-    STAT_IfInMulticastPkts,
-    STAT_IfInBroadcastPkts,
-    STAT_PORT_CNTR_END
-}rtk_stat_port_type_t;
-
 extern int rtk_stat_global_reset(void);
-extern int rtk_stat_port_get(uint32 port, rtk_stat_port_type_t cntr_idx, uint64 *pCntr);
 extern int rtk_stat_port_getAll(uint32 port, rtk_stat_port_cntr_t *pPort_cntrs);
-extern int rtl_stat_port_getserial(uint32 port, rtk_stat_port_cntr_t *pPort_cntrs);
 extern int RTL8367R_vlan_set(void);
 extern void RTL8367R_cpu_tag(int enable);
-extern int rtl8367b_getAsicPHYReg(unsigned int phyNo, unsigned int phyAddr, unsigned int* pRegData );
-#define rtl83xx_getAsicPHYReg(phyNo, phyAddr, pRegData )	rtl8367b_getAsicPHYReg(phyNo, phyAddr, pRegData )
 #endif
 
-#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT)
+#if defined(CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_8370_SUPPORT)
 typedef struct  rtk_port_mac_ability_s
 {
     uint32 forcemode;
@@ -698,105 +593,10 @@ typedef struct rtk_stat_port_cntr_s
 
 extern int rtk_stat_global_reset(void);
 extern int rtk_stat_port_getAll(uint32 port, rtk_stat_port_cntr_t *pPort_cntrs);
-extern int rtl_stat_port_getserial(uint32 port, rtk_stat_port_cntr_t *pPort_cntrs);
-#elif defined(CONFIG_RTL_83XX_SUPPORT)
-#include "../rtl83xx/rtk_types.h"
-/* port statistic counter structure */
-typedef struct rtk_stat_port_cntr_s
-{
-    uint64 ifInOctets;
-    uint32 dot3StatsFCSErrors;
-    uint32 dot3StatsSymbolErrors;
-    uint32 dot3InPauseFrames;
-    uint32 dot3ControlInUnknownOpcodes;
-    uint32 etherStatsFragments;
-    uint32 etherStatsJabbers;
-    uint32 ifInUcastPkts;
-    uint32 etherStatsDropEvents;
-    uint64 etherStatsOctets;
-    uint32 etherStatsUndersizePkts;
-    uint32 etherStatsOversizePkts;
-    uint32 etherStatsPkts64Octets;
-    uint32 etherStatsPkts65to127Octets;
-    uint32 etherStatsPkts128to255Octets;
-    uint32 etherStatsPkts256to511Octets;
-    uint32 etherStatsPkts512to1023Octets;
-    uint32 etherStatsPkts1024toMaxOctets;
-    uint32 etherStatsMcastPkts;
-    uint32 etherStatsBcastPkts;
-    uint64 ifOutOctets;
-    uint32 dot3StatsSingleCollisionFrames;
-    uint32 dot3StatsMultipleCollisionFrames;
-    uint32 dot3StatsDeferredTransmissions;
-    uint32 dot3StatsLateCollisions;
-    uint32 etherStatsCollisions;
-    uint32 dot3StatsExcessiveCollisions;
-    uint32 dot3OutPauseFrames;
-    uint32 dot1dBasePortDelayExceededDiscards;
-    uint32 dot1dTpPortInDiscards;
-    uint32 ifOutUcastPkts;
-    uint32 ifOutMulticastPkts;
-    uint32 ifOutBrocastPkts;
-    uint32 outOampduPkts;
-    uint32 inOampduPkts;
-    uint32 pktgenPkts;
-    uint32 inMldChecksumError;
-    uint32 inIgmpChecksumError;
-    uint32 inMldSpecificQuery;
-    uint32 inMldGeneralQuery;
-    uint32 inIgmpSpecificQuery;
-    uint32 inIgmpGeneralQuery;
-    uint32 inMldLeaves;
-    uint32 inIgmpLeaves;
-    uint32 inIgmpJoinsSuccess;
-    uint32 inIgmpJoinsFail;
-    uint32 inMldJoinsSuccess;
-    uint32 inMldJoinsFail;
-    uint32 inReportSuppressionDrop;
-    uint32 inLeaveSuppressionDrop;
-    uint32 outIgmpReports;
-    uint32 outIgmpLeaves;
-    uint32 outIgmpGeneralQuery;
-    uint32 outIgmpSpecificQuery;
-    uint32 outMldReports;
-    uint32 outMldLeaves;
-    uint32 outMldGeneralQuery;
-    uint32 outMldSpecificQuery;
-    uint32 inKnownMulticastPkts;
-    uint32 ifInMulticastPkts;
-    uint32 ifInBroadcastPkts;
-    uint32 ifOutDiscards;
-}rtk_stat_port_cntr_t;
-
-extern int rtk_stat_global_reset(void);
-extern int rtk_stat_port_getAll(uint32 port, rtk_stat_port_cntr_t *pPort_cntrs);
-extern int rtl_stat_port_getserial(uint32 port, rtk_stat_port_cntr_t *pPort_cntrs);
-extern int RTL83XX_vlan_set(void);
-extern void RTL83XX_cpu_tag(int enable);
-extern int rtl8367c_getAsicPHYReg(uint32 phyNo, uint32 phyAddr, uint32 *pRegData);
-#define rtl83xx_getAsicPHYReg(phyNo, phyAddr, pRegData )	rtl8367c_getAsicPHYReg(phyNo, phyAddr, pRegData )
 #endif
 
 extern unsigned int _debug_flag;
 
 #define _DEBUG_ETH_PHY			0x00000001
-#define _DEBUG_RW_PHY_PROTECT			0x80000000
-
-#if defined(CONFIG_RTL_8211F_SUPPORT)
-#if defined(CONFIG_RTL_8881A)
-#define GPIO_RESET				17		// GPIO_G1
-#define PORT0_RGMII_PHYID		5
-#elif defined(CONFIG_RTL_819XD)
-#define GPIO_RESET				18		// GPIO_G2
-#define PORT0_RGMII_PHYID		5
-#elif defined(CONFIG_RTL_8197F)
-extern int nfbi_init(void);
-extern int rtl_mdio_read(unsigned int mdio_phyaddr, unsigned int reg, unsigned int *pdata);
-extern int rtl_mdio_write(unsigned int mdio_phyaddr, unsigned int reg, unsigned int data);
-#define GPIO_RESET				BSP_GPIO_PIN_H2		// GPIO_H2
-#define GPIO_RESET_97FN			BSP_GPIO_PIN_F1		// GPIO_F1
-#define PORT0_RGMII_PHYID		6
-#endif
-#endif
 
 #endif
