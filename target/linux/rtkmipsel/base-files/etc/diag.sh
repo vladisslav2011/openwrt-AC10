@@ -14,6 +14,9 @@ get_status_led() {
 	komikan)
 		status_led="komikan:green:led0"
 		;;
+	ac10u)
+		status_led="ac10u:green:led0"
+		;;
 	esac
 }
 

@@ -22,6 +22,11 @@ komikan)
 	uci set wireless.@wifi-iface[0].ssid='Komikan 5G'
 	uci set wireless.@wifi-iface[1].ssid='Komikan 2G'
 	;;
+ac10u)
+	uci set system.@system[0].hostname=AC10U
+	uci set wireless.@wifi-iface[0].ssid='AC10U 5G'
+	uci set wireless.@wifi-iface[1].ssid='AC10U 2G'
+	;;
 *)
 	;;
 esac

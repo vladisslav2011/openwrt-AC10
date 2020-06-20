@@ -19,6 +19,9 @@ rtkmipsel_board_detect() {
 	*"Komikan"*)
 		name="komikan"
 		;;
+	*"AC10U"*)
+		name="ac10u"
+		;;
 	esac
 
 	[ -z "$name" ] && name="unknown"
