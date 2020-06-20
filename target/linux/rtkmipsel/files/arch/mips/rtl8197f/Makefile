@@ -31,4 +31,5 @@ obj-$(CONFIG_RTL8197_MACH_GENERIC)	+= mach_rtl819x.o
 obj-$(CONFIG_RTL8197_MACH_KINKAN)	+= mach-kinkan.o
 obj-$(CONFIG_RTL8197_MACH_KOMIKAN)	+= mach-komikan.o
 obj-$(CONFIG_RTL8197_MACH_AC10U)	+= mach-ac10u.o
+obj-$(CONFIG_RTL8197_MACH_AC10UV2)	+= mach-ac10uV2.o
 

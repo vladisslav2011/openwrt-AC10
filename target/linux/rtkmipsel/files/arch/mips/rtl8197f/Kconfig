@@ -92,4 +92,9 @@ config RTL8197_MACH_AC10U
 	help
 	  Say 'Y' here if you want your kernel to support the
 	  tenda ac10u router.
+config RTL8197_MACH_AC10UV2
+	bool "tenda ac10u v2"
+	help
+	  Say 'Y' here if you want your kernel to support the
+	  tenda ac10u v2 router.
 endmenu

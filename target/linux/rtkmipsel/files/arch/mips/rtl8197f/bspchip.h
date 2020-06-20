@@ -116,7 +116,11 @@
 /*
  * UART
  */
-#define BSP_UART0_BAUD		115200
+#ifdef CONFIG_RTL8197_MACH_AC10UV2
+	#define BSP_UART0_BAUD		38400
+#else
+	#define BSP_UART0_BAUD		115200
+#endif
 #ifdef CONFIG_RTK_FPGA
 #define BSP_UART0_FREQ		(BSP_CPU0_FREQ/8) // switch
 #define BSP_UART1_FREQ		(BSP_CPU1_FREQ/8) // switch
