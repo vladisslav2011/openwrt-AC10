@@ -241,13 +241,16 @@ void loader_main(unsigned long reg_a0, unsigned long reg_a1,
 
 	flush_cache(kernel_la, lzma_outsize);
 
-	printf("Starting kernel at %08x...\n\n", kernel_la);
 
 #ifdef CONFIG_KERNEL_CMDLINE
-	((char **)reg_a1)[reg_a0] = CONFIG_KERNEL_CMDLINE;
-	reg_a0++;
+	static const char * cmdline[]={CONFIG_KERNEL_CMDLINE,""};
+	printf("Starting kernel at %08x %s\n\n", kernel_la,cmdline[0]);
+	reg_a1=(unsigned long) &cmdline[0];
+	reg_a0 = 1;
 	reg_a2 = 0;
 	reg_a3 = 0;
+#else
+	printf("Starting kernel at %08x...\n\n", kernel_la);
 #endif
 	kernel_entry = (void *) kernel_la;
 	kernel_entry(reg_a0, reg_a1, reg_a2, reg_a3);
