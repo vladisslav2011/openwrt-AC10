@@ -86,4 +86,10 @@ config RTL8197_MACH_KOMIKAN
 	help
 	  Say 'Y' here if you want your kernel to support the
 	  8devices Komikan development board.
+
+config RTL8197_MACH_AC10U
+	bool "tenda ac10u"
+	help
+	  Say 'Y' here if you want your kernel to support the
+	  tenda ac10u router.
 endmenu

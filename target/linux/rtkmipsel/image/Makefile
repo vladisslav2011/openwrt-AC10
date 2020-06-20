@@ -9,10 +9,19 @@ include $(INCLUDE_DIR)/image.mk
 
 BlockSize=64k
 RAMFS_MAX_SIZE = 67108864	# 0x4000000
+ifeq ($(CONFIG_TARGET_rtkmipsel_rtl8197f_ac10u),y)
+RAMFS_MAX_SIZE = 8192000	# 0x00800000-0x00030000
+endif
 
 define mkcmdline
-board=$(shell echo $(1) | tr a-z A-Z) console=$(2),$(3) hwpart=0x$(4) mtdparts=m25p80:128k(boot),128k(hwpart),256k(config),-(firmware)
+	board=$(shell echo $(1) | tr a-z A-Z) console=$(2),$(3) hwpart=0x$(4) mtdparts=m25p80:128k(boot),128k(hwpart),-(firmware)
 endef
+
+ifeq ($(CONFIG_TARGET_rtkmipsel_rtl8197f_ac10u),y)
+define mkcmdline
+	board=$(shell echo $(1) | tr a-z A-Z) console=$(2),$(3) mtdparts=m25p80:128k(boot),64k(CFG),-(firmware)
+endef
+endif
 
 define test
 $(shell test $(1) $(2) $(3) && echo 1)
@@ -120,6 +129,9 @@ $(eval $(call SingleProfile,kinkan,ttyS0,115200,0x84000000,80000,20000))
 endif
 ifeq ($(CONFIG_TARGET_rtkmipsel_rtl8197f_komikan),y)
 $(eval $(call SingleProfile,komikan,ttyS0,115200,0x84000000,80000,20000))
+endif
+ifeq ($(CONFIG_TARGET_rtkmipsel_rtl8197f_ac10u),y)
+$(eval $(call SingleProfile,ac10u,ttyS0,115200,0x80500000,30000,20000))
 endif
 
 define Image/Build/Initramfs

@@ -19,6 +19,7 @@ enum ath79_mach_type {
 	RTL8197_MACH_GENERIC = 0,
 	RTL8197_MACH_KINKAN,			/* 8devices Kinkan devboard*/
 	RTL8197_MACH_KOMIKAN,			/* 8devices Komikan devboard*/
+	RTL8197_MACH_AC10U,			/* tenda ac10u*/
 };
 
 #endif /* _RTL8197_MACHTYPE_H */
