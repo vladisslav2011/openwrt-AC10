@@ -2514,7 +2514,7 @@ CONFIG_PACKAGE_kmod-fuse=y
 #
 # Input modules
 #
-CONFIG_PACKAGE_kmod-hid=y
+# CONFIG_PACKAGE_kmod-hid is not set
 # CONFIG_PACKAGE_kmod-hid-generic is not set
 CONFIG_PACKAGE_kmod-input-core=y
 CONFIG_PACKAGE_kmod-input-evdev=y
@@ -4775,7 +4775,7 @@ CONFIG_PACKAGE_openssh-sftp-server=y
 # CONFIG_PACKAGE_vpnc-scripts is not set
 # CONFIG_PACKAGE_wireguard is not set
 # CONFIG_PACKAGE_wireguard-tools is not set
-# CONFIG_PACKAGE_xl2tpd is not set
+CONFIG_PACKAGE_xl2tpd=y
 # CONFIG_PACKAGE_zerotier is not set
 
 #

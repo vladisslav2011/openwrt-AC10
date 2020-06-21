@@ -31,6 +31,10 @@ extern void rtl819x_gpio_pin_set_val(u32 pin, unsigned val);
 #define BSP_WPS_BTN_PIN			BSP_GPIO_PIN_H0
 #define BSP_RESET_LED_PIN		BSP_GPIO_PIN_H1
 #define BSP_WPS_LED_PIN			BSP_GPIO_PIN_H1
+#define BSP_SYS_LED_PIN			BSP_GPIO_PIN_H1
+#define BSP_WAN_LED_PIN			BSP_GPIO_PIN_C7
+#define BSP_LAN_LED_PIN			BSP_GPIO_PIN_D7
+#define BSP_WIFI_LED_PIN		BSP_GPIO_PIN_E1
 #define BSP_8367R_RST_PIN		BSP_GPIO_PIN_H2
 #define BSP_8367R_I2C_PIN1		BSP_GPIO_PIN_C2
 #define BSP_8367R_I2C_PIN2		BSP_GPIO_PIN_C3
@@ -43,10 +47,25 @@ extern void rtl819x_gpio_pin_set_val(u32 pin, unsigned val);
 
 static struct gpio_led ac10u_leds_gpio[] __initdata = {
 	{
-		.name		= "rtl819x:green:sys",
-		.gpio		= BSP_WPS_LED_PIN,
+		.name		= "rtl819x:blue:sys",
+		.gpio		= BSP_SYS_LED_PIN,
 		.active_low	= 1,
-	}
+	},
+	{
+		.name		= "rtl819x:blue:wan",
+		.gpio		= BSP_WAN_LED_PIN,
+		.active_low	= 0,
+	},
+	{
+		.name		= "rtl819x:blue:lan",
+		.gpio		= BSP_LAN_LED_PIN,
+		.active_low	= 0,
+	},
+	{
+		.name		= "rtl819x:blue:wifi",
+		.gpio		= BSP_WIFI_LED_PIN,
+		.active_low	= 1,
+	},
 };
 
 static struct gpio_keys_button ac10u_buttons[] __initdata = {
