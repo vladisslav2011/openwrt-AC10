@@ -75,11 +75,11 @@ unsigned int PRI_TO_QNUM(struct rtl8192cd_priv *priv, int priority)
 	if(priv->pmib->miscEntry.manual_priority && (OPMODE & WIFI_AP_STATE))
 		priority = priv->pmib->miscEntry.manual_priority;
 #endif
-
 	if (priv->pmib->dot11QosEntry.ManualEDCA) {
 		return priv->pmib->dot11QosEntry.TID_mapping[priority];
 	}
 	else {
+			return BE_QUEUE /*BK_QUEUE*/;
 		if ((priority == 0) || (priority == 3)) {
 			if (!((OPMODE & WIFI_STATION_STATE) && GET_STA_AC_BE_PARA.ACM))
 				return BE_QUEUE;
@@ -106,7 +106,7 @@ unsigned int PRI_TO_QNUM(struct rtl8192cd_priv *priv, int priority)
 					return BK_QUEUE;
 			}
 		} else {
-			return BK_QUEUE;
+			return BE_QUEUE /*BK_QUEUE*/;
 		}
 	}
 }
@@ -2492,8 +2492,8 @@ rtl88XX_fill_fwinfo(
                  * assign aggr size
                  */
 
-                // TODO: ³o¸Ì¬O«ü«DAC chip ???
-                // TODO: check ¬O§_¦³¦b¨ä¥L¦ì¸m..
+                // TODO: ï¿½oï¿½Ì¬Oï¿½ï¿½ï¿½DAC chip ???
+                // TODO: check ï¿½Oï¿½_ï¿½ï¿½ï¿½bï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½m..
 
                 // assign aggr density
                 if (txcfg->privacy) {

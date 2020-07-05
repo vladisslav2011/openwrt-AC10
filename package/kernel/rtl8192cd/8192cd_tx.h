@@ -63,7 +63,7 @@ enum _NETDEV_TX_QUEUE_ {
 		else if ((priority == 5) || (priority == 4)) \
 			q_num = VI_QUEUE; \
 		else  \
-			q_num = BK_QUEUE; \
+			q_num = BE_QUEUE /*BK_QUEUE*/; \
 }
 #else
 #define PRI_TO_QNUM(priority, q_num, wifi_specific) { \
