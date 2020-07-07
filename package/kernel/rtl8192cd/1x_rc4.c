@@ -57,6 +57,7 @@
  */
 #include "./8192cd_cfg.h"
 
+#ifdef INCLUDE_WPA_PSK
 
 #include "1x_rc4.h"
 
@@ -367,3 +368,4 @@ void RC4_set_key(RC4_KEY *key, int len, const unsigned char *data)
 		SK_LOOP(i+3);
 		}
 }
+#endif // INCLUDE_WPA_PSK

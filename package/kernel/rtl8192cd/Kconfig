@@ -825,6 +825,12 @@ config RTL_VAP_SUPPORT
         depends on RTL8192CD
         default y
 
+config RTL_VAP_COUNT
+        int "Virtual AP interface count"
+	range 0 9
+        depends on RTL8192CD && RTL_VAP_SUPPORT
+        default "9"
+
 config RTL_CLIENT_MODE_SUPPORT
         bool "Client Mode Support"
         depends on RTL8192CD

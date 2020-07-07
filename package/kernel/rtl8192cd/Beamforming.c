@@ -14,8 +14,10 @@ Beamforming_SetBeamFormInit(
 	struct rtl8192cd_priv *priv
 		)
 {
+#ifdef CONFIG_WLAN_HAL_8822BE
 		if(GET_CHIP_VER(priv) == VERSION_8822B)
 			SetBeamformInit8822B(priv);
+#endif
 }
 
 
@@ -26,15 +28,36 @@ Beamforming_SetBeamFormLeave(
 	)
 {
 
+#ifdef CONFIG_RTL_8812_SUPPORT
+		if(GET_CHIP_VER(priv) == VERSION_8812E)
+			SetBeamformLeave8812(priv, Idx);	
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8192EE
+		if(GET_CHIP_VER(priv) == VERSION_8192E)
+			SetBeamformLeave92E(priv,Idx);
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8814AE
+		if(GET_CHIP_VER(priv) == VERSION_8814A)
+			SetBeamformLeave8814A(priv,Idx);
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8881A
+		if(GET_CHIP_VER(priv) == VERSION_8881A)
+			SetBeamformLeave8881A(priv,Idx);
 
+#endif
+
+#ifdef CONFIG_WLAN_HAL_8197F
 		if(GET_CHIP_VER(priv) == VERSION_8197F)
 			SetBeamformLeave8197F(priv,Idx);
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8822BE
 		if(GET_CHIP_VER(priv) == VERSION_8822B)
 			SetBeamformLeave8822B(priv,Idx);
+#endif
 
 }
 
@@ -45,13 +68,29 @@ Beamforming_SetBeamFormStatus(
 	)
 {
 
+#ifdef CONFIG_WLAN_HAL_8192EE
+		if(GET_CHIP_VER(priv)== VERSION_8192E)
+			SetBeamformStatus92E(priv, Idx);		
+#endif
+#ifdef CONFIG_RTL_8812_SUPPORT
+		if(GET_CHIP_VER(priv)== VERSION_8812E)
+			SetBeamformStatus8812(priv, Idx);
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8814AE
+		if(GET_CHIP_VER(priv) == VERSION_8814A)
+			SetBeamformStatus8814A(priv,Idx);
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8197F
 		if(GET_CHIP_VER(priv) == VERSION_8197F)
 			SetBeamformStatus8197F(priv,Idx);
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8822BE
 		if(GET_CHIP_VER(priv) == VERSION_8822B)
 			SetBeamformStatus8822B(priv,Idx);
+#endif
 
 }
 
@@ -62,13 +101,33 @@ Beamforming_SetBeamFormEnter(
 	)
 {
 	ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("[%s] Enter\n", __FUNCTION__)); 
+#ifdef CONFIG_WLAN_HAL_8192EE
+		if (GET_CHIP_VER(priv)== VERSION_8192E)	
+			SetBeamformEnter92E(priv, Idx);
+#endif
+#ifdef CONFIG_RTL_8812_SUPPORT
+		if (GET_CHIP_VER(priv)== VERSION_8812E)	
+			SetBeamformEnter8812(priv, Idx);
+#endif
+#ifdef CONFIG_WLAN_HAL_8814AE
+		if(GET_CHIP_VER(priv) == VERSION_8814A)
+			SetBeamformEnter8814A(priv,Idx);
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8881A
+		if(GET_CHIP_VER(priv)== VERSION_8881A)
+			SetBeamformEnter8881A(priv, Idx);
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8197F
 		if(GET_CHIP_VER(priv) == VERSION_8197F)
 			SetBeamformEnter8197F(priv,Idx);
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8822BE
 		if(GET_CHIP_VER(priv) == VERSION_8822B)
 			SetBeamformEnter8822B(priv,Idx);
+#endif
 }
 
 VOID
@@ -76,9 +135,11 @@ Beamforming_CSIRate(
 	struct rtl8192cd_priv *priv
 )
 {
+#ifdef CONFIG_WLAN_HAL_8822BE
 		if(GET_CHIP_VER(priv) == VERSION_8822B) {
 			Beamforming_CSIRate_8822B(priv);
 		}		
+#endif
 
 }
 
@@ -91,14 +152,33 @@ Beamforming_NDPARate(
 	u1Byte		Rate
 	)
 {
+#ifdef CONFIG_WLAN_HAL_8192EE
+	if(GET_CHIP_VER(priv)== VERSION_8192E){
+		Beamforming_NDPARate_92E(priv, Mode, BW, Rate);
+	}		
+#endif
+#ifdef CONFIG_RTL_8812_SUPPORT
+	if(GET_CHIP_VER(priv)== VERSION_8812E) {
+		Beamforming_NDPARate_8812(priv, Mode, BW, Rate);  //
+	}
+#endif
+#ifdef CONFIG_WLAN_HAL_8814AE
+	if(GET_CHIP_VER(priv)== VERSION_8814A){
+		Beamforming_NDPARate_8814A(priv, Mode, BW, Rate);
+	}		
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8197F
 	if(GET_CHIP_VER(priv)== VERSION_8197F){
 		Beamforming_NDPARate_8197F(priv, Mode, BW, Rate);
 	}		
+#endif
 
+#ifdef CONFIG_WLAN_HAL_8822BE
 	if(GET_CHIP_VER(priv) == VERSION_8822B) {
 		Beamforming_NDPARate_8822B(priv, 0, 0, Rate);
 	}		
+#endif
 
 }
 
@@ -108,6 +188,30 @@ Beamforming_SetHWTimer(
 	u2Byte	t
 	)
 {
+#ifdef CONFIG_WLAN_HAL_8192EE
+		if(GET_CHIP_VER(priv)== VERSION_8192E)
+		{			
+			HW_VAR_HW_REG_TIMER_STOP_92E(priv);
+			HW_VAR_HW_REG_TIMER_INIT_92E(priv, t);
+			HW_VAR_HW_REG_TIMER_START_92E(priv);
+		}
+#endif
+#ifdef CONFIG_RTL_8812_SUPPORT
+		if(GET_CHIP_VER(priv)== VERSION_8812E)
+		{
+			HW_VAR_HW_REG_TIMER_STOP_8812(priv);
+			HW_VAR_HW_REG_TIMER_INIT_8812(priv, t);
+			HW_VAR_HW_REG_TIMER_START_8812(priv);
+		}
+#endif
+#ifdef CONFIG_WLAN_HAL_8814AE
+		if(GET_CHIP_VER(priv)== VERSION_8814A)
+		{			
+			HW_VAR_HW_REG_TIMER_STOP_8814A(priv);
+			HW_VAR_HW_REG_TIMER_INIT_8814A(priv, t);
+			HW_VAR_HW_REG_TIMER_START_8814A(priv);
+		}
+#endif
 }
 
 VOID
@@ -115,6 +219,24 @@ Beamforming_StopHWTimer(
 	struct rtl8192cd_priv *priv
 	)
 {
+#ifdef CONFIG_WLAN_HAL_8192EE
+		if(GET_CHIP_VER(priv)== VERSION_8192E)
+		{			
+			HW_VAR_HW_REG_TIMER_STOP_92E(priv);
+		}
+#endif
+#ifdef CONFIG_RTL_8812_SUPPORT
+		if(GET_CHIP_VER(priv)== VERSION_8812E)
+		{
+			HW_VAR_HW_REG_TIMER_STOP_8812(priv);
+		}
+#endif
+#ifdef CONFIG_WLAN_HAL_8814AE
+		if(GET_CHIP_VER(priv)== VERSION_8814A)
+		{			
+			HW_VAR_HW_REG_TIMER_STOP_8814A(priv);
+		}
+#endif
 }
 
 u1Byte
@@ -152,6 +274,11 @@ Beamforming_GetHTNDPTxRate(
 	u1Byte Nr_index = 0;
 	u1Byte NDPTxRate;
 
+#ifdef CONFIG_WLAN_HAL_8814AE
+	if(GET_CHIP_VER(priv)== VERSION_8814A)
+		Nr_index = TxBF_Nr(halTxbf8814A_GetNtx(priv), CompSteeringNumofBFer);		/*find Nr*/
+	else
+#endif
 		Nr_index = TxBF_Nr(1, CompSteeringNumofBFer);		/*find Nr*/
 	switch(Nr_index)
 	{
@@ -186,6 +313,11 @@ Beamforming_GetVHTNDPTxRate(
 	u1Byte Nr_index = 0;
 	u1Byte NDPTxRate;
 
+#ifdef CONFIG_WLAN_HAL_8814AE
+	if(GET_CHIP_VER(priv)== VERSION_8814A)
+		Nr_index = TxBF_Nr(halTxbf8814A_GetNtx(priv), CompSteeringNumofBFer);		/*find Nr*/
+	else
+#endif
 		Nr_index = TxBF_Nr(1, CompSteeringNumofBFer);		/*find Nr*/
 	
 	switch(Nr_index)
@@ -469,10 +601,20 @@ Beamforming_AddBFeeEntry(
 			if((Beamforming_GetVHTNDPTxRate(priv, CompSteeringNumofBFer) == _NSS2_MCS0_RATE_) && !priv->pshare->txbferVHT2TX) {
 				return NULL;
 			}
+			#ifdef CONFIG_WLAN_HAL_8814AE  
+			if((Beamforming_GetVHTNDPTxRate(priv, CompSteeringNumofBFer) == _NSS3_MCS0_RATE_) && !priv->pshare->txbferVHT3TX) {
+				return NULL;
+			}
+			#endif
 		} else if((BeamformCap & BEAMFORMER_CAP_HT_EXPLICIT)) {
 			if((Beamforming_GetHTNDPTxRate(priv, CompSteeringNumofBFer) == _MCS8_RATE_) && !priv->pshare->txbferHT2TX) {
 				return NULL;
 			}
+			#ifdef CONFIG_WLAN_HAL_8814AE  
+			if((Beamforming_GetHTNDPTxRate(priv, CompSteeringNumofBFer) == _MCS16_RATE_) && !priv->pshare->txbferHT3TX) {
+				return NULL;
+			}
+			#endif
 		}
 	}
 #endif		
@@ -579,9 +721,11 @@ Beamforming_AddBFeeEntry(
 		}
 #endif
 
+#ifdef MBSSID
 		if(GET_CHIP_VER(priv) == VERSION_8812E)
 			if (GET_MIB(GET_ROOT(priv))->miscEntry.vap_enable)
 				rtl8192cd_set_mbssid(priv, RA, *Idx);
+#endif
 		return pEntry;
 	}
 	else
@@ -840,6 +984,7 @@ Beamforming_InitEntry(
 
 			if(pBeamformerEntry == NULL) {
 				ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("%s, Not enough BFer entry!\n", __FUNCTION__));
+#if defined(UNIVERSAL_REPEATER)
 				if(IS_VXD_INTERFACE(priv)) {
 					unsigned int reuse_idx = priv->dev->name[4]-'0';
 
@@ -857,11 +1002,14 @@ Beamforming_InitEntry(
 						printk("Invalid index(%d) for reuse BeamformerEntry, beamformer is inactive!\n",reuse_idx);
 					}
 				}
+#endif
 			}
+#if defined(UNIVERSAL_REPEATER)
 			else {
 				if(IS_VXD_INTERFACE(priv))
 					DEBUG_INFO("[%s]Occupy BeamformerEntry[%d]\n",priv->dev->name,BFerIdx);
 			}
+#endif
 		}
 	}
 
@@ -876,6 +1024,7 @@ Beamforming_InitEntry(
 
 			if(pBeamformEntry == NULL)
 			{
+#if defined(UNIVERSAL_REPEATER)
 				if(IS_VXD_INTERFACE(priv)) {
 					unsigned int reuse_idx = priv->dev->name[4]-'0';
 
@@ -899,6 +1048,7 @@ Beamforming_InitEntry(
 						return FALSE;
 					}
 				} else
+#endif
 				return FALSE;
 			}
 			else
@@ -906,8 +1056,10 @@ Beamforming_InitEntry(
 		}	
 		else
 		{
+#if defined(UNIVERSAL_REPEATER)
 			if(IS_VXD_INTERFACE(priv))
 				DEBUG_INFO("[%s]Occupy BeamformEntry[%d]\n",priv->dev->name,BFerIdx);
+#endif
 			// Entry has been created. If entry is initialing or progressing then errors occur.
 			if(	pBeamformEntry->BeamformEntryState != BEAMFORMING_ENTRY_STATE_INITIALIZED && 
 				pBeamformEntry->BeamformEntryState != BEAMFORMING_ENTRY_STATE_PROGRESSED)
@@ -943,6 +1095,12 @@ Beamforming_DeInitEntry(
 	{
 		Beamforming_SetBeamFormLeave(priv, Idx);
 
+#ifdef CONFIG_RTL_8812_SUPPORT				// 8812 only??
+#ifdef MBSSID
+		if (GET_MIB(GET_ROOT(priv))->miscEntry.vap_enable)
+			rtl8192cd_clear_mbssid(priv, Idx);
+#endif
+#endif
 		
 		return TRUE;
 	}
@@ -1536,6 +1694,7 @@ getBeamEntryDev(struct rtl8192cd_priv *priv, PRT_BEAMFORMING_ENTRY pEntry)
 	if(pstat)
 		return priv;
 	
+#ifdef MBSSID
 	  if ((OPMODE & WIFI_AP_STATE) && priv->pmib->miscEntry.vap_enable) 
 	  {
 		for (j=0; j<RTL8192CD_NUM_VWLAN; j++) 
@@ -1549,6 +1708,8 @@ getBeamEntryDev(struct rtl8192cd_priv *priv, PRT_BEAMFORMING_ENTRY pEntry)
 			}
 		}
 	}
+#endif			
+#ifdef UNIVERSAL_REPEATER
 	vxd_priv = GET_VXD_PRIV(priv);
 	priv = vxd_priv;
 	if((OPMODE & WIFI_STATION_STATE) && (vxd_priv->assoc_num > 0) && IS_DRV_OPEN(vxd_priv)	) 
@@ -1557,6 +1718,7 @@ getBeamEntryDev(struct rtl8192cd_priv *priv, PRT_BEAMFORMING_ENTRY pEntry)
 		if(pstat)
 			return vxd_priv;
 	}
+#endif
 	return NULL;
 
 }
@@ -1632,9 +1794,12 @@ BeamformingStart_V2(
 		{
 			int i;
 			struct stat_info *pstat = get_stainfo(GET_ROOT(priv), RA);	
+#ifdef UNIVERSAL_REPEATER
 			if ((pstat == NULL) && IS_DRV_OPEN(GET_VXD_PRIV(GET_ROOT(priv)))) {
 				pstat = get_stainfo(GET_VXD_PRIV(priv), RA);
 			}
+#endif
+#ifdef MBSSID
 			if (pstat == NULL)	{
 				if (GET_ROOT(priv)->pmib->miscEntry.vap_enable) {
 					for (i=0; i<RTL8192CD_NUM_VWLAN; i++) {
@@ -1643,6 +1808,7 @@ BeamformingStart_V2(
 					}
 				}
 			}
+#endif
 			if (pstat && (pstat->state & WIFI_SLEEP_STATE)) {
 				ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("%s, SLEEP mode, no NDPA\n", __FUNCTION__));
 				return FALSE;
@@ -1663,6 +1829,13 @@ BeamformingStart_V2(
 		ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("%s, %d\n", __FUNCTION__, __LINE__));
 		return FALSE;
 	}
+#ifdef CONFIG_WLAN_HAL_8192EE
+	if ((OPMODE & WIFI_AP_STATE) && (priv->pshare->soundingLock)) {
+		pEntry->Sounding_En = 0;
+		ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("%s, %d\n", __FUNCTION__, __LINE__));
+		return FALSE;
+	}
+#endif
 //	
 	if (Mode == SOUNDING_SW_HT_TIMER || Mode == SOUNDING_HW_HT_TIMER || Mode == SOUNDING_AUTO_HT_TIMER) {
 		NDPTxRate = Beamforming_GetHTNDPTxRate(priv, pEntry->CompSteeringNumofBFer);
@@ -2052,6 +2225,7 @@ int shortenSoundingPeriod(struct rtl8192cd_priv *priv)
 				}
 			}
 
+#ifdef MBSSID
 		  if ((OPMODE & WIFI_AP_STATE) && priv->pmib->miscEntry.vap_enable)
 		  {
 			for (j=0; j<RTL8192CD_NUM_VWLAN; j++)
@@ -2073,6 +2247,8 @@ int shortenSoundingPeriod(struct rtl8192cd_priv *priv)
 				}
 			}
 		}
+#endif		
+#ifdef UNIVERSAL_REPEATER
 			vxd_priv = GET_VXD_PRIV(priv);
 			if((OPMODE_VXD & WIFI_STATION_STATE) && (vxd_priv->assoc_num > 0) && IS_DRV_OPEN(vxd_priv) 	)
 			{		
@@ -2089,6 +2265,7 @@ int shortenSoundingPeriod(struct rtl8192cd_priv *priv)
 					}
 				}
 			}
+#endif
 			
 		}
 	}
@@ -2225,6 +2402,10 @@ beamforming_rf_iqgen_setting (
 {
 	BOOLEAN is_iqgen_setting_ok = FALSE;
 	
+#ifdef CONFIG_WLAN_HAL_8814AE
+		if(GET_CHIP_VER(priv) == VERSION_8814A)
+			is_iqgen_setting_ok = beamforming_setiqgen_8814a(priv);
+#endif
 
 	return is_iqgen_setting_ok;
 
@@ -2545,6 +2726,9 @@ Beamforming_GetNDPAFrame(
                     ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("%s ,Clock Reset!!! ClockResetTimes=%d\n",
 	                    __FUNCTION__, 
 	                    pBeamformerEntry->ClockResetTimes));  
+#ifdef CONFIG_RTL_8812_SUPPORT	
+					_Beamforming_CLK(priv);
+#endif		
 				}
                 else
                     pBeamformerEntry->NDPALogRetryCnt++;
@@ -2904,6 +3088,11 @@ void issue_action_GROUP_ID(struct rtl8192cd_priv *priv, unsigned char idx)
 
 	txinsn.q_num = MANAGE_QUE_NUM;
 	txinsn.fr_type = _PRE_ALLOCMEM_;
+#ifdef P2P_SUPPORT	/*cfg p2p cfg p2p*/
+	if(rtk_p2p_is_enabled(priv)){
+      	txinsn.tx_rate = _6M_RATE_;
+	}else
+#endif    
     	txinsn.tx_rate = find_rate(priv, NULL, 0, 1);
 #ifndef TX_LOWESTRATE
 	txinsn.lowest_tx_rate = txinsn.tx_rate;

@@ -32,6 +32,13 @@ CONFIG_SOC_EXT_PA=y
 CONFIG_SOC_EXT_LNA=y
 CONFIG_SLOT_0_EXT_PA=y
 CONFIG_SLOT_0_EXT_LNA=y
+
+#CONFIG_RTK_SMART_ROAMING=y
+CONFIG_RTL_DOT11K_SUPPORT=y
+CONFIG_RTL_11V_SUPPORT=y
+CONFIG_RTL_11W_SUPPORT=y
+CONFIG_RTL_VAP_COUNT=2
+
 else
 ifeq ($(CONFIG_RTL8197_MACH_AC10UV2),y)
 CONFIG_SLOT_0_RFE_TYPE_10=y
@@ -60,6 +67,10 @@ CONFIG_WLAN_HAL_8197F=y
 CONFIG_WLAN_HAL_8822BE=y
 CONFIG_WLAN_HAL_88XX=y
 CONFIG_WLAN_MACHAL_API=y
+CONFIG_RTL_NO_BR_SHORTCUT=y
+
+#CONFIG_RTL_WLAN_DIAGNOSTIC=y
+#CONFIG_MEM_LIMITATION=y
 
 
 ccflags-y += -DCONFIG_RTL_COMAPI_WLTOOLS
@@ -90,6 +101,13 @@ ccflags-y += -DCONFIG_SOC_EXT_PA
 ccflags-y += -DCONFIG_SOC_EXT_LNA
 ccflags-y += -DCONFIG_SLOT_0_EXT_PA
 ccflags-y += -DCONFIG_SLOT_0_EXT_LNA
+
+#ccflags-y += -DCONFIG_RTK_SMART_ROAMING
+ccflags-y += -DCONFIG_RTL_DOT11K_SUPPORT
+ccflags-y += -DCONFIG_RTL_11V_SUPPORT
+ccflags-y += -DCONFIG_RTL_11W_SUPPORT
+ccflags-y += -DCONFIG_RTL_VAP_COUNT=2
+
 else
 ifeq ($(CONFIG_RTL8197_MACH_AC10UV2),y)
 ccflags-y += -DCONFIG_SLOT_0_RFE_TYPE_10
@@ -114,14 +132,20 @@ ccflags-y += -DCONFIG_WLAN_HAL_8197F
 ccflags-y += -DCONFIG_WLAN_HAL_8822BE
 ccflags-y += -DCONFIG_WLAN_HAL_88XX
 ccflags-y += -DCONFIG_WLAN_MACHAL_API
+ccflags-y += -DCONFIG_RTL_NO_BR_SHORTCUT
+
+#ccflags-y += -DCONFIG_RTL_WLAN_DIAGNOSTIC
+#ccflags-y += -DCONFIG_MEM_LIMITATION
 
 
 
-$(info CFLAGS BL $(CFLAGS))
+
 
 ifeq ($(CPTCFG_RTL8192CD),m)
 CONFIG_RTL8192CD:=m
 endif
+
+
 
 ifeq ($(CONFIG_RTL_92C_SUPPORT),y)
 RTL_WLAN_DATA_DIR := data
@@ -460,7 +484,7 @@ obj-y += 8192cd_p2p.o
 endif
 endif
 ifeq ($(CONFIG_RTL_COMAPI_WLTOOLS),y)
-rtl8192cd-objs += 8192cd_comapi.o
+obj-y += 8192cd_comapi.o
 endif
 ifeq ($(CONFIG_PACP_SUPPORT),y)
 obj-y += 8192cd_comapi.o
@@ -667,10 +691,6 @@ $(obj)/data_%.c: $(src)/$(RTL_WLAN_DATA_DIR_92E)/%.bin FORCE
 $(obj)/data_%.c: $(src)/$(RTL_WLAN_DATA_DIR_92E)/%.BIN FORCE
 	$(obj)/bin2c.pl $(notdir $(basename $@)) < $< > $@
 
-ifneq ($(TARGET_PROFILE),)
-$(obj)/data_%.c: $(src)/$(RTL_WLAN_DATA_DIR_97F)/%_$(TARGET_PROFILE).override FORCE
-	$(obj)/bin2c.pl $(notdir $(basename $@)) < $< > $@
-endif
 $(obj)/data_%.c: $(src)/$(RTL_WLAN_DATA_DIR_97F)/%.txt FORCE
 	$(obj)/bin2c.pl $(notdir $(basename $@)) < $< > $@
 $(obj)/data_%.c: $(src)/$(RTL_WLAN_DATA_DIR_97F)/%.bin FORCE
@@ -678,10 +698,6 @@ $(obj)/data_%.c: $(src)/$(RTL_WLAN_DATA_DIR_97F)/%.bin FORCE
 $(obj)/data_%.c: $(src)/$(RTL_WLAN_DATA_DIR_97F)/%.BIN FORCE
 	$(obj)/bin2c.pl $(notdir $(basename $@)) < $< > $@
 
-ifneq ($(TARGET_PROFILE),)
-$(obj)/data_%.c: $(src)/$(RTL_WLAN_DATA_DIR_8822B)/%_$(TARGET_PROFILE).override FORCE
-	$(obj)/bin2c.pl $(notdir $(basename $@)) < $< > $@
-endif
 $(obj)/data_%.c: $(src)/$(RTL_WLAN_DATA_DIR_8822B)/%.txt FORCE
 	$(obj)/bin2c.pl $(notdir $(basename $@)) < $< > $@
 $(obj)/data_%.c: $(src)/$(RTL_WLAN_DATA_DIR_8822B)/%.bin FORCE

@@ -11,7 +11,9 @@
 
 typedef void				VOID,*PVOID;
 
+#ifndef __OSK__
 typedef unsigned char		BOOLEAN,*PBOOLEAN;
+#endif
 
 typedef unsigned char		u1Byte,*pu1Byte;
 typedef unsigned short		u2Byte,*pu2Byte;
@@ -27,6 +29,7 @@ typedef signed long long		s8Byte,*ps8Byte;
 typedef unsigned int		UINT;
 typedef signed int			INT;
 
+#if (!defined(__OSK__)) || (defined(__OSK__) && !defined(UINT8))
 typedef unsigned int		UINT32,*pUINT32;
 typedef unsigned char		UINT8;
 typedef unsigned short		UINT16;
@@ -35,6 +38,7 @@ typedef signed short		INT16;
 typedef signed int			INT32;
 typedef unsigned long long	UINT64;
 typedef signed long long	INT64;
+#endif
 
 #ifndef BIT0
 #define BIT0		0x00000001
@@ -125,7 +129,7 @@ typedef signed long long	INT64;
 //
 // Byte Swapping routine.
 //
-#define EF1Byte
+#define EF1Byte	
 #define EF2Byte 	le16_to_cpu
 #define EF4Byte		le32_to_cpu
 
@@ -139,7 +143,7 @@ typedef signed long long	INT64;
 //
 #define LE_P4BYTE_TO_HOST_4BYTE(__pStart) \
 	(EF4Byte(*((u4Byte *)(__pStart))))
-
+	
 
 //
 //	Description:
@@ -175,7 +179,7 @@ typedef signed long long	INT64;
 
 #define WriteEF1Byte(_ptr, _val)	(*((pu1Byte)(_ptr)))=EF1Byte(_val)
 #define WriteEF2Byte(_ptr, _val)	(*((UNALIGNED pu2Byte)(_ptr)))=EF2Byte(_val)
-#define WriteEF4Byte(_ptr, _val)	(*((UNALIGNED pu4Byte)(_ptr)))=EF4Byte(_val)
+#define WriteEF4Byte(_ptr, _val)	(*((UNALIGNED pu4Byte)(_ptr)))=EF4Byte(_val)	
 
 
 //	Example:
@@ -192,7 +196,7 @@ typedef signed long long	INT64;
 //		BIT_OFFSET_LEN_MASK_32(16, 2) => 0x00030000
 //
 #define BIT_OFFSET_LEN_MASK_32(__BitOffset, __BitLen) \
-	(BIT_LEN_MASK_32(__BitLen) << (__BitOffset))
+	(BIT_LEN_MASK_32(__BitLen) << (__BitOffset)) 
 
 #define LE_BITS_TO_4BYTE(__pStart, __BitOffset, __BitLen) \
 	( \
@@ -203,7 +207,7 @@ typedef signed long long	INT64;
 
 //
 //	Description:
-//		Mask subfield (continuous bits in little-endian) of 4-byte value in litten byte oredering
+//		Mask subfield (continuous bits in little-endian) of 4-byte value in litten byte oredering  
 //		and return the result in 4-byte value in host byte ordering.
 //
 #define LE_BITS_CLEARED_TO_4BYTE(__pStart, __BitOffset, __BitLen) \
@@ -215,7 +219,7 @@ typedef signed long long	INT64;
 
 //
 //	Description:
-//		Set subfield of little-endian 4-byte value to specified value.
+//		Set subfield of little-endian 4-byte value to specified value.	
 //
 #define SET_BITS_TO_LE_4BYTE(__pStart, __BitOffset, __BitLen, __Value) \
 	*((UNALIGNED pu4Byte)(__pStart)) = \
@@ -225,23 +229,23 @@ typedef signed long long	INT64;
 			( (((u4Byte)__Value) & BIT_LEN_MASK_32(__BitLen)) << (__BitOffset) ) \
 		);
 
-
+		
 #define BIT_LEN_MASK_16(__BitLen) \
 		(0xFFFF >> (16 - (__BitLen)))
-
+		
 #define BIT_OFFSET_LEN_MASK_16(__BitOffset, __BitLen) \
 	(BIT_LEN_MASK_16(__BitLen) << (__BitOffset))
-
+	
 #define LE_P2BYTE_TO_HOST_2BYTE(__pStart) \
 	(EF2Byte(*((UNALIGNED pu2Byte)(__pStart))))
-
+	
 #define LE_BITS_TO_2BYTE(__pStart, __BitOffset, __BitLen) \
 	( \
 		( LE_P2BYTE_TO_HOST_2BYTE(__pStart) >> (__BitOffset) ) \
 		& \
 		BIT_LEN_MASK_16(__BitLen) \
 	)
-
+	
 #define LE_BITS_CLEARED_TO_2BYTE(__pStart, __BitOffset, __BitLen) \
 	( \
 		LE_P2BYTE_TO_HOST_2BYTE(__pStart) \
@@ -256,7 +260,7 @@ typedef signed long long	INT64;
 			| \
 			( (((u2Byte)__Value) & BIT_LEN_MASK_16(__BitLen)) << (__BitOffset) ) \
 		);
-
+					
 #define BIT_LEN_MASK_8(__BitLen) \
 		(0xFF >> (8 - (__BitLen)))
 
@@ -336,6 +340,6 @@ typedef enum _WIRELESS_MODE {
 	WIRELESS_MODE_N_24G = 0x10,
 	WIRELESS_MODE_N_5G = 0x20,
 	WIRELESS_MODE_AC_5G = 0x40,
-	WIRELESS_MODE_AC_24G = 0x80
+	WIRELESS_MODE_AC_24G = 0x80	
 } WIRELESS_MODE;
 #endif

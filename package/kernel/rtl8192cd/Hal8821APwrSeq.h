@@ -3,8 +3,10 @@
 
 #ifdef CONFIG_RTL_92E_SUPPORT
 
+#ifdef CONFIG_WLAN_HAL
 #include "WlanHAL/RTL88XX/Hal88XXPwrSeqCmd.h"
 
+#endif
 
 
 #ifdef BIT
@@ -12,7 +14,7 @@
 #endif
 #define BIT(x)	(1 << (x))
 
-/*
+/* 
 	Check document WM-20110607-Paul-RTL8821A_Power_Architecture-R02.vsd
 	There are 6 HW Power States:
 	0: POFF--Power Off
@@ -29,7 +31,7 @@
 	TRANS_SUS_TO_CARDEMU
 	TRANS_CARDEMU_TO_PDN
 	TRANS_ACT_TO_LPS
-	TRANS_LPS_TO_ACT
+	TRANS_LPS_TO_ACT	
 
 	TRANS_END
 */
@@ -40,7 +42,7 @@
 #define	RTL8821A_TRANS_CARDEMU_TO_PDN_STEPS	15
 #define	RTL8821A_TRANS_PDN_TO_CARDEMU_STEPS	15
 #define	RTL8821A_TRANS_ACT_TO_LPS_STEPS	15
-#define	RTL8821A_TRANS_LPS_TO_ACT_STEPS	15
+#define	RTL8821A_TRANS_LPS_TO_ACT_STEPS	15	
 #define	RTL8821A_TRANS_END_STEPS	1
 
 
@@ -55,7 +57,7 @@
 	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_WRITE, BIT(0), BIT(0)},/* polling until return 0*/	\
 	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_POLLING, BIT(0), 0},/**/	\
 
-
+	
 #define RTL8821A_TRANS_ACT_TO_CARDEMU													\
 	/* format */																\
 	/* { offset, cut_msk, fab_msk|interface_msk, base|cmd, msk, value }, // comments here*/								\
@@ -140,7 +142,7 @@
 	{0x0100, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_WRITE, 0xFF, 0xFF}, /*.	0x100[7:0] = 0xFF	 enable WMAC TRX*/\
 	{0x0002, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_WRITE, BIT(1)|BIT(0), BIT(1)|BIT(0)}, /*.	0x02[1:0] = 2b'11	 enable BB macro*/\
 	{0x0522, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK,PWR_BASEADDR_MAC,PWR_CMD_WRITE, 0xFF, 0}, /*.	0x522 = 0*/
-
+ 
 #define RTL8821A_TRANS_END															\
 	/* format */																\
 	/* { offset, cut_msk, fab_msk|interface_msk, base|cmd, msk, value }, // comments here*/								\
