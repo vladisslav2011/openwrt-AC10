@@ -33,7 +33,7 @@ EnableIMR88XX(
 );
 
 HAL_IMEM
-BOOLEAN
+u4Byte
 InterruptRecognized88XX(
     IN  HAL_PADAPTER        Adapter,
 	IN	PVOID				pContent,

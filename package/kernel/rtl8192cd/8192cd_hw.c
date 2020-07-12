@@ -1017,6 +1017,7 @@ unsigned int PHY_QueryRFReg(struct rtl8192cd_priv *priv, RF92CD_RADIO_PATH_E eRF
 		Readback_Value = (Original_Value & BitMask) >> BitShift;
 		return (Readback_Value);
 	}
+	return 0;
 }
 
 
@@ -3657,11 +3658,11 @@ int PHY_ConfigTXLmtWithParaFile_new_TXBF(struct rtl8192cd_priv *priv)
 
 int PHY_ConfigTXLmtWithParaFile(struct rtl8192cd_priv *priv)
 {
-	int read_bytes, num, len = 0, round;
-	unsigned int  ch_start, ch_end, limit, target = 0;
-	unsigned char *mem_ptr, *line_head, *next_head;
+	int read_bytes = 0, num = 0, len = 0, round = 0;
+	unsigned int  ch_start = 0, ch_end = 0, limit = 0, target = 0;
+	unsigned char *mem_ptr = NULL, *line_head = NULL, *next_head = NULL;
 	int	tbl_idx[6], set_en = 0, type = -1;
-	struct TxPwrLmtTable *reg_table;
+	struct TxPwrLmtTable *reg_table = NULL;
 
 	priv->pshare->txpwr_lmt_CCK = 0;
 	priv->pshare->txpwr_lmt_OFDM = 0;
@@ -10713,6 +10714,8 @@ static void LLT_table_init_8812(struct rtl8192cd_priv *priv)
 
 #endif //CONFIG_RTL_8812_SUPPORT
 
+#if (CONFIG_WLAN_NOT_HAL_EXIST==1)
+
 static void LLT_table_init(struct rtl8192cd_priv *priv)
 {
 	unsigned txpktbufSz, bufBd;
@@ -10894,6 +10897,7 @@ static void LLT_table_init(struct rtl8192cd_priv *priv)
 	RTL_W8(0x45D, txpktbufSz);
 }
 
+#endif
 
 #ifdef CONFIG_RTL_8812_SUPPORT
 static void MacInit_8812(struct rtl8192cd_priv *priv)
@@ -11416,7 +11420,7 @@ static int InitMAC_8723B(struct rtl8192cd_priv *priv)
 #endif
 
 
-#if(CONFIG_WLAN_NOT_HAL_EXIST==1)
+#if (CONFIG_WLAN_NOT_HAL_EXIST==1)
 static int MacInit(struct rtl8192cd_priv *priv)
 {
 	volatile unsigned char bytetmp;
@@ -14345,24 +14349,24 @@ void set_bcn_dont_ignore_edcca(struct rtl8192cd_priv *priv)
 int rtl8192cd_init_hw_PCI(struct rtl8192cd_priv *priv)
 {
 	struct wifi_mib *pmib;
-	unsigned int opmode;
-	unsigned long val32;
-	unsigned short val16;
+	unsigned int opmode = 0;
+	unsigned long val32 = 0;
+	unsigned short val16 = 0;
 	int i;
 #ifdef CONFIG_WLAN_HAL
 	unsigned int errorFlag = 0;
 #endif
 #ifndef SMP_SYNC
-	unsigned long x;
+	unsigned long x = 0;
 #endif
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT) || defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_RTL_8812_SUPPORT)
 	unsigned int fwStatus = 0, dwnRetry = 5;
 #endif
 #if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_RTL_8723B_SUPPORT)
-	unsigned int	c50_bak, e50_bak;
+	unsigned int	c50_bak = 0, e50_bak = 0;
 #endif
 #if defined(CONFIG_WLAN_HAL_8814AE)
-	unsigned int	back_c50, back_e50, back_1850, back_1a50;
+	unsigned int	back_c50 = 0, back_e50 = 0, back_1850 = 0, back_1a50 = 0;
 #endif
 
 	SAVE_INT_AND_CLI(x);
@@ -20023,14 +20027,8 @@ int offloadTestFunction(struct rtl8192cd_priv *priv, unsigned char *data)
 #ifdef CONFIG_OFFLOAD_FUNCTION
 int offloadTestFunction(struct rtl8192cd_priv *priv, unsigned char *data)
 {
-	int mode = 0, status;
-    unsigned long flags;
-    u32 tmp32, haddr, saddr, cnt, ctr;
-    PHCI_RX_DMA_MANAGER_88XX        prx_dma;
-    PHCI_RX_DMA_QUEUE_STRUCT_88XX   cur_q;
-    PHCI_TX_DMA_MANAGER_88XX        ptx_dma;
-    PHCI_TX_DMA_QUEUE_STRUCT_88XX   cur_q_tx;
-    u4Byte RXBDReg;
+	int mode = 0;
+    u32 haddr, saddr;
 
 	mode = _atoi(data, 16);
     haddr = 0xb8b00000; //pcie host addr
@@ -20175,7 +20173,15 @@ int offloadTestFunction(struct rtl8192cd_priv *priv, unsigned char *data)
     }
 
     
-#ifdef PCIE_POWER_SAVING_TEST    
+#ifdef PCIE_POWER_SAVING_TEST
+	{
+		unsigned long flags;
+		u32 tmp32,ctr,cnt;
+		PHCI_RX_DMA_MANAGER_88XX        prx_dma;
+		PHCI_RX_DMA_QUEUE_STRUCT_88XX   cur_q;
+		PHCI_TX_DMA_MANAGER_88XX        ptx_dma;
+		PHCI_TX_DMA_QUEUE_STRUCT_88XX   cur_q_tx;
+	    u4Byte RXBDReg;
         if( mode == 0x7)//pcie goto L1
         {
             SAVE_INT_AND_CLI(flags);
@@ -20542,8 +20548,7 @@ int offloadTestFunction(struct rtl8192cd_priv *priv, unsigned char *data)
     
             printk("back to -> L0\n");
         }
-        
-            
+	}
 #endif    
     
 	return 0;
@@ -28620,7 +28625,6 @@ void TxACurrentCalibration(struct rtl8192cd_priv *priv)
 	//u1Byte 			eFuseContent[DCMD_EFUSE_MAX_SECTION_NUM * EFUSE_MAX_WORD_UNIT * 2];
 	u1Byte			efuse0x3D8, efuse0x3D7;
 	u4Byte			origRF0x18PathA = 0, origRF0x18PathB = 0;
-	u8 val=0xff;
 	// save original 0x18 value
 	origRF0x18PathA = PHY_QueryRFReg(priv, ODM_RF_PATH_A, 0x18, 0xFFFFF,1);
 	origRF0x18PathB = PHY_QueryRFReg(priv, ODM_RF_PATH_B, 0x18, 0xFFFFF,1);
@@ -28918,7 +28922,7 @@ int read_gpio_8822(struct rtl8192cd_priv *priv, unsigned int num)
 		offset = (num - 8);
 	}
 	else
-		return;
+		return 0;
 
 	tmp_value = RTL_R32(reg_gpio_ctrl);
 
@@ -29721,7 +29725,6 @@ void start_bbp_ch_load(struct rtl8192cd_priv *priv, unsigned int units)
 unsigned int read_bbp_ch_load(struct rtl8192cd_priv *priv)
 {
     unsigned short chip_ver = GET_CHIP_VER(priv);
-	unsigned char retry = 0;
     if(chip_ver == VERSION_8188C || chip_ver == VERSION_8192C || chip_ver ==VERSION_8192D || 
         chip_ver == VERSION_8188E || chip_ver == VERSION_8192E || chip_ver == VERSION_8197F) /*all N-series ic*/
     {

@@ -177,6 +177,33 @@ typedef enum _HW_VARIABLES{
 
 }HW_VARIABLES;
 
+#define HAL_INT_FLAG_AXI_EXCEPTION    (1lu<<0)
+#define HAL_INT_FLAG_BCNDERR0         (1lu<<1)
+#define HAL_INT_FLAG_BcnInt           (1lu<<2)
+#define HAL_INT_FLAG_BcnInt1          (1lu<<3)
+#define HAL_INT_FLAG_BcnInt_MBSSID    (1lu<<4)
+#define HAL_INT_FLAG_C2HCMD           (1lu<<5)
+#define HAL_INT_FLAG_CPWM2            (1lu<<6)
+#define HAL_INT_FLAG_FS_TIMEOUT0      (1lu<<7)
+#define HAL_INT_FLAG_GTIMER4          (1lu<<8)
+#define HAL_INT_FLAG_PSTIMEOUT1       (1lu<<9)
+#define HAL_INT_FLAG_PwrInt0          (1lu<<10)
+#define HAL_INT_FLAG_PwrInt1          (1lu<<11)
+#define HAL_INT_FLAG_PwrInt2          (1lu<<12)
+#define HAL_INT_FLAG_PwrInt3          (1lu<<13)
+#define HAL_INT_FLAG_PwrInt4          (1lu<<14)
+#define HAL_INT_FLAG_RDU              (1lu<<15)
+#define HAL_INT_FLAG_RXERR            (1lu<<16)
+#define HAL_INT_FLAG_RXFOVW           (1lu<<17)
+#define HAL_INT_FLAG_RX_OK            (1lu<<18)
+#define HAL_INT_FLAG_TBDER            (1lu<<19)
+#define HAL_INT_FLAG_TBDOK            (1lu<<20)
+#define HAL_INT_FLAG_TXBCN1ERR        (1lu<<21)
+#define HAL_INT_FLAG_TXBCN1OK         (1lu<<22)
+#define HAL_INT_FLAG_TXBCNERR_MBSSID  (1lu<<23)
+#define HAL_INT_FLAG_TXBCNOK_MBSSID   (1lu<<24)
+#define HAL_INT_FLAG_TXERR            (1lu<<25)
+#define HAL_INT_FLAG_TXFOVW           (1lu<<26)
 
 // The type used to query whether the interrupt in HAL is toggled.
 typedef enum _HAL_INT_TYPE
@@ -448,7 +475,8 @@ typedef VOID
     INPUT	HAL_PADAPTER		Adapter
 );
 
-typedef BOOLEAN
+
+typedef u4Byte
 (*NicInterruptRecognizedHandler)(
     INPUT   HAL_PADAPTER    Adapter,
     INPUT   PVOID           pContent,

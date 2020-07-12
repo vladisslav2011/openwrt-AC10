@@ -73,7 +73,7 @@ EnableIMR88XX(
 //
 
 HAL_IMEM
-BOOLEAN
+u4Byte
 InterruptRecognized88XX(
     IN  HAL_PADAPTER        Adapter,
 	IN	PVOID				pContent,
@@ -81,7 +81,7 @@ InterruptRecognized88XX(
 )
 {
     PHAL_DATA_TYPE              pHalData = _GET_HAL_DATA(Adapter);
-    u1Byte                      result;
+    u4Byte                      result = 0;
 
 	pHalData->IntArray_bak[0] = pHalData->IntArray[0];
 	pHalData->IntArray_bak[1] = pHalData->IntArray[1];
@@ -94,7 +94,7 @@ InterruptRecognized88XX(
     pHalData->IntArray[1] &= pHalData->IntMask[1];
     HAL_RTL_W32(REG_HISR1, pHalData->IntArray[1]);
 
-    result = (pHalData->IntArray[0]!=0 || pHalData->IntArray[1]!=0);
+    result |= pHalData->IntArray[0]|pHalData->IntArray[1];
 
 #if IS_RTL88XX_MAC_V2
     if ( _GET_HAL_DATA(Adapter)->MacVersion.is_MAC_v2) {
@@ -107,7 +107,7 @@ InterruptRecognized88XX(
     pHalData->IntArray[3] &= pHalData->IntMask[3];
     HAL_RTL_W32(REG_HISR3, pHalData->IntArray[3]);
    
-    result = (result || (pHalData->IntArray[2]!=0 || pHalData->IntArray[3]!=0 ));
+    result |= pHalData->IntArray[2] | pHalData->IntArray[3];
 
     }
 #endif // #if IS_RTL88XX_MAC_V2
@@ -119,7 +119,7 @@ InterruptRecognized88XX(
         HAL_RTL_W32(REG_HSISR, pHalData->IntArray[4]);
     }
     
-    result = (result || (pHalData->IntArray[4]!=0));    
+    result |= pHalData->IntArray[4];
     
 #endif // CFG_HAL_SUPPORT_AXI_BUS_EXCEPTION
 
@@ -129,8 +129,51 @@ InterruptRecognized88XX(
         pHalData->FtIntArray &= pHalData->FtIntMask;
         HAL_RTL_W32(REG_FTISR, pHalData->FtIntArray);
 
-        result = (result || (pHalData->FtIntArray!=0));
+        result |= pHalData->FtIntArray;
     }
+#endif
+	if(!result)
+		return 0;
+	if( pHalData->IntArray[0] & BIT_BCNDERR0 )   result |= HAL_INT_FLAG_BCNDERR0;
+	if( pHalData->IntArray[0] & BIT_BCNDMAINT0 ) result |= HAL_INT_FLAG_BcnInt;
+	if( pHalData->IntArray[0] & BIT_C2HCMD ) result |= HAL_INT_FLAG_C2HCMD;
+	if( pHalData->IntArray[0] & BIT_CPWM2 ) result |= HAL_INT_FLAG_CPWM2;
+	if( pHalData->IntArray[0] & BIT_GTINT4 ) result |= HAL_INT_FLAG_GTIMER4;
+	if( pHalData->IntArray[0] & BIT_PSTIMEOUT1 ) result |= HAL_INT_FLAG_PSTIMEOUT1;
+	if( pHalData->IntArray[0] & BIT_RDU ) result |= HAL_INT_FLAG_RDU;
+	if( pHalData->IntArray[0] & BIT_RXOK ) result |= HAL_INT_FLAG_RX_OK;
+	if( pHalData->IntArray[0] & BIT_TXBCN0ERR ) result |= HAL_INT_FLAG_TBDER;
+	if( pHalData->IntArray[0] & BIT_TXBCN0OK ) result |= HAL_INT_FLAG_TBDOK;
+	if( pHalData->IntArray[1] & BIT_BCNDMAINT1 ) result |= HAL_INT_FLAG_BcnInt1;
+	if( pHalData->IntArray[1] & BIT_TXERR_INT ) result |= HAL_INT_FLAG_TXERR;
+	if( pHalData->IntArray[1] & BIT_TXFOVW ) result |= HAL_INT_FLAG_TXFOVW;
+	if( pHalData->IntArray[1] & BIT_RXERR_INT ) result |= HAL_INT_FLAG_RXERR;
+	if( pHalData->IntArray[1] & BIT_FOVW ) result |= HAL_INT_FLAG_RXFOVW;
+	if( (pHalData->IntArray[1] & (BIT_BCNDMAINT1|BIT_BCNDMAINT2|BIT_BCNDMAINT3|BIT_BCNDMAINT4|
+                                    BIT_BCNDMAINT5|BIT_BCNDMAINT6|BIT_BCNDMAINT7)) ||
+                    (pHalData->IntArray[0] & BIT_BCNDMAINT0) ) result |= HAL_INT_FLAG_BcnInt_MBSSID;
+#ifdef CFG_HAL_TX_AMSDU
+	if( pHalData->FtIntArray & BIT_FS_PS_TIMEOUT0_EN ) result |= HAL_INT_FLAG_FS_TIMEOUT0;
+#endif
+#if CFG_HAL_SUPPORT_EACH_VAP_INT
+	if( pHalData->IntArray[2] & BIT_TXBCN1ERR ) result |= HAL_INT_FLAG_TXBCN1ERR;
+	if( pHalData->IntArray[2] & BIT_TXBCN1OK ) result |= HAL_INT_FLAG_TXBCN1OK;
+	if( (pHalData->IntArray[2] & (BIT_TXBCN1ERR|BIT_TXBCN2ERR|BIT_TXBCN3ERR|BIT_TXBCN4ERR|
+                                   BIT_TXBCN5ERR|BIT_TXBCN6ERR|BIT_TXBCN7ERR)) ||
+                   (pHalData->IntArray[0] & BIT_TXBCN0ERR) ) result |= HAL_INT_FLAG_TXBCNERR_MBSSID;
+	if( (pHalData->IntArray[2] & (BIT_TXBCN1OK|BIT_TXBCN2OK|BIT_TXBCN3OK|BIT_TXBCN4OK|
+                                    BIT_TXBCN5OK|BIT_TXBCN6OK|BIT_TXBCN7OK)) ||
+                    (pHalData->IntArray[0] & BIT_TXBCN0OK) ) result |= HAL_INT_FLAG_TXBCNOK_MBSSID;
+#endif
+#if CFG_HAL_HW_DETEC_POWER_STATE
+	if( pHalData->IntArray[3] & BIT_PWR_INT_31to0 ) result |= HAL_INT_FLAG_PwrInt0;
+	if( pHalData->IntArray[3] & BIT_PWR_INT_63to32 ) result |= HAL_INT_FLAG_PwrInt1;
+	if( pHalData->IntArray[3] & BIT_PWR_INT_95to64 ) result |= HAL_INT_FLAG_PwrInt2;
+	if( pHalData->IntArray[3] & BIT_PWR_INT_126to96 ) result |= HAL_INT_FLAG_PwrInt3;
+	if( pHalData->IntArray[3] & BIT_PWR_INT_127 ) result |= HAL_INT_FLAG_PwrInt4;
+#endif
+#if CFG_HAL_SUPPORT_AXI_BUS_EXCEPTION
+	if( pHalData->IntArray[4] & BIT_AXI_EXCEPT_HINT) result |= HAL_INT_FLAG_AXI_EXCEPTION;
 #endif
 
     return result;

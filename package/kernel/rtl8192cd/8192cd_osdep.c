@@ -188,6 +188,7 @@ u32 if_priv_stactrl[NUM_WLAN_IFACE];
 #include <linux/proc_fs.h> 
 #endif
 #endif
+
 #if defined(CONFIG_WIRELESS_LAN_MODULE) && !defined(NOT_RTK_BSP)
 #ifdef BR_SHORTCUT
 extern int (*wirelessnet_hook)(void);
@@ -1530,50 +1531,21 @@ __inline__ static int __rtl_wlan_interrupt(void *dev_instance)
 {
     struct net_device       *dev;
     struct rtl8192cd_priv   *priv;
-
+	u4Byte ints=0;
     unsigned int status, status_ext, retry_cnt = 0;
-    BOOLEAN caseBcnInt, caseBcnStatusOK, caseBcnStatusER, caseBcnDMAER;
-    BOOLEAN caseRxRDU, caseRxOK, caseRxFOVW, caseTxFOVW , caseTxErr , caseRxErr;
-#if defined(HW_DETEC_POWER_STATE)
-    BOOLEAN casePwrInt0, casePwrInt1, casePwrInt2, casePwrInt3 , casePwrInt4;    
-#endif
-	BOOLEAN caseC2HIsr;
-
-#if defined(SW_TX_QUEUE) ||defined(RTK_ATM)
-    BOOLEAN caseGTimer4Int;
-#endif
-
-#if defined(CONFIG_VERIWAVE_CHECK)
-    BOOLEAN caseTimer1 = FALSE;
-#endif
-
-#if 1   //Filen: temp
-    static unsigned int caseRxRDUCnt=0, caseRxOKCnt=0;
-#endif
-
-#if	defined(SUPPORT_AXI_BUS_EXCEPTION) 
-    BOOLEAN caseAXIException;
-#endif
-
-#if	defined(SUPPORT_AP_OFFLOAD) 
-    //yllin
-    BOOLEAN caseCPWM2;
-#endif
-
-#if	defined(SUPPORT_TX_AMSDU) || defined(P2P_SUPPORT)
-    BOOLEAN caseTimer2;
-#endif
-
-	BOOLEAN casePSTimer2 = FALSE;
+	
+	
     dev = (struct net_device *)dev_instance;
 	priv = GET_DEV_PRIV(dev);
+	ints=GET_HAL_INTERFACE(priv)->InterruptRecognizedHandler(priv, NULL, 0);
 
-    if(_FALSE == GET_HAL_INTERFACE(priv)->InterruptRecognizedHandler(priv, NULL, 0)) {
+    if(ints == 0) {
 #ifdef WLAN_NULL_INT_WORKAROUND
 		delay_us(40); 
 		priv->ext_stats.null_interrupt_cnt1++;
 		
-		if(_FALSE == GET_HAL_INTERFACE(priv)->InterruptRecognizedHandler(priv, NULL, 0)) 
+		ints = GET_HAL_INTERFACE(priv)->InterruptRecognizedHandler(priv, NULL, 0);
+		if(ints == 0)
 #endif			
 		{
 #ifdef PCIE_PME_WAKEUP_TEST//yllin         
@@ -1634,60 +1606,30 @@ __inline__ static int __rtl_wlan_interrupt(void *dev_instance)
 int_retry_process:    
 	{
         //4 Initialize
-        caseBcnInt          = FALSE;
-        caseBcnStatusOK     = FALSE;
-        caseBcnStatusER     = FALSE;
-        caseBcnDMAER        = FALSE;
-
-        caseRxRDU           = FALSE;
-        caseRxOK            = FALSE;
-        caseRxFOVW          = FALSE;
-        
-        #if defined(SW_TX_QUEUE) ||defined(RTK_ATM)
-        caseGTimer4Int      = FALSE;
-        #endif
-
-#if	defined(SUPPORT_AXI_BUS_EXCEPTION) 
-        caseAXIException    = FALSE;
-#endif
-
-#if defined(CONFIG_VERIWAVE_CHECK)
-        caseTimer1 = FALSE;
-#endif
-
-#if	defined(SUPPORT_TX_AMSDU) || defined(P2P_SUPPORT)
-        caseTimer2 = FALSE;
-#endif
 
         //4 Check interrupt handler
         // 1.) Beacon
-        caseBcnInt      = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_BcnInt_MBSSID);
-        caseBcnDMAER    = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_BCNDERR0);
 
-
-#ifdef  SUPPORT_EACH_VAP_INT
-        if (IS_SUPPORT_EACH_VAP_INT(priv)) {  
-            caseBcnStatusOK = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_TXBCNOK_MBSSID);
-            caseBcnStatusER = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_TXBCNERR_MBSSID);
-        }else
-#endif
-        {
-           caseBcnStatusOK = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_TBDOK);
-           caseBcnStatusER = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_TBDER);
-        }
-
-        if(TRUE == caseBcnDMAER)
+        if( ints & HAL_INT_FLAG_BCNDERR0)
         {
             priv->ext_stats.beacon_dma_err++;
         }
 
-        if (TRUE == caseBcnInt || TRUE == caseBcnStatusOK || TRUE == caseBcnStatusER) {
-            rtl88XX_bcnProc(priv, caseBcnInt, caseBcnStatusOK, caseBcnStatusER);
+        if (ints & (HAL_INT_FLAG_BcnInt_MBSSID |
+#ifdef  SUPPORT_EACH_VAP_INT
+			IS_SUPPORT_EACH_VAP_INT(priv)?(HAL_INT_FLAG_TXBCNOK_MBSSID|HAL_INT_FLAG_TXBCNERR_MBSSID):
+#endif
+		(HAL_INT_FLAG_TBDOK|HAL_INT_FLAG_TBDER) ) ) {
+#ifdef  SUPPORT_EACH_VAP_INT
+			if(IS_SUPPORT_EACH_VAP_INT(priv))
+				rtl88XX_bcnProc(priv, !!(ints & HAL_INT_FLAG_BcnInt_MBSSID), !!(ints & HAL_INT_FLAG_TXBCNOK_MBSSID), !!(ints & HAL_INT_FLAG_TXBCNERR_MBSSID));
+            else
+#endif
+				rtl88XX_bcnProc(priv, !!(ints & HAL_INT_FLAG_BcnInt_MBSSID), !!(ints & HAL_INT_FLAG_TBDOK), !!(ints & HAL_INT_FLAG_TBDER));
         }
 
 #ifdef TXREPORT
-		caseC2HIsr = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_C2HCMD);
-		if (TRUE == caseC2HIsr) {
+		if ( ints & HAL_INT_FLAG_C2HCMD) {
 #ifdef __ECOS
 			priv->pshare->has_triggered_C2H_isr = 1;
 			priv->pshare->call_dsr = 1;
@@ -1699,20 +1641,17 @@ int_retry_process:
 #endif
 
         // 2.) Rx
-        caseRxRDU = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_RDU);
-        if (TRUE == caseRxRDU) {
-            caseRxRDUCnt++; //filen: temp
+        if (ints & HAL_INT_FLAG_RDU) {
+            //caseRxRDUCnt++; //filen: temp
             priv->ext_stats.rx_rdu++;
-            priv->pshare->skip_mic_chk = SKIP_MIC_NUM;            
+            priv->pshare->skip_mic_chk = SKIP_MIC_NUM;
         }
         
-        caseRxOK = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_RX_OK);
-        if (TRUE == caseRxOK) {
-            caseRxOKCnt++; //filen: temp
+        if (ints & HAL_INT_FLAG_RX_OK) {
+            //caseRxOKCnt++; //filen: temp
         }
         
-        caseRxFOVW = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_RXFOVW);
-        if (TRUE == caseRxFOVW) {
+        if (ints & HAL_INT_FLAG_RXFOVW) {
             priv->ext_stats.rx_fifoO++;
             priv->pshare->skip_mic_chk = SKIP_MIC_NUM;            
         }
@@ -1721,56 +1660,53 @@ int_retry_process:
                 // 5.) check PS INT
 #ifdef HW_DETEC_POWER_STATE
             if (IS_SUPPORT_HW_DETEC_POWER_STATE(priv)) {    
-                casePwrInt0 = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_PwrInt0);
-                casePwrInt1 = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_PwrInt1);        
-                casePwrInt2 = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_PwrInt2);        
-                casePwrInt3 = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_PwrInt3);        
-                casePwrInt4 = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_PwrInt4);        
-                int  i;
+                //int  i;
 
                 //printk("casePwrInt0 = %x pwr = %x \n",casePwrInt0,RTL_R32(0x1140));          
                 
                 
-                if (TRUE == casePwrInt0 || TRUE == casePwrInt1 || TRUE == casePwrInt2 || TRUE == casePwrInt3 || TRUE == casePwrInt4) {
-#ifdef HW_DETEC_POWER_STATE                      
-                    if(TRUE == casePwrInt0)
+                if (ints & (HAL_INT_FLAG_PwrInt0|HAL_INT_FLAG_PwrInt1|HAL_INT_FLAG_PwrInt2|HAL_INT_FLAG_PwrInt3|HAL_INT_FLAG_PwrInt4)) {
+                    if(ints & HAL_INT_FLAG_PwrInt0)
                     {
                         detect_hw_pwr_state(priv,0);
                     }
 
-                    if(TRUE == casePwrInt1)
+                    if(ints & HAL_INT_FLAG_PwrInt1)
                     {
                         detect_hw_pwr_state(priv,1);
-                    }                    
+                    }
 
-                    if(TRUE == casePwrInt2)
+                    if(ints & HAL_INT_FLAG_PwrInt2)
                     {
                         detect_hw_pwr_state(priv,2);
-                    }                    
+                    }
 
-                    if(TRUE == casePwrInt3)
+                    if(ints & HAL_INT_FLAG_PwrInt3)
                     {
                         detect_hw_pwr_state(priv,3);
-                    }                    
-#endif //#ifdef HW_DETEC_POWER_STATE     
+                    }
+                    //vlad: is it missing or what? Check and uncomment.
+                    #if 0
+                    if(ints & HAL_INT_FLAG_PwrInt4)
+                    {
+                        detect_hw_pwr_state(priv,4);
+                    }
+                    #endif
                 }
             }
 #endif //defined(HW_DETEC_POWER_STATE)
 #endif 
 
-        if (TRUE == caseRxRDU || TRUE == caseRxOK || TRUE == caseRxFOVW) {
-            InterruptRxHandle(priv, caseRxRDU);
+        if (ints & (HAL_INT_FLAG_RDU|HAL_INT_FLAG_RX_OK|HAL_INT_FLAG_RXFOVW)) {
+            InterruptRxHandle(priv, !!(ints & HAL_INT_FLAG_RDU));
         }
-
+		//TODO: vlad: should we check for some flag here?
         // 3.) Tx
         InterruptTxHandle(priv);
 
         // 4.) check DMA error
-        caseTxFOVW = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_TXFOVW);
-        caseTxErr  = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_TXERR);
-        caseRxErr  = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_RXERR);
 
-        if (TRUE == caseTxFOVW || TRUE == caseTxErr) {
+        if (ints & (HAL_INT_FLAG_TXFOVW|HAL_INT_FLAG_TXERR)) {
             // check Tx DMA error
             u4Byte  TxDMAStatus = 0;
             GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_NUM_TXDMA_STATUS, (pu1Byte)&TxDMAStatus);
@@ -1787,7 +1723,7 @@ int_retry_process:
             }
 
 #ifdef CONFIG_WLAN_HAL_8814AE
-            if (caseTxFOVW) 
+            if (ints & HAL_INT_TYPE_TXFOVW) 
             {
                 priv->ext_stats.tx_fovw++;
             }
@@ -1795,7 +1731,7 @@ int_retry_process:
 
         }        
 
-        if (TRUE == caseRxFOVW || TRUE == caseRxErr) {
+        if (ints & (HAL_INT_FLAG_RXERR|HAL_INT_FLAG_RXFOVW)) {
             // check Rx DMA error            
             u1Byte  RxDMAStatus = 0;
             GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_NUM_RXDMA_STATUS, (pu1Byte)&RxDMAStatus);
@@ -1813,8 +1749,7 @@ int_retry_process:
         }
 
 #if defined(CONFIG_VERIWAVE_CHECK)
-        caseTimer1 = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_PSTIMEOUT1);
-        if (caseTimer1) {
+        if (ints & HAL_INT_FLAG_PSTIMEOUT1) {
             unsigned int current_value = 0;
             unsigned int timeout = 0;
             cancel_timer1(priv);
@@ -1835,8 +1770,7 @@ int_retry_process:
         // 4.) TX_AMSDU & P2P
 
 #if defined(SUPPORT_TX_AMSDU) || defined(P2P_SUPPORT)        
-        caseTimer2  = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_FS_TIMEOUT0);
-        if ( TRUE == caseTimer2 ) {
+        if ( ints & HAL_INT_FLAG_FS_TIMEOUT0 ) {
             InterruptPSTimer2Handle(priv);
         }
 
@@ -1860,8 +1794,7 @@ int_retry_process:
 #endif
     // 6.) SW TX QUEUE ,  RTK_ATM
     #if defined(SW_TX_QUEUE) ||defined(RTK_ATM)
-    caseGTimer4Int = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_GTIMER4);
-    if(caseGTimer4Int == TRUE) {
+    if(ints & HAL_INT_FLAG_GTIMER4) {
         
         #ifdef RTK_ATM  
         if(priv->pshare->rf_ft_var.atm_en) {
@@ -1892,15 +1825,13 @@ int_retry_process:
 
 	// 7.) AXI exception
 	#if	defined(SUPPORT_AXI_BUS_EXCEPTION) 
-        caseAXIException    = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_AXI_EXCEPTION);
-        if(caseAXIException == TRUE) {
+        if(ints & HAL_INT_FLAG_AXI_EXCEPTION) {
             priv->pshare->axi_exception++;		   
         }
     #endif
     // 8.) CPWM2 //yllin
     #if defined(SUPPORT_AP_OFFLOAD)
-        caseCPWM2  = GET_HAL_INTERFACE(priv)->GetInterruptHandler(priv, HAL_INT_TYPE_CPWM2);
-        if ( TRUE == caseCPWM2 ) {
+        if ( ints & HAL_INT_FLAG_CPWM2 ) {
             u1Byte reg_val;
             u4Byte u4_val;
             u1Byte rxdone_check_count=0;
@@ -1961,9 +1892,10 @@ int_retry_process:
     #endif 
 
 	if ((retry_cnt++) <= RTL_WLAN_INT_RETRY_CNT_MAX ) {
-		if (GET_HAL_INTERFACE(priv)->InterruptRecognizedHandler(priv, NULL, 0)) {
-			PHAL_DATA_TYPE              pHalData = _GET_HAL_DATA(priv);
-			if ((pHalData->IntArray_bak[0] != pHalData->IntArray[0]) || (pHalData->IntArray_bak[1] != pHalData->IntArray[1]))
+		ints=GET_HAL_INTERFACE(priv)->InterruptRecognizedHandler(priv, NULL, 0);
+		if (ints) {
+/*			PHAL_DATA_TYPE              pHalData = _GET_HAL_DATA(priv);
+			if ((pHalData->IntArray_bak[0] != pHalData->IntArray[0]) || (pHalData->IntArray_bak[1] != pHalData->IntArray[1]))*/
 				goto int_retry_process;
 		}
 	}	
@@ -1979,7 +1911,7 @@ void check_dma_error(struct rtl8192cd_priv *priv, unsigned int status, unsigned 
 	int clear_isr=0, check_tx_dma=0, check_rx_dma=0;
 
 #ifdef CONFIG_RTL_88E_SUPPORT
-	if (GET_CHIP_VER(priv)==VERSION_8188E) {
+	if (GET_CHIP_VER(priv)==VERSION_8188E)	 {
 		if ((status_ext & HIMRE_88E_RXFOVW) | (status_ext & HIMRE_88E_RXERR))
 			check_rx_dma++;
 		if ((status_ext & HIMRE_88E_TXFOVW) | (status_ext & HIMRE_88E_TXERR))
