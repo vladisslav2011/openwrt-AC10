@@ -287,9 +287,9 @@ enum WIFI_FRAME_SUBTYPE {
 
 
 #ifdef P2P_SUPPORT
-#define CATEGORY_P2P_PUBLIC_ACTION  		4 	
-#define ACTIONY_P2P_PUBLIC_ACTION  			9 	
-#define	_P2P_PUBLIC_ACTION_FIELD_			9		
+#define CATEGORY_P2P_PUBLIC_ACTION  		4
+#define ACTIONY_P2P_PUBLIC_ACTION  			9
+#define	_P2P_PUBLIC_ACTION_FIELD_			9
 #define _P2P_PUBLIC_ACTION_IE_OFFSET_		8
 #define _P2P_ACTION_IE_OFFSET_				7
 #define _P2P_IE_							221
@@ -326,7 +326,7 @@ enum WIFI_REASON_CODE	{
 	_RSON_ASOC_NOT_AUTH_			= 9,	// Request assiciate or reassociate, before authenticate
 	// 10,11,12 for 802.11h
 	// WPA reason
-	_RSON_DISASSOC_DUE_BSS_TRANSITION = 12,	//Disassociated due to BSS Transition Management	
+	_RSON_DISASSOC_DUE_BSS_TRANSITION = 12,	//Disassociated due to BSS Transition Management
 	_RSON_INVALID_IE_				= 13,
 	_RSON_MIC_FAILURE_				= 14,
 	_RSON_4WAY_HNDSHK_TIMEOUT_		= 15,
@@ -370,7 +370,7 @@ enum WIFI_STATUS_CODE {
 	_STATS_RATE_FAIL_				= 18,	// Denial authenticate, STA not support BSS request datarate.
 #ifdef CONFIG_IEEE80211R
 	_STATS_INVALID_PAIRWISE_CIPHER_	= 19,
-	_STATUS_R0KH_UNREACHABLE_		= 28,	
+	_STATUS_R0KH_UNREACHABLE_		= 28,
 #endif
 	_STATS_ASSOC_REJ_TEMP_			= 30,	// Association request rejected temporarily; try again later
 	_STATS_REQ_DECLINED_		= 37,
@@ -434,12 +434,12 @@ enum MEASUREMENT_TYPE {
     MEASUREMENT_TYPE_BEACON = 5,
     MEASUREMENT_TYPE_FRAME = 6,
     MEASUREMENT_TYPE_STA_STATISTIC = 7,
-    MEASUREMENT_TYPE_LCI = 8, 
-    MEASUREMENT_TYPE_XMIT_CATEGORY = 9,       
-    MEASUREMENT_TYPE_MCAST_DIAGNOSTICS = 10,    
-    MEASUREMENT_TYPE_LOC_CIVIC = 11,       
+    MEASUREMENT_TYPE_LCI = 8,
+    MEASUREMENT_TYPE_XMIT_CATEGORY = 9,
+    MEASUREMENT_TYPE_MCAST_DIAGNOSTICS = 10,
+    MEASUREMENT_TYPE_LOC_CIVIC = 11,
     MEASUREMENT_TYPE_LOC_IDENTIFIER = 12,
-    MEASUREMENT_TYPE_PAUSE = 255,                           
+    MEASUREMENT_TYPE_PAUSE = 255,
 };
 #endif
 
@@ -701,7 +701,7 @@ enum MEASUREMENT_TYPE {
 #define PMF_CAP					0x400
 #define PMF_NONE				0x200
 
-#define BIP_HEADER_LEN			26 
+#define BIP_HEADER_LEN			26
 #define MMIC_TAG_IE				1
 #define MMIC_TAG_LEN			1
 #define MMIC_CRC_LEN 			4
@@ -806,7 +806,7 @@ enum MEASUREMENT_TYPE {
 #define _DELBA_ACTION_ID_			2
 #define _VENDOR_ACTION_ID_			0x7f	// add for P2P_SUPPORT
 
-/*-----------------------------------------------------------------------------			
+/*-----------------------------------------------------------------------------
 				Below is for PMF related definition
 ------------------------------------------------------------------------------*/
 #define _SA_QUERY_CATEGORY_ID_		8
@@ -850,13 +850,13 @@ enum MEASUREMENT_TYPE {
 
 #define _WNM_PREFERED_BSS_TRANS_LIST_INCLUDED_	19
 
-#define _WNM_BSS_TRANS_SUPPORT_			BIT(3)		
+#define _WNM_BSS_TRANS_SUPPORT_			BIT(3)
 
 #define _WNM_PREFERRED_CANDIDATE_LIST_ 	BIT(0)		// 1: process
-#define _WNM_ABRIDGED_					BIT(1)		// 0: no recommandation or against 
+#define _WNM_ABRIDGED_					BIT(1)		// 0: no recommandation or against
 #define _WNM_DIASSOC_IMMINENT_			BIT(2)		// 1: diassoc from current AP
 #define _WNM_BSS_TERMINATION_INCLUDED_	BIT(3)		// 1: bss is shutting down
-#define _WNM_ESS_DIASSOC_IMMINENT_		BIT(4)		
+#define _WNM_ESS_DIASSOC_IMMINENT_		BIT(4)
 
 #define MAX_LIST_LEN						2304
 
@@ -951,8 +951,8 @@ enum bss_trans_mgmt_status_code {
 #endif
 
 #if (BEAMFORMING_SUPPORT == 1)
-#define _HTCAP_RECEIVED_NDP            BIT(3)    
-#define _HTCAP_TRANSMIT_NDP           BIT(4)    
+#define _HTCAP_RECEIVED_NDP            BIT(3)
+#define _HTCAP_TRANSMIT_NDP           BIT(4)
 #endif
 
 #define _HTCAP_AMPDU_FAC_8K_		0
@@ -991,7 +991,7 @@ enum bss_trans_mgmt_status_code {
  ------------------------------------------------------------------------------*/
 #define _DLS_CATEGORY_ID_			2
 #define _DLS_REQ_ACTION_ID_			0
-#define _DLS_RSP_ACTION_ID_			1	
+#define _DLS_RSP_ACTION_ID_			1
 #define _TDLS_CATEGORY_ID_ 			12
 
 #define	_TDLS_PROHIBITED_			BIT(6)
@@ -1047,7 +1047,7 @@ enum mgmt_type {
 	MGMT_PROBERSP = 1,
 	MGMT_ASSOCRSP = 2,
 	MGMT_ASSOCREQ = 3,
-	MGMT_PROBEREQ = 4,	
+	MGMT_PROBEREQ = 4,
 };
 /*-----------------------------------------------------------------------------
             Below is for Spectrum Management  related definition
@@ -1069,13 +1069,13 @@ enum mgmt_type {
 #define _NEIGHBOR_REPORT_REQEST_ACTION_ID_	    4
 #define _NEIGHBOR_REPORT_RESPONSE_ACTION_ID_	5
 
-#define _FRAME_BODY_SUBIE_		    1 
-#define _REPORT_DETAIL_SUBIE_		2 
+#define _FRAME_BODY_SUBIE_		    1
+#define _REPORT_DETAIL_SUBIE_		2
 #define MAX_BEACON_SUBLEMENT_LEN    226
 
 #ifdef SUPPORT_MONITOR
 #define PTK_LEN_UPPER_BOUND 256
-#define PTK_FILTER_LEN 		252	
+#define PTK_FILTER_LEN 		252
 #define WLAN_802_2_LEN		8
 #define WLAN_IP_HDR_LEN	20
 #define WLAN_UDP_LEN		8

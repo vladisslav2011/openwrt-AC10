@@ -5,14 +5,14 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	HalComDef.h
-	
+
 Abstract:
 	Defined HAL Mapping Type
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
-	2012-03-23 Filen            Create.	
+	2012-03-23 Filen            Create.
 --*/
 
 
@@ -98,7 +98,7 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #define HAL_DEV_BUS_TYPE	HAL_RT_SDIO_INTERFACE
 #endif
 
-//2 HAL Compile flag: 
+//2 HAL Compile flag:
 //Prefix: CFG_HAL_XXXXXXXXXXX
 #define CFG_HAL_DBG                          0
 
@@ -347,30 +347,30 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 //4 HW Offset between TXBD Beacon
 // Eric change, Beacon offset different in 8881 & other chips
 #if IS_EXIST_RTL8192EE || IS_EXIST_RTL8814AE ||IS_EXIST_RTL8197FEM ||IS_EXIST_RTL8822BE
-#define TXBD_BEACON_OFFSET_V1       128 
+#define TXBD_BEACON_OFFSET_V1       128
 #endif  //#if IS_EXIST_RTL8192EE || IS_EXIST_RTL8814AE ||IS_EXIST_RTL8197FEM
 
 #if IS_EXIST_RTL8881AEM
-#define TXBD_BEACON_OFFSET_V2       64  //Filen: Cant's be modified (HW Fixed value)       
+#define TXBD_BEACON_OFFSET_V2       64  //Filen: Cant's be modified (HW Fixed value)
 #endif  //IS_RTL8881A_SERIES
 
 #if 0
 #if IS_EXIST_RTL8192EE
-#define TXBD_BEACON_OFFSET_8192E    128 //Filen: Cant's be modified (HW Fixed value)       
+#define TXBD_BEACON_OFFSET_8192E    128 //Filen: Cant's be modified (HW Fixed value)
 #endif  //IS_RTL8192E_SERIES
 
 #if IS_EXIST_RTL8881AEM
-#define TXBD_BEACON_OFFSET_8881A    64  //Filen: Cant's be modified (HW Fixed value)       
+#define TXBD_BEACON_OFFSET_8881A    64  //Filen: Cant's be modified (HW Fixed value)
 #endif  //IS_RTL8881A_SERIES
 
 #if IS_EXIST_RTL8814AE
-#define TXBD_BEACON_OFFSET_8814AE   128 //Filen: Cant's be modified (HW Fixed value)       
+#define TXBD_BEACON_OFFSET_8814AE   128 //Filen: Cant's be modified (HW Fixed value)
 #endif  //IS_EXIST_RTL8814AE
 
 #if IS_EXIST_RTL8197FEM
-#define TXBD_BEACON_OFFSET_8197F    128 //Filen: Cant's be modified (HW Fixed value)       
+#define TXBD_BEACON_OFFSET_8197F    128 //Filen: Cant's be modified (HW Fixed value)
 #endif  //IS_EXIST_RTL8814AE
-#endif 
+#endif
 
 #define TXBD_BEACON_OFFSET_MAX      128 //Compare all Chip Beacon Offset
 
@@ -381,7 +381,7 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #if CFG_HAL_MAC_LOOPBACK
 #if (IS_RTL8192E_SERIES || IS_RTL8881A_SERIES || IS_RTL8197F_SERIES)
 #define TXPKTBUF_TOTAL_PAGECNT          256   // Filen: can't be modified in 92E/8881A
-#define TX_PAGE_CNT_HPQ                 0x04                 
+#define TX_PAGE_CNT_HPQ                 0x04
 #define TX_PAGE_CNT_NPQ                 0x29
 #define TX_PAGE_CNT_LPQ                 0x04
 #define TX_PAGE_CNT_EPQ                 0x04
@@ -396,19 +396,19 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #if (IS_RTL8814A_SERIES || IS_RTL8822B_SERIES)
 #define TXPKTBUF_TOTAL_PAGECNT_V1       2048  // Filen: can't be modified in 8814A
 #ifdef WMM_DSCP_C42
-#define TX_PAGE_CNT_HPQ_V1              80 
+#define TX_PAGE_CNT_HPQ_V1              80
 #define TX_PAGE_CNT_NPQ_V1              80
 #define TX_PAGE_CNT_LPQ_V1              80
 #define TX_PAGE_CNT_EPQ_V1              20
 #else
-#define TX_PAGE_CNT_HPQ_V1              20 
+#define TX_PAGE_CNT_HPQ_V1              20
 #define TX_PAGE_CNT_NPQ_V1              20
 #define TX_PAGE_CNT_LPQ_V1              20
 #define TX_PAGE_CNT_EPQ_V1              20
 #endif
 #if 0//IS_RTL8197F_SERIES
 #define TXPKTBUF_TOTAL_PAGECNT_V1       256  // Filen: can't be modified in 8197F
-#define TX_PAGE_CNT_HPQ_V1              0x4 
+#define TX_PAGE_CNT_HPQ_V1              0x4
 #define TX_PAGE_CNT_NPQ_V1              0x29
 #define TX_PAGE_CNT_LPQ_V1              0x4
 #define TX_PAGE_CNT_EPQ_V1              0x4
@@ -435,8 +435,8 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #define TX_PAGE_CNT_PUBQ                0x7E
 #else
 #define TX_PAGE_CNT_HPQ                 0x0e
-#define TX_PAGE_CNT_NPQ                 (Adapter->pshare->rf_ft_var.txbuf_merge ? 0x49: 0x29) 
-#define TX_PAGE_CNT_LPQ                 (Adapter->pshare->rf_ft_var.txbuf_merge ? 0x00: 0x20) 
+#define TX_PAGE_CNT_NPQ                 (Adapter->pshare->rf_ft_var.txbuf_merge ? 0x49: 0x29)
+#define TX_PAGE_CNT_LPQ                 (Adapter->pshare->rf_ft_var.txbuf_merge ? 0x00: 0x20)
 #define TX_PAGE_CNT_EPQ                 0x04
 #define TX_PAGE_CNT_PUBQ                0x9a
 #endif
@@ -471,7 +471,7 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 
 #if (IS_RTL8814A_SERIES || IS_RTL8822B_SERIES)
 #define TXPKTBUF_TOTAL_PAGECNT_V1       2048  // Filen: can't be modified in 8814A
-#define TX_PAGE_CNT_HPQ_V1              80 
+#define TX_PAGE_CNT_HPQ_V1              80
 #define TX_PAGE_CNT_NPQ_V1              80
 #define TX_PAGE_CNT_LPQ_V1              80
 #define TX_PAGE_CNT_EPQ_V1              40
@@ -514,7 +514,7 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 //
 #if (IS_RTL8192E_SERIES || IS_RTL8881A_SERIES || IS_RTL8197F_SERIES)
 #define TXPKTBUF_RQPN_PAGECNT           (TX_PAGE_CNT_HPQ + TX_PAGE_CNT_NPQ + TX_PAGE_CNT_LPQ + TX_PAGE_CNT_EPQ + TX_PAGE_CNT_PUBQ)
-#define TXPKTBUF_LLT_PAGECNT            (TXPKTBUF_RQPN_PAGECNT+1)   
+#define TXPKTBUF_LLT_PAGECNT            (TXPKTBUF_RQPN_PAGECNT+1)
 #endif //#if (IS_RTL8192E_SERIES || IS_RTL8881A_SERIES || IS_RTL8197F_SERIES)
 
 #if (IS_RTL8814A_SERIES || IS_RTL8822B_SERIES)
@@ -609,7 +609,7 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #define TRX_DMA_QUEUE_MAP_PARA          (BIT_TXDMA_VOQ_MAP(TXDMA_VOQ_MAP_SEL)|BIT_TXDMA_VIQ_MAP(TXDMA_VIQ_MAP_SEL)|\
                                         BIT_TXDMA_BEQ_MAP(TXDMA_BEQ_MAP_SEL)|BIT_TXDMA_BKQ_MAP(TXDMA_BKQ_MAP_SEL)|\
                                         BIT_TXDMA_MGQ_MAP(TXDMA_MGQ_MAP_SEL)|BIT_TXDMA_HIQ_MAP(TXDMA_HIQ_MAP_SEL))
-#ifdef WMM_DSCP_C42                                        
+#ifdef WMM_DSCP_C42
 #define TRX_DMA_QUEUE_MAP_PARA_14      	(BIT_TXDMA_VOQ_MAP(TXDMA_VOQ_MAP_SEL_14)|BIT_TXDMA_VIQ_MAP(TXDMA_VIQ_MAP_SEL_14)|\
                                         BIT_TXDMA_BEQ_MAP(TXDMA_BEQ_MAP_SEL_14)|BIT_TXDMA_BKQ_MAP(TXDMA_BKQ_MAP_SEL_14)|\
                                         BIT_TXDMA_MGQ_MAP(TXDMA_MGQ_MAP_SEL)|BIT_TXDMA_HIQ_MAP(TXDMA_HIQ_MAP_SEL))
@@ -664,10 +664,10 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #define CHECK_FW_RAMCODE_READY_TIMES        10
 #define CHECK_FW_RAMCODE_READY_DELAY_MS     20
 #define H2CBUF_OCCUPY_DELAY_CNT             30
-#define H2CBUF_OCCUPY_DELAY_US              10    
+#define H2CBUF_OCCUPY_DELAY_US              10
 #define C2H_CONTENT_LEN                     12
 #define LENGTH_C2HEXT_CONTENT				228 //256-24-4
-// For 3081 FW 
+// For 3081 FW
 #if IS_RTL88XX_FW_MIPS
 #define MIPS_DL_IMEM                        0
 #define MIPS_DL_DMEM                        1
@@ -702,7 +702,7 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 
 #endif //if IS_RTL88XX_FW_MIPS
 
-//4 MAC Sleep 
+//4 MAC Sleep
 #define MACID_REGION1_LIMIT                 31
 #define MACID_REGION2_LIMIT                 63
 #define MACID_REGION3_LIMIT                 95
@@ -711,31 +711,31 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #define HW_MACID_SEARCH_NOT_READY           0x7E
 #define HW_MACID_SEARCH_FAIL                0x7F
 #define HW_MACID_SEARCH_SUPPORT_NUM         (HW_MACID_SEARCH_FAIL-1)
-#define HAL_HWMACID_RESULT_SUCCESS          0                
+#define HAL_HWMACID_RESULT_SUCCESS          0
 #define HAL_HWMACID_RESULT_NOT_READY        1
 #define HAL_HWMACID_RESULT_FAIL             2
 
 //4 Beacon Related
 #define BEACON_ERALY_INIT_TIME              10
 
-//4 BB RF 
-#define CHANNEL_MAX_NUMBER_2G	            14	
+//4 BB RF
+#define CHANNEL_MAX_NUMBER_2G	            14
 
 
-//4 TXRPT buffer related 
-#define MaxMacIDNum                         128   
+//4 TXRPT buffer related
+#define MaxMacIDNum                         128
 #define MaxMacIDGroupNum                    11
 #define RPTBufferStartHiAddr                0x660    // ReportBuffer base address: 0x18660000
-#define CRC5StartAddr                       0x800    // CRC5 start address in RPTbuffer: 0x18661800   
-#define CRC5BitNum                          5       
+#define CRC5StartAddr                       0x800    // CRC5 start address in RPTbuffer: 0x18661800
+#define CRC5BitNum                          5
 #define CRC5GroupBitNum                     64
 #define CRC5GroupByteNum                    8
 #define macIDNumperGroup                    12       // 64/5=12
 #define RWCtrlBit                           BIT15
 #define CRCAcrossSHT                        30       // The six number of CRC val will across the 32bit, start at bit30
-#define SecondBitSHT                        2       
+#define SecondBitSHT                        2
 #define CRC5EndBit                          BIT28
-#define CRC5ValidBit                        BIT29      
+#define CRC5ValidBit                        BIT29
 
 
 #if IS_EXIST_PCI
@@ -781,22 +781,22 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #define TXBD_SEG_32_64_SEL      0
 
 // TXBD Segment Selection
-// 0: 2 Segment 
+// 0: 2 Segment
 // 1: 4 Segment
 // 2: 8 Segment
 #define TX_VOQ_TXBD_MODE_SEL    1
-#define TX_VIQ_TXBD_MODE_SEL    1    
-#define TX_BEQ_TXBD_MODE_SEL    1        
+#define TX_VIQ_TXBD_MODE_SEL    1
+#define TX_BEQ_TXBD_MODE_SEL    1
 #define TX_BKQ_TXBD_MODE_SEL    1
-#define TX_MGQ_TXBD_MODE_SEL    1        
+#define TX_MGQ_TXBD_MODE_SEL    1
 #define TX_BCNQ_TXBD_MODE_SEL   1
-#define TX_HI0Q_TXBD_MODE_SEL   1        
+#define TX_HI0Q_TXBD_MODE_SEL   1
 #define TX_HI1Q_TXBD_MODE_SEL   1
-#define TX_HI2Q_TXBD_MODE_SEL   1        
+#define TX_HI2Q_TXBD_MODE_SEL   1
 #define TX_HI3Q_TXBD_MODE_SEL   1
-#define TX_HI4Q_TXBD_MODE_SEL   1        
+#define TX_HI4Q_TXBD_MODE_SEL   1
 #define TX_HI5Q_TXBD_MODE_SEL   1
-#define TX_HI6Q_TXBD_MODE_SEL   1        
+#define TX_HI6Q_TXBD_MODE_SEL   1
 #define TX_HI7Q_TXBD_MODE_SEL   1
 #define TX_H2CQ_TXBD_MODE_SEL   1
 
@@ -850,7 +850,7 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #if IS_EXIST_RTL8814AE
 #define TX_BCNQ_TXBD_NUM_8814AE	(1+HAL_NUM_VWLAN)*(TXBD_BEACON_OFFSET_V1/sizeof(TX_BUFFER_DESCRIPTOR))  // Root + VAP Num
 #endif //IS_EXIST_RTL8814AE
-#endif 
+#endif
 
 #define NUM_TX_DESC_CMDQ        32
 
@@ -896,12 +896,12 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #define DESC_DMA_SIZE_NO_BCNQ \
     (TOTAL_NUM_RXBD * sizeof(RX_BUFFER_DESCRIPTOR) + \
      TOTAL_NUM_TXBD_NO_BCN * (sizeof(TX_BUFFER_DESCRIPTOR) + SIZE_TXDESC_88XX_MAX))
-     
+
 #define DESC_DMA_SIZE_NO_BCNQ_IF(Adapter) \
 		(TOTAL_NUM_RXBD_IF(Adapter) * sizeof(RX_BUFFER_DESCRIPTOR) + \
 		 TOTAL_NUM_TXBD_NO_BCN * (sizeof(TX_BUFFER_DESCRIPTOR) + SIZE_TXDESC_88XX_MAX))
-     
-#endif 
+
+#endif
 
 #define HAL_PAGE_SIZE   PAGE_SIZE
 
@@ -917,7 +917,7 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #define DESC_DMA_SIZE_8881A (DESC_DMA_SIZE_NO_BCNQ + \
                              (1+HAL_NUM_VWLAN) * TXBD_BEACON_OFFSET_V2 + \
                              (1+HAL_NUM_VWLAN) * SIZE_TXDESC_88XX)
-    
+
 #define DESC_DMA_PAGE_SIZE_8881A    (DESC_DMA_SIZE_8881A + HAL_PAGE_SIZE)
 #endif  // IS_RTL8881A_SERIES
 
@@ -930,11 +930,11 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #define DESC_DMA_SIZE_MAX (DESC_DMA_SIZE_NO_BCNQ + \
                              (1+HAL_NUM_VWLAN) * TXBD_BEACON_OFFSET_MAX + \
                              (1+HAL_NUM_VWLAN) * SIZE_TXDESC_88XX_MAX)
-                             
+
 #define DESC_DMA_SIZE_MAX_IF(Adapter) (DESC_DMA_SIZE_NO_BCNQ_IF(Adapter) + \
                              (1+HAL_NUM_VWLAN) * TXBD_BEACON_OFFSET_MAX + \
-                             (1+HAL_NUM_VWLAN) * SIZE_TXDESC_88XX_MAX)                             
-#endif 
+                             (1+HAL_NUM_VWLAN) * SIZE_TXDESC_88XX_MAX)
+#endif
 
 #define DESC_DMA_PAGE_SIZE_MAX_HAL    (DESC_DMA_SIZE_MAX + HAL_PAGE_SIZE)
 #define DESC_DMA_PAGE_SIZE_MAX_HAL_IF(Adapter)    (DESC_DMA_SIZE_MAX_IF(Adapter) + HAL_PAGE_SIZE)
@@ -958,8 +958,8 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 
 #if CFG_HAL_HW_TX_SHORTCUT_HDR_CONV
 // FramCtrl, DurID, A1, A2, A3, SeqNum, A4, Qos, HTCtrl, IV, EIV,
-//       2   +    2   + 6 + 6 + 6 +    2    + 6 + 2  +   4    + 4 + 4  = 44 bytes 
-// TODO: in test chip, we should add 8 byte (llc) for this max value, 
+//       2   +    2   + 6 + 6 + 6 +    2    + 6 + 2  +   4    + 4 + 4  = 44 bytes
+// TODO: in test chip, we should add 8 byte (llc) for this max value,
 // TODO: i.e., HAL_WIFI_HEADER_LEN_MAX is (44+8) for 8814AE test chip
 #define HAL_WIFI_HEADER_LEN_MAX		44
 #define HAL_ETH_HEADER_LEN_MAX		WLAN_ETHHDR_LEN // 14 bytes
@@ -979,7 +979,7 @@ extern void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned in
 #endif  //IS_RTL88XX_GENERATION
 
 
-//3 Mapping Basic Type 
+//3 Mapping Basic Type
 #define VOID void
 #define PVOID void *
 
@@ -1074,13 +1074,13 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
 
 #define PlatformEFIORead1Byte(Adapter,reg)		\
         (( Adapter->pwr_state==L2  || Adapter->pwr_state==L1) ? 0 :(RTL_R8_F(Adapter, reg)) )
-    
+
 #define PlatformEFIORead2Byte(Adapter,reg)	\
         (( Adapter->pwr_state==L2  || Adapter->pwr_state==L1) ? 0 : (RTL_R16_F(Adapter, reg)))
-    
+
 #define PlatformEFIORead4Byte(Adapter,reg)	\
         (( Adapter->pwr_state==L2  || Adapter->pwr_state==L1) ? 0 : (RTL_R32_F(Adapter, reg)))
-    
+
 #define PlatformEFIOWrite1Byte(Adapter,reg,val8)	\
         do { \
         if( Adapter->pwr_state==L2  || Adapter->pwr_state==L1) \
@@ -1088,7 +1088,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
         else \
             RTL_W8_F(Adapter, reg, val8); \
         } while (0)
-    
+
 #define PlatformEFIOWrite2Byte(Adapter,reg,val16)	\
         do { \
         if( Adapter->pwr_state==L2  || Adapter->pwr_state==L1) \
@@ -1096,7 +1096,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
         else \
             RTL_W16_F(Adapter, reg, val16); \
         } while (0)
-    
+
 #define PlatformEFIOWrite4Byte(Adapter,reg,val32)	\
         do { \
         if( Adapter->pwr_state==L2  || Adapter->pwr_state==L1) \
@@ -1108,13 +1108,13 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
 #elif defined(CONFIG_32K)  //tingchu
 #define HAL_RTL_R8(reg)		\
                     (( Adapter->offload_32k_flag ==2) ? 0 :(RTL_R8_F(Adapter, reg)) )
-                
+
 #define HAL_RTL_R16(reg)	\
                     (( Adapter->offload_32k_flag ==2) ? 0 : (RTL_R16_F(Adapter, reg)))
-                
+
 #define HAL_RTL_R32(reg)	\
                     (( Adapter->offload_32k_flag ==2) ? 0 : (RTL_R32_F(Adapter, reg)))
-                
+
 #define HAL_RTL_W8(reg, val8)	\
                     do { \
                     if(Adapter->offload_32k_flag ==2) \
@@ -1122,7 +1122,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
                     else \
                         RTL_W8_F(Adapter, reg, val8); \
                     } while (0)
-                
+
 #define HAL_RTL_W16(reg, val16)	\
                     do { \
                     if( Adapter->offload_32k_flag ==2) \
@@ -1130,7 +1130,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
                     else \
                         RTL_W16_F(Adapter, reg, val16); \
                     } while (0)
-                
+
 #define HAL_RTL_W32(reg, val32)	\
                     do { \
                     if( Adapter->offload_32k_flag ==2) \
@@ -1138,17 +1138,17 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
                     else \
                         RTL_W32_F(Adapter, reg, val32) ; \
                     } while (0)
-                
-                
+
+
 #define PlatformEFIORead1Byte(Adapter,reg)		\
                         (( Adapter->offload_32k_flag ==2) ? 0 :(RTL_R8_F(Adapter, reg)) )
-                    
+
 #define PlatformEFIORead2Byte(Adapter,reg)	\
                         (( Adapter->offload_32k_flag ==2) ? 0 : (RTL_R16_F(Adapter, reg)))
-                    
+
 #define PlatformEFIORead4Byte(Adapter,reg)	\
                         (( Adapter->offload_32k_flag ==2) ? 0 : (RTL_R32_F(Adapter, reg)))
-                    
+
 #define PlatformEFIOWrite1Byte(Adapter,reg,val8)	\
                         do { \
                         if( Adapter->offload_32k_flag ==2) \
@@ -1156,7 +1156,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
                         else \
                             RTL_W8_F(Adapter, reg, val8); \
                         } while (0)
-                    
+
 #define PlatformEFIOWrite2Byte(Adapter,reg,val16)	\
                         do { \
                         if( Adapter->offload_32k_flag ==2) \
@@ -1164,7 +1164,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
                         else \
                             RTL_W16_F(Adapter, reg, val16); \
                         } while (0)
-                    
+
 #define PlatformEFIOWrite4Byte(Adapter,reg,val32)	\
                         do { \
                         if( Adapter->offload_32k_flag ==2) \
@@ -1204,13 +1204,13 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
 #define PlatformEFIORead2Byte(Adapter,reg)        \
             (RTL_R16_F(Adapter, reg))
 #define PlatformEFIORead4Byte(Adapter,reg)        \
-            (RTL_R32_F(Adapter, reg))   
+            (RTL_R32_F(Adapter, reg))
 
 
 #define PlatformEFIOWrite1Byte(Adapter,reg,val8)        \
     do { \
         RTL_W8_F(Adapter, reg, val8); \
-    } while (0)            
+    } while (0)
 #define PlatformEFIOWrite2Byte(Adapter,reg,val16)        \
     do { \
         RTL_W16_F(Adapter, reg, val16); \
@@ -1219,7 +1219,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
     do { \
         RTL_W32_F(Adapter, reg, val32) ; \
     } while (0)
-#endif    
+#endif
 
 #endif
 
@@ -1312,7 +1312,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
 #if (CFG_HAL_SUPPORT_UNIVERSAL_REPEATER) || (CFG_HAL_SUPPORT_MBSSID)
 //#define HAL_GET_ROOT_PRIV(Adapter)          GET_ROOT_PRIV(Adapter)
 #define HAL_IS_ROOT_INTERFACE(Adapter)      IS_ROOT_INTERFACE(Adapter)
-#define HAL_GET_ROOT(Adapter)               GET_ROOT(Adapter)								
+#define HAL_GET_ROOT(Adapter)               GET_ROOT(Adapter)
 #else
 #define HAL_GET_ROOT(Adapter)               GET_ROOT(Adapter)
 #endif
@@ -1338,7 +1338,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
 #define HAL_POWER_RANGE_CHECK(val)                          POWER_RANGE_CHECK(val)
 #define HAL_EFUSE_POWER_RANGE_CHECK(val)                    (((val) > 0x3f)? 0x0 : ((val < 0) ? 0x0 : val))
 #define HAL_COUNT_SIGN_OFFSET(base, offset)                 COUNT_SIGN_OFFSET(base, offset)
-#define HAL_RTL_ABS(a,b)                                    RTL_ABS(a,b)    
+#define HAL_RTL_ABS(a,b)                                    RTL_ABS(a,b)
 
 //3 Mapping Protocol Function
 #define HAL_IS_MCAST(da)                    IS_MCAST(da)
@@ -1385,7 +1385,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
 //
 // Byte Swapping routine.
 //
-#define HAL_EF1Byte	
+#define HAL_EF1Byte
 #define HAL_EF2Byte 	le16_to_cpu
 #define HAL_EF4Byte     le32_to_cpu
 
@@ -1409,7 +1409,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
 #define GET_BUF_DATA_PTR(ptr)                                       (ptr->data)
 
 
-//3 Mapping Debug 
+//3 Mapping Debug
 #if     CFG_HAL_DBG
 #define HalDbgPrint    printk
 #else
@@ -1496,75 +1496,75 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
 #define HAL_VAR_pwrdiff5GHT40_2S(chIdx)     (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff5GHT40_2S)+chIdx))
 #define HAL_VAR_pwrdiff5GHT20(chIdx)        (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff5GHT20)+chIdx))
 #define HAL_VAR_pwrdiff5GOFDM(chIdx)        (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff5GOFDM)+chIdx))
-#define HAL_VAR_pwrdiff_20BW1S_OFDM1T_A(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_20BW1S_OFDM1T_A)+chIdx))	
-#define HAL_VAR_pwrdiff_40BW2S_20BW2S_A(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW2S_20BW2S_A)+chIdx))	
+#define HAL_VAR_pwrdiff_20BW1S_OFDM1T_A(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_20BW1S_OFDM1T_A)+chIdx))
+#define HAL_VAR_pwrdiff_40BW2S_20BW2S_A(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW2S_20BW2S_A)+chIdx))
 #define HAL_VAR_pwrdiff_OFDM2T_CCK2T_A(chIdx)       (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM2T_CCK2T_A)+chIdx))
-#define HAL_VAR_pwrdiff_40BW3S_20BW3S_A(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW3S_20BW3S_A)+chIdx))	
+#define HAL_VAR_pwrdiff_40BW3S_20BW3S_A(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW3S_20BW3S_A)+chIdx))
 #define HAL_VAR_pwrdiff_4OFDM3T_CCK3T_A(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM3T_CCK3T_A)+chIdx))
-#define HAL_VAR_pwrdiff_40BW4S_20BW4S_A(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW4S_20BW4S_A)+chIdx))	
+#define HAL_VAR_pwrdiff_40BW4S_20BW4S_A(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW4S_20BW4S_A)+chIdx))
 #define HAL_VAR_pwrdiff_OFDM4T_CCK4T_A(chIdx)       (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM4T_CCK4T_A)+chIdx))
 #define HAL_VAR_pwrdiff_5G_20BW1S_OFDM1T_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_20BW1S_OFDM1T_A)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW2S_20BW2S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW2S_20BW2S_A)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW3S_20BW3S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW3S_20BW3S_A)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW4S_20BW4S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW4S_20BW4S_A)+chIdx))
-#define HAL_VAR_pwrdiff_5G_RSVD_OFDM4T_A(chIdx)	    (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_RSVD_OFDM4T_A)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW1S_160BW1S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW1S_160BW1S_A)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW2S_160BW2S_A)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW3S_160BW3S_A)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW4S_160BW4S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW4S_160BW4S_A)+chIdx))	
-#define HAL_VAR_pwrdiff_20BW1S_OFDM1T_B(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_20BW1S_OFDM1T_B)+chIdx))	
-#define HAL_VAR_pwrdiff_40BW2S_20BW2S_B(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW2S_20BW2S_B)+chIdx))	
+#define HAL_VAR_pwrdiff_5G_RSVD_OFDM4T_A(chIdx)	    (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_RSVD_OFDM4T_A)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW1S_160BW1S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW1S_160BW1S_A)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW2S_160BW2S_A)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW3S_160BW3S_A)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW4S_160BW4S_A(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW4S_160BW4S_A)+chIdx))
+#define HAL_VAR_pwrdiff_20BW1S_OFDM1T_B(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_20BW1S_OFDM1T_B)+chIdx))
+#define HAL_VAR_pwrdiff_40BW2S_20BW2S_B(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW2S_20BW2S_B)+chIdx))
 #define HAL_VAR_pwrdiff_OFDM2T_CCK2T_B(chIdx)       (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM2T_CCK2T_B)+chIdx))
-#define HAL_VAR_pwrdiff_40BW3S_20BW3S_B(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW3S_20BW3S_B)+chIdx))	
+#define HAL_VAR_pwrdiff_40BW3S_20BW3S_B(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW3S_20BW3S_B)+chIdx))
 #define HAL_VAR_pwrdiff_4OFDM3T_CCK3T_B(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM3T_CCK3T_B)+chIdx))
-#define HAL_VAR_pwrdiff_40BW4S_20BW4S_B(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW4S_20BW4S_B)+chIdx))	
+#define HAL_VAR_pwrdiff_40BW4S_20BW4S_B(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW4S_20BW4S_B)+chIdx))
 #define HAL_VAR_pwrdiff_OFDM4T_CCK4T_B(chIdx)       (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM4T_CCK4T_B)+chIdx))
 #define HAL_VAR_pwrdiff_5G_20BW1S_OFDM1T_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_20BW1S_OFDM1T_B)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW2S_20BW2S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW2S_20BW2S_B)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW3S_20BW3S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW3S_20BW3S_B)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW4S_20BW4S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW4S_20BW4S_B)+chIdx))
-#define HAL_VAR_pwrdiff_5G_RSVD_OFDM4T_B(chIdx)	    (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_RSVD_OFDM4T_B)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW1S_160BW1S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW1S_160BW1S_B)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW2S_160BW2S_B)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW3S_160BW3S_B)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW4S_160BW4S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW4S_160BW4S_B)+chIdx))	
-#define HAL_VAR_pwrdiff_20BW1S_OFDM1T_C(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_20BW1S_OFDM1T_C)+chIdx))	
-#define HAL_VAR_pwrdiff_40BW2S_20BW2S_C(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW2S_20BW2S_C)+chIdx))	
+#define HAL_VAR_pwrdiff_5G_RSVD_OFDM4T_B(chIdx)	    (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_RSVD_OFDM4T_B)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW1S_160BW1S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW1S_160BW1S_B)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW2S_160BW2S_B)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW3S_160BW3S_B)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW4S_160BW4S_B(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW4S_160BW4S_B)+chIdx))
+#define HAL_VAR_pwrdiff_20BW1S_OFDM1T_C(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_20BW1S_OFDM1T_C)+chIdx))
+#define HAL_VAR_pwrdiff_40BW2S_20BW2S_C(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW2S_20BW2S_C)+chIdx))
 #define HAL_VAR_pwrdiff_OFDM2T_CCK2T_C(chIdx)       (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM2T_CCK2T_C)+chIdx))
-#define HAL_VAR_pwrdiff_40BW3S_20BW3S_C(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW3S_20BW3S_C)+chIdx))	
+#define HAL_VAR_pwrdiff_40BW3S_20BW3S_C(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW3S_20BW3S_C)+chIdx))
 #define HAL_VAR_pwrdiff_4OFDM3T_CCK3T_C(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM3T_CCK3T_C)+chIdx))
-#define HAL_VAR_pwrdiff_40BW4S_20BW4S_C(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW4S_20BW4S_C)+chIdx))	
+#define HAL_VAR_pwrdiff_40BW4S_20BW4S_C(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW4S_20BW4S_C)+chIdx))
 #define HAL_VAR_pwrdiff_OFDM4T_CCK4T_C(chIdx)       (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM4T_CCK4T_C)+chIdx))
 #define HAL_VAR_pwrdiff_5G_20BW1S_OFDM1T_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_20BW1S_OFDM1T_C)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW2S_20BW2S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW2S_20BW2S_C)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW3S_20BW3S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW3S_20BW3S_C)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW4S_20BW4S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW4S_20BW4S_C)+chIdx))
-#define HAL_VAR_pwrdiff_5G_RSVD_OFDM4T_C(chIdx)	    (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_RSVD_OFDM4T_C)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW1S_160BW1S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW1S_160BW1S_C)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW2S_160BW2S_C)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW3S_160BW3S_C)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW4S_160BW4S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW4S_160BW4S_C)+chIdx))	
-#define HAL_VAR_pwrdiff_20BW1S_OFDM1T_D(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_20BW1S_OFDM1T_D)+chIdx))	
-#define HAL_VAR_pwrdiff_40BW2S_20BW2S_D(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW2S_20BW2S_D)+chIdx))	
+#define HAL_VAR_pwrdiff_5G_RSVD_OFDM4T_C(chIdx)	    (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_RSVD_OFDM4T_C)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW1S_160BW1S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW1S_160BW1S_C)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW2S_160BW2S_C)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW3S_160BW3S_C)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW4S_160BW4S_C(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW4S_160BW4S_C)+chIdx))
+#define HAL_VAR_pwrdiff_20BW1S_OFDM1T_D(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_20BW1S_OFDM1T_D)+chIdx))
+#define HAL_VAR_pwrdiff_40BW2S_20BW2S_D(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW2S_20BW2S_D)+chIdx))
 #define HAL_VAR_pwrdiff_OFDM2T_CCK2T_D(chIdx)       (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM2T_CCK2T_D)+chIdx))
-#define HAL_VAR_pwrdiff_40BW3S_20BW3S_D(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW3S_20BW3S_D)+chIdx))	
+#define HAL_VAR_pwrdiff_40BW3S_20BW3S_D(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW3S_20BW3S_D)+chIdx))
 #define HAL_VAR_pwrdiff_4OFDM3T_CCK3T_D(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM3T_CCK3T_D)+chIdx))
-#define HAL_VAR_pwrdiff_40BW4S_20BW4S_D(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW4S_20BW4S_D)+chIdx))	
+#define HAL_VAR_pwrdiff_40BW4S_20BW4S_D(chIdx)  	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_40BW4S_20BW4S_D)+chIdx))
 #define HAL_VAR_pwrdiff_OFDM4T_CCK4T_D(chIdx)       (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_OFDM4T_CCK4T_D)+chIdx))
 #define HAL_VAR_pwrdiff_5G_20BW1S_OFDM1T_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_20BW1S_OFDM1T_D)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW2S_20BW2S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW2S_20BW2S_D)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW3S_20BW3S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW3S_20BW3S_D)+chIdx))
 #define HAL_VAR_pwrdiff_5G_40BW4S_20BW4S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_40BW4S_20BW4S_D)+chIdx))
-#define HAL_VAR_pwrdiff_5G_RSVD_OFDM4T_D(chIdx)	    (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_RSVD_OFDM4T_D)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW1S_160BW1S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW1S_160BW1S_D)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW2S_160BW2S_D)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW3S_160BW3S_D)+chIdx))	
-#define HAL_VAR_pwrdiff_5G_80BW4S_160BW4S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW4S_160BW4S_D)+chIdx))	
+#define HAL_VAR_pwrdiff_5G_RSVD_OFDM4T_D(chIdx)	    (*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_RSVD_OFDM4T_D)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW1S_160BW1S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW1S_160BW1S_D)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW2S_160BW2S_D)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW3S_160BW3S_D)+chIdx))
+#define HAL_VAR_pwrdiff_5G_80BW4S_160BW4S_D(chIdx)	(*(((u1Byte *)Adapter->pmib->dot11RFEntry.pwrdiff_5G_80BW4S_160BW4S_D)+chIdx))
 #if (IS_RTL8814A_SERIES || IS_RTL8822B_SERIES)
-#define HAL_VAR_CurrentTxAgcCCK(path,chIdx)			(*(((u1Byte *)Adapter->pshare->phw->CurrentTxAgcCCK)+path*4+chIdx))	
-#define HAL_VAR_CurrentTxAgcOFDM(path,rate)			(*(((u1Byte *)Adapter->pshare->phw->CurrentTxAgcOFDM)+path*8+rate))	
-#define HAL_VAR_CurrentTxAgcMCS(path,rate)			(*(((u1Byte *)Adapter->pshare->phw->CurrentTxAgcMCS)+path*32+rate))	
-#define HAL_VAR_CurrentTxAgcVHT(path,rate)			(*(((u1Byte *)Adapter->pshare->phw->CurrentTxAgcVHT)+path*40+rate))	
+#define HAL_VAR_CurrentTxAgcCCK(path,chIdx)			(*(((u1Byte *)Adapter->pshare->phw->CurrentTxAgcCCK)+path*4+chIdx))
+#define HAL_VAR_CurrentTxAgcOFDM(path,rate)			(*(((u1Byte *)Adapter->pshare->phw->CurrentTxAgcOFDM)+path*8+rate))
+#define HAL_VAR_CurrentTxAgcMCS(path,rate)			(*(((u1Byte *)Adapter->pshare->phw->CurrentTxAgcMCS)+path*32+rate))
+#define HAL_VAR_CurrentTxAgcVHT(path,rate)			(*(((u1Byte *)Adapter->pshare->phw->CurrentTxAgcVHT)+path*40+rate))
 #endif
 
 // 11n OFDM setting
@@ -1592,7 +1592,7 @@ typedef struct stat_info        _HAL_STA_INFO,*P_HAL_STA_INFO;
 #define HAL_VAR_MCSTxAgcOffset_A(idx)       (*(((u1Byte *)Adapter->pshare->phw->MCSTxAgcOffset_A)+idx))
 #define HAL_VAR_MCSTxAgcOffset_B(idx)       (*(((u1Byte *)Adapter->pshare->phw->MCSTxAgcOffset_B)+idx))
 
-// 11n CCK setting 
+// 11n CCK setting
 #define HAL_cck_pwr_max                     (Adapter->pshare->rf_ft_var.cck_pwr_max)
 #define HAL_txPowerPlus_cck_1               (Adapter->pshare->rf_ft_var.txPowerPlus_cck_1)
 #define HAL_txPowerPlus_cck_2               (Adapter->pshare->rf_ft_var.txPowerPlus_cck_2)

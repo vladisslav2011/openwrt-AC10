@@ -52,7 +52,7 @@
 #define LIB1X_EAPOL_KEY				3		//0000 0011B
 #define LIB1X_EAPOL_ENCASFALERT		4		//0000 0100B
 #ifdef CONFIG_IEEE80211W_CLI
-#define KeyAKMPos					16	
+#define KeyAKMPos					16
 #define KEY_AKM_LEN					4
 #endif
 
@@ -102,8 +102,8 @@ enum {
 
 #ifdef CONFIG_IEEE80211W
 enum mfp_options {
-	NO_MGMT_FRAME_PROTECTION = 0,	
-	MGMT_FRAME_PROTECTION_OPTIONAL = 1,	
+	NO_MGMT_FRAME_PROTECTION = 0,
+	MGMT_FRAME_PROTECTION_OPTIONAL = 1,
 	MGMT_FRAME_PROTECTION_REQUIRED = 2
 };
 #endif
@@ -216,13 +216,13 @@ typedef struct _wpa_global_info {
 	unsigned char		GMK[GMK_LEN];
 	int					GN;
 	int					GM;
-#ifdef CONFIG_IEEE80211W	
-#ifdef CONFIG_IEEE80211W_CLI		
-	unsigned short		rsnie_cap;	
-#endif	
-	unsigned char		IGTK[2][IGTK_LEN];	
-	int					GN_igtk;	
-	int 				GM_igtk;	
+#ifdef CONFIG_IEEE80211W
+#ifdef CONFIG_IEEE80211W_CLI
+	unsigned short		rsnie_cap;
+#endif
+	unsigned char		IGTK[2][IGTK_LEN];
+	int					GN_igtk;
+	int 				GM_igtk;
 	union PN48 IGTK_PN;
 #endif
 	int					GRekeyCounts;
@@ -256,11 +256,11 @@ typedef struct _wpa_sta_info {
 	unsigned char		UnicastCipher;
  	unsigned char		NumOfRxTSC;
  	unsigned char		AuthKeyMethod;
-#ifdef CONFIG_IEEE80211W	
+#ifdef CONFIG_IEEE80211W
 	enum mfp_options ieee80211w;	/* dot11AssociationSAQueryMaximumTimeout (in TUs) */
-	unsigned int assoc_sa_query_max_timeout;	/* dot11AssociationSAQueryRetryTimeout (in TUs) */	
+	unsigned int assoc_sa_query_max_timeout;	/* dot11AssociationSAQueryRetryTimeout (in TUs) */
 	int assoc_sa_query_retry_timeout;
-#endif /* CONFIG_IEEE80211W */	
+#endif /* CONFIG_IEEE80211W */
  	int					isSuppSupportPreAuthentication;
 	int					isSuppSupportPairwiseAsDefaultKey;
 	LARGE_INTEGER		CurrentReplayCounter;
@@ -286,7 +286,7 @@ typedef struct _wpa_sta_info {
 	int					clientHndshkDone;
 	int 				clientGkeyUpdate;
 	LARGE_INTEGER		clientMICReportReplayCounter;
-#ifdef CONFIG_IEEE80211W	
+#ifdef CONFIG_IEEE80211W
 	BOOLEAN 			mgmt_frame_prot;
 #endif
 #ifdef CONFIG_IEEE80211R

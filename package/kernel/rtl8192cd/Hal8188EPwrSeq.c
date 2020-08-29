@@ -3,15 +3,15 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	Hal8188EPwrSeq.c
-	
+
 Abstract:
 	This file includes all kinds of Power Action event for RTL8188E and corresponding hardware configurtions which are released from HW SD.
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
 	2011-07-07 Roger            Create.
-	
+
 --*/
 #ifdef __ECOS
 #include <cyg/io/eth/rltk/819x/wrapper/sys_support.h>
@@ -80,7 +80,7 @@ WLAN_PWR_CFG rtl8188E_resume_flow[RTL8188E_TRANS_ACT_TO_CARDEMU_STEPS+RTL8188E_T
 WLAN_PWR_CFG rtl8188E_hwpdn_flow[RTL8188E_TRANS_ACT_TO_CARDEMU_STEPS+RTL8188E_TRANS_CARDEMU_TO_PDN_STEPS+RTL8188E_TRANS_END_STEPS]=
 {
 	RTL8188E_TRANS_ACT_TO_CARDEMU
-	RTL8188E_TRANS_CARDEMU_TO_PDN	
+	RTL8188E_TRANS_CARDEMU_TO_PDN
 	RTL8188E_TRANS_END
 };
 
@@ -88,7 +88,7 @@ WLAN_PWR_CFG rtl8188E_hwpdn_flow[RTL8188E_TRANS_ACT_TO_CARDEMU_STEPS+RTL8188E_TR
 WLAN_PWR_CFG rtl8188E_enter_lps_flow[RTL8188E_TRANS_ACT_TO_LPS_STEPS+RTL8188E_TRANS_END_STEPS]=
 {
 	//FW behavior
-	RTL8188E_TRANS_ACT_TO_LPS	
+	RTL8188E_TRANS_ACT_TO_LPS
 	RTL8188E_TRANS_END
 };
 

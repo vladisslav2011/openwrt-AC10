@@ -20,9 +20,9 @@
 
 
 #ifdef GREEN_HILL
-#define SMP_LOCK_MESH_PATH(__x__) 
+#define SMP_LOCK_MESH_PATH(__x__)
 #define SMP_UNLOCK_MESH_PATH(__x__)
-#define SMP_LOCK_MESH_QUEUE(__x__) 
+#define SMP_LOCK_MESH_QUEUE(__x__)
 #define SMP_UNLOCK_MESH_QUEUE(__x__)
 #define SMP_LOCK_MESH_PROXY(__x__)
 #define SMP_UNLOCK_MESH_PROXY(__x__)
@@ -149,9 +149,9 @@
 #endif
 
 #else
-#define SMP_LOCK_MESH_PATH(__x__) 
+#define SMP_LOCK_MESH_PATH(__x__)
 #define SMP_UNLOCK_MESH_PATH(__x__)
-#define SMP_LOCK_MESH_QUEUE(__x__) 
+#define SMP_LOCK_MESH_QUEUE(__x__)
 #define SMP_UNLOCK_MESH_QUEUE(__x__)
 #define SMP_LOCK_MESH_PROXY(__x__)
 #define SMP_UNLOCK_MESH_PROXY(__x__)

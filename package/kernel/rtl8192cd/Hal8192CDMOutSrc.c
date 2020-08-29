@@ -1,6 +1,6 @@
 //============================================================
 //
-// File Name: Hal8192CDMOutSrc.c 
+// File Name: Hal8192CDMOutSrc.c
 //
 // Description:
 //
@@ -379,11 +379,11 @@ void set_DIG_state(struct rtl8192cd_priv *priv, int state)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 				if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-					|| 
+					||
 #endif
 					(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -395,11 +395,11 @@ void set_DIG_state(struct rtl8192cd_priv *priv, int state)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 				if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-					|| 
+					||
 #endif
 					(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -411,11 +411,11 @@ void set_DIG_state(struct rtl8192cd_priv *priv, int state)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 				if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-					|| 
+					||
 #endif
 					(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -430,11 +430,11 @@ void set_DIG_state(struct rtl8192cd_priv *priv, int state)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 				if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-					|| 
+					||
 #endif
 					(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -446,11 +446,11 @@ void set_DIG_state(struct rtl8192cd_priv *priv, int state)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 				if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-					|| 
+					||
 #endif
 					(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -462,11 +462,11 @@ void set_DIG_state(struct rtl8192cd_priv *priv, int state)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 				if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-					|| 
+					||
 #endif
 					(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -492,34 +492,34 @@ void MP_DIG_process(unsigned long task_priv)
 	//unsigned int	FA_cnt_ofdm = priv->pshare->ofdm_FA_cnt1 + priv->pshare->ofdm_FA_cnt2 +
 	//                             priv->pshare->ofdm_FA_cnt3 + priv->pshare->ofdm_FA_cnt4;
 	//unsigned int	FA_cnt_cck = priv->pshare->cck_FA_cnt;
-	
+
 	if (!(priv->drv_state & DRV_STATE_OPEN))
 		return;
-	
+
 	if (!(priv->pshare->rf_ft_var.mp_specific && priv->pshare->mp_dig_on))
 		return;
-	
+
 	//printk("===> %s, pBandType = %d\n", __FUNCTION__, priv->pmib->dot11RFEntry.phyBandSelect);
 
 	if (priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_5G) {
 
 		FA_statistic(priv);
-	
-		priv->pshare->LastNumQryPhyStatusAll = priv->pshare->NumQryPhyStatus;	
-		priv->pshare->NumQryPhyStatus = priv->pshare->NumQryPhyStatusCCK + priv->pshare->NumQryPhyStatusOFDM; 
+
+		priv->pshare->LastNumQryPhyStatusAll = priv->pshare->NumQryPhyStatus;
+		priv->pshare->NumQryPhyStatus = priv->pshare->NumQryPhyStatusCCK + priv->pshare->NumQryPhyStatusOFDM;
 		RXOK_cal = priv->pshare->NumQryPhyStatus - priv->pshare->LastNumQryPhyStatusAll;
-	
+
 		if (RXOK_cal == 0)
 			RxPWDBAve = 0;
 		else
 			RxPWDBAve = priv->pshare->RxPWDBAve/RXOK_cal;
 
 		priv->pshare->RxPWDBAve= 0;
-				
+
 		//printk("RX OK = %d\n", RXOK_cal);
 		//printk("RSSI = %d\n", RxPWDBAve);
 		//printk("DIG = (%x, %x), Cnt_all = %d, Cnt_Ofdm_fail = %d, Cnt_Cck_fail = %d\n", RTL_R8(0xc50), RTL_R8(0xc58), priv->pshare->FA_total_cnt, FA_cnt_ofdm, FA_cnt_cck);
-				
+
 		if (RXOK_cal >= 70)  {
 			if (RxPWDBAve <= 40) {
 				RTL_W8(0xc50, 0x1C);
@@ -527,13 +527,13 @@ void MP_DIG_process(unsigned long task_priv)
 			} else if (RxPWDBAve > 45) {
 				RTL_W8(0xc50, 0x20);
 				RTL_W8(0xc58, 0x20);
-			} 
+			}
 		}
 		else {
 			RTL_W8(0xc50, 0x20);
 			RTL_W8(0xc58, 0x20);
 		}
-	} 
+	}
 	mod_timer(&priv->pshare->MP_DIGTimer, RTL_MILISECONDS_TO_JIFFIES(700));
 }
 #endif
@@ -547,7 +547,7 @@ void DIG_process(struct rtl8192cd_priv *priv)
 	unsigned char value_IGI;
 	signed char value8;
 	unsigned int IGI_target;
-	unsigned char Adap_IGI_Upper; 
+	unsigned char Adap_IGI_Upper;
 #ifdef INTERFERENCE_CONTROL
 	unsigned short thd0 = priv->pshare->threshold0;
 	unsigned short thd1 = priv->pshare->threshold1;
@@ -561,7 +561,7 @@ void DIG_process(struct rtl8192cd_priv *priv)
 //			priv->pshare->FA_upper = 0x42;
 			priv->pshare->FA_upper = MIN_NUM(0x42, priv->pshare->rssi_min+36);
 			priv->pshare->FA_lower = 0x30;
-		} else 
+		} else
 #endif
 		{
 			// Reset initial gain upper & lower bounds
@@ -584,7 +584,7 @@ void DIG_process(struct rtl8192cd_priv *priv)
 				if (priv->pshare->rssi_min != 0xFF)
 				{
 //					priv->pshare->FA_upper = 0x3E;
-					
+
 					if (priv->pshare->rssi_min > 30)
 						priv->pshare->FA_lower = 0x24;
 					else if (priv->pshare->rssi_min > 25)
@@ -598,7 +598,7 @@ void DIG_process(struct rtl8192cd_priv *priv)
 				else		// before link
 				{
 					priv->pshare->FA_upper = 0x32;
-					
+
 					thd0 = 500;
 					thd1 = 8000;
 					thd2 = 10000;
@@ -627,11 +627,11 @@ void DIG_process(struct rtl8192cd_priv *priv)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 		if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-			(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+			(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-			|| 
+			||
 #endif
 			(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -689,7 +689,7 @@ void DIG_process(struct rtl8192cd_priv *priv)
 			else
 				PHY_SetBBReg(priv, 0x870, bMaskDWord, RTL_R32(0x870)&  ~(BIT(5)|BIT(6)|BIT(21)|BIT(22)));
 
-		} else 
+		} else
 #endif
 		{
 			if( (priv->pshare->rssi_min > 40) && (value_IGI >= priv->pshare->FA_upper) )  {
@@ -783,7 +783,7 @@ void DIG_process(struct rtl8192cd_priv *priv)
 		else if (value_IGI < priv->pshare->FA_lower)
 			value_IGI = priv->pshare->FA_lower;
 		if (priv->pshare->rf_ft_var.adaptivity_enable && priv->pshare->rf_ft_var.adaptivity_flag == TRUE)
-		{	
+		{
 			Adap_IGI_Upper = priv->pshare->rf_ft_var.Adaptivity_IGI_upper;
 			if(value_IGI > Adap_IGI_Upper)
 				value_IGI = Adap_IGI_Upper;
@@ -796,11 +796,11 @@ void DIG_process(struct rtl8192cd_priv *priv)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 			if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-				|| 
+				||
 #endif
 				(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -812,11 +812,11 @@ void DIG_process(struct rtl8192cd_priv *priv)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 			if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-				|| 
+				||
 #endif
 				(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -828,11 +828,11 @@ void DIG_process(struct rtl8192cd_priv *priv)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 			if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-				|| 
+				||
 #endif
 				(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -847,11 +847,11 @@ void DIG_process(struct rtl8192cd_priv *priv)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 			if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-				|| 
+				||
 #endif
 				(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -863,11 +863,11 @@ void DIG_process(struct rtl8192cd_priv *priv)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 			if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-				|| 
+				||
 #endif
 				(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -879,11 +879,11 @@ void DIG_process(struct rtl8192cd_priv *priv)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 			if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-				|| 
+				||
 #endif
 				(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -967,7 +967,7 @@ void DIG_for_site_survey(struct rtl8192cd_priv *priv, int do_ss)
 	else {
 		// DIG on
 #ifndef INTERFERENCE_CONTROL
-		if (priv->pshare->phw->signal_strength > 1) 
+		if (priv->pshare->phw->signal_strength > 1)
 #endif
 		{
 			set_DIG_state(priv, 1);
@@ -1234,7 +1234,7 @@ unsigned char getThermalValue(struct rtl8192cd_priv *priv)
 	PHY_SetRFReg(priv, RF92CD_PATH_A, RF_T_METER, bMask20Bits, 0x60);
 	while ((PHY_QueryRFReg(priv, RF92CD_PATH_A, RF_T_METER, bMask20Bits, 1) > 0x1f) && ((i++) < 1000)) {//<20ms, test is in 20 us
 		delay_us(20);
-	}	
+	}
 	ThermalValue =(unsigned char)PHY_QueryRFReg(priv, RF92CD_PATH_A, RF_T_METER, bMask20Bits, 1) & 0x01f;
 	priv->pshare->Thermal_idx = (priv->pshare->Thermal_idx+1)%8;
 	priv->pshare->Thermal_log[ priv->pshare->Thermal_idx ] = ThermalValue;
@@ -1247,7 +1247,7 @@ unsigned char getThermalValue(struct rtl8192cd_priv *priv)
 }
 
 
-#ifdef CONFIG_RTL_92C_SUPPORT	
+#ifdef CONFIG_RTL_92C_SUPPORT
 
 #ifdef HIGH_POWER_EXT_PA
 void swingIndexRemap2(int *a, int b, int i)
@@ -1266,7 +1266,7 @@ void swingIndexRemap2(int *a, int b, int i)
 
 	if(i == 0)
 		offset = 1;
-	else 
+	else
 		offset = 3;
 
 	if(*a < b )
@@ -1281,9 +1281,9 @@ void swingIndexRemap2(int *a, int b, int i)
 		*a = b + index_mapping_HighPower_92C[offset][d];
 	}
 
-	//printk("\n\ a = %d, b = %d, offset = %d, d = %d, diff = %d \n\n", 
+	//printk("\n\ a = %d, b = %d, offset = %d, d = %d, diff = %d \n\n",
 		//*a, b, offset, d, index_mapping_HighPower_92C[offset][d]);
-	
+
 }
 void swingIndexRemap(int *a, int b)
 {
@@ -1367,7 +1367,7 @@ void tx_power_tracking(struct rtl8192cd_priv *priv)
 			if(priv->pshare->rf_ft_var.mp_specific)
 			{
 				if((OPMODE & WIFI_MP_CTX_BACKGROUND) && !(OPMODE & WIFI_MP_CTX_PACKET))
-					printk("NOT do LCK during ctx !!!! \n"); 
+					printk("NOT do LCK during ctx !!!! \n");
 				else
 			PHY_LCCalibrate(priv);
 		}
@@ -1411,7 +1411,7 @@ void tx_power_tracking(struct rtl8192cd_priv *priv)
 					offset = ((priv->pmib->dot11RFEntry.pwrdiffOFDM[channel-1] & 0xf0) >> 4);
 					TxPwrLevel[1] = COUNT_SIGN_OFFSET(TxPwrLevel[1], offset);
 				}
-#ifdef POWER_PERCENT_ADJUSTMENT				
+#ifdef POWER_PERCENT_ADJUSTMENT
 				pwrdiff_percent = PwrPercent2PwrLevel(priv->pmib->dot11RFEntry.power_percent);
 				TxPwrLevel[0] = POWER_RANGE_CHECK(TxPwrLevel[0]+pwrdiff_percent);
 				TxPwrLevel[1] = POWER_RANGE_CHECK(TxPwrLevel[1]+pwrdiff_percent);
@@ -1441,8 +1441,8 @@ void tx_power_tracking(struct rtl8192cd_priv *priv)
 #ifdef _TRACKING_TABLE_FILE
 				if (priv->pshare->rf_ft_var.pwr_track_file)
 				{
-					int d = 0; 
-					
+					int d = 0;
+
 					OFDM_index[i] = priv->pshare->OFDM_index[i];
 					d = RTL_ABS(OFDM_index[i], priv->pshare->OFDM_index0[i]);
 
@@ -1495,8 +1495,8 @@ void tx_power_tracking(struct rtl8192cd_priv *priv)
 #ifdef _TRACKING_TABLE_FILE
 				 if (priv->pshare->rf_ft_var.pwr_track_file)
 				 {
-					int d = 0; 
-					
+					int d = 0;
+
 					CCK_index = priv->pshare->CCK_index;
 					d = RTL_ABS(CCK_index, priv->pshare->CCK_index0);
 
@@ -1601,7 +1601,7 @@ void tx_power_tracking(struct rtl8192cd_priv *priv)
 			if(priv->pshare->rf_ft_var.mp_specific)
 			{
 				if((OPMODE & WIFI_MP_CTX_BACKGROUND) && !(OPMODE & WIFI_MP_CTX_PACKET))
-					printk("NOT do IQK during ctx !!!! \n"); 
+					printk("NOT do IQK during ctx !!!! \n");
 				else
 					PHY_IQCalibrate(priv);
 			}
@@ -1669,18 +1669,18 @@ void ODM_ResetIQKResult(struct rtl8192cd_priv *priv)
 	for(i = 0; i < IQK_Matrix_Settings_NUM; i++)
 	{
 		{
-			priv->pshare->IQKMatrixRegSetting[i].Value[0][0] = 
-				priv->pshare->IQKMatrixRegSetting[i].Value[0][2] = 
-				priv->pshare->IQKMatrixRegSetting[i].Value[0][4] = 
+			priv->pshare->IQKMatrixRegSetting[i].Value[0][0] =
+				priv->pshare->IQKMatrixRegSetting[i].Value[0][2] =
+				priv->pshare->IQKMatrixRegSetting[i].Value[0][4] =
 				priv->pshare->IQKMatrixRegSetting[i].Value[0][6] = 0x100;
 
-			priv->pshare->IQKMatrixRegSetting[i].Value[0][1] = 
-				priv->pshare->IQKMatrixRegSetting[i].Value[0][3] = 
-				priv->pshare->IQKMatrixRegSetting[i].Value[0][5] = 
+			priv->pshare->IQKMatrixRegSetting[i].Value[0][1] =
+				priv->pshare->IQKMatrixRegSetting[i].Value[0][3] =
+				priv->pshare->IQKMatrixRegSetting[i].Value[0][5] =
 				priv->pshare->IQKMatrixRegSetting[i].Value[0][7] = 0x0;
 
 			priv->pshare->IQKMatrixRegSetting[i].bIQKDone = FALSE;
-			
+
 		}
 	}
 
@@ -1689,7 +1689,7 @@ void ODM_ResetIQKResult(struct rtl8192cd_priv *priv)
 #define	RF_PATH_A		0		//Radio Path A
 #define	OFDM_TABLE_SIZE_92D 	43
 
-#define bRFRegOffsetMask	0xfffff	
+#define bRFRegOffsetMask	0xfffff
 
 
 //091212 chiyokolin
@@ -1697,10 +1697,10 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 {
 
 	//HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
-	
+
 	unsigned char			ThermalValue = 0, delta, delta_LCK, delta_IQK, offset;
 	unsigned char			ThermalValue_AVG_count = 0;
-	unsigned int			ThermalValue_AVG = 0;	
+	unsigned int			ThermalValue_AVG = 0;
 	int						ele_A=0, ele_D, TempCCk, X, value32;
 	int						Y, ele_C=0;
 	char					OFDM_index[2], CCK_index=0, OFDM_index_old[2]={0,0}, CCK_index_old=0, index;
@@ -1710,30 +1710,30 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 
 	unsigned char			OFDM_min_index = 6, rf; //OFDM BB Swing should be less than +3.0dB, which is required by Arthur
 	unsigned char			Indexforchannel = 0/*GetRightChnlPlaceforIQK(pHalData->CurrentChannel)*/;
-	char					OFDM_index_mapping[2][index_mapping_NUM_88E] = { 
-							{0,	0,	2,	3,	4,	4,			//2.4G, decrease power 
-							5, 	6, 	7, 	7,	8,	9,					
-							10,	10,	11}, // For lower temperature, 20120220 updated on 20120220.	
-							{0,	0,	-1,	-2,	-3,	-4,			//2.4G, increase power 
-							-4, 	-4, 	-4, 	-5,	-7,	-8,					
-							-9,	-9,	-10},					
-							};	
-	unsigned char			Thermal_mapping[2][index_mapping_NUM_88E] = { 
-							{0,	2,	4,	6,	8,	10,			//2.4G, decrease power 
-							12, 	14, 	16, 	18,	20,	22,					
-							24,	26,	27},	
-							{0, 	2,	4,	6,	8,	10, 			//2.4G,, increase power 
-							12, 	14, 	16, 	18, 	20, 	22, 
-							25,	25,	25},					
-							};	
-	
+	char					OFDM_index_mapping[2][index_mapping_NUM_88E] = {
+							{0,	0,	2,	3,	4,	4,			//2.4G, decrease power
+							5, 	6, 	7, 	7,	8,	9,
+							10,	10,	11}, // For lower temperature, 20120220 updated on 20120220.
+							{0,	0,	-1,	-2,	-3,	-4,			//2.4G, increase power
+							-4, 	-4, 	-4, 	-5,	-7,	-8,
+							-9,	-9,	-10},
+							};
+	unsigned char			Thermal_mapping[2][index_mapping_NUM_88E] = {
+							{0,	2,	4,	6,	8,	10,			//2.4G, decrease power
+							12, 	14, 	16, 	18,	20,	22,
+							24,	26,	27},
+							{0, 	2,	4,	6,	8,	10, 			//2.4G,, increase power
+							12, 	14, 	16, 	18, 	20, 	22,
+							25,	25,	25},
+							};
+
 	priv->pshare->TXPowerTrackingCallbackCnt++; //cosa add for debug
 	priv->pshare->bTXPowerTrackingInit = TRUE;
-    
+
 #if (MP_DRIVER == 1)
     priv->pshare->TxPowerTrackControl = 1; //priv->pshare->TxPowerTrackControl; //_eric_?? // <Kordan> We should keep updating the control variable according to HalData.
     // <Kordan> pshare->RegA24 will be initialized when ODM HW configuring, but MP configures with para files.
-    priv->pshare->RegA24 = 0x090e1317; 
+    priv->pshare->RegA24 = 0x090e1317;
 #endif
 
 
@@ -1748,13 +1748,13 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 	{
 		priv->pshare->Power_tracking_on_88E = 1;
 		PHY_SetRFReg(priv, RF92CD_PATH_A, 0x42, (BIT(17) | BIT(16)), 0x03);
-		return; 
+		return;
 	}
 	else
 	{
 
 		priv->pshare->Power_tracking_on_88E = 0;
-	
+
 		//printk("===>dm_TXPowerTrackingCallback_ThermalMeter_8188E txpowercontrol %d\n",  priv->pshare->TxPowerTrackControl);
 
 		ThermalValue = (unsigned char)PHY_QueryRFReg(priv, RF_PATH_A, RF_T_METER_88E, 0xfc00, 1);	//0x42: RF Reg[15:10] 88E
@@ -1762,31 +1762,31 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 		printk("\nReadback Thermal Meter = 0x%x pre thermal meter 0x%x EEPROMthermalmeter 0x%x\n", ThermalValue, priv->pshare->ThermalValue, priv->pmib->dot11RFEntry.ther);
 
 	}
-	
+
 	if(is2T)
 		rf = 2;
 	else
 		rf = 1;
-	
+
 	if(ThermalValue)
 	{
 //		if(!pHalData->ThermalValue)
 		{
-			//Query OFDM path A default setting 		
+			//Query OFDM path A default setting
 			ele_D = PHY_QueryBBReg(priv, rOFDM0_XATxIQImbalance, bMaskDWord)&bMaskOFDM_D;
-	
+
 			for(i=0; i<OFDM_TABLE_SIZE_92D; i++)	//find the index
 			{
 				if(ele_D == (OFDMSwingTable[i]&bMaskOFDM_D))
 				{
 					OFDM_index_old[0] = (unsigned char)i;
-					printk("Initial pathA ele_D reg0x%x = 0x%x, OFDM_index=0x%x\n", 
+					printk("Initial pathA ele_D reg0x%x = 0x%x, OFDM_index=0x%x\n",
 						rOFDM0_XATxIQImbalance, ele_D, OFDM_index_old[0]);
 					break;
 				}
 			}
 
-			//Query OFDM path B default setting 
+			//Query OFDM path B default setting
 			if(is2T)
 			{
 				ele_D = PHY_QueryBBReg(priv, rOFDM0_XBTxIQImbalance, bMaskDWord)&bMaskOFDM_D;
@@ -1795,13 +1795,13 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 					if(ele_D == (OFDMSwingTable[i]&bMaskOFDM_D))
 					{
 						OFDM_index_old[1] = (unsigned char)i;
-						printk("Initial pathB ele_D reg0x%x = 0x%x, OFDM_index=0x%x\n", 
+						printk("Initial pathB ele_D reg0x%x = 0x%x, OFDM_index=0x%x\n",
 							rOFDM0_XBTxIQImbalance, ele_D, OFDM_index_old[1]);
 						break;
 					}
 				}
 			}
-			
+
 			{
 				//Query CCK default setting From 0xa24
 				TempCCk = priv->pshare->RegA24;
@@ -1813,7 +1813,7 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 						if(memcmp((void*)&TempCCk, (void*)&CCKSwingTable_Ch14[i][2], 4)==0)
 						{
 							CCK_index_old =(unsigned char) i;
-							//printk("Initial reg0x%x = 0x%x, CCK_index=0x%x, ch 14 %d\n", 
+							//printk("Initial reg0x%x = 0x%x, CCK_index=0x%x, ch 14 %d\n",
 								//rCCK0_TxFilter2, TempCCk, CCK_index_old, priv->pshare->bCCKinCH14);
 							break;
 						}
@@ -1824,10 +1824,10 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 						if(memcmp((void*)&TempCCk, (void*)&CCKSwingTable_Ch1_Ch13[i][2], 4)==0)
 						{
 							CCK_index_old =(unsigned char) i;
-							//printk("Initial reg0x%x = 0x%x, CCK_index=0x%x, ch14 %d\n", 
+							//printk("Initial reg0x%x = 0x%x, CCK_index=0x%x, ch14 %d\n",
 								//rCCK0_TxFilter2, TempCCk, CCK_index_old, priv->pshare->bCCKinCH14);
 							break;
-						}			
+						}
 					}
 				}
 			}
@@ -1835,17 +1835,17 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 			if(!priv->pshare->ThermalValue)
 			{
 				priv->pshare->ThermalValue = priv->pmib->dot11RFEntry.ther;
-				priv->pshare->ThermalValue_LCK = ThermalValue;				
-				priv->pshare->ThermalValue_IQK = ThermalValue;								
-				
+				priv->pshare->ThermalValue_LCK = ThermalValue;
+				priv->pshare->ThermalValue_IQK = ThermalValue;
+
 				for(i = 0; i < rf; i++)
 					priv->pshare->OFDM_index[i] = OFDM_index_old[i];
 				priv->pshare->CCK_index = CCK_index_old;
-			}			
+			}
 
 			if(priv->pshare->bReloadtxpowerindex)
 			{
-				printk("reload ofdm index for band switch\n");				
+				printk("reload ofdm index for band switch\n");
 			}
 
 			//calculate average thermal meter
@@ -1867,15 +1867,15 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 				if(ThermalValue_AVG_count)
 				{
 					ThermalValue = (unsigned char)(ThermalValue_AVG / ThermalValue_AVG_count);
-					printk("AVG Thermal Meter = 0x%x \n", ThermalValue);					
+					printk("AVG Thermal Meter = 0x%x \n", ThermalValue);
 				}
-			}			
+			}
 		}
 
 		if(priv->pshare->bReloadtxpowerindex)
 		{
-			delta = ThermalValue > priv->pmib->dot11RFEntry.ther?(ThermalValue - priv->pmib->dot11RFEntry.ther):(priv->pmib->dot11RFEntry.ther - ThermalValue);				
-			priv->pshare->bReloadtxpowerindex = FALSE;	
+			delta = ThermalValue > priv->pmib->dot11RFEntry.ther?(ThermalValue - priv->pmib->dot11RFEntry.ther):(priv->pmib->dot11RFEntry.ther - ThermalValue);
+			priv->pshare->bReloadtxpowerindex = FALSE;
 			priv->pshare->bDoneTxpower = FALSE;
 		}
 		else if(priv->pshare->bDoneTxpower)
@@ -1884,7 +1884,7 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 		}
 		else
 		{
-			delta = ThermalValue > priv->pmib->dot11RFEntry.ther?(ThermalValue - priv->pmib->dot11RFEntry.ther):(priv->pmib->dot11RFEntry.ther - ThermalValue);		
+			delta = ThermalValue > priv->pmib->dot11RFEntry.ther?(ThermalValue - priv->pmib->dot11RFEntry.ther):(priv->pmib->dot11RFEntry.ther - ThermalValue);
 		}
 		delta_LCK = (ThermalValue > priv->pshare->ThermalValue_LCK)?(ThermalValue - priv->pshare->ThermalValue_LCK):(priv->pshare->ThermalValue_LCK - ThermalValue);
 		delta_IQK = (ThermalValue > priv->pshare->ThermalValue_IQK)?(ThermalValue - priv->pshare->ThermalValue_IQK):(priv->pshare->ThermalValue_IQK - ThermalValue);
@@ -1900,14 +1900,14 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 			PHY_LCCalibrate(priv);
 		}
 
-		
+
 		if(delta > 0 && priv->pshare->TxPowerTrackControl)
 		{
-			delta = ThermalValue > priv->pmib->dot11RFEntry.ther?(ThermalValue - priv->pmib->dot11RFEntry.ther):(priv->pmib->dot11RFEntry.ther - ThermalValue);		
+			delta = ThermalValue > priv->pmib->dot11RFEntry.ther?(ThermalValue - priv->pmib->dot11RFEntry.ther):(priv->pmib->dot11RFEntry.ther - ThermalValue);
 
-			//calculate new OFDM / CCK offset	
+			//calculate new OFDM / CCK offset
 			{
-				{							
+				{
 					if(ThermalValue > priv->pmib->dot11RFEntry.ther)
 						j = 1;
 					else
@@ -1921,30 +1921,30 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 								offset--;
 							break;
 						}
-					}			
+					}
 					if(offset >= index_mapping_NUM_88E)
 						offset = index_mapping_NUM_88E-1;
-					
-					index = OFDM_index_mapping[j][offset];	
+
+					index = OFDM_index_mapping[j][offset];
 
 					printk("\nj = %d delta = %d, index = %d\n\n", j, delta, index);
-					
-					for(i = 0; i < rf; i++) 		
+
+					for(i = 0; i < rf; i++)
 						OFDM_index[i] = priv->pshare->OFDM_index[i] + OFDM_index_mapping[j][offset];
-						CCK_index = priv->pshare->CCK_index + OFDM_index_mapping[j][offset];					
-				}				
-				
+						CCK_index = priv->pshare->CCK_index + OFDM_index_mapping[j][offset];
+				}
+
 				if(is2T)
 				{
-					printk("temp OFDM_A_index=0x%x, OFDM_B_index=0x%x, CCK_index=0x%x\n", 
-						priv->pshare->OFDM_index[0], priv->pshare->OFDM_index[1], priv->pshare->CCK_index);			
+					printk("temp OFDM_A_index=0x%x, OFDM_B_index=0x%x, CCK_index=0x%x\n",
+						priv->pshare->OFDM_index[0], priv->pshare->OFDM_index[1], priv->pshare->CCK_index);
 				}
 				else
 				{
-					printk("temp OFDM_A_index=0x%x, CCK_index=0x%x\n", 
-						priv->pshare->OFDM_index[0], priv->pshare->CCK_index); 		
+					printk("temp OFDM_A_index=0x%x, CCK_index=0x%x\n",
+						priv->pshare->OFDM_index[0], priv->pshare->CCK_index);
 				}
-				
+
 				for(i = 0; i < rf; i++)
 				{
 					if(OFDM_index[i] > OFDM_TABLE_SIZE_92D-1)
@@ -1966,24 +1966,24 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 
 				if(is2T)
 				{
-					printk("new OFDM_A_index=0x%x, OFDM_B_index=0x%x, CCK_index=0x%x\n", 
+					printk("new OFDM_A_index=0x%x, OFDM_B_index=0x%x, CCK_index=0x%x\n",
 						OFDM_index[0], OFDM_index[1], CCK_index);
 				}
 				else
 				{
-					printk("new OFDM_A_index=0x%x, CCK_index=0x%x\n", 
-						OFDM_index[0], CCK_index); 
+					printk("new OFDM_A_index=0x%x, CCK_index=0x%x\n",
+						OFDM_index[0], CCK_index);
 				}
 			}
 
 			//2 temporarily remove bNOPG
 			//Config by SwingTable
-			if(priv->pshare->TxPowerTrackControl /*&& !pHalData->bNOPG*/)			
+			if(priv->pshare->TxPowerTrackControl /*&& !pHalData->bNOPG*/)
 			{
-				priv->pshare->bDoneTxpower = TRUE;			
+				priv->pshare->bDoneTxpower = TRUE;
 
 				//Adujst OFDM Ant_A according to IQK result
-				ele_D = (OFDMSwingTable[(unsigned char)OFDM_index[0]] & 0xFFC00000)>>22;		
+				ele_D = (OFDMSwingTable[(unsigned char)OFDM_index[0]] & 0xFFC00000)>>22;
 				X = priv->pshare->IQKMatrixRegSetting[Indexforchannel].Value[0][0];
 				Y = priv->pshare->IQKMatrixRegSetting[Indexforchannel].Value[0][1];
 
@@ -1992,12 +1992,12 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 					if ((X & 0x00000200) != 0)
 						X = X | 0xFFFFFC00;
 					ele_A = ((X * ele_D)>>8)&0x000003FF;
-						
+
 					//new element C = element D x Y
 					if ((Y & 0x00000200) != 0)
 						Y = Y | 0xFFFFFC00;
 					ele_C = ((Y * ele_D)>>8)&0x000003FF;
-					
+
 					//wirte new elements A, C, D to regC80 and regC94, element B is always 0
 					value32 = (ele_D<<22)|((ele_C&0x3F)<<16)|ele_A;
 					PHY_SetBBReg(priv, rOFDM0_XATxIQImbalance, bMaskDWord, value32);
@@ -2007,18 +2007,18 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 
 					value32 = ((X * ele_D)>>7)&0x01;
 					PHY_SetBBReg(priv, rOFDM0_ECCAThreshold, BIT(24), value32);
-					
+
 				}
 				else
 				{
-					PHY_SetBBReg(priv, rOFDM0_XATxIQImbalance, bMaskDWord, OFDMSwingTable[(unsigned char)OFDM_index[0]]);				
+					PHY_SetBBReg(priv, rOFDM0_XATxIQImbalance, bMaskDWord, OFDMSwingTable[(unsigned char)OFDM_index[0]]);
 					PHY_SetBBReg(priv, rOFDM0_XCTxAFE, bMaskH4Bits, 0x00);
-					PHY_SetBBReg(priv, rOFDM0_ECCAThreshold, BIT(24), 0x00);			
+					PHY_SetBBReg(priv, rOFDM0_ECCAThreshold, BIT(24), 0x00);
 				}
 
-				//printk("TxPwrTracking for path A: X = 0x%x, Y = 0x%x ele_A = 0x%x ele_C = 0x%x ele_D = 0x%x 0xe94 = 0x%x 0xe9c = 0x%x\n", 
-					//(unsigned int)X, (unsigned int)Y, (unsigned int)ele_A, (unsigned int)ele_C, (unsigned int)ele_D, (unsigned int)X, (unsigned int)Y); 	
-				
+				//printk("TxPwrTracking for path A: X = 0x%x, Y = 0x%x ele_A = 0x%x ele_C = 0x%x ele_D = 0x%x 0xe94 = 0x%x 0xe9c = 0x%x\n",
+					//(unsigned int)X, (unsigned int)Y, (unsigned int)ele_A, (unsigned int)ele_C, (unsigned int)ele_D, (unsigned int)X, (unsigned int)Y);
+
 				{
 					//Adjust CCK according to IQK result
 					if(!priv->pshare->bCCKinCH14){
@@ -2029,7 +2029,7 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 						RTL_W8(0xa26, CCKSwingTable_Ch1_Ch13[(unsigned char)CCK_index][4]);
 						RTL_W8(0xa27, CCKSwingTable_Ch1_Ch13[(unsigned char)CCK_index][5]);
 						RTL_W8(0xa28, CCKSwingTable_Ch1_Ch13[(unsigned char)CCK_index][6]);
-						RTL_W8(0xa29, CCKSwingTable_Ch1_Ch13[(unsigned char)CCK_index][7]);		
+						RTL_W8(0xa29, CCKSwingTable_Ch1_Ch13[(unsigned char)CCK_index][7]);
 					}
 					else{
 						RTL_W8(0xa22, CCKSwingTable_Ch14[(unsigned char)CCK_index][0]);
@@ -2039,67 +2039,67 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 						RTL_W8(0xa26, CCKSwingTable_Ch14[(unsigned char)CCK_index][4]);
 						RTL_W8(0xa27, CCKSwingTable_Ch14[(unsigned char)CCK_index][5]);
 						RTL_W8(0xa28, CCKSwingTable_Ch14[(unsigned char)CCK_index][6]);
-						RTL_W8(0xa29, CCKSwingTable_Ch14[(unsigned char)CCK_index][7]);	
-					}		
+						RTL_W8(0xa29, CCKSwingTable_Ch14[(unsigned char)CCK_index][7]);
+					}
 				}
-				
+
 				if(is2T)
-				{						
+				{
 					ele_D = (OFDMSwingTable[(unsigned char)OFDM_index[1]] & 0xFFC00000)>>22;
-					
+
 					//new element A = element D x X
 					X = priv->pshare->IQKMatrixRegSetting[Indexforchannel].Value[0][4];
 					Y = priv->pshare->IQKMatrixRegSetting[Indexforchannel].Value[0][5];
-					
+
 					//if(X != 0 && pHalData->CurrentBandType92D == ODM_BAND_ON_2_4G)
 					if((X != 0) && (priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_2G))
-						
+
 					{
 						if ((X & 0x00000200) != 0)	//consider minus
 							X = X | 0xFFFFFC00;
 						ele_A = ((X * ele_D)>>8)&0x000003FF;
-						
+
 						//new element C = element D x Y
 						if ((Y & 0x00000200) != 0)
 							Y = Y | 0xFFFFFC00;
 						ele_C = ((Y * ele_D)>>8)&0x00003FF;
-						
+
 						//wirte new elements A, C, D to regC88 and regC9C, element B is always 0
 						value32=(ele_D<<22)|((ele_C&0x3F)<<16) |ele_A;
 						PHY_SetBBReg(priv, rOFDM0_XBTxIQImbalance, bMaskDWord, value32);
 
 						value32 = (ele_C&0x000003C0)>>6;
-						PHY_SetBBReg(priv, rOFDM0_XDTxAFE, bMaskH4Bits, value32);	
-						
+						PHY_SetBBReg(priv, rOFDM0_XDTxAFE, bMaskH4Bits, value32);
+
 						value32 = ((X * ele_D)>>7)&0x01;
 						PHY_SetBBReg(priv, rOFDM0_ECCAThreshold, BIT(28), value32);
 
 					}
 					else
 					{
-						PHY_SetBBReg(priv, rOFDM0_XBTxIQImbalance, bMaskDWord, OFDMSwingTable[(unsigned char)OFDM_index[1]]);										
-						PHY_SetBBReg(priv, rOFDM0_XDTxAFE, bMaskH4Bits, 0x00);	
-						PHY_SetBBReg(priv, rOFDM0_ECCAThreshold, BIT(28), 0x00);				
+						PHY_SetBBReg(priv, rOFDM0_XBTxIQImbalance, bMaskDWord, OFDMSwingTable[(unsigned char)OFDM_index[1]]);
+						PHY_SetBBReg(priv, rOFDM0_XDTxAFE, bMaskH4Bits, 0x00);
+						PHY_SetBBReg(priv, rOFDM0_ECCAThreshold, BIT(28), 0x00);
 					}
 
-					//printk("TxPwrTracking path B: X = 0x%x, Y = 0x%x ele_A = 0x%x ele_C = 0x%x ele_D = 0x%x 0xeb4 = 0x%x 0xebc = 0x%x\n", 
-						//(unsigned int)X, (unsigned int)Y, (unsigned int)ele_A, (unsigned int)ele_C, (unsigned int)ele_D, (unsigned int)X, (unsigned int)Y);			
+					//printk("TxPwrTracking path B: X = 0x%x, Y = 0x%x ele_A = 0x%x ele_C = 0x%x ele_D = 0x%x 0xeb4 = 0x%x 0xebc = 0x%x\n",
+						//(unsigned int)X, (unsigned int)Y, (unsigned int)ele_A, (unsigned int)ele_C, (unsigned int)ele_D, (unsigned int)X, (unsigned int)Y);
 				}
-				
+
 				printk("TxPwrTracking 0xc80 = 0x%x, 0xc94 = 0x%x RF 0x24 = 0x%x\n\n", PHY_QueryBBReg(priv, 0xc80, bMaskDWord), PHY_QueryBBReg(priv, 0xc94, bMaskDWord), PHY_QueryRFReg(priv, RF_PATH_A, 0x24, bRFRegOffsetMask, 1));
-			}			
+			}
 		}
-		
-	
+
+
 #if 0 //DO NOT do IQK during 88E power tracking
 		// if((delta_IQK > pHalData->Delta_IQK) && (pHalData->Delta_IQK != 0))
         if (delta_IQK >= 8) // Delta temperature is equal to or larger than 20 centigrade.
 		{
-			ODM_ResetIQKResult(priv);		
+			ODM_ResetIQKResult(priv);
 
 /*
 #if(DM_ODM_SUPPORT_TYPE  & ODM_WIN)
-#if (DEV_BUS_TYPE == RT_PCI_INTERFACE)	
+#if (DEV_BUS_TYPE == RT_PCI_INTERFACE)
 #if USE_WORKITEM
 			PlatformAcquireMutex(&pHalData->mxChnlBwControl);
 #else
@@ -2108,14 +2108,14 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 #elif((DEV_BUS_TYPE == RT_USB_INTERFACE) || (DEV_BUS_TYPE == RT_SDIO_INTERFACE))
 			PlatformAcquireMutex(&pHalData->mxChnlBwControl);
 #endif
-#endif			
+#endif
 */
 			priv->pshare->ThermalValue_IQK= ThermalValue;
 			PHY_IQCalibrate_8188E(priv, FALSE);
 
 /*
 #if(DM_ODM_SUPPORT_TYPE  & ODM_WIN)
-#if (DEV_BUS_TYPE == RT_PCI_INTERFACE)	
+#if (DEV_BUS_TYPE == RT_PCI_INTERFACE)
 #if USE_WORKITEM
 			PlatformReleaseMutex(&pHalData->mxChnlBwControl);
 #else
@@ -2135,11 +2135,11 @@ void odm_TXPowerTrackingCallback_ThermalMeter_8188E(struct rtl8192cd_priv *priv)
 			//Adapter->HalFunc.SetHalDefVarHandler(Adapter, HAL_DEF_THERMAL_VALUE, &ThermalValue);
 			priv->pshare->ThermalValue = ThermalValue;
 		}
-			
+
 	}
 
 	//printk("<===dm_TXPowerTrackingCallback_ThermalMeter_8188E\n");
-	
+
 	priv->pshare->TXPowercount = 0;
 
 }
@@ -2246,26 +2246,26 @@ void tx_power_tracking_92D(struct rtl8192cd_priv *priv)
 					 9, 11, 13,  15,  16,  16,	16},
 					 {0,  1, 3, 4, 6, 7,	 //5G, path B/MAC 1, ch100-165, increase power
 					 9,  11,  13,  15,	16,  18,  20},
-					};	
+					};
 
-	u8			bInteralPA[2];	
-				
+	u8			bInteralPA[2];
+
 #endif
 
 #ifdef DPK_92D
 	short	index_mapping_DPK[4][index_mapping_DPK_NUM]={
 				{0, 0,	1,	2,	2,				//path A current thermal > PG thermal
-				3,	4,	5,	5,	6,		
+				3,	4,	5,	5,	6,
 				7,	7,	8,	9,	9},
 				{0, 0,	-1, -2, -3, 			//path A current thermal < PG thermal
-				-3, -4, -5, -6, -6, 	
+				-3, -4, -5, -6, -6,
 				-7, -8, -9, -9, -10},
 				{0, 0,	1,	2,	2,				//path B current thermal > PG thermal
-				3,	4,	5,	5,	6,		
+				3,	4,	5,	5,	6,
 				7,	7,	8,	9,	9},
 				{0, 0,	-1, -2, -3, 			//path B current thermal < PG thermal
-				-3, -4, -5, -6, -6, 	
-				-7, -8, -9, -9, -10}					
+				-3, -4, -5, -6, -6,
+				-7, -8, -9, -9, -10}
 				};
 
 	u8		delta_DPK;
@@ -2274,7 +2274,7 @@ void tx_power_tracking_92D(struct rtl8192cd_priv *priv)
 
 	if(priv->pshare->bDPKworking) {
 		DEBUG_INFO("DPK in progress abort tx power tracking \n");
-		return; 
+		return;
 	}
 
 #endif
@@ -2316,7 +2316,7 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 		return;
 	}
 	else
-#endif		
+#endif
 	{
 		ThermalValue =(unsigned char)PHY_QueryRFReg(priv, RF92CD_PATH_A, RF_T_METER_92D, 0xf800, 1);
 //		priv->pshare->pwr_trk_ongoing = 0;
@@ -2421,12 +2421,12 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 					value_DPK_shift = index_mapping_DPK[j*2+1][priv->pmib->dot11RFEntry.ther- priv->pshare->ThermalValue_DPKstore];
 
 				for(i = 0; i < index_mapping_DPK_NUM; i++) 	{
-					priv->pshare->index_mapping_DPK_current[j*2][i] = 
+					priv->pshare->index_mapping_DPK_current[j*2][i] =
 						index_mapping_DPK[j*2][i]-value_DPK_shift;
-					priv->pshare->index_mapping_DPK_current[j*2+1][i] = 
-						index_mapping_DPK[j*2+1][i]-value_DPK_shift;										
-				}				
-			}		
+					priv->pshare->index_mapping_DPK_current[j*2+1][i] =
+						index_mapping_DPK[j*2+1][i]-value_DPK_shift;
+				}
+			}
 		}
 		else
 		{
@@ -2448,7 +2448,7 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 #endif
 		if(delta > 0
 #ifdef DPK_92D
-			||(priv->pshare->bDPKstore)			
+			||(priv->pshare->bDPKstore)
 #endif
 		){
 			if(delta == 0 && priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_2G)
@@ -2469,14 +2469,14 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 				{
 					for(i = 0; i < rf; i++)
 						 OFDM_index[i] = priv->pshare->OFDM_index[i] - get_tx_tracking_index(priv, channel, i, delta, 0, 0);
-					
+
 					CCK_index = priv->pshare->CCK_index - get_tx_tracking_index(priv, channel, 0, delta, 0, 1);
 				}
 				else
 				{
 					for(i = 0; i < rf; i++)
 						OFDM_index[i] = priv->pshare->OFDM_index[i] + get_tx_tracking_index(priv, channel, i, delta, 1, 0);
-					
+
 					CCK_index = priv->pshare->CCK_index + get_tx_tracking_index(priv, channel, i, delta, 1, 1);
 				}
 				}
@@ -2509,7 +2509,7 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 						if (priv->pmib->dot11RFEntry.macPhyMode == DUALMAC_DUALPHY && priv->pshare->wlandev_idx==1)		//MAC 1 5G
 							bInteralPA[i] = priv->pshare->phw->InternalPA5G[1];
 						else
-							bInteralPA[i] = priv->pshare->phw->InternalPA5G[i];	
+							bInteralPA[i] = priv->pshare->phw->InternalPA5G[i];
 
 						if(bInteralPA[i]) {
 							if(priv->pshare->wlandev_idx == 1 || i == 1/*rf*/)
@@ -2517,7 +2517,7 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 							else
 								offset = 0;
 							if(channel >= 100 && channel <= 165)
-								offset += 2;													
+								offset += 2;
 						}
 						else
 #endif
@@ -2533,7 +2533,7 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 						if(i == 0)
 						{
 							if(channel <= 99)
-								offset = 0; 
+								offset = 0;
 							else if(channel <= 140)
 								offset = 2;
 							else
@@ -2542,7 +2542,7 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 						else
 						{
 							if(channel <= 99)
-								offset = 6; 
+								offset = 6;
 							else if(channel <= 140)
 								offset = 8;
 							else
@@ -2574,7 +2574,7 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 						if (priv->pshare->rf_ft_var.pwr_track_file)
 						{
 							if(ThermalValue > priv->pmib->dot11RFEntry.ther)
-								index[i] = get_tx_tracking_index(priv, channel, i, delta, 0, 0);	
+								index[i] = get_tx_tracking_index(priv, channel, i, delta, 0, 0);
 							else
 								index[i] = get_tx_tracking_index(priv, channel, i, delta, 1, 0);
 						}
@@ -2598,10 +2598,10 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 
 						if(ThermalValue > priv->pmib->dot11RFEntry.ther) //set larger Tx power
 						{
-#if 0						
+#if 0
 							if(bInteralPA[i] && ThermalValue > 0x12)
-								index[i] = ((delta/2)*3+(delta%2));	
-#endif							
+								index[i] = ((delta/2)*3+(delta%2));
+#endif
 							OFDM_index[i] = priv->pshare->OFDM_index[i] -index[i];
 						}
 						else
@@ -2635,7 +2635,7 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 						if (OFDM_index[i] < (OFDM_min_index_internalPA+ priv->pshare->OFDM_min_index_internalPA_DPK[i]))
 						{
 							priv->pshare->TxPowerLevelDPK[i] = OFDM_min_index_internalPA+ priv->pshare->OFDM_min_index_internalPA_DPK[i]-OFDM_index[i];
-							OFDM_index[i] = (OFDM_min_index_internalPA+ priv->pshare->OFDM_min_index_internalPA_DPK[i]);				
+							OFDM_index[i] = (OFDM_min_index_internalPA+ priv->pshare->OFDM_min_index_internalPA_DPK[i]);
 						}
 						else
 						{
@@ -2644,9 +2644,9 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 #else
                                                 if (OFDM_index[i] < (OFDM_min_index_internalPA))
                                                 {
-                                                        OFDM_index[i] = (OFDM_min_index_internalPA);                   
+                                                        OFDM_index[i] = (OFDM_min_index_internalPA);
                                                 }
-#endif				
+#endif
 					} else if(OFDM_index[i] < OFDM_min_index) {
 #ifdef HIGH_POWER_EXT_PA //Modify HP tracking table, from Arthur 2012.02.13
 #else
@@ -2764,7 +2764,7 @@ u8		index_mapping_HighPower_PA[12][index_mapping_NUM] = {
 						mp_set_tx_power(priv, str);
 
 					}
-#endif				
+#endif
 					}
 
 					DEBUG_INFO("TxPwrTracking path B: X = 0x%x, Y = 0x%x ele_A = 0x%x ele_C = 0x%x ele_D = 0x%x\n",
@@ -2783,7 +2783,7 @@ TxPowerDPK:
 			unsigned char pwrlevelHT40_1S_A = priv->pmib->dot11RFEntry.pwrlevelHT40_1S_A[channel-1];
 			if (priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_5G)
 				pwrlevelHT40_1S_A = priv->pmib->dot11RFEntry.pwrlevel5GHT40_1S_A[channel-1];
-#ifdef CONFIG_RTL_92D_DMDP			
+#ifdef CONFIG_RTL_92D_DMDP
 			if ((priv->pmib->dot11RFEntry.macPhyMode==DUALMAC_DUALPHY) &&
 				(priv->pshare->wlandev_idx == 1) && (priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_5G))
 					pwrlevelHT40_1S_A = priv->pmib->dot11RFEntry.pwrlevel5GHT40_1S_B[channel-1];
@@ -2794,15 +2794,15 @@ TxPowerDPK:
 			//for DPK
 			if(delta_DPK > 0 && !bNOPG /*&& pHalData->bDPKdone*/) {
 				for(i = 0; i < rf; i++) {
-					if(bInteralPA[i] && priv->pshare->bDPKdone[i]) {				
-						if(ThermalValue > priv->pmib->dot11RFEntry.ther) 	
+					if(bInteralPA[i] && priv->pshare->bDPKdone[i]) {
+						if(ThermalValue > priv->pmib->dot11RFEntry.ther)
 							value_DPK = priv->pshare->index_mapping_DPK_current[i*2][ThermalValue-priv->pmib->dot11RFEntry.ther];
 						else
 							value_DPK = priv->pshare->index_mapping_DPK_current[i*2+1][priv->pmib->dot11RFEntry.ther-ThermalValue];
-						
-						PHY_SetBBReg(priv, index_DPK[i], 0x7c00, value_DPK);						
+
+						PHY_SetBBReg(priv, index_DPK[i], 0x7c00, value_DPK);
 					}
-				}				
+				}
 				priv->pshare->ThermalValue_DPK = ThermalValue;
 			}
 		}
@@ -2817,7 +2817,7 @@ TxPowerDPK:
 
 #ifdef RX_GAIN_TRACK_92D
 		if(priv->pmib->dot11RFEntry.ther && (priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_5G) &&
-			(ThermalValue < priv->pmib->dot11RFEntry.ther)) { 
+			(ThermalValue < priv->pmib->dot11RFEntry.ther)) {
 			priv->pshare->ThermalValue_RxGain = ThermalValue;
 			rx_gain_tracking_92D(priv);
 		}
@@ -2943,7 +2943,7 @@ void choose_IOT_main_sta(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 			for (i=0; i<RTL8192CD_NUM_VWLAN; ++i)
 				assoc_num += GET_ROOT(priv)->pvap_priv[i]-> assoc_num;
 		}
-#endif	
+#endif
 #ifdef UNIVERSAL_REPEATER
 		if (IS_DRV_OPEN(GET_VXD_PRIV(GET_ROOT(priv))))
 			assoc_num += GET_VXD_PRIV(GET_ROOT(priv))-> assoc_num;
@@ -2955,9 +2955,9 @@ void choose_IOT_main_sta(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 
 	if (priv->pshare->rf_ft_var.low_tp_no_aggr) {
 		unsigned long sta_tp = (pstat->current_tx_bytes + pstat->current_rx_bytes) >> 17;
-		if  (!pstat->low_tp_disable_ampdu && sta_tp <= 2) 
+		if  (!pstat->low_tp_disable_ampdu && sta_tp <= 2)
 			pstat->low_tp_disable_ampdu = 1;
-		else if (pstat->low_tp_disable_ampdu && sta_tp >= 5) 
+		else if (pstat->low_tp_disable_ampdu && sta_tp >= 5)
 			pstat->low_tp_disable_ampdu = 0;
 	}
 
@@ -2985,7 +2985,7 @@ void choose_IOT_main_sta(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 
 		if( (pstat->IOTPeer==HT_IOT_PEER_INTEL)
 			|| (pstat->ht_cap_len && aggReady))	 {
-		
+
 			if ((assoc_num==1) || (tx_2s_avg + rx_2s_avg >= 25)) {
 				priv->pshare->highTP_found_pstat = pstat;
 			}	/*this STA's TXRX packet very close AP's total TXRX packet then let it as highTP_found_pstat*/
@@ -2997,8 +2997,8 @@ void choose_IOT_main_sta(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 //				if(pstat->is_ralink_sta && ((tx_2s_avg + rx_2s_avg) >= 45))
 				if(pstat->IOTPeer == HT_IOT_PEER_RALINK && ((tx_2s_avg + rx_2s_avg) >= 45))
 					priv->pshare->highTP_found_pstat = pstat;
-			}	
-#endif				
+			}
+#endif
 		}
 	}
 	else {
@@ -3029,14 +3029,14 @@ void rxBB_dm(struct rtl8192cd_priv *priv)
 		{
 #ifdef HIGH_POWER_EXT_LNA
 			if (!priv->pshare->rf_ft_var.use_ext_lna)
-#endif				
-				CCK_CCA_dynamic_enhance(priv, priv->pshare->rssi_min);			
+#endif
+				CCK_CCA_dynamic_enhance(priv, priv->pshare->rssi_min);
 		}
 	}
 	if (priv->pshare->rf_ft_var.adaptivity_enable){
 		unsigned char IGI;
 		IGI = RTL_R8(0xc50);
-		rtl8192cd_Adaptivity(priv,IGI);		
+		rtl8192cd_Adaptivity(priv,IGI);
 	}
 }
 
@@ -3057,7 +3057,7 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 	if(pstat) {
 		if((pstat->tx_avarage + pstat->rx_avarage) < (1<<17))		// 1M bps
 			pstat = NULL;
-	}	
+	}
 #if defined(RTL_MANUAL_EDCA) && defined(WIFI_WMM)
 	if(priv->pmib->dot11QosEntry.ManualEDCA)
 		return ;
@@ -3068,7 +3068,7 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 		for (i=0; i<RTL8192CD_NUM_VWLAN; ++i)
 			assoc_num += GET_ROOT(priv)->pvap_priv[i]-> assoc_num;
 	}
-#endif	
+#endif
 #ifdef UNIVERSAL_REPEATER
 	if (IS_DRV_OPEN(GET_VXD_PRIV(GET_ROOT(priv))))
 		assoc_num += GET_VXD_PRIV(GET_ROOT(priv))-> assoc_num;
@@ -3080,7 +3080,7 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 
 #ifdef WIFI_WMM
 	if (QOS_ENABLE) {
-		if (!priv->pmib->dot11OperationEntry.wifi_specific || 
+		if (!priv->pmib->dot11OperationEntry.wifi_specific ||
 			((OPMODE & WIFI_AP_STATE) && (priv->pmib->dot11OperationEntry.wifi_specific))) {
 			if (priv->pshare->iot_mode_enable &&
 				((priv->pshare->phw->VO_pkt_count > 50) ||
@@ -3125,11 +3125,11 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 				if (!priv->pshare->iot_mode_BK_exist && (priv->pshare->phw->BK_pkt_count > 250)) {
 					priv->pshare->iot_mode_BK_exist++;
 					switch_turbo++;
-					EDEBUG("switch_turbo++\n");					
+					EDEBUG("switch_turbo++\n");
 				} else if (priv->pshare->iot_mode_BE_exist && (priv->pshare->phw->BK_pkt_count < 250)) {
 					priv->pshare->iot_mode_BK_exist = 0;
 					switch_turbo++;
-					EDEBUG("switch_turbo++\n");					
+					EDEBUG("switch_turbo++\n");
 				}
 			}
 #endif
@@ -3146,7 +3146,7 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 
 #ifdef CONFIG_RTL_92D_DMDP
 			if ((GET_CHIP_VER(priv) == VERSION_8192D) && (priv->pmib->dot11RFEntry.macPhyMode == DUALMAC_DUALPHY)) {
-				unsigned int tp =	(unsigned int)(priv->ext_stats.tx_avarage>>17) + (unsigned int)(priv->ext_stats.rx_avarage>>17);	
+				unsigned int tp =	(unsigned int)(priv->ext_stats.tx_avarage>>17) + (unsigned int)(priv->ext_stats.rx_avarage>>17);
 				if (priv->pshare->rf_ft_var.wifi_beq_iot) {
 					if (priv->pshare->wifi_beq_lower && priv->pshare->iot_mode_VI_exist && tp <= 20) {
 						priv->pshare->wifi_beq_lower= 0;
@@ -3200,7 +3200,7 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 			 * decide EDCA content for different chip vendor
 			 */
 #ifdef WIFI_WMM
-		if (QOS_ENABLE && (!priv->pmib->dot11OperationEntry.wifi_specific || 
+		if (QOS_ENABLE && (!priv->pmib->dot11OperationEntry.wifi_specific ||
 			((OPMODE & WIFI_AP_STATE) && (priv->pmib->dot11OperationEntry.wifi_specific == 2))
 #ifdef CLIENT_MODE
             || ((OPMODE & WIFI_STATION_STATE) && (priv->pmib->dot11OperationEntry.wifi_specific == 2))
@@ -3208,12 +3208,12 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 			)) {
 			if (pstat && pstat->rssi >= priv->pshare->rf_ft_var.txop_enlarge_upper) {
 #ifdef LOW_TP_TXOP
-				
+
 
 				if (pstat->IOTPeer==HT_IOT_PEER_INTEL)
 
 				{
-				
+
 					if (priv->pshare->txop_enlarge != 0xe) {
 						priv->pshare->txop_enlarge = 0xe;
 						if (priv->pshare->iot_mode_enable)
@@ -3231,12 +3231,12 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 
 				{
 					if (pstat->IOTPeer==HT_IOT_PEER_INTEL)
-						priv->pshare->txop_enlarge = 0xe;						
+						priv->pshare->txop_enlarge = 0xe;
 					else if (pstat->IOTPeer==HT_IOT_PEER_RALINK)
-						priv->pshare->txop_enlarge = 0xd;						
+						priv->pshare->txop_enlarge = 0xd;
 					else
 						priv->pshare->txop_enlarge = 2;
-					
+
 				}
 
 					if (priv->pshare->iot_mode_enable)
@@ -3254,7 +3254,7 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 			// for Intel IOT, need to enlarge CW MAX from 6 to 10
 
 
-			if (pstat && pstat->IOTPeer==HT_IOT_PEER_INTEL && (((pstat->tx_avarage+pstat->rx_avarage)>>10) < 
+			if (pstat && pstat->IOTPeer==HT_IOT_PEER_INTEL && (((pstat->tx_avarage+pstat->rx_avarage)>>10) <
 				priv->pshare->rf_ft_var.cwmax_enhance_thd))
 
 			{
@@ -3319,11 +3319,11 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 				priv->pshare->swqen_keeptime = 0;
 			}
 		}
-		//debug msg	
+		//debug msg
 		//printk("swq=%d,sw=%d,en=%d,mode=%d\n", priv->pshare->swq_en, switch_turbo, priv->pshare->txop_enlarge, priv->pshare->iot_mode_enable);
     }
 #if 1//defined(CONFIG_RTL_819XD)
-    else if( (assoc_num == 1) && (priv->up_time % 2)== 0 && (AMPDU_ENABLE) ) {		
+    else if( (assoc_num == 1) && (priv->up_time % 2)== 0 && (AMPDU_ENABLE) ) {
         //if (pstat) {
 //        if ((pstat) && pstat->is_intel_sta) {
         if ((pstat) && pstat->IOTPeer == HT_IOT_PEER_INTEL) {
@@ -3332,7 +3332,7 @@ void IOT_engine(struct rtl8192cd_priv *priv)
             	if ((pstat->current_tx_bytes > 14417920) && (priv->pshare->swq_en == 0)) { // && (pstat->current_rx_bytes > 14417920) && (priv->pshare->swq_en == 0))  { //55Mbps
                 	priv->pshare->swq_en = 1;
 			priv->pshare->swqen_keeptime = priv->up_time;
-		} 	
+		}
         	//else if ((priv->pshare->swq_en == 1) && ((pstat->tx_avarage < 4587520) || (pstat->rx_avarage < 4587520))) { //35Mbps
 		else if ((pstat->tx_avarage < 9175040) && (priv->pshare->swq_en == 1)) { //35Mbps
 			priv->pshare->swq_en = 0;
@@ -3371,17 +3371,17 @@ void IOT_engine(struct rtl8192cd_priv *priv)
 
 				// Determine to close txop.
 #if defined(UNIVERSAL_REPEATER) || defined(MBSSID)
-				if(pstat && pstat->expire_to) 
-				{	
+				if(pstat && pstat->expire_to)
+				{
 					struct rtl8192cd_priv *tmppriv;
-					struct aid_obj *aidarray;	
+					struct aid_obj *aidarray;
 					aidarray = container_of(pstat, struct aid_obj, station);
 					tmppriv = aidarray->priv;
 
 					curr_tp = (unsigned int)(tmppriv->ext_stats.tx_avarage>>17) + (unsigned int)(tmppriv->ext_stats.rx_avarage>>17);
-				} 
-				else 
-#endif				
+				}
+				else
+#endif
 				curr_tp = (unsigned int)(priv->ext_stats.tx_avarage>>17) + (unsigned int)(priv->ext_stats.rx_avarage>>17);
 				if (curr_tp <= thd_tp && curr_tp >= priv->pshare->rf_ft_var.low_tp_txop_thd_low)
 					under_thd = 1;
@@ -3461,7 +3461,7 @@ void IOT_EDCA_switch(struct rtl8192cd_priv *priv, int mode, char enable)
 				vi_cw_max = 5;
 				vi_cw_min = 3;
 				vi_aifs = (sifs_time + ((OPMODE & WIFI_AP_STATE)?1:2) * slot_time);
-			} else 
+			} else
 #endif
 			{
 				vi_cw_max = 6;
@@ -3478,7 +3478,7 @@ void IOT_EDCA_switch(struct rtl8192cd_priv *priv, int mode, char enable)
 #ifdef WMM_BEBK_PRI
 #ifdef CONFIG_RTL_88E_SUPPORT
 		if ((GET_CHIP_VER(priv) == VERSION_8188E ) && priv->pshare->iot_mode_BK_exist) {
-			RTL_W32(EDCA_BK_PARA, (10 << 12) | (6 << 8) | 0x4f);			
+			RTL_W32(EDCA_BK_PARA, (10 << 12) | (6 << 8) | 0x4f);
 		}
 #endif
 #endif
@@ -3499,13 +3499,13 @@ void IOT_EDCA_switch(struct rtl8192cd_priv *priv, int mode, char enable)
 			RTL_W32(EDCA_BE_PARA, (((OPMODE & WIFI_AP_STATE)?6:10) << 12) | (4 << 8)
 					| (sifs_time + 3 * slot_time));
 		}
-		RTL_W16(RD_CTRL, RTL_R16(RD_CTRL) | DIS_TXOP_CFE);		
+		RTL_W16(RD_CTRL, RTL_R16(RD_CTRL) | DIS_TXOP_CFE);
 	} else {
 #ifdef LOW_TP_TXOP
 		int txop;
 		unsigned int cw_max;
 		unsigned int txop_close;
-		
+
 		cw_max = ((priv->pshare->BE_cwmax_enhance) ? 10 : 6);
 		txop_close = ((priv->pshare->rf_ft_var.low_tp_txop && priv->pshare->rf_ft_var.low_tp_txop_close) ? 1 : 0);
 		txop = (txop_close ? 0 : (BE_TXOP*2));
@@ -3534,9 +3534,9 @@ void IOT_EDCA_switch(struct rtl8192cd_priv *priv, int mode, char enable)
 				//RTL_W32(EDCA_BE_PARA, (BE_TXOP*2 << 16) | (6 << 12) | (4 << 8) | 0x1f);
 				if (get_rf_mimo_mode(priv) == MIMO_1T1R)
 					RTL_W32(EDCA_BE_PARA, (BE_TXOP*2 << 16) | (6 << 12) | (5 << 8) | 0x1f);
-				else	
+				else
 					RTL_W32(EDCA_BE_PARA, (BE_TXOP*2 << 16) | (8 << 12) | (5 << 8) | 0x1f);
-					
+
 				RTL_W16(RD_CTRL, RTL_R16(RD_CTRL) & ~(DIS_TXOP_CFE));
 #endif
 				priv->pshare->txop_enlarge = 2;
@@ -3547,7 +3547,7 @@ void IOT_EDCA_switch(struct rtl8192cd_priv *priv, int mode, char enable)
 			} else {
 				if (priv->pshare->txop_enlarge == 0)
 					RTL_W16(RD_CTRL, RTL_R16(RD_CTRL) | DIS_TXOP_CFE);
-					
+
 				if (get_rf_mimo_mode(priv) == MIMO_2T2R)
 #if 0 //defined(CONFIG_RTL_8196D) || defined(CONFIG_RTL_8196E) || (defined(CONFIG_RTL_8197D) && !defined(CONFIG_PORT0_EXT_GIGA))
 					RTL_W32(EDCA_BE_PARA, ((BE_TXOP*priv->pshare->txop_enlarge) << 16) |
@@ -3573,7 +3573,7 @@ void IOT_EDCA_switch(struct rtl8192cd_priv *priv, int mode, char enable)
 					RTL_W32(EDCA_BE_PARA, (txop << 16) | (cw_max << 12) | (4 << 8) | 0x1f);
 			} else {
 				txop = (txop_close ? 0: (BE_TXOP*priv->pshare->txop_enlarge));
-			
+
 				if (get_rf_mimo_mode(priv) == MIMO_2T2R)
 					RTL_W32(EDCA_BE_PARA, (txop << 16) | (cw_max << 12) | (4 << 8) | (sifs_time + 3 * slot_time));
 				else
@@ -3731,7 +3731,7 @@ void _FA_statistic(struct rtl8192cd_priv *priv)
 	priv->pshare->ofdm_FA_total_cnt = (unsigned int) priv->pshare->ofdm_FA_cnt1 +
 			priv->pshare->ofdm_FA_cnt2 + priv->pshare->ofdm_FA_cnt3 +
 			priv->pshare->ofdm_FA_cnt4 + RTL_R16(0xcf0) + RTL_R16(0xcf2);
-	
+
 	priv->pshare->FA_total_cnt = priv->pshare->ofdm_FA_total_cnt + priv->pshare->cck_FA_cnt;
 #else
 	priv->pshare->FA_total_cnt = priv->pshare->ofdm_FA_cnt1 + priv->pshare->ofdm_FA_cnt2 +
@@ -3775,7 +3775,7 @@ void FA_statistic(struct rtl8192cd_priv *priv)
 		priv->pshare->ofdm_FA_total_cnt = (unsigned int) priv->pshare->ofdm_FA_cnt1 +
 				priv->pshare->ofdm_FA_cnt2 + priv->pshare->ofdm_FA_cnt3 +
 				priv->pshare->ofdm_FA_cnt4 + RTL_R16(0xcf0) + RTL_R16(0xcf2);
-		
+
 		priv->pshare->FA_total_cnt = priv->pshare->ofdm_FA_total_cnt + priv->pshare->cck_FA_cnt;
 #else
 
@@ -3922,7 +3922,7 @@ void check_RA_by_rssi(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 		} else
 #endif
 		{
-#if defined(CONFIG_RTL_92D_SUPPORT) || defined(CONFIG_RTL_92C_SUPPORT)		
+#if defined(CONFIG_RTL_92D_SUPPORT) || defined(CONFIG_RTL_92C_SUPPORT)
 			add_update_RATid(priv, pstat);
 #endif
 		}
@@ -3939,7 +3939,7 @@ void check_txrate_by_reg(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 
 	if( should_restrict_Nrate(priv, pstat) && is_fixedMCSTxRate(priv, pstat))
 		legacyRA = 1;
-	
+
 	if (pstat->sta_in_firmware == 1)
 	{
 		if (is_auto_rate(priv , pstat) || legacyRA)
@@ -3950,7 +3950,7 @@ void check_txrate_by_reg(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 
 			if ((initial_rate&0x3f) < 12) {
 				pstat->current_tx_rate = dot11_rate_table[initial_rate&0x3f];
-				pstat->ht_current_tx_info &= ~TX_USE_SHORT_GI;				
+				pstat->ht_current_tx_info &= ~TX_USE_SHORT_GI;
 			} else {
 				pstat->current_tx_rate = HT_RATE_ID + ((initial_rate&0x3f) -12);
 				if (initial_rate & BIT(6))
@@ -4083,7 +4083,7 @@ void add_RATid(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 		pstat->tx_ra_bitmap &= 0xfffffff0; //disable cck rate
 
 #ifdef P2P_SUPPORT
-	if(pstat->is_p2p_client){ 
+	if(pstat->is_p2p_client){
 		pstat->tx_ra_bitmap &= 0xfffffff0; //disable cck rate
 	}
 #endif
@@ -4192,7 +4192,7 @@ void add_RATid(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 			pRAInfo->RateID = ARFR_B_ONLY;
 		}
 		ODM_RA_UpdateRateInfo_8188E(ODMPTR, pstat->aid, pRAInfo->RateID, pstat->tx_ra_bitmap, pRAInfo->RateSGI);
-#endif		
+#endif
 	} else
 #endif
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
@@ -4201,7 +4201,7 @@ void add_RATid(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 		if (pstat->sta_in_firmware == 1)
 		{
 #ifdef CONFIG_RTL_92D_SUPPORT
-			if (priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_5G) 
+			if (priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_5G)
 			{
 				pstat->tx_ra_bitmap &= 0xfffffff0;
 				if (pstat->tx_ra_bitmap & 0xff00000) {
@@ -4220,7 +4220,7 @@ void add_RATid(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 				} else {
 					set_RATid_cmd(priv, REMAP_AID(pstat), ARFR_Band_A_BMC, pstat->tx_ra_bitmap);
 				}
-			} else 
+			} else
 #endif
 			{
 				if (pstat->tx_ra_bitmap & 0xff00000) {
@@ -4285,13 +4285,13 @@ void set_rssi_cmd(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 	int rssi = pstat->rssi;
 
 #ifdef HIGH_POWER_EXT_PA
-	if( priv->pshare->rf_ft_var.use_ext_pa ) 
+	if( priv->pshare->rf_ft_var.use_ext_pa )
 		rssi += RSSI_DIFF_PA;
 	if( rssi > 100)
 		rssi = 100;
 #endif
 
-	
+
 	SAVE_INT_AND_CLI(flags);
 
 	/*
@@ -4470,7 +4470,7 @@ void check_EDCCA(struct rtl8192cd_priv *priv, short rssi)
 	if ((!priv->pshare->rf_ft_var.edcca_thd) && priv->pshare->phw->EDCCA_on) {
 		RTL_W32(0xc4c, 0x7f037f);
 		priv->pshare->phw->EDCCA_on = 0;
-	}	
+	}
 }
 #endif
 
@@ -4528,12 +4528,12 @@ void dm_SW_AntennaSwitchInit(struct rtl8192cd_priv *priv)
 #ifdef CONFIG_RTL_92D_DMDP
 		 if(priv->pshare->wlandev_idx==0)
 			priv->pshare->rf_ft_var.antHw_enable=0;
-		 else 
+		 else
 		 	return;
 #endif
-// GPIO 45 : 
+// GPIO 45 :
 // GPIO_MOD     => data port
-// GPIO_IO_SEL  => output 
+// GPIO_IO_SEL  => output
 	RTL_W32(GPIO_PIN_CTRL, 0x00300000| RTL_R32(GPIO_PIN_CTRL));
 	PHY_SetBBReg(priv, GPIO_PIN_CTRL, 0x3000, priv->pshare->DM_SWAT_Table.CurAntenna);
 	RTL_W32(rFPGA0_XCD_RFParameter, RTL_R32(rFPGA0_XCD_RFParameter)| BIT(15)|BIT(16));		// enable ANTSEL
@@ -4772,8 +4772,8 @@ void dm_SW_AntennaSwitch(struct rtl8192cd_priv *priv, char Step)
 	if(nextAntenna != priv->pshare->DM_SWAT_Table.CurAntenna) {
 #if defined(CONFIG_PCI_HCI)
 #ifdef GPIO_ANT_SWITCH
-		PHY_SetBBReg(priv, GPIO_PIN_CTRL, 0x3000, nextAntenna);	
-#else		
+		PHY_SetBBReg(priv, GPIO_PIN_CTRL, 0x3000, nextAntenna);
+#else
 		if (!priv->pshare->rf_ft_var.antSw_select)
 			PHY_SetBBReg(priv, rFPGA0_XA_RFInterfaceOE, 0x300, nextAntenna);
 		else
@@ -4864,13 +4864,13 @@ int diversity_antenna_select(struct rtl8192cd_priv *priv, unsigned char *data)
 #endif
 	if(ant==Antenna_L || ant==Antenna_R) {
 #ifdef GPIO_ANT_SWITCH
-		PHY_SetBBReg(priv, GPIO_PIN_CTRL, 0x3000, ant); 
-#else		
+		PHY_SetBBReg(priv, GPIO_PIN_CTRL, 0x3000, ant);
+#else
 		if (!priv->pshare->rf_ft_var.antSw_select)
 			PHY_SetBBReg(priv, rFPGA0_XA_RFInterfaceOE, 0x300, ant);
 		else
 			PHY_SetBBReg(priv, rFPGA0_XB_RFInterfaceOE, 0x300, ant);
-#endif		
+#endif
 		priv->pshare->DM_SWAT_Table.CurAntenna = ant;
 		priv->pshare->rf_ft_var.antSw_enable = 0;
 		SwAntDivRestAfterLink(priv);
@@ -4899,7 +4899,7 @@ void dm_HW_AntennaSwitchInit(struct rtl8192cd_priv *priv)
 //	if (GET_CHIP_VER(priv) == VERSION_8188C)
 	if(get_rf_mimo_mode(priv)== MIMO_1T1R)
 		priv->pshare->rf_ft_var.antSw_select = 0;
-	
+
 	if ( !priv->pshare->rf_ft_var.antSw_select)	{
 		RTL_W32(rFPGA0_XAB_RFParameter, RTL_R32(rFPGA0_XAB_RFParameter) | BIT(13) );	 //select ANTESEL from path A
 		RTL_W32(rFPGA0_XAB_RFInterfaceSW, RTL_R32(rFPGA0_XAB_RFInterfaceSW) & ~(BIT(8)| BIT(9)) ); // ANTSEL as HW control
@@ -4913,11 +4913,11 @@ void dm_HW_AntennaSwitchInit(struct rtl8192cd_priv *priv)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 		if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-			(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+			(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-			|| 
+			||
 #endif
 			(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -4942,7 +4942,7 @@ void dm_HW_AntennaSwitchInit(struct rtl8192cd_priv *priv)
 	RTL_W8(0xa14, (RTL_R8(0xa14) & 0xe0) | 0x08 );	// default : optional = 1:1
 #ifdef GPIO_ANT_SWITCH
 	PHY_SetBBReg(priv, rFPGA0_XCD_RFParameter, 0x40000000, 0x01);		// enable ANTSEL
-#endif	
+#endif
 
 }
 
@@ -5036,14 +5036,14 @@ void dm_HW_IdleAntennaSelect(struct rtl8192cd_priv *priv)
 		return;
 
 	phead = &priv->asoc_list;
-	
+
 	SMP_LOCK_ASOC_LIST(flags);
-	
+
 	plist = phead->next;
 	while(plist != phead)	{
 		pstat = list_entry(plist, struct stat_info, asoc_list);
 		plist = plist->next;
-		
+
 		if((pstat->expire_to) && (pstat->AntRSSI[0] || pstat->AntRSSI[1])) {
 			int rssi = (pstat->AntRSSI[0] < pstat->AntRSSI[1]) ? pstat->AntRSSI[0] : pstat->AntRSSI[1];
 			if((!pstat_min) || ( rssi < rssi_min) ) {
@@ -5052,7 +5052,7 @@ void dm_HW_IdleAntennaSelect(struct rtl8192cd_priv *priv)
 			}
 		}
 	};
-	
+
 	SMP_UNLOCK_ASOC_LIST(flags);
 
 	if(pstat_min)
@@ -5062,20 +5062,20 @@ void dm_HW_IdleAntennaSelect(struct rtl8192cd_priv *priv)
 #ifdef TX_SHORTCUT
 	if (!priv->pmib->dot11OperationEntry.disable_txsc) {
 		SMP_LOCK_ASOC_LIST(flags);
-		
+
 		plist = phead->next;
 		while(plist != phead)	{
 			pstat = list_entry(plist, struct stat_info, asoc_list);
 			plist = plist->next;
-			
+
 			if(pstat->expire_to) {
 				for (i=0; i<TX_SC_ENTRY_NUM; i++) {
-					struct tx_desc *pdesc= &(pstat->tx_sc_ent[i].hwdesc1);	
+					struct tx_desc *pdesc= &(pstat->tx_sc_ent[i].hwdesc1);
 					pdesc->Dword2 &= set_desc(~ (BIT(24)|BIT(25)));
 					if((pstat->CurAntenna^priv->pshare->rf_ft_var.CurAntenna)&1)
 						pdesc->Dword2 |= set_desc(BIT(24)|BIT(25));
 	#ifdef CONFIG_PCI_HCI
-					pdesc= &(pstat->tx_sc_ent[i].hwdesc2);	
+					pdesc= &(pstat->tx_sc_ent[i].hwdesc2);
 					pdesc->Dword2 &= set_desc(~ (BIT(24)|BIT(25)));
 					if((pstat->CurAntenna^priv->pshare->rf_ft_var.CurAntenna)&1)
 						pdesc->Dword2 |= set_desc(BIT(24)|BIT(25));
@@ -5083,10 +5083,10 @@ void dm_HW_IdleAntennaSelect(struct rtl8192cd_priv *priv)
 				}
 			}
 		};
-		
+
 		SMP_UNLOCK_ASOC_LIST(flags);
 	}
-#endif	
+#endif
 
 }
 
@@ -5100,9 +5100,9 @@ int diversity_antenna_select(struct rtl8192cd_priv *priv, unsigned char *data)
 
 	if (ant==Antenna_L || ant==Antenna_R) {
 
-#ifdef GPIO_ANT_SWITCH		
+#ifdef GPIO_ANT_SWITCH
 		if(priv->pshare->rf_ft_var.antSw_enable)  {
-			PHY_SetBBReg(priv, GPIO_PIN_CTRL, 0x3000, ant); 
+			PHY_SetBBReg(priv, GPIO_PIN_CTRL, 0x3000, ant);
 		} else
 #endif
 		{
@@ -5116,11 +5116,11 @@ int diversity_antenna_select(struct rtl8192cd_priv *priv, unsigned char *data)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 				if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+					(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-					|| 
+					||
 #endif
 					(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -5133,18 +5133,18 @@ int diversity_antenna_select(struct rtl8192cd_priv *priv, unsigned char *data)
 			RTL_W32(0x858, 0x569a569a);
 		}
 		if(HW_DIV_ENABLE)
-			priv->pshare->rf_ft_var.antHw_enable = BIT(5);			
+			priv->pshare->rf_ft_var.antHw_enable = BIT(5);
 		priv->pshare->rf_ft_var.CurAntenna  = (ant%2);
 #ifdef SW_ANT_SWITCH
-		if(priv->pshare->rf_ft_var.antSw_enable) 
+		if(priv->pshare->rf_ft_var.antSw_enable)
 			priv->pshare->rf_ft_var.antSw_enable = BIT(5);
 		priv->pshare->DM_SWAT_Table.CurAntenna = ant;
 		priv->pshare->RSSI_test =0;
 #endif
 	}
 	else if(ant==0){
-#ifdef GPIO_ANT_SWITCH		
-			if(priv->pshare->rf_ft_var.antHw_enable) 
+#ifdef GPIO_ANT_SWITCH
+			if(priv->pshare->rf_ft_var.antHw_enable)
 #endif
 			{
 			if (!priv->pshare->rf_ft_var.antSw_select)  {
@@ -5155,11 +5155,11 @@ int diversity_antenna_select(struct rtl8192cd_priv *priv, unsigned char *data)
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 			if (
 #ifdef CONFIG_RTL_92C_SUPPORT
-				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C) 
+				(GET_CHIP_VER(priv)==VERSION_8192C) || (GET_CHIP_VER(priv)==VERSION_8188C)
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-				|| 
+				||
 #endif
 				(GET_CHIP_VER(priv)==VERSION_8192D)
 #endif
@@ -5291,8 +5291,8 @@ void DetectSTAExistance(struct rtl8192cd_priv *priv, struct tx_rpt *report, stru
 		DEBUG_WARN( "detect: txfail=%d, tx_conti_fail_cnt=%d\n", report->txfail, pstat->tx_conti_fail_cnt );
 
 		if(	CHIP_VER_92X_SERIES(priv) && (priv->up_time >= (pstat->tx_last_good_time+TFRL_SetTime)) &&
-			pstat->tx_conti_fail_cnt >= TFRL_FailCnt && 
-		#if defined(CONFIG_RTL8672) || defined (NOT_RTK_BSP) 
+			pstat->tx_conti_fail_cnt >= TFRL_FailCnt &&
+		#if defined(CONFIG_RTL8672) || defined (NOT_RTK_BSP)
 			!pstat->ht_cap_len && // legacy rate only
 		#endif
 			!priv->pshare->bRLShortened )
@@ -5311,7 +5311,7 @@ void DetectSTAExistance(struct rtl8192cd_priv *priv, struct tx_rpt *report, stru
 			DEBUG_WARN( "AP is going to del_sta %02X:%02X:%02X:%02X:%02X:%02X\n", pstat->hwaddr[0],pstat->hwaddr[1],pstat->hwaddr[2],pstat->hwaddr[3],pstat->hwaddr[4],pstat->hwaddr[5] );
 
 			sprintf((char *)tmpbuf, "%02x%02x%02x%02x%02x%02x", pstat->hwaddr[0],pstat->hwaddr[1],pstat->hwaddr[2],pstat->hwaddr[3],pstat->hwaddr[4],pstat->hwaddr[5]);
-		
+
 //			del_sta(priv, tmpbuf);
 			++(pstat->leave);
 
@@ -5885,7 +5885,7 @@ char _PHY_SimularityCompare(struct rtl8192cd_priv *priv, int result[][8], unsign
 		for(i = 0; i < 2; i++)
 			result[3][i] = result[c1][i];
 		return FALSE;
-	}	
+	}
 	else if (!(SimularityBitMap & 0x0c)) {			//path A RX OK
 		for(i = 2; i < 4; i++)
 			result[3][i] = result[c1][i];
@@ -5913,7 +5913,7 @@ unsigned char _PHY_PathA_IQK(struct rtl8192cd_priv *priv, char	configPathB)
 	unsigned int regEAC, regE94, regE9C, regEA4;
 	unsigned char result = 0x00;
 
-	
+
 	//	RTPRINT(FINIT, INIT_IQK, ("Path-A IQK setting!\n"));
 #if defined(HIGH_POWER_EXT_PA) && defined(CONFIG_RTL_92C_SUPPORT)
 	if (priv->pshare->rf_ft_var.use_ext_pa){
@@ -6838,9 +6838,9 @@ void IQK_92D_5G_n(struct rtl8192cd_priv *priv)
 
 			reg = (result_final[3] >> 6) & 0xF;
 			PHY_SetBBReg(priv, 0xca0, 0xF0000000, reg);
-		
+
 			PHY_SetBBReg(priv, 0xe34, 0x03FF0000, result_final[2]); // X
-			PHY_SetBBReg(priv, 0xe34, 0x3FF, result_final[3]);  //Y			
+			PHY_SetBBReg(priv, 0xe34, 0x3FF, result_final[3]);  //Y
 		}
 	}
 
@@ -6887,9 +6887,9 @@ void IQK_92D_5G_n(struct rtl8192cd_priv *priv)
 
 			reg = (result_final[7] >> 6) & 0xF;
 			PHY_SetBBReg(priv, 0xc78, 0x0000F000, reg);
-			
+
 			PHY_SetBBReg(priv, 0xe54, 0x03FF0000, result_final[6]); // X
-			PHY_SetBBReg(priv, 0xe54, 0x3FF, result_final[7]);  //Y		
+			PHY_SetBBReg(priv, 0xe54, 0x3FF, result_final[7]);  //Y
 		}
 	}
 
@@ -7462,7 +7462,7 @@ void IQK_92D_2G_phy1(struct rtl8192cd_priv *priv)
 	RTL_W8(0x551, temp_551);
 	RTL_W32(0x40, temp_040);
 	RTL_W8(0x522, temp_522);
-	
+
 	if (!IQKOK)
 		priv->pshare->IQK_fail_cnt++;
 }
@@ -7743,9 +7743,9 @@ void IQK_92D_5G_phy0_n(struct rtl8192cd_priv *priv)
 
 			reg = (result_final[3] >> 6) & 0xF;
 			PHY_SetBBReg(priv, 0xca0, 0xF0000000, reg);
-			
+
 			PHY_SetBBReg(priv, 0xe34, 0x03FF0000, result_final[2]); // X
-			PHY_SetBBReg(priv, 0xe34, 0x3FF, result_final[3]);  //Y		
+			PHY_SetBBReg(priv, 0xe34, 0x3FF, result_final[3]);  //Y
 		}
 	}
 
@@ -8134,15 +8134,15 @@ static void PHY_LCCalibrate_92D(struct rtl8192cd_priv *priv)
 #ifdef DPK_92D
 
 #if 1 //copy from driver of station team
-#define		RF_AC						0x00	
+#define		RF_AC						0x00
 
-#define		rPdp_AntA      				0xb00  
+#define		rPdp_AntA      				0xb00
 #define		rBndA						0xb30
 #define		rPdp_AntB 					0xb70
 #define		rBndB						0xba0
 
-#define		RF_MODE1					0x10	 
-#define		RF_MODE2					0x11	
+#define		RF_MODE1					0x10
+#define		RF_MODE2					0x11
 
 #define		rTxAGC_A_CCK11_2_B_CCK11	0x86c
 
@@ -8152,19 +8152,19 @@ static void PHY_LCCalibrate_92D(struct rtl8192cd_priv *priv)
 #define		RF_TXPA_G2					0x32	// RF TX PA control
 #define		RF_TXPA_G3					0x33	// RF TX PA control
 #define		RF_LOBF_9					0x38
-#define		RF_RXRF_A3					0x3C	
+#define		RF_RXRF_A3					0x3C
 #define		RF_TRSW						0x3F
 
 #define		RF_TXPA_G1					0x31	// RF TX PA control
 #define		RF_TXPA_G2					0x32	// RF TX PA control
 #define		RF_TXPA_G3					0x33	// RF TX PA control
 #define		RF_LOBF_9					0x38
-#define		RF_RXRF_A3					0x3C	
+#define		RF_RXRF_A3					0x3C
 #define		RF_TRSW						0x3F
 
 #define		RF_TXRF_A2					0x41
-#define		RF_TXPA_G4					0x46	
-#define		RF_TXPA_A4					0x4B	
+#define		RF_TXPA_G4					0x46
+#define		RF_TXPA_A4					0x4B
 
 #define		RF_IQADJ_G1					0x01
 #define		RF_IQADJ_G2					0x02
@@ -8182,7 +8182,7 @@ static void PHY_LCCalibrate_92D(struct rtl8192cd_priv *priv)
 #define		RF_TXBIAS					0x16
 #endif
 
-#define DPK_DEBUG(fmt,args...) 
+#define DPK_DEBUG(fmt,args...)
 
 #define		DP_BB_REG_NUM		7
 //#define		DP_BB_REG_NUM_A	11
@@ -8225,7 +8225,7 @@ void rtl8192cd_DPK_timer(unsigned long task_priv)
 		return;
 
 	if (priv->pshare->pwr_trk_ongoing){
-		DPK_DEBUG("==>_PHY_DigitalPredistortion() TxPowerTrackingInProgress() delay 100ms\n"); 	
+		DPK_DEBUG("==>_PHY_DigitalPredistortion() TxPowerTrackingInProgress() delay 100ms\n");
 		mod_timer(&priv->pshare->DPKTimer, jiffies + RTL_MILISECONDS_TO_JIFFIES(100));
 	}else{
 		PHY_DPCalibrate(priv);
@@ -8241,10 +8241,10 @@ void _PHY_DPK_polling(struct rtl8192cd_priv *priv)
 
 	do{
 		delay_us(delay);
-		
-		u4tmp = PHY_QueryBBReg(priv, 0xdf4, bMaskDWord);		
-		//RTPRINT(FINIT, INIT_IQK, ("0xdf4 = 0x%x, delay %d us\n", u4tmp, delaycount*delay+800));			
-		delaycount++;		
+
+		u4tmp = PHY_QueryBBReg(priv, 0xdf4, bMaskDWord);
+		//RTPRINT(FINIT, INIT_IQK, ("0xdf4 = 0x%x, delay %d us\n", u4tmp, delaycount*delay+800));
+		delaycount++;
 		delay = 100;
 		u4tmp = (u4tmp & BIT(26)) >> 26;
 	}while(u4tmp == 0x01 && delaycount < delaybound);
@@ -8254,11 +8254,11 @@ void _PHY_DPK_polling(struct rtl8192cd_priv *priv)
 // if AP curve check fail return FALSE
 int _PHY_DPK_AP_curve_check(struct rtl8192cd_priv *priv, unsigned int *PA_power, unsigned int RegiesterNum)
 {
-	unsigned int 	PA_power_temp[DP_PA_MODEL_NUM], i = 0, index = 5, 
+	unsigned int 	PA_power_temp[DP_PA_MODEL_NUM], i = 0, index = 5,
 			base = 532, ref1, ref2;
 	int	power_I, power_Q;
 
-	//store I, Q 
+	//store I, Q
 
 	for(i = 0; i < DP_PA_MODEL_NUM; i++){
 		power_I = (PA_power[i] >> 8);
@@ -8279,7 +8279,7 @@ int _PHY_DPK_AP_curve_check(struct rtl8192cd_priv *priv, unsigned int *PA_power,
 	ref2 = PA_power_temp[index];
 	for(i = index; i < index*2; i++)
 		ref2 = (ref2 > PA_power_temp[i])?ref2:PA_power_temp[i];
-		
+
 	DPK_DEBUG("==>_PHY_DPK_AP_cureve_check ref1 =  0x%x ref2 =  0x%x\n", ref1, ref2);
 
 	if(ref1 == 0)
@@ -8303,16 +8303,16 @@ int _PHY_DPK_check(struct rtl8192cd_priv *priv, unsigned int *PA_power, unsigned
 		power_Q = PA_power[i] & bMaskByte0;
 		if(power_Q & BIT(7))
 			power_Q |= bMaskH3Bytes;
-		
+
 		PA_power_temp[i==0?0:1] = power_I*power_I+ power_Q*power_Q;
 
-		DPK_DEBUG("==>_PHY_DPK_check pa_power_temp[%d] 0x%x\n", i, PA_power_temp[i==0?0:1]);								
-		
+		DPK_DEBUG("==>_PHY_DPK_check pa_power_temp[%d] 0x%x\n", i, PA_power_temp[i==0?0:1]);
+
 		if(i == 0)
 			i = RegiesterNum -1;
 		else if (i == RegiesterNum -1)
 			break;
-	}	
+	}
 
 	//normalization
 	if(PA_power_temp[0] == 0)
@@ -8331,73 +8331,73 @@ int _PHY_Find_Tx_Power_Index(struct rtl8192cd_priv *priv, unsigned int *PA_power
 	unsigned int	check_base =bPlus3db?400:323;
 
 	int	power_I, power_Q;
-	int	index = -1;	
+	int	index = -1;
 
 	DPK_DEBUG("==>tx_index minus %d bplus3db %d\n", base, bPlus3db);
 
 	_PHY_DPK_polling(priv);
 
-	if(path == RF92CD_PATH_A)	
+	if(path == RF92CD_PATH_A)
 	{
 		PHY_SetBBReg(priv, 0xb00, bMaskDWord, 0x01017018);
-		tmpReg[0] = PHY_QueryBBReg(priv, 0xbdc, bMaskDWord);		
+		tmpReg[0] = PHY_QueryBBReg(priv, 0xbdc, bMaskDWord);
 		tmpReg[1] = PHY_QueryBBReg(priv, 0xbe8, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb00, bMaskDWord, 0x01017019);
-		tmpReg[2] = PHY_QueryBBReg(priv, 0xbdc, bMaskDWord);		
-		tmpReg[3] = PHY_QueryBBReg(priv, 0xbe0, bMaskDWord);		
+		tmpReg[2] = PHY_QueryBBReg(priv, 0xbdc, bMaskDWord);
+		tmpReg[3] = PHY_QueryBBReg(priv, 0xbe0, bMaskDWord);
 		tmpReg[4] = PHY_QueryBBReg(priv, 0xbe8, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb00, bMaskDWord, 0x0101701a);
-		tmpReg[5] = PHY_QueryBBReg(priv, 0xbe0, bMaskDWord);		
+		tmpReg[5] = PHY_QueryBBReg(priv, 0xbe0, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb00, bMaskDWord, 0x0101701b);
-		tmpReg[6] = PHY_QueryBBReg(priv, 0xbdc, bMaskDWord);		
+		tmpReg[6] = PHY_QueryBBReg(priv, 0xbdc, bMaskDWord);
 		tmpReg[7] = PHY_QueryBBReg(priv, 0xbe8, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb00, bMaskDWord, 0x0101701c);
 		tmpReg[8] = PHY_QueryBBReg(priv, 0xbe8, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb00, bMaskDWord, 0x0101701e);
-		tmpReg[9] = PHY_QueryBBReg(priv, 0xbdc, bMaskDWord);		
+		tmpReg[9] = PHY_QueryBBReg(priv, 0xbdc, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb00, bMaskDWord, 0x0101701f);
 		tmpReg[10] = PHY_QueryBBReg(priv, 0xbe8, bMaskDWord);
 
-		//RTPRINT(FINIT, INIT_IQK, ("==>_PHY_Find_Tx_Power_Index path A\n")); 						
-		
+		//RTPRINT(FINIT, INIT_IQK, ("==>_PHY_Find_Tx_Power_Index path A\n"));
+
 	}
 	else if(path == RF92CD_PATH_B)
 	{
 		PHY_SetBBReg(priv, 0xb70, bMaskDWord, 0x01017018);
-		tmpReg[0] = PHY_QueryBBReg(priv, 0xbec, bMaskDWord);		
+		tmpReg[0] = PHY_QueryBBReg(priv, 0xbec, bMaskDWord);
 		tmpReg[1] = PHY_QueryBBReg(priv, 0xbf8, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb70, bMaskDWord, 0x01017019);
-		tmpReg[2] = PHY_QueryBBReg(priv, 0xbec, bMaskDWord);		
-		tmpReg[3] = PHY_QueryBBReg(priv, 0xbf0, bMaskDWord);		
+		tmpReg[2] = PHY_QueryBBReg(priv, 0xbec, bMaskDWord);
+		tmpReg[3] = PHY_QueryBBReg(priv, 0xbf0, bMaskDWord);
 		tmpReg[4] = PHY_QueryBBReg(priv, 0xbf8, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb70, bMaskDWord, 0x0101701a);
-		tmpReg[5] = PHY_QueryBBReg(priv, 0xbf4, bMaskDWord);		
+		tmpReg[5] = PHY_QueryBBReg(priv, 0xbf4, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb70, bMaskDWord, 0x0101701b);
-		tmpReg[6] = PHY_QueryBBReg(priv, 0xbec, bMaskDWord);		
+		tmpReg[6] = PHY_QueryBBReg(priv, 0xbec, bMaskDWord);
 		tmpReg[7] = PHY_QueryBBReg(priv, 0xbf8, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb70, bMaskDWord, 0x0101701c);
 		tmpReg[8] = PHY_QueryBBReg(priv, 0xbf8, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb70, bMaskDWord, 0x0101701e);
-		tmpReg[9] = PHY_QueryBBReg(priv, 0xbec, bMaskDWord);		
+		tmpReg[9] = PHY_QueryBBReg(priv, 0xbec, bMaskDWord);
 
 		PHY_SetBBReg(priv, 0xb70, bMaskDWord, 0x0101701f);
 		tmpReg[10] = PHY_QueryBBReg(priv, 0xbf8, bMaskDWord);
 
-		//RTPRINT(FINIT, INIT_IQK, ("==>_PHY_Find_Tx_Power_Index path B\n")); 						
-		
-	}	
-	
+		//RTPRINT(FINIT, INIT_IQK, ("==>_PHY_Find_Tx_Power_Index path B\n"));
+
+	}
+
 	for(i = 0; i < RegNum; i++)
 	{
 		power_I = (tmpReg[i] >> 8);
@@ -8409,24 +8409,24 @@ int _PHY_Find_Tx_Power_Index(struct rtl8192cd_priv *priv, unsigned int *PA_power
 			power_Q |= bMaskH3Bytes;
 
 		PA_power[i] = power_I*power_I+ power_Q*power_Q;
-	}	
+	}
 
 	//normalization
 	tmpBase = PA_power[0];
-	//RTPRINT(FINIT, INIT_IQK, ("==>PA_power START normalized\n")); 						
+	//RTPRINT(FINIT, INIT_IQK, ("==>PA_power START normalized\n"));
 
 	if(tmpBase == 0)
 		DPK_DEBUG("==>PA_power[0] is ZERO !!!!!\n");
 
 	for(i = 0; i < RegNum; i++)
 	{
-		if(tmpBase != 0)			
+		if(tmpBase != 0)
 			PA_power[i] = (PA_power[i] << 9) /tmpBase;
 		else
-			PA_power[i] = (PA_power[i] << 9) ;		
+			PA_power[i] = (PA_power[i] << 9) ;
 		PA_power_normal[i] = PA_power[i];
 		PA_power[i] = (PA_power[i] > base)?(PA_power[i] - base):(base - PA_power[i]);
-		DPK_DEBUG("==>PA_power normalized index %d value 0x%x\n", i, PA_power[i]);							
+		DPK_DEBUG("==>PA_power normalized index %d value 0x%x\n", i, PA_power[i]);
 	}
 
 	//choose min for TX index to do DPK
@@ -8436,7 +8436,7 @@ int _PHY_Find_Tx_Power_Index(struct rtl8192cd_priv *priv, unsigned int *PA_power
 		if(PA_power[i] < base)
 		{
 			base = PA_power[i];
-			index = i;		
+			index = i;
 		}
 	}
 
@@ -8448,7 +8448,7 @@ int _PHY_Find_Tx_Power_Index(struct rtl8192cd_priv *priv, unsigned int *PA_power
 	else
 	{
 		tx_index += index;
-	}	
+	}
 
 	DPK_DEBUG("==>tx_index result 0x%x  PA_power[%d] = 0x%x\n", tx_index, index, PA_power[index]);
 
@@ -8477,26 +8477,26 @@ unsigned char _PHY_Find_Rx_Power_Index(struct rtl8192cd_priv *priv, unsigned cha
 			0xb28,	0xbe8},{
 			0xb98,	0xbf8}};
 	int round = 0;
-	
+
 	while (TRUE) {
 		tmpReg = 0x52000 | tx_index | (rx_index << 5);
 		PHY_SetRFReg(priv, path, RF_AC, bMask20Bits, tmpReg);
-		//RTPRINT(FINIT, INIT_IQK, ("==>RF 0ffset 0 = 0x%x readback = 0x%x\n", tmpReg, 
-			//PHY_QueryRFReg(pAdapter, path, RF_AC, bRFRegOffsetMask)));	
-	
+		//RTPRINT(FINIT, INIT_IQK, ("==>RF 0ffset 0 = 0x%x readback = 0x%x\n", tmpReg,
+			//PHY_QueryRFReg(pAdapter, path, RF_AC, bRFRegOffsetMask)));
+
 		//----send one shot signal----//
 		PHY_SetBBReg(priv, offset[path][0], bMaskDWord, 0x80080000);	//0xb28, 0xb98
 		PHY_SetBBReg(priv, offset[path][0], bMaskDWord, 0x00080000);
-				
+
 		_PHY_DPK_polling(priv);
-		
+
 		tmpReg = PHY_QueryBBReg(priv, offset[path][1], bMaskDWord);
 		power_I = ((tmpReg & bMaskByte1) >> 8);
 		power_Q = tmpReg & bMaskByte0;
 
 		if(power_I & BIT(7))
 		{
-			power_I |= bMaskH3Bytes; 
+			power_I |= bMaskH3Bytes;
 			power_I = 0-power_I;	//absolute value
 		}
 
@@ -8505,7 +8505,7 @@ unsigned char _PHY_Find_Rx_Power_Index(struct rtl8192cd_priv *priv, unsigned cha
 			power_Q |= bMaskH3Bytes;
 			power_Q = 0-power_Q;
 		}
-		//RTPRINT(FINIT, INIT_IQK, ("==>rx_index 0x%x I = 0x%x Q = 0x%x offset 0xbe8 = 0x%x\n", rx_index, power_I, power_Q, tmpReg));	
+		//RTPRINT(FINIT, INIT_IQK, ("==>rx_index 0x%x I = 0x%x Q = 0x%x offset 0xbe8 = 0x%x\n", rx_index, power_I, power_Q, tmpReg));
 
 		tmp = (power_I > power_Q)? power_I:power_Q;
 
@@ -8543,7 +8543,7 @@ unsigned char _PHY_Find_Rx_Power_Index(struct rtl8192cd_priv *priv, unsigned cha
 
 		if(rx_index == 0 || rx_index == 31)
 			break;
-		
+
 		if (++round > 10000) {
 			panic_printk("%s[%d] while (1) goes too many\n", __FUNCTION__, __LINE__);
 			break;
@@ -8551,8 +8551,8 @@ unsigned char _PHY_Find_Rx_Power_Index(struct rtl8192cd_priv *priv, unsigned cha
 	}
 	if(rx_index == 0 && tmp > 0x6f)
 		*bDecreaseTxIndex = TRUE;
-	
-	DPK_DEBUG("==>rx_index FINAL 0x%x I = 0x%x Q = 0x%x\n", rx_index, power_I, power_Q);	
+
+	DPK_DEBUG("==>rx_index FINAL 0x%x I = 0x%x Q = 0x%x\n", rx_index, power_I, power_Q);
 
 	return	rx_index;
 
@@ -8562,173 +8562,173 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 {
 	char	is2T = ((priv->pmib->dot11RFEntry.macPhyMode != DUALMAC_DUALPHY) ?1 :0);
 
-	unsigned int	tmpReg, value32/*, checkbit*/;					
+	unsigned int	tmpReg, value32/*, checkbit*/;
 	unsigned int	AFE_backup[IQK_ADDA_REG_NUM];
-	static unsigned int	AFE_REG[IQK_ADDA_REG_NUM] = {	
-						rFPGA0_XCD_SwitchControl, 0xe6c, 0xe70, 0xe74, 0xe78, 
-						0xe7c, 0xe80, 0xe84, 0xe88, 0xe8c, 
+	static unsigned int	AFE_REG[IQK_ADDA_REG_NUM] = {
+						rFPGA0_XCD_SwitchControl, 0xe6c, 0xe70, 0xe74, 0xe78,
+						0xe7c, 0xe80, 0xe84, 0xe88, 0xe8c,
 						0xed0, 0xed4, 0xed8, 0xedc, 0xee0,
 						0xeec};
 
-	static unsigned int	BB_backup[DP_BB_REG_NUM];	
+	static unsigned int	BB_backup[DP_BB_REG_NUM];
 	static unsigned int	BB_REG[DP_BB_REG_NUM] = {
-						rOFDM0_TRxPathEnable, rFPGA0_RFMOD, 
+						rOFDM0_TRxPathEnable, rFPGA0_RFMOD,
 						rOFDM0_TRMuxPar, rFPGA0_XCD_RFInterfaceSW,
-						rFPGA0_AnalogParameter4, rFPGA0_XAB_RFInterfaceSW, 
+						rFPGA0_AnalogParameter4, rFPGA0_XAB_RFInterfaceSW,
 						rTxAGC_B_CCK11_A_CCK2_11
 						};
 
-	static unsigned int	BB_backup_A[DP_BB_REG_NUM_A];	
+	static unsigned int	BB_backup_A[DP_BB_REG_NUM_A];
 	static unsigned int	BB_REG_A[DP_BB_REG_NUM_A] = {
-						rFPGA0_XA_RFInterfaceOE,	rTxAGC_A_Rate18_06, 
-						rTxAGC_A_Rate54_24,		rTxAGC_A_CCK1_Mcs32, 
-						0xe0c, 					rTxAGC_A_Mcs03_Mcs00, 
-						rTxAGC_A_Mcs07_Mcs04, 	rTxAGC_A_Mcs11_Mcs08, 
+						rFPGA0_XA_RFInterfaceOE,	rTxAGC_A_Rate18_06,
+						rTxAGC_A_Rate54_24,		rTxAGC_A_CCK1_Mcs32,
+						0xe0c, 					rTxAGC_A_Mcs03_Mcs00,
+						rTxAGC_A_Mcs07_Mcs04, 	rTxAGC_A_Mcs11_Mcs08,
 						rTxAGC_A_Mcs15_Mcs12,	rOFDM0_XAAGCCore1/*,
 						rBndA*/
 						};
 
-	
-	static unsigned int	BB_backup_B[DP_BB_REG_NUM_B];	
+
+	static unsigned int	BB_backup_B[DP_BB_REG_NUM_B];
 	static unsigned int	BB_REG_B[DP_BB_REG_NUM_B] = {
-						rFPGA0_XB_RFInterfaceOE,	rTxAGC_B_Rate18_06, 
-						rTxAGC_B_Rate54_24,		rTxAGC_B_CCK1_55_Mcs32, 
-						rTxAGC_B_Mcs03_Mcs00, 	rTxAGC_B_Mcs07_Mcs04, 
+						rFPGA0_XB_RFInterfaceOE,	rTxAGC_B_Rate18_06,
+						rTxAGC_B_Rate54_24,		rTxAGC_B_CCK1_55_Mcs32,
+						rTxAGC_B_Mcs03_Mcs00, 	rTxAGC_B_Mcs07_Mcs04,
 						rTxAGC_B_Mcs11_Mcs08,	rTxAGC_B_Mcs15_Mcs12,
 						rOFDM0_XBAGCCore1 /*, rBndB*/
 						};
-	
+
 	static unsigned int	BB_settings[DP_BB_REG_NUM_settings] = {
-						0x00a05430, 0x02040000, 0x000800e4, 0x22208000, 
+						0x00a05430, 0x02040000, 0x000800e4, 0x22208000,
 						0xccf000c0/*,	0x07600760*/};
-						
+
 	static unsigned int	BB_REG_loop[DP_PATH_NUM][DP_BB_REG_NUM_loop] = {
-						{0xb00, 0xb04, 0xb28, 0xb68, 
-						0xb08, 0xb0c, 0xb10, 0xb14, 
-						0xb18, 0xb1c, 0xb20, 0xb24,   
-						0xe28, 0xb00, 0xb04, 0xb08, 
+						{0xb00, 0xb04, 0xb28, 0xb68,
+						0xb08, 0xb0c, 0xb10, 0xb14,
+						0xb18, 0xb1c, 0xb20, 0xb24,
+						0xe28, 0xb00, 0xb04, 0xb08,
 						0xb0c, 0xb10, 0xb14, 0xb18,
 						0xb1c, 0xb20, 0xb24, 0xb28,
-						0xb2c, rBndA, 0xb34, 0xb38, 
+						0xb2c, rBndA, 0xb34, 0xb38,
 						0xb3c, 0xe28},
-						{0xb70, 0xb74, 0xb98, 0xb6C, 
-						0xb78, 0xb7c, 0xb80, 0xb84, 
-						0xb88, 0xb8c, 0xb90, 0xb94,   
-						0xe28, 0xb60, 0xb64, 0xb68, 
+						{0xb70, 0xb74, 0xb98, 0xb6C,
+						0xb78, 0xb7c, 0xb80, 0xb84,
+						0xb88, 0xb8c, 0xb90, 0xb94,
+						0xe28, 0xb60, 0xb64, 0xb68,
 						0xb6c, 0xb70, 0xb74, 0xb78,
 						0xb7c, 0xb80, 0xb84, 0xb88,
-						0xb8c, 0xb90, 0xb94, 0xb98, 
-						0xb9c, 0xe28} 						
-						};			
+						0xb8c, 0xb90, 0xb94, 0xb98,
+						0xb9c, 0xe28}
+						};
 
 	static unsigned int	BB_settings_loop[DP_BB_REG_NUM_loop] = {
-						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000, 
+						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000,
 						0x41382e21,	0x5b554f48, 0x6f6b6661, 0x817d7874,
 						0x908c8884, 0x9d9a9793, 0xaaa7a4a1, 0xb6b3b0ad,
 						0x40000000, 0x7d327c18, 0x7e057db3, 0x7e5f7e37,
 						0x7e967e7c, 0x7ebe7eac, 0x7ed77ecc, 0x7eee7ee4,
 						0x7f017ef9, 0x7f0e7f07, 0x7f1c7f15, 0x7f267f20,
 						0x7f2f7f2a, 0x7f377f34, 0x7f3e7f3b, 0x7f457f42,
-						0x7f4b7f48, 0x00000000 
+						0x7f4b7f48, 0x00000000
 						};
 
 	static unsigned int	BB_settings_loop_3db[DP_BB_REG_NUM_loop] = {
-						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000, 
+						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000,
 						0x5b4e402e,	0x7f776f65, 0x9c968f88, 0xb5afa8a3,
 						0xcac4bfb9, 0xdcd8d4ce, 0xeeeae6e2, 0xfffbf7f2,
 						0x40000000, 0x7dfe7d32, 0x7e967e59, 0x7ed77eba,
 						0x7efd7eeb, 0x7f1a7f0e, 0x7f2d7f25, 0x7f3c7f36,
 						0x7f4a7f44, 0x7f547f4e, 0x7f5d7f58, 0x7f657f60,
 						0x7f6a7f68, 0x7f717f6e, 0x7f767f73, 0x7f7b7f78,
-						0x7f7f7f7d, 0x00000000 
-						};	
-	
-	static unsigned int	BB_settings_loop_tx[DP_BB_REG_NUM_loop] = {	
-						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000, 
-						0x21212121, 0x21212121, 0x21212121, 0x21212121,
-						0x21212121, 0x21212121, 0x21212121, 0x21212121,
-						0x40000000,	0x7c187c18, 0x7c187c18, 0x7c187c18, 
-						0x7c187c18, 	0x7c187c18,	0x7c187c18, 0x7c187c18, 
-						0x7c187c18,	0x7c187c18, 0x7c187c18, 0x7c187c18, 
-						0x7c187c18,	0x7c187c18, 0x7c187c18, 0x7c187c18, 
-						0x7c187c18, 0x00000000 
-						};	
+						0x7f7f7f7d, 0x00000000
+						};
 
-	static unsigned int	BB_settings_loop_tx_3db[DP_BB_REG_NUM_loop] = { 
-						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000, 
+	static unsigned int	BB_settings_loop_tx[DP_BB_REG_NUM_loop] = {
+						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000,
+						0x21212121, 0x21212121, 0x21212121, 0x21212121,
+						0x21212121, 0x21212121, 0x21212121, 0x21212121,
+						0x40000000,	0x7c187c18, 0x7c187c18, 0x7c187c18,
+						0x7c187c18, 	0x7c187c18,	0x7c187c18, 0x7c187c18,
+						0x7c187c18,	0x7c187c18, 0x7c187c18, 0x7c187c18,
+						0x7c187c18,	0x7c187c18, 0x7c187c18, 0x7c187c18,
+						0x7c187c18, 0x00000000
+						};
+
+	static unsigned int	BB_settings_loop_tx_3db[DP_BB_REG_NUM_loop] = {
+						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000,
 						0x2e2e2e2e, 0x2e2e2e2e, 0x2e2e2e2e, 0x2e2e2e2e,
 						0x2e2e2e2e, 0x2e2e2e2e, 0x2e2e2e2e, 0x2e2e2e2e,
-						0x40000000, 0x7d327d32, 0x7d327d32, 0x7d327d32, 
-						0x7d327d32, 	0x7d327d32, 0x7d327d32, 0x7d327d32, 
-						0x7d327d32, 0x7d327d32, 0x7d327d32, 0x7d327d32, 
-						0x7d327d32, 0x7d327d32, 0x7d327d32, 0x7d327d32, 
-						0x7d327d32, 0x00000000 
+						0x40000000, 0x7d327d32, 0x7d327d32, 0x7d327d32,
+						0x7d327d32, 	0x7d327d32, 0x7d327d32, 0x7d327d32,
+						0x7d327d32, 0x7d327d32, 0x7d327d32, 0x7d327d32,
+						0x7d327d32, 0x7d327d32, 0x7d327d32, 0x7d327d32,
+						0x7d327d32, 0x00000000
 						};
 
 
 					//for find 2dB loss point
-	static unsigned int	BB_settings_loop_tx_2[DP_BB_REG_NUM_loop] = { 
-						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000, 
+	static unsigned int	BB_settings_loop_tx_2[DP_BB_REG_NUM_loop] = {
+						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000,
 						0x41382e21, 0x5b554f48, 0x6f6b6661, 0x817d7874,
 						0x908c8884, 0x9d9a9793, 0xaaa7a4a1, 0xb6b3b0ad,
-						0x40000000, 0x7d327c18, 0x7e057db3, 0x7e5f7e37, 
-						0x7e967e7c, 0x7ebe7eac, 0x7ed77ecc, 0x7eee7ee4, 
-						0x7f017ef9, 0x7f0e7f07, 0x7f1c7f15, 0x7f267f20, 
-						0x7f2f7f2a, 0x7f377f34, 0x7f3e7f3b, 0x7f457f42, 
-						0x7f4b7f48, 0x00000000 
+						0x40000000, 0x7d327c18, 0x7e057db3, 0x7e5f7e37,
+						0x7e967e7c, 0x7ebe7eac, 0x7ed77ecc, 0x7eee7ee4,
+						0x7f017ef9, 0x7f0e7f07, 0x7f1c7f15, 0x7f267f20,
+						0x7f2f7f2a, 0x7f377f34, 0x7f3e7f3b, 0x7f457f42,
+						0x7f4b7f48, 0x00000000
 						};
 
 					//for find 2dB loss point
-	static unsigned int	BB_settings_loop_tx_2_3db[DP_BB_REG_NUM_loop] = { 
-						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000, 
+	static unsigned int	BB_settings_loop_tx_2_3db[DP_BB_REG_NUM_loop] = {
+						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000,
 						0x5b4e402e, 0x7f776f65, 0x9c968f88, 0xb5afa8a3,
 						0xcac4bfb9, 0xdcd8d4ce, 0xeeeae6e2, 0xfffbf7f2,
-						0x40000000, 0x7dfe7d32, 0x7e967e59, 0x7ed77eba, 
-						0x7efd7eeb, 0x7f1a7f0e, 0x7f2d7f25, 0x7f3c7f36, 
-						0x7f4a7f44, 0x7f547f4e, 0x7f5d7f58, 0x7f657f60, 
-						0x7f6a7f68, 0x7f717f6e, 0x7f767f73, 0x7f7b7f78, 
-						0x7f7f7f7d, 0x00000000 
-						};					
+						0x40000000, 0x7dfe7d32, 0x7e967e59, 0x7ed77eba,
+						0x7efd7eeb, 0x7f1a7f0e, 0x7f2d7f25, 0x7f3c7f36,
+						0x7f4a7f44, 0x7f547f4e, 0x7f5d7f58, 0x7f657f60,
+						0x7f6a7f68, 0x7f717f6e, 0x7f767f73, 0x7f7b7f78,
+						0x7f7f7f7d, 0x00000000
+						};
 
 
 	static unsigned int	BB_settings_loop_rx[DP_BB_REG_NUM_loop_rx] = {
-						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000, 
+						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000,
 						0x21212121,	0x40000000, 0x7c187c18, 0x00000000
-						};	
+						};
 
 	static unsigned int	BB_settings_loop_rx_3db[DP_BB_REG_NUM_loop_rx] = {
-						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000, 
+						0x01017e18, 0xf76d9f84, 0x00080000, 0x11880000,
 						0x2e2e2e2e,	0x40000000, 0x7d327d32, 0x00000000
-						};	
+						};
 
 	static unsigned int	BB_settings_loop_pa[DP_BB_REG_NUM_loop_pa] = {
-						0x02096eb8, 0xf76d9f84, 0x00044499, 0x02880140  
-						};	
+						0x02096eb8, 0xf76d9f84, 0x00044499, 0x02880140
+						};
 
 	static unsigned int	BB_settings_loop_dp[DP_BB_REG_NUM_loop_pa] = {
-						0x01017098, 0x776d9f84, 0x00000000, 0x08080000  
-						};	
+						0x01017098, 0x776d9f84, 0x00000000, 0x08080000
+						};
 
 	unsigned int	*BB_settings_temp;
 
 	static unsigned char	Sram_db_settings[DP_SRAM_NUM_db] = {
-						0xfe,	0xf0,	0xe3,	0xd6,	0xca,	
+						0xfe,	0xf0,	0xe3,	0xd6,	0xca,
 						0xbf,	0xb4,	0xaa,	0xa0,	0x97,
 						0x8f,	0x87,	0x7f,	0x78,	0x71,
 						0x6b,	0x65,	0x5f,	0x5a,	0x55,
-						0x50,	0x4c,	0x47,	0x43,	0x40,	
+						0x50,	0x4c,	0x47,	0x43,	0x40,
 						0x3c,	0x39,	0x35,	0x32,	0x2f,
 						0x2d,	0x2a,	0x28,	0x26,	0x23,
 						0x21,	0x20,	0x1e,	0x1c,	0x1a,
-						0x19,	0x18,	0x16,	0x16,	0x14,	
+						0x19,	0x18,	0x16,	0x16,	0x14,
 						0x13,	0x12,	0x11,	0x10,	0x0f,
-						0x0e,	0x0d,	0x0c,	0x0c,	0x0b,	
-						0x0a,	0x0a,	0x09,	0x09,	0x08,	
-						0x08,	0x07,	0x07,	0x06,	0x06,	
-						0x06,	0x05,	0x05,	0x05,	0x04,	
-						0x04,	0x04,	0x04,	0x03,	0x03,	
-						0x03,	0x03,	0x03,	0x02,	0x02,	
-						0x02,	0x02,	0x02,	0x02,	0x02,	
+						0x0e,	0x0d,	0x0c,	0x0c,	0x0b,
+						0x0a,	0x0a,	0x09,	0x09,	0x08,
+						0x08,	0x07,	0x07,	0x06,	0x06,
+						0x06,	0x05,	0x05,	0x05,	0x04,
+						0x04,	0x04,	0x04,	0x03,	0x03,
+						0x03,	0x03,	0x03,	0x02,	0x02,
+						0x02,	0x02,	0x02,	0x02,	0x02,
 						0x01
 					};
 
@@ -8736,24 +8736,24 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 
 	static unsigned int	offset[2][DP_OFFSET_NUM] = {{		//path, offset
 						0xe34,	0xb28, 	0xb00,	0xbdc,	0xbc0,
-						0xbe8,	rOFDM0_XATxIQImbalance,	rBndA,	
+						0xbe8,	rOFDM0_XATxIQImbalance,	rBndA,
 						0xb68},{
 						0xe54,	0xb98,	0xb70,	0xbec,	0xbc4,
 						0xbf8,	rOFDM0_XBTxIQImbalance,	rBndB,
 						0xb6c}};
-						
+
 	//unsigned char	OFDM_min_index = 6, OFDM_min_index_internalPA = 3;
 	unsigned char	OFDM_index[2];
 	//unsigned char	retrycount = 0, retrybound = 1;
 
 	unsigned int	RF_backup[DP_PATH_NUM][DP_RF_REG_NUM];
 	static unsigned int	RF_REG[DP_RF_REG_NUM] = {
-						RF_TX_G3,	RF_TXPA_A4,	RF_RXRF_A3,	
+						RF_TX_G3,	RF_TXPA_A4,	RF_RXRF_A3,
 						RF_BS_PA_APSET_G1_G4/*,	RF_BS_PA_APSET_G5_G8,
 						RF_BS_PA_APSET_G9_G11*/};
 
 	static unsigned int	RF_AP_curve_select[DP_AP_CUREVE_SELECT_NUM] = {
-						0x7bdef,	0x94a52,	0xa5294/*,	0xb5ad6*/	};	
+						0x7bdef,	0x94a52,	0xa5294/*,	0xb5ad6*/	};
 
 	static unsigned int	RF_PA_BIAS[3][DP_PA_BIAS_NUM] = {{	//40MHz / 20MHz, original
 						0xe189f,	0xa189f,	0x6189f,	0x2189f	},{
@@ -8770,15 +8770,15 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 
 	int				gain_loss_backup[DP_PATH_NUM][DP_PA_MODEL_NUM];	//I,Q
 
-	static unsigned int	gain_loss_bound[DP_GAIN_LOSS_BOUND_NUM] = {						
-						63676,	60114 ,	56751 ,	53577 ,	49145,	
+	static unsigned int	gain_loss_bound[DP_GAIN_LOSS_BOUND_NUM] = {
+						63676,	60114 ,	56751 ,	53577 ,	49145,
 						47750, 	45079 ,	42557 ,	40177 ,	37929 ,
-						35807 ,	33804 ,	31913,	30128  		
-					};	
+						35807 ,	33804 ,	31913,	30128
+					};
 
-	static int				gain_loss_coef[DP_GAIN_LOSS_BOUND_NUM+1] = { 					
-						512,	527,	543, 	558, 	573, 	
-						589,	609,	625, 	645, 	666, 	
+	static int				gain_loss_coef[DP_GAIN_LOSS_BOUND_NUM+1] = {
+						512,	527,	543, 	558, 	573,
+						589,	609,	625, 	645, 	666,
 						681,	701, 	722, 	742,	768
 					};
 
@@ -8792,15 +8792,15 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 
 	unsigned char	index_for_zero_db = 6, AP_curve_index = 0;
 	int				power_I, power_Q;
-	static unsigned int	gain_loss_bound[DP_GAIN_LOSS_BOUND_NUM] = {						
+	static unsigned int	gain_loss_bound[DP_GAIN_LOSS_BOUND_NUM] = {
 						61870,	55142,	49145,	43801,	39037,
-						34792,	31008,	27636		
-					};		
+						34792,	31008,	27636
+					};
 #endif
-	
+
 	unsigned int	MAC_backup[IQK_MAC_REG_NUM];
 	static unsigned int	MAC_REG[IQK_MAC_REG_NUM] = {
-						0x522,	0x550, 	0x551, 	0x040};		
+						0x522,	0x550, 	0x551, 	0x040};
 
 	//unsigned int	AFE_on_off[PATH_NUM] = {
 	//				0x04db25a4, 0x0b1b25a4};	//path A on path B path A off path B on
@@ -8824,40 +8824,40 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 #endif
 
 	DPK_DEBUG("==>_PHY_DigitalPredistortion() interface index %d is2T = %d\n", priv->pshare->wlandev_idx, is2T); //anchin
-	
+
 	DPK_DEBUG("_PHY_DigitalPredistortion for %s\n", (is2T ? "2T2R" : "1T1R"));
 
-	DPK_DEBUG("==>_PHY_DigitalPredistortion() current thermal meter = 0x%x PG thermal meter = 0x%x bPlus3db %d\n", 
+	DPK_DEBUG("==>_PHY_DigitalPredistortion() current thermal meter = 0x%x PG thermal meter = 0x%x bPlus3db %d\n",
 		priv->pshare->ThermalValue_DPKtrack, priv->pmib->dot11RFEntry.ther, bPlus3db);
-	
+
 	if ((priv->pmib->dot11RFEntry.phyBandSelect!= PHY_BAND_5G)||(GET_CHIP_VER(priv)!=VERSION_8192D))
 		return;
-	
+
 	bInternalPA = priv->pshare->rf_ft_var.use_intpa92d;
 
 	if(!is2T)
 		path_num = 1;
-	else 
+	else
 		path_num = 2;
-	
+
 	if(!bInternalPA) {
-		DPK_DEBUG("==>_PHY_DigitalPredistortion() NOT internal5G\n");	
-		return;	
+		DPK_DEBUG("==>_PHY_DigitalPredistortion() NOT internal5G\n");
+		return;
 	}
 
 	if(priv->pshare->pwr_trk_ongoing){
-		DPK_DEBUG("==>_PHY_DigitalPredistortion() TxPowerTrackingInProgress() delay 100ms\n"); 	
+		DPK_DEBUG("==>_PHY_DigitalPredistortion() TxPowerTrackingInProgress() delay 100ms\n");
 		mod_timer(&priv->pshare->DPKTimer, jiffies + RTL_MILISECONDS_TO_JIFFIES(100));
 		return;
-	}	
-	
+	}
+
 	OFDM_index[RF92CD_PATH_A] = priv->pshare->OFDM_index[RF92CD_PATH_A];
 	OFDM_index[RF92CD_PATH_B] = priv->pshare->OFDM_index[RF92CD_PATH_B];
 
-	DPK_DEBUG("original index 0x%x \n", priv->pshare->OFDM_index[0]);		
-	
+	DPK_DEBUG("original index 0x%x \n", priv->pshare->OFDM_index[0]);
+
 	priv->pshare->bDPKworking = TRUE;
-	
+
 	//save global setting
 	//save BB default value
 	_PHY_SaveADDARegisters(priv, BB_REG, BB_backup, DP_BB_REG_NUM);
@@ -8872,16 +8872,16 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 	//save path A BB default value
 	_PHY_SaveADDARegisters(priv, BB_REG_A, BB_backup_A, DP_BB_REG_NUM_A);
 
-	//save path B BB default value	
+	//save path B BB default value
 	if(is2T)
 		_PHY_SaveADDARegisters(priv, BB_REG_B, BB_backup_B, DP_BB_REG_NUM_B);
-	
+
 	//save pathA/B RF default value
 	for(path=0; path<path_num; path++){
 		for(index=0; index<DP_RF_REG_NUM; index++)
-			RF_backup[path][index] = PHY_QueryRFReg(priv, path, RF_REG[index], bMaskDWord, 1);	
-	}	
-	
+			RF_backup[path][index] = PHY_QueryRFReg(priv, path, RF_REG[index], bMaskDWord, 1);
+	}
+
 	//BB register setting
 	for(index = 0; index < DP_BB_REG_NUM_settings; index++)
 		PHY_SetBBReg(priv, BB_REG[index], bMaskDWord, BB_settings[index]);
@@ -8892,13 +8892,13 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 	//BB pah A register setting: fix TRSW to TX, external PA on, external LAN off
 	if(!bInternalPA)
 	{
-		PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x07600f60);			
-		PHY_SetBBReg(priv, rFPGA0_XA_RFInterfaceOE, ~(BIT8|BIT9), 0x66e60a30);		
+		PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x07600f60);
+		PHY_SetBBReg(priv, rFPGA0_XA_RFInterfaceOE, ~(BIT8|BIT9), 0x66e60a30);
 	}
 	else
 	{
-		PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x07600760);			
-		PHY_SetBBReg(priv, rFPGA0_XA_RFInterfaceOE, ~(BIT8|BIT9), 0x66e60230);		
+		PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x07600760);
+		PHY_SetBBReg(priv, rFPGA0_XA_RFInterfaceOE, ~(BIT8|BIT9), 0x66e60230);
 	}
 	PHY_SetBBReg(priv, rBndA, 0xF00000, 0x0a);
 
@@ -8907,15 +8907,15 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 	{
 		if(!bInternalPA)
 		{
-			PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x0f600f60);					
+			PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x0f600f60);
 		PHY_SetBBReg(priv, rFPGA0_XB_RFInterfaceOE, bMaskDWord, 0x061f0130);
 		}
 		else
 		{
-			PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x07600760);						
+			PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x07600760);
 			PHY_SetBBReg(priv, rFPGA0_XB_RFInterfaceOE, bMaskDWord, 0x061f0130);
 		}
-		PHY_SetBBReg(priv, rBndB, 0xF00000, 0x0a);		
+		PHY_SetBBReg(priv, rBndB, 0xF00000, 0x0a);
 	}
 
 	//MAC register setting
@@ -8923,10 +8923,10 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 
 	//path A/B DPK
 	//Path-A/B AFE all on
-	for(path=0; path<path_num; path++)	
+	for(path=0; path<path_num; path++)
 	{
 
-		//if(is2T && !pHalData->InternalPA5G[path])		
+		//if(is2T && !pHalData->InternalPA5G[path])
 			//continue;
 
 		if(path == RF92CD_PATH_B)
@@ -8934,13 +8934,13 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 			//BB pah A register setting:fix TRSW to TX;external LNA off
 			if(!bInternalPA)
 			{
-				PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x0f600f60);			
-				PHY_SetBBReg(priv, rFPGA0_XA_RFInterfaceOE, ~(BIT8|BIT9), 0x66e60230);		
+				PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x0f600f60);
+				PHY_SetBBReg(priv, rFPGA0_XA_RFInterfaceOE, ~(BIT8|BIT9), 0x66e60230);
 			}
 			else
 			{
-				PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x07600760);			
-				PHY_SetBBReg(priv, rFPGA0_XA_RFInterfaceOE, ~(BIT8|BIT9), 0x66e60230);		
+				PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x07600760);
+				PHY_SetBBReg(priv, rFPGA0_XA_RFInterfaceOE, ~(BIT8|BIT9), 0x66e60230);
 			}
 			PHY_SetBBReg(priv, rBndA, 0xF00000, 0x0a);
 
@@ -8949,23 +8949,23 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 			{
 				if(!bInternalPA)
 				{
-					PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x0f600f60);					
-					PHY_SetBBReg(priv, rFPGA0_XB_RFInterfaceOE, bMaskDWord, 0x061f0930);			
+					PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x0f600f60);
+					PHY_SetBBReg(priv, rFPGA0_XB_RFInterfaceOE, bMaskDWord, 0x061f0930);
 				}
 				else
 				{
-					PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x07600760);						
+					PHY_SetBBReg(priv, rFPGA0_XAB_RFInterfaceSW, bMaskDWord, 0x07600760);
 					PHY_SetBBReg(priv, rFPGA0_XB_RFInterfaceOE, bMaskDWord, 0x061f0130);
 				}
-				PHY_SetBBReg(priv, rBndB, 0xF00000, 0x0a);		
-			}			
+				PHY_SetBBReg(priv, rBndB, 0xF00000, 0x0a);
+			}
 		}
 
 		AP_curve_index = 1;
-		rx_index = 0x06;		
+		rx_index = 0x06;
 		bPlus3db = FALSE;
 		bDecreaseTxIndex = FALSE;
-	
+
 		if(path == RF92CD_PATH_A)
 		{
 			_PHY_PathADDAOn(priv, AFE_REG, TRUE, is2T);
@@ -8976,45 +8976,45 @@ void PHY_DPCalibrate(struct rtl8192cd_priv *priv)
 		}
 
 		if(path == RF92CD_PATH_B)
-			PHY_SetBBReg(priv, rFPGA1_DebugSelect, bMaskDWord, 0x00000303); 		
+			PHY_SetBBReg(priv, rFPGA1_DebugSelect, bMaskDWord, 0x00000303);
 
 		//path A/B RF setting
-		//internal lopback off	
+		//internal lopback off
 		if(path == RF92CD_PATH_A && !bInternalPA)
 		{
-			PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE1, bMask20Bits, 0x5007f);					
-			PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE2, bMask20Bits, 0x6f1f9);								
-		}		
+			PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE1, bMask20Bits, 0x5007f);
+			PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE2, bMask20Bits, 0x6f1f9);
+		}
 		else if(path == RF92CD_PATH_B)
 		{
-			PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE1, bMask20Bits, 0x1000f);					
-			PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE2, bMask20Bits, 0x60103);								
+			PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE1, bMask20Bits, 0x1000f);
+			PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE2, bMask20Bits, 0x60103);
 		}
 
 		PHY_SetRFReg(priv, path, RF_RXRF_A3, bMask20Bits, 0xef456);
 
 		//Path A/B to standby mode
-		PHY_SetRFReg(priv, path==RF92CD_PATH_A?RF92CD_PATH_B:RF92CD_PATH_A, 
+		PHY_SetRFReg(priv, path==RF92CD_PATH_A?RF92CD_PATH_B:RF92CD_PATH_A,
 			RF_AC, bMask20Bits, 0x10000);
 
 		//set DPK PA bias table
-		index = priv->pshare->CurrentChannelBW == HT_CHANNEL_WIDTH_20_40?0:1;		
+		index = priv->pshare->CurrentChannelBW == HT_CHANNEL_WIDTH_20_40?0:1;
 		if(path == RF92CD_PATH_A)
 		{
 			for(i = 0; i < path_num; i++)
 		{
 				for(j = 0; j < DP_PA_BIAS_NUM; j++)
-					PHY_SetRFReg(priv, i, RF_TXBIAS, bMask20Bits, RF_PA_BIAS[index][j]);	
+					PHY_SetRFReg(priv, i, RF_TXBIAS, bMask20Bits, RF_PA_BIAS[index][j]);
 			}
 		}
-		
+
 Step1:
 
-		DPK_DEBUG("==>AP curve select 0x%x bplus3db %d path%s!!\n", RF_AP_curve_select[AP_curve_index], bPlus3db, path==RF92CD_PATH_A?"A":"B");				
-	
+		DPK_DEBUG("==>AP curve select 0x%x bplus3db %d path%s!!\n", RF_AP_curve_select[AP_curve_index], bPlus3db, path==RF92CD_PATH_A?"A":"B");
+
 		//RF setting for AP curve selection
-		//default AP curve = 15	
-		PHY_SetRFReg(priv, path, RF_BS_PA_APSET_G1_G4, bMask20Bits, RF_AP_curve_select[AP_curve_index]);	
+		//default AP curve = 15
+		PHY_SetRFReg(priv, path, RF_BS_PA_APSET_G1_G4, bMask20Bits, RF_AP_curve_select[AP_curve_index]);
 
 		//////////////////////////////////////////////////
 		// step 1: find RF TX/RX index
@@ -9042,16 +9042,16 @@ Step1:
 		{
 			if(bDecreaseTxIndex)
 			{
-				PHY_SetBBReg(priv, offset[path][2], bMaskDWord, 0x01017098);	//0xb00, 0xb70				
+				PHY_SetBBReg(priv, offset[path][2], bMaskDWord, 0x01017098);	//0xb00, 0xb70
 				PHY_SetBBReg(priv, offset[path][8], bMaskDWord, 0x28080000);	//0xb68, 0xb6c
-				
+
 				for(i = 3; i < DP_RF_REG_NUM; i++)
 					PHY_SetRFReg(priv, path, RF_REG[i], bMask20Bits, RF_backup[path][i]);
 
 				//set original DPK bias table
 				for(j = 0; j < DP_PA_BIAS_NUM; j++)
 					PHY_SetRFReg(priv, path, RF_TXBIAS, bMask20Bits, RF_PA_BIAS[2][j]);
-				continue;														
+				continue;
 			}
 			else
 			{
@@ -9077,7 +9077,7 @@ Step1:
 		//----send one shot signal----//
 		PHY_SetBBReg(priv, offset[path][1], bMaskDWord, 0x80080000);	//0xb28, 0xb98
 		PHY_SetBBReg(priv, offset[path][1], bMaskDWord, 0x00080000);
-		
+
 		//get power
 		if(!_PHY_Find_Tx_Power_Index(priv, PA_power[path], path, bPlus3db, bDecreaseTxIndex, &tx_index))
 		{
@@ -9087,9 +9087,9 @@ Step1:
 				{
 					if(tx_index < 0x11)
 					{
-						PHY_SetBBReg(priv, offset[path][2], bMaskDWord, 0x01017098);	//0xb00, 0xb70				
+						PHY_SetBBReg(priv, offset[path][2], bMaskDWord, 0x01017098);	//0xb00, 0xb70
 						PHY_SetBBReg(priv, offset[path][8], bMaskDWord, 0x28080000);	//0xb68, 0xb6c
-						
+
 						for(i = 3; i < DP_RF_REG_NUM; i++)
 							PHY_SetRFReg(priv, path, RF_REG[i], bMask20Bits, RF_backup[path][i]);
 
@@ -9097,30 +9097,30 @@ Step1:
 						for(j = 0; j < DP_PA_BIAS_NUM; j++)
 							PHY_SetRFReg(priv, path, RF_TXBIAS, bMask20Bits, RF_PA_BIAS[2][j]);
 
-						continue;											
-					}	
+						continue;
+					}
 					else
 					{
-						//RTPRINT(FINIT, INIT_IQK, ("==>Check pattern reliability path%s SUCCESS tx_index = 0x1b!!!!\n", path==RF90_PATH_A?"A":"B")); 										
+						//RTPRINT(FINIT, INIT_IQK, ("==>Check pattern reliability path%s SUCCESS tx_index = 0x1b!!!!\n", path==RF90_PATH_A?"A":"B"));
 					}
 				}
 				else if(tx_index < 0x1a)
 				{
 					bDecreaseTxIndex = TRUE;
-					goto Step1; 				
+					goto Step1;
 				}
 				else
 				{
 					bPlus3db = TRUE;
-					goto Step1; 				
+					goto Step1;
 				}
 			}
-			else if(tx_index == 0x1f) 
+			else if(tx_index == 0x1f)
 			{
 				DPK_DEBUG("==>Check pattern reliability path%s FAIL!!!!\n", path==RF92CD_PATH_A?"A":"B");
 				PHY_SetBBReg(priv, offset[path][2], bMaskDWord, 0x01017098);	//0xb00, 0xb70
 				PHY_SetBBReg(priv, offset[path][8], bMaskDWord, 0x28080000);	//0xb68, 0xb6c
-				
+
 				for(i = 3; i < DP_RF_REG_NUM; i++)
 					PHY_SetRFReg(priv, path, RF_REG[i], bMask20Bits, RF_backup[path][i]);
 
@@ -9128,14 +9128,14 @@ Step1:
 				for(j = 0; j < DP_PA_BIAS_NUM; j++)
 					PHY_SetRFReg(priv, path, RF_TXBIAS, bMask20Bits, RF_PA_BIAS[2][j]);
 
-				continue;							
-			}		
+				continue;
+			}
 
-		
+
 		}
 		else
 		{
-			DPK_DEBUG("==>Check pattern reliability path%s SUCCESS!!!!\n", path==RF92CD_PATH_A?"A":"B"); 					
+			DPK_DEBUG("==>Check pattern reliability path%s SUCCESS!!!!\n", path==RF92CD_PATH_A?"A":"B");
 		}
 
 		//find RF RX index
@@ -9156,7 +9156,7 @@ Step1:
 		for(; i < 29; i++)
 			PHY_SetBBReg(priv, BB_REG_loop[path][i], bMaskDWord, BB_settings_temp[6]);
 		PHY_SetBBReg(priv, BB_REG_loop[path][i], bMaskDWord, BB_settings_temp[7]);
-		
+
 		rx_index = _PHY_Find_Rx_Power_Index(priv, tx_index, rx_index, path, &bDecreaseTxIndex);
 
 		//////////////////////////////////////
@@ -9173,18 +9173,18 @@ Step1:
 
 		//LNA VDD to gnd
 		PHY_SetRFReg(priv,path, RF_AC, bMask20Bits, 0x52000 | tx_index | (rx_index << 5));
-			
+
 		//----send one shot signal----//
 		// Path A
 		PHY_SetBBReg(priv, offset[path][1], bMaskDWord, 0x80080000);	//0xb28, 0xb98
 		PHY_SetBBReg(priv, offset[path][1], bMaskDWord, 0x00080000);
-		
+
 		PHY_SetRFReg(priv, RF92CD_PATH_A, RF_T_METER, BIT17|BIT16, 0x03);
-	
+
 		_PHY_DPK_polling(priv);
 
 		priv->pshare->ThermalValue_DPKstore = (unsigned char)PHY_QueryRFReg(priv, RF92CD_PATH_A, RF_T_METER, 0xf800, 1);	//0x42: RF Reg[15:11] 92D
-		
+
 		// read PA model and save to PA_model_A[32]
 		for(i = 0; i < DP_PA_MODEL_RUN_NUM; i++)
 		{
@@ -9192,7 +9192,7 @@ Step1:
 			for(index = 0; index < DP_PA_MODEL_PER_RUN_NUM; index++)
 			{
 				PA_model_backup[path][i*4+index] = PHY_QueryBBReg(priv, offset[path][3]+index*4, bMaskDWord);	//0xbdc, 0xbec
-				DPK_DEBUG("==>PA_model_backup index %d value 0x%x()\n", i*4+index, PA_model_backup[path][i*4+index]);			
+				DPK_DEBUG("==>PA_model_backup index %d value 0x%x()\n", i*4+index, PA_model_backup[path][i*4+index]);
 			}
 		}
 
@@ -9202,19 +9202,19 @@ Step1:
 		{
 			if(!_PHY_DPK_AP_curve_check(priv, PA_model_backup[path], DP_PA_MODEL_NUM))
 			{
-				DPK_DEBUG("==>find appropriate AP curve 0x%x path%s FAIL!!!!\n", RF_AP_curve_select[AP_curve_index], path==RF92CD_PATH_A?"A":"B");			
+				DPK_DEBUG("==>find appropriate AP curve 0x%x path%s FAIL!!!!\n", RF_AP_curve_select[AP_curve_index], path==RF92CD_PATH_A?"A":"B");
 				AP_curve_index++;
 				if(AP_curve_index < DP_AP_CUREVE_SELECT_NUM)
-					goto Step1; 		
+					goto Step1;
 			}
 			else
 			{
-				DPK_DEBUG("==>find appropriate AP curve path%s SUCCESS!!!!\n", path==RF92CD_PATH_A?"A":"B"); 					
+				DPK_DEBUG("==>find appropriate AP curve path%s SUCCESS!!!!\n", path==RF92CD_PATH_A?"A":"B");
 			}
 		}
 #endif
 
-		//check PA model		
+		//check PA model
 		if(!_PHY_DPK_check(priv, PA_model_backup[path], DP_PA_MODEL_NUM))
 		{
 			PHY_SetBBReg(priv, offset[path][2], bMaskDWord, 0x01017098);	// add in 2011-06-02
@@ -9222,69 +9222,69 @@ Step1:
 
 			for(i = 3; i < DP_RF_REG_NUM; i++)
 				PHY_SetRFReg(priv, path, RF_REG[i], bMaskDWord, RF_backup[path][i]);
-			DPK_DEBUG("==>PA model path%s FAIL!!!!\n", path==RF92CD_PATH_A?"A":"B"); 	
-			priv->pshare->bDPKdone[path] = FALSE;							
+			DPK_DEBUG("==>PA model path%s FAIL!!!!\n", path==RF92CD_PATH_A?"A":"B");
+			priv->pshare->bDPKdone[path] = FALSE;
 			//set original DPK bias table
 			for(j = 0; j < DP_PA_BIAS_NUM; j++)
 				PHY_SetRFReg(priv, path, RF_TXBIAS, bMask20Bits, RF_PA_BIAS[2][j]);
-												
+
 			continue;
 		}
 		else
 		{
-			DPK_DEBUG("==>PA model path%s SUCCESS!!!!\n", path==RF92CD_PATH_A?"A":"B");			
-//			priv->pshare->bDPKdone[path] = TRUE;	
-//			priv->pshare->bDPKstore = TRUE; 		
+			DPK_DEBUG("==>PA model path%s SUCCESS!!!!\n", path==RF92CD_PATH_A?"A":"B");
+//			priv->pshare->bDPKdone[path] = TRUE;
+//			priv->pshare->bDPKstore = TRUE;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
 		// step 3: fill PA model to DP Calibration
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
-		//fill BB TX index for the DPK reference 
-		DPK_DEBUG("==>fill PA model to DP Calibration\n"); 		
+		//fill BB TX index for the DPK reference
+		DPK_DEBUG("==>fill PA model to DP Calibration\n");
 
 		if(path == RF92CD_PATH_A){
 			for(index = 0; index < DP_PA_MODEL_RUN_NUM; index++){
 				if(index != 3){
-					PHY_SetBBReg(priv, 0xe00+index*4, bMaskDWord, 0x3c3c3c3c);	
+					PHY_SetBBReg(priv, 0xe00+index*4, bMaskDWord, 0x3c3c3c3c);
 				} else {
-					PHY_SetBBReg(priv, 0xe00+index*4, bMaskDWord, 0x03903c3c);						
+					PHY_SetBBReg(priv, 0xe00+index*4, bMaskDWord, 0x03903c3c);
 				}
 			}
-			PHY_SetBBReg(priv, 0x86c, bMaskDWord, 0x3c3c3c3c);	
+			PHY_SetBBReg(priv, 0x86c, bMaskDWord, 0x3c3c3c3c);
 		}else if (path == RF92CD_PATH_B){
 			for(index = 0; index < 4; index++) {
-				PHY_SetBBReg(priv, 0x830+index*4, bMaskDWord, 0x3c3c3c3c);			
+				PHY_SetBBReg(priv, 0x830+index*4, bMaskDWord, 0x3c3c3c3c);
 			}
 			for(index = 0; index < 2; index++) {
-				PHY_SetBBReg(priv, 0x848+index*4, bMaskDWord, 0x3c3c3c3c);	
+				PHY_SetBBReg(priv, 0x848+index*4, bMaskDWord, 0x3c3c3c3c);
 			}
 			for(index = 0; index < 2; index++) {
-				PHY_SetBBReg(priv, 0x868+index*4, bMaskDWord, 0x3c3c3c3c);										
+				PHY_SetBBReg(priv, 0x868+index*4, bMaskDWord, 0x3c3c3c3c);
 			}
-		}		
+		}
 
 		// SRAM boundary setting
 		PHY_SetBBReg(priv, 0xe28, 0xffffff00, 0x400000);
 
 		if(priv->pshare->phw->bNewTxGainTable)
-			PHY_SetBBReg(priv, offset[path][4], bMaskDWord, 0x0008421f);	//0xbc0, 0xbc4	
-		else	
-			PHY_SetBBReg(priv, offset[path][4], bMaskDWord, 0x0009ce7f);	//0xbc0, 0xbc4	
+			PHY_SetBBReg(priv, offset[path][4], bMaskDWord, 0x0008421f);	//0xbc0, 0xbc4
+		else
+			PHY_SetBBReg(priv, offset[path][4], bMaskDWord, 0x0009ce7f);	//0xbc0, 0xbc4
 
 		PHY_SetBBReg(priv, 0xe28, 0xffffff00, 0);
 
 		_PHY_SetADDARegisters(priv, BB_REG_loop[path], BB_settings_loop_pa, DP_BB_REG_NUM_loop_pa);
-		
+
 		// fill PA model to page B1 registers
 		PHY_SetBBReg(priv, 0xe28, 0xffffff00, 0x400000);
 		for(index = 0; index < (DP_PA_MODEL_NUM/2); index++){	//path A = 0xb00, path B = 0xb60
-			PHY_SetBBReg(priv, 0xb00+index*4+path*0x60, bMaskDWord, 
-			(PA_model_backup[path][index*2+1] << 16) | PA_model_backup[path][index*2]); 
+			PHY_SetBBReg(priv, 0xb00+index*4+path*0x60, bMaskDWord,
+			(PA_model_backup[path][index*2+1] << 16) | PA_model_backup[path][index*2]);
 		}
 		PHY_SetBBReg(priv, 0xe28, 0xffffff00, 0);
 
-		//one shot	
+		//one shot
 		PHY_SetBBReg(priv, offset[path][1], bMaskDWord, 0x80044499);	//0xb28, 0xb98
 		PHY_SetBBReg(priv, offset[path][1], bMaskDWord, 0x00044499);
 
@@ -9300,7 +9300,7 @@ Step1:
 		power_I = (tmpReg >> 16);
 		if(power_I & BIT(15))
 			power_I |= bMaskLWord; ////////ZZZZZZZZZZZZZZZZZZ
-		
+
 		power_Q = tmpReg & bMaskLWord;
 		if(power_Q & BIT(15))
 			power_Q |= bMaskHWord;
@@ -9309,110 +9309,110 @@ Step1:
 
 		tmpReg = power_I*power_I + power_Q*power_Q;
 
-		DPK_DEBUG("gain loss =	0x%x \n", tmpReg); 					
+		DPK_DEBUG("gain loss =	0x%x \n", tmpReg);
 
 		if(tmpReg < 26090)
 		{
-			PHY_SetBBReg(priv, offset[path][2], bMaskDWord, 0x01017098);	//0xb00, 0xb70						
+			PHY_SetBBReg(priv, offset[path][2], bMaskDWord, 0x01017098);	//0xb00, 0xb70
 			PHY_SetBBReg(priv, offset[path][8], bMaskDWord, 0x28080000);	//0xb68, 0xb6c
 
 			for(i = 3; i < DP_RF_REG_NUM; i++)
 				PHY_SetRFReg(priv, path, RF_REG[i], bMask20Bits, RF_backup[path][i]);
-			priv->pshare->bDPKdone[path] = FALSE;							
+			priv->pshare->bDPKdone[path] = FALSE;
 			//set original DPK bias table
 			for(j = 0; j < DP_PA_BIAS_NUM; j++)
-				PHY_SetRFReg(priv, path, RF_TXBIAS, bMask20Bits, RF_PA_BIAS[2][j]);					
-			
-			continue;		
+				PHY_SetRFReg(priv, path, RF_TXBIAS, bMask20Bits, RF_PA_BIAS[2][j]);
+
+			continue;
 		}
 		else
 		{
-			priv->pshare->bDPKdone[path] = TRUE;	
-			priv->pshare->bDPKstore = TRUE; 		
+			priv->pshare->bDPKdone[path] = TRUE;
+			priv->pshare->bDPKstore = TRUE;
 		}
 
 		for(i = 0; i < DP_GAIN_LOSS_BOUND_NUM; i++)
 		{
-#if DP_gain_loss == 1						
-			if(tmpReg > gain_loss_bound[i]/* || i == (DP_GAIN_LOSS_BOUND_NUM -1)*/) 	
-#else				
+#if DP_gain_loss == 1
+			if(tmpReg > gain_loss_bound[i]/* || i == (DP_GAIN_LOSS_BOUND_NUM -1)*/)
+#else
 			if(tmpReg > gain_loss_bound[i] || i == (DP_GAIN_LOSS_BOUND_NUM -1))
-#endif				
+#endif
 			{
 #if DP_gain_loss == 0
 				if(i == 0)
 					break;
-	
+
 				index = OFDM_index[path] > i?OFDM_index[path]-i:0;
 				if(index < OFDM_min_index_internalPA)
 					index = OFDM_min_index_internalPA;
-				PHY_SetBBReg(priv, offset[path][6], bMaskDWord, OFDMSwingTable[index]); //0xc80, 0xc88							
-				DPK_DEBUG("original index 0x%x gain_loss minus index 0x%x\n", priv->pshare->OFDM_index[0], i); 					
+				PHY_SetBBReg(priv, offset[path][6], bMaskDWord, OFDMSwingTable[index]); //0xc80, 0xc88
+				DPK_DEBUG("original index 0x%x gain_loss minus index 0x%x\n", priv->pshare->OFDM_index[0], i);
 #endif
 				break;
 			}
 		}
-	
+
 #if DP_gain_loss == 1
-	
-		DPK_DEBUG("gain_loss Compensated coefficient %d\n", gain_loss_coef[i]);					
+
+		DPK_DEBUG("gain_loss Compensated coefficient %d\n", gain_loss_coef[i]);
 		coef = gain_loss_coef[i];
 		GainLossIndex = i;
-		priv->pshare->OFDM_min_index_internalPA_DPK[path] = GainLossIndex == 0?0:(GainLossIndex/2+GainLossIndex%2);		
-		
+		priv->pshare->OFDM_min_index_internalPA_DPK[path] = GainLossIndex == 0?0:(GainLossIndex/2+GainLossIndex%2);
+
 		//read DP LUT value from register
 		for(i = 0; i < DP_PA_MODEL_RUN_NUM; i++)
 		{
 			PHY_SetBBReg(priv, offset[path][2], bMaskDWord, 0x00297018+i);	//0xb00, 0xb70
 			for(index = 0; index < DP_PA_MODEL_PER_RUN_NUM; index++)
 			{
-				tmpReg = (i == 0 && index==0)?0x01000000:PHY_QueryBBReg(priv, offset[path][3]+index*4, bMaskDWord); //0xbdc, 0xbec		
+				tmpReg = (i == 0 && index==0)?0x01000000:PHY_QueryBBReg(priv, offset[path][3]+index*4, bMaskDWord); //0xbdc, 0xbec
 
 				gain_loss_backup[1][i*4+index] = (tmpReg >> 16);			//I
 				if(gain_loss_backup[1][i*4+index] & BIT(15))
-					gain_loss_backup[1][i*4+index] |= bMaskHWord;			
-				
+					gain_loss_backup[1][i*4+index] |= bMaskHWord;
+
 				gain_loss_backup[0][i*4+index] = (tmpReg & bMaskLWord); //Q
 				if(gain_loss_backup[0][i*4+index] & BIT(15))
-					gain_loss_backup[0][i*4+index] |= bMaskHWord;				
-				DPK_DEBUG("==>DP LUT index %d value 0x%x() I = 0x%x, Q = 0x%x\n", i*4+index, tmpReg, gain_loss_backup[1][i*4+index], gain_loss_backup[0][i*4+index]);												
-	
-				//gain * LUT			
+					gain_loss_backup[0][i*4+index] |= bMaskHWord;
+				DPK_DEBUG("==>DP LUT index %d value 0x%x() I = 0x%x, Q = 0x%x\n", i*4+index, tmpReg, gain_loss_backup[1][i*4+index], gain_loss_backup[0][i*4+index]);
+
+				//gain * LUT
 				for(j = 0; j < 2; j++)
 				{
-	//				RTPRINT(FINIT, INIT_IQK, ("==>0DP LUT sram %s index %d value %d()\n", j == 0?"Q":"I", i*4+index, gain_loss_backup[j][i*4+index]));												
-				
+	//				RTPRINT(FINIT, INIT_IQK, ("==>0DP LUT sram %s index %d value %d()\n", j == 0?"Q":"I", i*4+index, gain_loss_backup[j][i*4+index]));
+
 					gain_loss_backup[j][i*4+index] = (gain_loss_backup[j][i*4+index] * coef) / (int)(512);
-	//				RTPRINT(FINIT, INIT_IQK, ("==>1DP LUT sram %s index %d value 0x%x()\n", j == 0?"Q":"I", i*4+index, gain_loss_backup[j][i*4+index]));												
-					
+	//				RTPRINT(FINIT, INIT_IQK, ("==>1DP LUT sram %s index %d value 0x%x()\n", j == 0?"Q":"I", i*4+index, gain_loss_backup[j][i*4+index]));
+
 					gain_loss_backup[j][i*4+index] = gain_loss_backup[j][i*4+index] >= (int)(512)?(int)(511):gain_loss_backup[j][i*4+index] < (int)(-512)?(int)(-512):gain_loss_backup[j][i*4+index];
-	//				RTPRINT(FINIT, INIT_IQK, ("==>2DP LUT sram %s index %d value 0x%x()\n", j == 0?"Q":"I", i*4+index, gain_loss_backup[j][i*4+index]));												
-					
+	//				RTPRINT(FINIT, INIT_IQK, ("==>2DP LUT sram %s index %d value 0x%x()\n", j == 0?"Q":"I", i*4+index, gain_loss_backup[j][i*4+index]));
+
 					gain_loss_backup[j][i*4+index] = gain_loss_backup[j][i*4+index] >> 2;
-	//				RTPRINT(FINIT, INIT_IQK, ("==>3DP LUT sram %s index %d value 0x%x()\n", j == 0?"Q":"I", i*4+index, gain_loss_backup[j][i*4+index]));												
-					
+	//				RTPRINT(FINIT, INIT_IQK, ("==>3DP LUT sram %s index %d value 0x%x()\n", j == 0?"Q":"I", i*4+index, gain_loss_backup[j][i*4+index]));
+
 				}
 				tmpReg = ((gain_loss_backup[1][i*4+index] & bMaskByte0) << 8 ) | ((gain_loss_backup[0][i*4+index] & bMaskByte0));
 				gain_loss_backup[0][i*4+index] = tmpReg & bMaskLWord;
-				DPK_DEBUG("==>DP LUT sram index %d value 0x%x()\n", i*4+index, tmpReg);												
+				DPK_DEBUG("==>DP LUT sram index %d value 0x%x()\n", i*4+index, tmpReg);
 			}
 		}
-	
+
 		//write DP LUT into sram
 		for(i = 0; i < DP_PA_MODEL_NUM; i++)
 		{
 			value32 =  (path==RF92CD_PATH_A?((i%2 == 0)?0x01000000:0x02000000):
-				((i%2 == 0)?0x04000000:0x08000000)) | 
-				gain_loss_backup[0][(DP_PA_MODEL_NUM-1)-i] |( (i/2) << 16); 	
-			DPK_DEBUG("0xb2c value = 0x%x\n",  value32);									
-			PHY_SetBBReg(priv, 0xb2c , bMaskDWord, value32);		
+				((i%2 == 0)?0x04000000:0x08000000)) |
+				gain_loss_backup[0][(DP_PA_MODEL_NUM-1)-i] |( (i/2) << 16);
+			DPK_DEBUG("0xb2c value = 0x%x\n",  value32);
+			PHY_SetBBReg(priv, 0xb2c , bMaskDWord, value32);
 		}
-//		PHY_SetBBReg(priv, 0xb2c , bMaskDWord, 0x00000000); 		
-			
+//		PHY_SetBBReg(priv, 0xb2c , bMaskDWord, 0x00000000);
+
 #endif
-			
+
 #endif
-	
+
 		///////////////////////////////////////////////////////////////
 		// step 5: Enable Digital Predistortion
 		///////////////////////////////////////////////////////////////
@@ -9424,18 +9424,18 @@ Step1:
 			// pwsf boundary
 			PHY_SetBBReg(priv, offset[path][7], bMaskDWord, 0x000fffff);	//0xb30, 0xba0
 
-			// write pwsf to sram				
+			// write pwsf to sram
 			//find tx_index index value
 			SramIndex = 24; //restore default value
 			SramIndex -= GainLossIndex;
 			if(bPlus3db)
-				SramIndex += 3*4;			
+				SramIndex += 3*4;
 
 			SramIndex = SramIndex >= DP_SRAM_NUM_db?DP_SRAM_NUM_db-1:(SramIndex<0?0:SramIndex);
-			
-			DPK_DEBUG("tx_index = 0x%x, sram value 0x%x gainloss index %d bPlus3db %d\n",  tx_index, Sram_db_settings[SramIndex], GainLossIndex, bPlus3db);						
 
-			index = 0x1f - tx_index;			
+			DPK_DEBUG("tx_index = 0x%x, sram value 0x%x gainloss index %d bPlus3db %d\n",  tx_index, Sram_db_settings[SramIndex], GainLossIndex, bPlus3db);
+
+			index = 0x1f - tx_index;
 			if(SramIndex >= index*4)
 			{
 				index = SramIndex - index*4;
@@ -9446,7 +9446,7 @@ Step1:
 			{
 				index_repeat = index - SramIndex/4;
 				SramIndex %= 4;
-				index = 0;				
+				index = 0;
 			}
 
 			index = index >= DP_SRAM_NUM_db?DP_SRAM_NUM_db-1:index;
@@ -9455,40 +9455,40 @@ Step1:
 			else
 				index_1 = index < (DP_SRAM_NUM_db-1)?(index_repeat==-2?index+1*4:index):index;
 
-			DPK_DEBUG("0x1f value = 0x%x, index 0x%x repeat %d SramIndex %d\n",  Sram_db_settings[index], index, index_repeat, SramIndex); 					
-			
+			DPK_DEBUG("0x1f value = 0x%x, index 0x%x repeat %d SramIndex %d\n",  Sram_db_settings[index], index, index_repeat, SramIndex);
+
 			for(i = 0; i < DP_SRAM_NUM; i++)
-			{								
-				value32 = (path==RF92CD_PATH_A?0x10000000:0x20000000) | (i << 16) | 
-					(Sram_db_settings[index_1] << 8 )| Sram_db_settings[index]; 	
-				DPK_DEBUG("0xb2c value = 0x%x\n",  value32);					
-				
+			{
+				value32 = (path==RF92CD_PATH_A?0x10000000:0x20000000) | (i << 16) |
+					(Sram_db_settings[index_1] << 8 )| Sram_db_settings[index];
+				DPK_DEBUG("0xb2c value = 0x%x\n",  value32);
+
 				PHY_SetBBReg(priv, 0xb2c , bMaskDWord, value32);
 				if(index_repeat >= 0)
 					index_repeat -= 2;
 				else if(index_repeat == -1)
 					index_repeat = -2;
-					
+
 				if((index < (DP_SRAM_NUM_db-1)-1))
 				{
 					if(index_repeat == -2)
-					{						
+					{
 						index+=2*4;
-						index_1 = index < (DP_SRAM_NUM_db-1)?index+1*4:index;		
+						index_1 = index < (DP_SRAM_NUM_db-1)?index+1*4:index;
 					}
 					if(index_repeat == 0)
 					{
 						index = SramIndex;
-						index_1 = index < (DP_SRAM_NUM_db-1)?index+1*4:index;		
-					}	
+						index_1 = index < (DP_SRAM_NUM_db-1)?index+1*4:index;
+					}
 					else if(index_repeat == 1)
-					{						
+					{
 						index_1 = SramIndex;
 					}
 					else if(index_repeat == -1)
 					{
 						index = index_1+1*4;
-						index_1 = index < (DP_SRAM_NUM_db-1)?index+1*4:index;								
+						index_1 = index < (DP_SRAM_NUM_db-1)?index+1*4:index;
 					}
 				}
 				else
@@ -9499,8 +9499,8 @@ Step1:
 				index = index < DP_SRAM_NUM_db?index:DP_SRAM_NUM_db-1;
 				index_1 = index_1 < DP_SRAM_NUM_db?index_1:DP_SRAM_NUM_db-1;
 			}
-		}		
-#else		
+		}
+#else
 		if(!SkipStep5)
 		{
 			_PHY_SetADDARegisters(priv, BB_REG_loop[path], BB_settings_loop_dp, DP_BB_REG_NUM_loop_pa);
@@ -9508,13 +9508,13 @@ Step1:
 			// pwsf boundary
 			PHY_SetBBReg(priv, offset[path][7], bMaskDWord, 0x000fffff);	//0xb30, 0xba0
 
-			// write pwsf to sram				
+			// write pwsf to sram
 			//find RF0x1f index value
 			if(bPlus3db)
 				tx_index += 3;
 
 //			tx_index = 0x21;
-			
+
 			index = 0x1f - tx_index;
 			if(index_for_zero_db >= index)
 			{
@@ -9524,41 +9524,41 @@ Step1:
 			else
 			{
 				index_repeat = index - index_for_zero_db;
-				index = 0;				
+				index = 0;
 			}
 
 			index = index >= DP_SRAM_NUM_db?DP_SRAM_NUM_db-1:index;
 			index_1 = index < (DP_SRAM_NUM_db-1)?(index_repeat==-2?index+1:index):index;
 
-			DPK_DEBUG("0x1f value = 0x%x, index 0x%x repeat %d\n",	Sram_db_settings[index], index, index_repeat); 					
-			
+			DPK_DEBUG("0x1f value = 0x%x, index 0x%x repeat %d\n",	Sram_db_settings[index], index, index_repeat);
+
 			for(i = 0; i < DP_SRAM_NUM; i++)
-			{								
-				value32 = (path==RF92CD_PATH_A?0x10000000:0x20000000) | (i << 16) | 
-					(Sram_db_settings[index_1] << 8 )| Sram_db_settings[index]; 	
-				DPK_DEBUG("0xb2c value = 0x%x\n",  value32);					
-				
+			{
+				value32 = (path==RF92CD_PATH_A?0x10000000:0x20000000) | (i << 16) |
+					(Sram_db_settings[index_1] << 8 )| Sram_db_settings[index];
+				DPK_DEBUG("0xb2c value = 0x%x\n",  value32);
+
 				PHY_SetBBReg(priv, 0xb2c , bMaskDWord, value32);
 				if(index_repeat >= 0)
 					index_repeat -= 2;
 				else if(index_repeat == -1)
 					index_repeat = -2;
-					
+
 				if((index < (DP_SRAM_NUM_db-1)-1))
 				{
 					if(index_repeat == -2)
 					{
 						index += 2;
-						index_1 = index < (DP_SRAM_NUM_db-1)?index+1:index; 	
+						index_1 = index < (DP_SRAM_NUM_db-1)?index+1:index;
 					}
 					if(index_repeat == 0)
 					{
-						index_1 = index < (DP_SRAM_NUM_db-1)?index+1:index; 	
-					}					
+						index_1 = index < (DP_SRAM_NUM_db-1)?index+1:index;
+					}
 					else if(index_repeat == -1)
 					{
 						index++;
-						index_1 = index < (DP_SRAM_NUM_db-1)?index+1:index; 							
+						index_1 = index < (DP_SRAM_NUM_db-1)?index+1:index;
 					}
 				}
 				else
@@ -9567,7 +9567,7 @@ Step1:
 				}
 			}
 		}
-#endif		
+#endif
 	}
 
 	//reload RF default value
@@ -9578,19 +9578,19 @@ Step1:
 	}
 
 	//Reload standby mode default value (if path B excute DPK)
-	if(is2T && priv->pshare->phw->InternalPA5G[RF92CD_PATH_B]) 	
+	if(is2T && priv->pshare->phw->InternalPA5G[RF92CD_PATH_B])
 	{
 		PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE1, bMask20Bits, 0x1000f);
-		PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE2, bMask20Bits, 0x60101);		
+		PHY_SetRFReg(priv, RF92CD_PATH_A, RF_MODE2, bMask20Bits, 0x60101);
 	}
-	
+
 	//reload BB default value
 	for(index=0; index<DP_BB_REG_NUM; index++)
 		PHY_SetBBReg(priv, BB_REG[index], bMaskDWord, BB_backup[index]);
 
-	//external LNA on	
+	//external LNA on
 	PHY_SetBBReg(priv, rBndA, 0xF00000, 0x00);
-	
+
 	if(is2T)
 		PHY_SetBBReg(priv, rBndB, 0xF00000, 0x00);
 
@@ -9613,11 +9613,11 @@ Step1:
 	PHY_SetBBReg(priv, BB_REG_B[8], bMaskByte0, 0x50);
 	PHY_SetBBReg(priv, BB_REG_B[8], bMaskDWord, BB_backup_B[8]);
 #endif
-	
-	//reload AFE default value
-	_PHY_ReloadADDARegisters(priv, AFE_REG, AFE_backup, IQK_ADDA_REG_NUM);	
 
-	//reload MAC default value	
+	//reload AFE default value
+	_PHY_ReloadADDARegisters(priv, AFE_REG, AFE_backup, IQK_ADDA_REG_NUM);
+
+	//reload MAC default value
 	_PHY_ReloadMACRegisters(priv, MAC_REG, MAC_backup);
 
 	priv->pshare->bDPKworking = FALSE;

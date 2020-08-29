@@ -20,7 +20,7 @@
 #if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_RTL_8723B_SUPPORT)
 typedef struct _C2H_EVT_HDR{
 	u1Byte	CmdID: 4;
-	u1Byte	CmdLen: 4; 
+	u1Byte	CmdLen: 4;
 	u1Byte	CmdSeq;
 }C2H_EVT_HDR, *PC2H_EVT_HDR;
 
@@ -129,31 +129,31 @@ void UpdateBBRFVal8812(struct rtl8192cd_priv *priv, unsigned char channel)
 					RTL_W32(0xeb8, RTL_R32(0xeb8) & (~BIT(15)));
 				} else {
 #ifdef HIGH_POWER_EXT_PA
-					if (priv->pshare->rf_ft_var.use_ext_pa) 
+					if (priv->pshare->rf_ft_var.use_ext_pa)
 					{
 	#if 0
-						if (priv->pmib->dot11RFEntry.pa_type == PA_RFMD_4501) {											
+						if (priv->pmib->dot11RFEntry.pa_type == PA_RFMD_4501) {
 							RTL_W32(0xcb0, tmp_cb0 | (0x53 << 16));
 							RTL_W32(0xeb0, tmp_eb0 | (0x53 << 16));
 						} else {
 							RTL_W32(0xcb0, tmp_cb0 | (0x54 << 16));
 							RTL_W32(0xeb0, tmp_eb0 | (0x54 << 16));
 						}
-	#else					
+	#else
 						//For 8812 PHY_PARAMETER after V40.
 						RTL_W32(0xcb0, 0x77337717);
 						RTL_W32(0xeb0, 0x77337717);
 
 						if (priv->pmib->dot11RFEntry.pa_type == PA_RFMD_4501 || priv->pmib->dot11RFEntry.pa_type == PA_SKYWORKS_85712_HP) {
-							PHY_SetBBReg(priv, 0xcb4, 0x3ff00000, 0x00);	
-							PHY_SetBBReg(priv, 0xeb4, 0x3ff00000, 0x00);										
+							PHY_SetBBReg(priv, 0xcb4, 0x3ff00000, 0x00);
+							PHY_SetBBReg(priv, 0xeb4, 0x3ff00000, 0x00);
 						} else {
-							PHY_SetBBReg(priv, 0xcb4, 0x3ff00000, 0x10);	
-							PHY_SetBBReg(priv, 0xeb4, 0x3ff00000, 0x10);					
-						}					
-	#endif		
+							PHY_SetBBReg(priv, 0xcb4, 0x3ff00000, 0x10);
+							PHY_SetBBReg(priv, 0xeb4, 0x3ff00000, 0x10);
+						}
+	#endif
 					} else
-#endif				
+#endif
 					{
 #ifdef CONFIG_PA_RTC5634
 					// internal PA+PAPE
@@ -161,7 +161,7 @@ void UpdateBBRFVal8812(struct rtl8192cd_priv *priv, unsigned char channel)
 							//panic_printk("Set PAPE on\n");
 							RTL_W32(0xcb0, 0x77537717);
 							RTL_W32(0xeb0, 0x77537717);
-						}					
+						}
 #endif
 					}
 				}
@@ -207,29 +207,29 @@ void UpdateBBRFVal8812(struct rtl8192cd_priv *priv, unsigned char channel)
 				RTL_W32(0xeb8, RTL_R32(0xeb8) & (~BIT(15)));
 			} else {
 #ifdef HIGH_POWER_EXT_PA
-				if (priv->pshare->rf_ft_var.use_ext_pa) 
+				if (priv->pshare->rf_ft_var.use_ext_pa)
 				{
 	#if 0
-					if (priv->pmib->dot11RFEntry.pa_type == PA_RFMD_4501) { 										
+					if (priv->pmib->dot11RFEntry.pa_type == PA_RFMD_4501) {
 						RTL_W32(0xcb0, tmp_cb0 | (0x53 << 16));
 						RTL_W32(0xeb0, tmp_eb0 | (0x53 << 16));
 					} else {
 						RTL_W32(0xcb0, tmp_cb0 | (0x54 << 16));
 						RTL_W32(0xeb0, tmp_eb0 | (0x54 << 16));
 					}
-	#else					
+	#else
 					//For 8812 PHY_PARAMETER after V40.
 					RTL_W32(0xcb0, 0x77337717);
 					RTL_W32(0xeb0, 0x77337717);
-				
+
 					if (priv->pmib->dot11RFEntry.pa_type == PA_RFMD_4501 || priv->pmib->dot11RFEntry.pa_type == PA_SKYWORKS_85712_HP) {
-						PHY_SetBBReg(priv, 0xcb4, 0x3ff00000, 0x00);	
-						PHY_SetBBReg(priv, 0xeb4, 0x3ff00000, 0x00);										
+						PHY_SetBBReg(priv, 0xcb4, 0x3ff00000, 0x00);
+						PHY_SetBBReg(priv, 0xeb4, 0x3ff00000, 0x00);
 					} else {
-						PHY_SetBBReg(priv, 0xcb4, 0x3ff00000, 0x10);	
-						PHY_SetBBReg(priv, 0xeb4, 0x3ff00000, 0x10);					
-					}					
-	#endif		
+						PHY_SetBBReg(priv, 0xcb4, 0x3ff00000, 0x10);
+						PHY_SetBBReg(priv, 0xeb4, 0x3ff00000, 0x10);
+					}
+	#endif
 				} else
 #endif
 				{
@@ -239,7 +239,7 @@ void UpdateBBRFVal8812(struct rtl8192cd_priv *priv, unsigned char channel)
 						//panic_printk("Set PAPE on\n");
 						RTL_W32(0xcb0, 0x77537717);
 						RTL_W32(0xeb0, 0x77537717);
-					}					
+					}
 #endif
 				}
 			}
@@ -273,7 +273,7 @@ void UpdateBBRFVal8812(struct rtl8192cd_priv *priv, unsigned char channel)
 			RTL_W32(0x8c0, RTL_R32(0x8c0) | BIT(17));
 			PHY_SetBBReg(priv, 0x830, BIT(17)|BIT(16)|BIT(15)|BIT(14)|BIT(13), 0x17);
 		}
-	} 
+	}
 
 	if (channel <= 14 && (switch_bw || (priv->pshare->pre_channel == 0)))
 		RTL_W8(0x454, (RTL_R8(0x454) & ~(BIT(7))));
@@ -295,7 +295,7 @@ void UpdateBBRFVal8812(struct rtl8192cd_priv *priv, unsigned char channel)
 void SpurCheck8812(struct rtl8192cd_priv *priv, unsigned char ch_bw, unsigned char channel, unsigned int bandwidth)
 {
 	unsigned int dwTmp = 0;
-	unsigned char primary_channel = 0;	
+	unsigned char primary_channel = 0;
 #ifdef RTK_AC_SUPPORT
 	if(ch_bw == 1 && (GET_CHIP_VER(priv) != VERSION_8723B)){ /* if switch channel */
 		if((priv->pshare->CurrentChannelBW == HT_CHANNEL_WIDTH_AC_40 && (channel == 11 || channel == 12)) ||
@@ -311,12 +311,12 @@ void SpurCheck8812(struct rtl8192cd_priv *priv, unsigned char ch_bw, unsigned ch
 				   (priv->pshare->CurrentChannelBW == HT_CHANNEL_WIDTH_AC_20 && (priv->pshare->pre_channel == 13 || priv->pshare->pre_channel == 14))){
 
 				/* Restore 0x8ac, 0x8c4*/
-				PHY_SetBBReg(priv, 0x8ac, BIT(10), 0);	
+				PHY_SetBBReg(priv, 0x8ac, BIT(10), 0);
 				RTL_W32(0X8c4,0);
 				primary_channel = priv->pshare->txsc_20;
-				dwTmp = RTL_R32(0x8ac);			
+				dwTmp = RTL_R32(0x8ac);
 				dwTmp &= ~(BIT(0) | BIT(1) | BIT(6) | BIT(7) | BIT(8) | BIT(9) | BIT(20) | BIT(21));
-			
+
 				switch (priv->pshare->CurrentChannelBW) {
 				case HT_CHANNEL_WIDTH_AC_5:
 					dwTmp |= (BIT(6) | BIT(20));
@@ -339,23 +339,23 @@ void SpurCheck8812(struct rtl8192cd_priv *priv, unsigned char ch_bw, unsigned ch
 					switch (priv->pshare->CurrentChannelBW)
 					{
 					case HT_CHANNEL_WIDTH_AC_5:
-						PHY_SetBBReg(priv, 0x8c4, BIT(30), 0);	
+						PHY_SetBBReg(priv, 0x8c4, BIT(30), 0);
 						break;
 					case HT_CHANNEL_WIDTH_AC_10:
-						PHY_SetBBReg(priv, 0x8c4, BIT(30), 0);				
+						PHY_SetBBReg(priv, 0x8c4, BIT(30), 0);
 						break;
-					case HT_CHANNEL_WIDTH_AC_20:		
-						PHY_SetBBReg(priv, 0x8c4, BIT(30), 0);				
+					case HT_CHANNEL_WIDTH_AC_20:
+						PHY_SetBBReg(priv, 0x8c4, BIT(30), 0);
 						break;
 					case HT_CHANNEL_WIDTH_AC_40:
-						PHY_SetBBReg(priv, 0x8c4, BIT(30), 0);				
+						PHY_SetBBReg(priv, 0x8c4, BIT(30), 0);
 						break;
 					}
 				}
-			
+
 				dwTmp = RTL_R32(0x8ac);
 				dwTmp &= ~(BIT(2)|BIT(3)|BIT(4)|BIT(5));
-			
+
 				switch (bandwidth) {
 				case HT_CHANNEL_WIDTH_AC_5:
 				case HT_CHANNEL_WIDTH_AC_10:
@@ -368,7 +368,7 @@ void SpurCheck8812(struct rtl8192cd_priv *priv, unsigned char ch_bw, unsigned ch
 				}
 			}
 	}else if(ch_bw == 0){ /* if switch bandwidth */
-		if((bandwidth == HT_CHANNEL_WIDTH_AC_20 && (priv->pmib->dot11RFEntry.dot11channel == 13 || priv->pmib->dot11RFEntry.dot11channel == 14)) || 
+		if((bandwidth == HT_CHANNEL_WIDTH_AC_20 && (priv->pmib->dot11RFEntry.dot11channel == 13 || priv->pmib->dot11RFEntry.dot11channel == 14)) ||
 			(bandwidth == HT_CHANNEL_WIDTH_AC_40 && (priv->pmib->dot11RFEntry.dot11channel == 11 || priv->pmib->dot11RFEntry.dot11channel == 12))
 			){
 			RTL_W32(0x8ac,0x0ff0ff04);
@@ -544,7 +544,7 @@ void Cal_OFDMTxPower_5G(struct rtl8192cd_priv *priv, unsigned char ch_idx)
 
 	unsigned int  writeVal = 0;
 	unsigned char ch_idx_vht80 = get_center_channel(priv, priv->pmib->dot11RFEntry.dot11channel, priv->pmib->dot11nConfigEntry.dot11n2ndChOffset, 1) -1;
-	unsigned char ch_idx_ht40 = ((priv->pmib->dot11nConfigEntry.dot11n2ndChOffset==HT_2NDCH_OFFSET_BELOW) ? (priv->pmib->dot11RFEntry.dot11channel-2) : (priv->pmib->dot11RFEntry.dot11channel+2)) - 1; 	
+	unsigned char ch_idx_ht40 = ((priv->pmib->dot11nConfigEntry.dot11n2ndChOffset==HT_2NDCH_OFFSET_BELOW) ? (priv->pmib->dot11RFEntry.dot11channel-2) : (priv->pmib->dot11RFEntry.dot11channel+2)) - 1;
 #ifdef POWER_PERCENT_ADJUSTMENT
 	signed char pwrdiff_percent = PwrPercent2PwrLevel(priv->pmib->dot11RFEntry.power_percent);
 #endif
@@ -715,7 +715,7 @@ void Cal_OFDMTxPower_5G(struct rtl8192cd_priv *priv, unsigned char ch_idx)
 		writeVal = (tmp_TPI << 24) | (tmp_TPI << 16) | (tmp_TPI << 8) | tmp_TPI;
 		Write_HT2S_B(priv, writeVal);
 
-	
+
 		//PATH A, BW80-1S
 		pwr_80_1s = (priv->pmib->dot11RFEntry.pwrlevel5GHT40_1S_A[ch_idx_vht80 - 4] +
 					 priv->pmib->dot11RFEntry.pwrlevel5GHT40_1S_A[ch_idx_vht80 + 4]) / 2  ;
@@ -779,7 +779,7 @@ void Cal_OFDMTxPower_2G(struct rtl8192cd_priv *priv, unsigned char ch_idx)
 
 	unsigned int  writeVal = 0;
 	//unsigned char ch_idx_ht20 = priv->pmib->dot11RFEntry.dot11channel -1;
-	
+
 #ifdef POWER_PERCENT_ADJUSTMENT
 	signed char pwrdiff_percent = PwrPercent2PwrLevel(priv->pmib->dot11RFEntry.power_percent);
 #endif
@@ -947,7 +947,7 @@ void TxPG_OFDM_8812_A(struct rtl8192cd_priv *priv)
 	*tmp_b4 = POWER_RANGE_CHECK(*tmp_b4 + priv->pshare->phw->OFDMTxAgcOffset_A[0]);
 	if(*tmp_b1 > priv->pshare->rf_ft_var.bcn_pwr_max)
 		*tmp_b1 = priv->pshare->rf_ft_var.bcn_pwr_max;
-	priv->pshare->rf_ft_var.bcn_pwr_idex= *tmp_b1;	
+	priv->pshare->rf_ft_var.bcn_pwr_idex= *tmp_b1;
 	writeVal = (*tmp_b4 << 24) | (*tmp_b3 << 16) | (*tmp_b2 << 8) | *tmp_b1;
 	RTL_W32(rTxAGC_A_Ofdm18_Ofdm6_JAguar, writeVal);
 	tmp_dw = RTL_R32(rTxAGC_A_Ofdm54_Ofdm24_JAguar);
@@ -1169,14 +1169,14 @@ unsigned char get_byte_from_dw(unsigned int tmp_dw, unsigned char byte_num)
 unsigned int assign_lmt_reg_value(struct rtl8192cd_priv *priv, unsigned int reg_offset, unsigned char max_idx, unsigned char max_idx2)
 {
 
-	unsigned int tmp_dw; 
+	unsigned int tmp_dw;
 	unsigned char reg_val[4];
 	unsigned char i=0;
 
 	tmp_dw = RTL_R32(reg_offset);
 
 	//printk("[0x%03x] 0x%08x >> ", reg_offset, tmp_dw);
-	
+
 	get_tx_pwr(tmp_dw, (unsigned char *)&reg_val[0], (unsigned char *)&reg_val[1],
 		(unsigned char *)&reg_val[2], (unsigned char *)&reg_val[3]);
 
@@ -1212,7 +1212,7 @@ unsigned int assign_lmt_reg_value(struct rtl8192cd_priv *priv, unsigned int reg_
 unsigned char check_lmt_valid(struct rtl8192cd_priv *priv, unsigned char phy_band)
 {
 	unsigned char lmt_valid = 1;
-	
+
 	if(phy_band == PHY_BAND_2G)
 		if(priv->pshare->txpwr_lmt_CCK == 0)
 			lmt_valid = 0;
@@ -1222,10 +1222,10 @@ unsigned char check_lmt_valid(struct rtl8192cd_priv *priv, unsigned char phy_ban
 
 	if(priv->pshare->txpwr_lmt_HT1S == 0)
 		lmt_valid = 0;
-	
+
 	if(priv->pshare->txpwr_lmt_HT2S == 0)
 		lmt_valid = 0;
-	
+
 	if(phy_band == PHY_BAND_5G)
 	{
 		if(priv->pshare->txpwr_lmt_VHT1S == 0)
@@ -1237,10 +1237,10 @@ unsigned char check_lmt_valid(struct rtl8192cd_priv *priv, unsigned char phy_ban
 
 	if(lmt_valid == 0)
 	DEBUG_WARN("NO Limit Value, NO limit TX POWER !!!\n limit for cck=%d, ofdm=%d, ht1s=%d, ht2s=%d, vht1s=%d, vht2s=%d\n",
-		priv->pshare->txpwr_lmt_CCK, 
-		priv->pshare->txpwr_lmt_OFDM, 
+		priv->pshare->txpwr_lmt_CCK,
+		priv->pshare->txpwr_lmt_OFDM,
 		priv->pshare->txpwr_lmt_HT1S,
-		priv->pshare->txpwr_lmt_HT2S, 
+		priv->pshare->txpwr_lmt_HT2S,
 		priv->pshare->txpwr_lmt_VHT1S,
 		priv->pshare->txpwr_lmt_VHT2S
 	);
@@ -1354,12 +1354,12 @@ void TxLMT_OFDM_8812_A(struct rtl8192cd_priv *priv)
 	idx_vht_2ss_mcs7 = get_byte_from_dw(tmp_dw, 1);
 	max_lmt_idx_vht2s = idx_vht_2ss_mcs7 + lmt_pg_idx_vht2s;
 	max_lmt_idx_vht2s = POWER_MIN_INDEX(max_lmt_idx_vht2s);
-	
+
 	assign_lmt_reg_value(priv, rTxAGC_A_CCK11_CCK1_JAguar, max_lmt_idx_cck, 0);
-	
+
 	assign_lmt_reg_value(priv, rTxAGC_A_Ofdm18_Ofdm6_JAguar, max_lmt_idx_ofdm, 0);
 	assign_lmt_reg_value(priv, rTxAGC_A_Ofdm54_Ofdm24_JAguar, max_lmt_idx_ofdm, 0);
-	
+
 	assign_lmt_reg_value(priv, rTxAGC_A_MCS3_MCS0_JAguar, max_lmt_idx_ht1s, 0);
 	assign_lmt_reg_value(priv, rTxAGC_A_MCS7_MCS4_JAguar, max_lmt_idx_ht1s, 0);
 	assign_lmt_reg_value(priv, rTxAGC_A_MCS11_MCS8_JAguar, max_lmt_idx_ht2s, 0);
@@ -1441,10 +1441,10 @@ void TxLMT_OFDM_8812_B(struct rtl8192cd_priv *priv)
 	max_lmt_idx_vht2s = POWER_MIN_INDEX(max_lmt_idx_vht2s);
 
 	assign_lmt_reg_value(priv, rTxAGC_B_CCK11_CCK1_JAguar, max_lmt_idx_cck, 0);
-	
+
 	assign_lmt_reg_value(priv, rTxAGC_B_Ofdm18_Ofdm6_JAguar, max_lmt_idx_ofdm, 0);
 	assign_lmt_reg_value(priv, rTxAGC_B_Ofdm54_Ofdm24_JAguar, max_lmt_idx_ofdm, 0);
-	
+
 	assign_lmt_reg_value(priv, rTxAGC_B_MCS3_MCS0_JAguar, max_lmt_idx_ht1s, 0);
 	assign_lmt_reg_value(priv, rTxAGC_B_MCS7_MCS4_JAguar, max_lmt_idx_ht1s, 0);
 	assign_lmt_reg_value(priv, rTxAGC_B_MCS11_MCS8_JAguar, max_lmt_idx_ht2s, 0);
@@ -1503,14 +1503,14 @@ void PHY_SetOFDMTxPower_8812(struct rtl8192cd_priv *priv, unsigned char channel)
 			|| (priv->pmib->dot11RFEntry.pwrlevel5GHT40_1S_B[ch_idx] == 0)) {
 			use_DefaultOFDMTxPower_8812(priv);
 			return;
-		}		
+		}
 		Cal_OFDMTxPower_5G(priv, ch_idx);
 	} else if (phy_band == PHY_BAND_2G) {
 		if ((priv->pmib->dot11RFEntry.pwrlevelHT40_1S_A[ch_idx] == 0)
 			|| (priv->pmib->dot11RFEntry.pwrlevelHT40_1S_B[ch_idx] == 0)) {
 			use_DefaultOFDMTxPower_8812(priv);
 			return;
-		}	
+		}
 		Cal_OFDMTxPower_2G(priv, ch_idx);
 	}
 
@@ -1526,8 +1526,8 @@ void PHY_SetOFDMTxPower_8812(struct rtl8192cd_priv *priv, unsigned char channel)
 		{
 			TxLMT_OFDM_8812_A(priv);
 			TxLMT_OFDM_8812_B(priv);
-		}		
-	}		
+		}
+	}
 #endif
 	{
 		int ofdm6a = RTL_R32(rTxAGC_A_Ofdm18_Ofdm6_JAguar) & 0x3f;
@@ -1539,9 +1539,9 @@ void PHY_SetOFDMTxPower_8812(struct rtl8192cd_priv *priv, unsigned char channel)
 		if(ofdm6b>priv->pshare->rf_ft_var.bcn_pwr_max) {
 			ofdm6b = priv->pshare->rf_ft_var.bcn_pwr_max;
 			RTL_W8(rTxAGC_B_Ofdm18_Ofdm6_JAguar, ofdm6b);
-		}				
+		}
 		priv->pshare->rf_ft_var.bcn_pwr_idex= max(ofdm6a,ofdm6b);
-	}	
+	}
 
 }
 
@@ -1601,16 +1601,16 @@ void PHY_SetCCKTxPower_8812(struct rtl8192cd_priv *priv, unsigned char channel)
 	TxPG_CCK_8812(priv);
 #endif
 
-#ifdef TXPWR_LMT_8812	
+#ifdef TXPWR_LMT_8812
 	if (!priv->pshare->rf_ft_var.disable_txpwrlmt)
-	{			
+	{
 		if (check_lmt_valid(priv, phy_band))
 		{
 			TxLMT_CCK_8812_A(priv);
 			TxLMT_CCK_8812_B(priv);
 		}
 	}
-#endif	
+#endif
 
 }
 
@@ -1870,7 +1870,7 @@ FirmwareDownload8812(
 	}
 #endif
 #ifdef CONFIG_RTL_8723B_SUPPORT
-		if (GET_CHIP_VER(priv) == VERSION_8723B) { 
+		if (GET_CHIP_VER(priv) == VERSION_8723B) {
 			pFirmwareBuf = data_rtl8723bfw_start + 32;
 			FirmwareLen = data_rtl8723bfw_end - data_rtl8723bfw_start - 32;
 		}
@@ -2229,12 +2229,12 @@ Get_RA_ShortGI(
 			bShortGI80MHz = TRUE;
 #if 0
 // disable SGI when LDPC is enabled in AC mode
-			if((pEntry->is_realtek_sta) && (priv->pmib->dot11nConfigEntry.dot11nLDPC == 1) && 
+			if((pEntry->is_realtek_sta) && (priv->pmib->dot11nConfigEntry.dot11nLDPC == 1) &&
 				((pEntry->ht_cap_len && cpu_to_le16(pEntry->ht_cap_buf.ht_cap_info) & _HTCAP_SUPPORT_RX_LDPC_) ||
 					(pEntry->vht_cap_len && (cpu_to_le32(pEntry->vht_cap_buf.vht_cap_info) & BIT(RX_LDPC_E))))	) {
 					bShortGI80MHz = bShortGI40MHz = bShortGI20MHz = 0;
 				}
-#endif			
+#endif
 		}
 	#endif
 	}
@@ -2318,13 +2318,13 @@ char is_ac2g(struct rtl8192cd_priv * priv)
 	unsigned char ac2g = 0;
 
 	if((GET_CHIP_VER(priv)== VERSION_8812E) || (GET_CHIP_VER(priv)== VERSION_8881A))
-	if(priv->pmib->dot11BssType.net_work_type & WIRELESS_11AC 
+	if(priv->pmib->dot11BssType.net_work_type & WIRELESS_11AC
 		&& ((priv->pmib->dot11BssType.net_work_type & WIRELESS_11A) == 0)
 		&& (priv->pshare->rf_ft_var.ac2g_enable)
 		)
 		ac2g = 1;
 
-	return ac2g; 
+	return ac2g;
 
 }
 #endif
@@ -2350,7 +2350,7 @@ UpdateHalRAMask8812(
 	#if CFG_HAL_RTK_AC_SUPPORT
 	unsigned int VHT_TxMap = priv->pmib->dot11acConfigEntry.dot11VHT_TxMap;
 	#endif
-	
+
 	if (pEntry == NULL) {
 		return;
 	}
@@ -2370,10 +2370,10 @@ UpdateHalRAMask8812(
 		ratr_bitmap =  0xfffffff;
 		//
 		//		if(pstat->vht_cap_len && ( priv->pshare->rf_ft_var.support_11ac)) {
-	#ifdef RTK_AC_SUPPORT	
-		if (pstat->vht_cap_len && (priv->pmib->dot11BssType.net_work_type & WIRELESS_11AC) && (!should_restrict_Nrate(priv, pstat)) && (GET_CHIP_VER(priv) != VERSION_8723B)) { //for 11ac logo 
+	#ifdef RTK_AC_SUPPORT
+		if (pstat->vht_cap_len && (priv->pmib->dot11BssType.net_work_type & WIRELESS_11AC) && (!should_restrict_Nrate(priv, pstat)) && (GET_CHIP_VER(priv) != VERSION_8723B)) { //for 11ac logo
 
-			if( (IS_B_CUT_8812(priv)) 
+			if( (IS_B_CUT_8812(priv))
 				&& ((priv->pmib->dot11nConfigEntry.dot11nUse40M==0)||(BW == 0)) )
 			{
 				//printk("\n  !!! B CUT + AC STA + 20M, NO AC RATES !!!\n");
@@ -2383,7 +2383,7 @@ UpdateHalRAMask8812(
 			else{
 				WirelessMode = WIRELESS_MODE_AC_5G;
 			}
-			
+
 			if (((le32_to_cpu(pstat->vht_cap_buf.vht_support_mcs[0]) >> 2) & 3) == 3)
 				rf_mimo_mode = MIMO_1T1R;
 			if (pstat->nss == 1)
@@ -2397,7 +2397,7 @@ UpdateHalRAMask8812(
 				WirelessMode = WIRELESS_MODE_N_24G;
 			if ((pstat->tx_ra_bitmap & 0xff00000) == 0)
 				rf_mimo_mode = MIMO_1T1R;
-		} else if (((priv->pmib->dot11BssType.net_work_type & WIRELESS_11G) && isErpSta(pstat)) && 
+		} else if (((priv->pmib->dot11BssType.net_work_type & WIRELESS_11G) && isErpSta(pstat)) &&
 					(priv->pmib->dot11RFEntry.dot11channel <= 14)) {
 			WirelessMode = WIRELESS_MODE_G;
 		} else if ((priv->pmib->dot11BssType.net_work_type & WIRELESS_11A) &&
@@ -2412,7 +2412,7 @@ UpdateHalRAMask8812(
 
 		if (WirelessMode == WIRELESS_MODE_AC_5G) {
 			ratr_bitmap &= 0xfff;
-		#ifdef RTK_AC_SUPPORT	
+		#ifdef RTK_AC_SUPPORT
 			if(GET_CHIP_VER(priv) != VERSION_8723B) {
 				int tmp32 = (pstat->vht_cap_buf.vht_support_mcs[0]);
 				// special 1SS & 2SS
@@ -2442,16 +2442,16 @@ UpdateHalRAMask8812(
 
 		if (priv->pshare->is_40m_bw && (BW == HT_CHANNEL_WIDTH_20_40)
 #ifdef WIFI_11N_2040_COEXIST
-				&& !((((GET_MIB(priv))->dot11OperationEntry.opmode) & WIFI_AP_STATE) 
+				&& !((((GET_MIB(priv))->dot11OperationEntry.opmode) & WIFI_AP_STATE)
 				&& COEXIST_ENABLE
 				&& (priv->bg_ap_timeout || orForce20_Switch20Map(priv)
 
 				))
 #endif
 		)
-		
+
 		bCurTxBW40MHz = TRUE;
-		
+
 	}
 
 	if(((GET_MIB(priv))->dot11OperationEntry.opmode) & WIFI_STATION_STATE) {
@@ -2478,7 +2478,7 @@ UpdateHalRAMask8812(
 
 	if (MimoPs <= MIMO_PS_DYNAMIC)
 		MimoPs_enable = TRUE;
-		
+
 	phydm_UpdateHalRAMask(ODMPTR, WirelessMode, rf_mimo_mode, BW, MimoPs_enable, disable_cck_rate, &ratr_bitmap_msb, &ratr_bitmap, rssi_level);
 	pstat->ratr_idx = phydm_rate_id_mapping(ODMPTR, WirelessMode, rf_mimo_mode, BW);
 
@@ -2588,7 +2588,7 @@ UpdateHalRAMask8812(
 						ratr_bitmap &= 0x003ff000;
 					else
 						ratr_bitmap &= 0x003ff010;
-				}	
+				}
 				else
 				{
 					if(rssi_level == 1) 			// add by Gary for ac-series
@@ -2597,9 +2597,9 @@ UpdateHalRAMask8812(
 						ratr_bitmap &= 0xfffff000;		 // VHT 2SS MCS0~9
 					else
 						ratr_bitmap &= 0xfffff010;		 // All
-				}	
+				}
 
-				//panic_printk("[%s][%d] rssi_level=[%d->%d] ratr_bitmap=0x%x\n", __FUNCTION__, __LINE__, 
+				//panic_printk("[%s][%d] rssi_level=[%d->%d] ratr_bitmap=0x%x\n", __FUNCTION__, __LINE__,
 					//pstat->rssi_level_ac, rssi_level, ratr_bitmap);
 
 				pstat->rssi_level_ac = rssi_level;
@@ -2639,7 +2639,7 @@ UpdateHalRAMask8812(
 
 
 #ifdef AC2G_256QAM
-	 
+
 	 if(is_ac2g(priv) && pstat->vht_cap_len )
 	 {
 		 printk("AC2G STA Associated !!\n");
@@ -2652,12 +2652,12 @@ UpdateHalRAMask8812(
 			 	pstat->ratr_idx = 10;
 			 else
 			 	pstat->ratr_idx = 11;
- 
+
 			 if(BW == 0)
 			 	VHT_TxMap = 0x1ff;
 			 else
 			 	VHT_TxMap = 0x3ff;
- 
+
 		 }
 		 else if (rf_mimo_mode == MIMO_2T2R)
 		 {
@@ -2676,10 +2676,10 @@ UpdateHalRAMask8812(
 		 }
 
 		 ratr_bitmap &= ((VHT_TxMap << 12)|0xfff);
-		 
+
 		 pstat->WirelessMode = WIRELESS_MODE_AC_24G;
 	 }
-	 
+
 #endif
 
 	// for debug, set vht_txmap for RAMask
@@ -3096,9 +3096,9 @@ C2HRaReportHandler_8812(
 	u1Byte	MacId = CmdBuf[1];
 	BOOLEAN	bLDPC = CmdBuf[2] & BIT0;
 	BOOLEAN	bTxBF = (CmdBuf[2] & BIT1) >> 1;
-#if (BEAMFORMING_SUPPORT == 1)		
+#if (BEAMFORMING_SUPPORT == 1)
 	Beamforming_SetTxBFen(priv, MacId, bTxBF);
-#endif	
+#endif
 }
 
 VOID
@@ -3121,14 +3121,14 @@ C2HTxTxReportHandler_8812(
 	}
 }
 
-#if (BEAMFORMING_SUPPORT == 1) 
+#if (BEAMFORMING_SUPPORT == 1)
 VOID C2HTxBeamformingHandler_8812(	struct rtl8192cd_priv *priv, pu1Byte CmdBuf, u1Byte	CmdLen);
 #endif
 
 VOID
 _C2HContentParsing8812(
 	struct rtl8192cd_priv *priv,
-		u1Byte			c2hCmdId, 
+		u1Byte			c2hCmdId,
 		u1Byte			c2hCmdLen,
 		pu1Byte 			tmpBuf
 )
@@ -3137,19 +3137,19 @@ _C2HContentParsing8812(
 	switch(c2hCmdId)
 	{
 		case C2H_8812_TXBF:
-#if (BEAMFORMING_SUPPORT == 1) 			
+#if (BEAMFORMING_SUPPORT == 1)
 			C2HTxBeamformingHandler_8812(priv, tmpBuf, c2hCmdLen);
 #endif
 			break;
 		case C2H_8812_TXPERORT:
-#ifdef TXREPORT		
+#ifdef TXREPORT
 			C2HTxTxReportHandler_8812(priv, tmpBuf, c2hCmdLen);
 
 	#ifdef TXRETRY_CNT
-			requestTxRetry_8812(priv);	
+			requestTxRetry_8812(priv);
 	#else
-			requestTxReport_8812(priv);			
-	#endif			
+			requestTxReport_8812(priv);
+	#endif
 
 #endif
 			break;
@@ -3158,7 +3158,7 @@ _C2HContentParsing8812(
 		case C2H_8812_TXRETRY:
 			C2HTxTxRetryHandler(priv, tmpBuf);
 			requestTxReport_8812(priv);
-			break;  
+			break;
 #endif
 
 		default:
@@ -3194,8 +3194,8 @@ C2HPacketHandler_8812(
 	{
 		c2hCmdLen = Length -2;
 		tmpBuf = Buffer+2;
-		
-		_C2HContentParsing8812(priv, c2hCmdId, c2hCmdLen, tmpBuf);		
+
+		_C2HContentParsing8812(priv, c2hCmdId, c2hCmdLen, tmpBuf);
 	}
 }
 
@@ -3211,12 +3211,12 @@ SetBeamformRfMode8812(
 	u4Byte					bSelfBeamformee = FALSE;
 	RT_BEAMFORMING_ENTRY	BeamformEntry;
 	BEAMFORMING_CAP		BeamformCap = BEAMFORMING_CAP_NONE;
-	
+
 	BeamformCap = Beamforming_GetBeamCap(priv, pBeamformingInfo);
-	
+
 	if(BeamformCap == pBeamformingInfo->BeamformCap)
 		return;
-	else 
+	else
 		pBeamformingInfo->BeamformCap = BeamformCap;
 	if(get_rf_mimo_mode(priv) == MIMO_1T1R)
 		return;
@@ -3225,9 +3225,9 @@ SetBeamformRfMode8812(
 
 	bSelfBeamformer = BeamformCap & BEAMFORMER_CAP;
 	bSelfBeamformee = BeamformCap & BEAMFORMEE_CAP;
-	
+
 	if(bSelfBeamformer)
-	{	
+	{
 		PHY_SetRFReg(priv, ODM_RF_PATH_A, RF_ModeTableAddr, 0x78000,0x3); // Select RX mode
 		PHY_SetRFReg(priv, ODM_RF_PATH_A, RF_ModeTableData0, 0xfffff,0x3F7FF); // Set Table data
 		PHY_SetRFReg(priv, ODM_RF_PATH_A, RF_ModeTableData1, 0xfffff,0xE26BF); // Enable TXIQGEN in RX mode
@@ -3246,20 +3246,20 @@ SetBeamformRfMode8812(
 	}
 	PHY_SetRFReg(priv, ODM_RF_PATH_A, RF_WeLut_Jaguar, 0x80000,0x0); // RF Mode table write disable
 	PHY_SetRFReg(priv, ODM_RF_PATH_B, RF_WeLut_Jaguar, 0x80000,0x0); // RF Mode table write disable
-	
+
 	if(bSelfBeamformer) {
 		PHY_SetBBReg(priv, rTxPath_Jaguar, bMaskByte1, 0x33);
-#ifdef RF_MIMO_SWITCH		
+#ifdef RF_MIMO_SWITCH
 		priv->pshare->rf_phy_bb_backup[1] &= ~ bMaskByte1;
 		priv->pshare->rf_phy_bb_backup[1] |= 0x3300;
-#endif		
+#endif
 
 	} else {
 		PHY_SetBBReg(priv, rTxPath_Jaguar, bMaskByte1, 0x11);
-#ifdef RF_MIMO_SWITCH		
+#ifdef RF_MIMO_SWITCH
 		priv->pshare->rf_phy_bb_backup[1] &= ~ bMaskByte1;
-		priv->pshare->rf_phy_bb_backup[1] |= 0x1100;		
-#endif		
+		priv->pshare->rf_phy_bb_backup[1] |= 0x1100;
+#endif
 	}
 }
 VOID
@@ -3271,7 +3271,7 @@ SetBeamformEnter8812(
 	u1Byte					i = 0;
 	u1Byte					BFerIdx = (BFerBFeeIdx & 0xF0)>>4;
 	u1Byte					BFeeIdx = (BFerBFeeIdx & 0xF);
-	u4Byte					CSI_Param;	
+	u4Byte					CSI_Param;
 	PRT_BEAMFORMING_INFO 	pBeamformingInfo = &(priv->pshare->BeamformingInfo);
 	RT_BEAMFORMING_ENTRY	BeamformeeEntry;
 	RT_BEAMFORMER_ENTRY	BeamformerEntry;
@@ -3285,22 +3285,22 @@ SetBeamformEnter8812(
 	if((pBeamformingInfo->BeamformCap & BEAMFORMEE_CAP) && (BFerIdx < BEAMFORMER_ENTRY_NUM))
 	{
 		BeamformerEntry = pBeamformingInfo->BeamformerEntry[BFerIdx];
-		
+
 		if (!IS_TEST_CHIP(priv))		{
 			if (IS_C_CUT_8812(priv))
 				RTL_W16( REG_SND_PTCL_CTRL_8812, 0x2CB); 		// Disable SIG-B CRC8 check
 			else
-				RTL_W16( REG_SND_PTCL_CTRL_8812, 0x0B); 
+				RTL_W16( REG_SND_PTCL_CTRL_8812, 0x0B);
 		}
 		else
-			RTL_W16( REG_SND_PTCL_CTRL_8812, 0x1B);	
+			RTL_W16( REG_SND_PTCL_CTRL_8812, 0x1B);
 
 		// MAC addresss/Partial AID of Beamformer
 		if(BFerIdx == 0)
 		{
 			for(i = 0; i < 6 ; i++)
 				RTL_W8( (REG_BFMER0_INFO_8812+i), BeamformerEntry.MacAddr[i]);
-			
+
 			//RTL_W16( REG_BFMER0_INFO_8812+6, BeamformerEntry.P_AID);
 		}
 		else
@@ -3314,7 +3314,7 @@ SetBeamformEnter8812(
 		// CSI report parameters of Beamformer
 		if((BeamformerEntry.BeamformEntryCap & BEAMFORMEE_CAP_VHT_SU) ||(BeamformerEntry.BeamformEntryCap & BEAMFORMER_CAP_VHT_SU) )
 			CSI_Param = 0x01090109;
-		else 
+		else
 			CSI_Param = 0x03090309;
 
 		RTL_W32( REG_CSI_RPT_PARAM_BW20_8812, CSI_Param);
@@ -3332,42 +3332,42 @@ SetBeamformEnter8812(
 
 		if(OPMODE & WIFI_ADHOC_STATE)
 			STAid = BeamformeeEntry.AID;
-		else 
+		else
 			STAid = BeamformeeEntry.P_AID;
 
 		// P_AID of Beamformee & enable NDPA transmission
 		if(BFeeIdx == 0)
-		{	
-			RTL_W16( REG_TXBF_CTRL_8812, STAid);	
+		{
+			RTL_W16( REG_TXBF_CTRL_8812, STAid);
 			RTL_W8( REG_TXBF_CTRL_8812+3, RTL_R8( REG_TXBF_CTRL_8812+3)|BIT6|BIT7|BIT4);
-		}	
+		}
 		else
 		{
 			RTL_W16( REG_TXBF_CTRL_8812+2, STAid |BIT14| BIT15|BIT12);
-		}	
+		}
 
 		// CSI report parameters of Beamformee
-		if(BFeeIdx == 0)	
+		if(BFeeIdx == 0)
 		{
 			// Get BIT24 & BIT25
-			u1Byte	tmp = RTL_R8( REG_BFMEE_SEL_8812+3) & 0x3;	
+			u1Byte	tmp = RTL_R8( REG_BFMEE_SEL_8812+3) & 0x3;
 			RTL_W8( REG_BFMEE_SEL_8812+3, tmp | 0x60);
 			RTL_W16( REG_BFMEE_SEL_8812, STAid | BIT9);
-		}	
+		}
 		else
 		{
 			// Set BIT25
 			RTL_W16( REG_BFMEE_SEL_8812+2, STAid | 0xE200);
 		}
 
-	//	if(pHalData->bIsMPChip == FALSE) 
-		if (IS_TEST_CHIP(priv))		
+	//	if(pHalData->bIsMPChip == FALSE)
+		if (IS_TEST_CHIP(priv))
 		{
-			// VHT category value 
+			// VHT category value
 			RTL_W8( REG_SND_PTCL_CTRL_8812+1, ACT_CAT_VHT);
 			// NDPA subtype
 			RTL_W8( REG_SND_PTCL_CTRL_8812+2, Type_NDPA >> 4);
-		}	
+		}
 
 		Beamforming_Notify(priv);
 	}
@@ -3391,27 +3391,27 @@ SetBeamformLeave8812(
     if (BeamformeeEntry.BeamformEntryCap == BEAMFORMING_CAP_NONE)
     {
 	if(Idx == 0)
-	{	
+	{
 		ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("[Beamforming]@%s, BeamformeeEntryCap == NONE, Idx=%d\n", __FUNCTION__, Idx));
-		RTL_W16( REG_TXBF_CTRL_8812, 0);	
-            RTL_W16( REG_BFMEE_SEL_8812, 0);        
+		RTL_W16( REG_TXBF_CTRL_8812, 0);
+            RTL_W16( REG_BFMEE_SEL_8812, 0);
         }
         else
         {
 			ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("[Beamforming]@%s, BeamformeeEntryCap == NONE, Idx=%d\n", __FUNCTION__, Idx));
             RTL_R16( (REG_TXBF_CTRL_8812+2) & 0xF000);
-            RTL_W16( REG_BFMEE_SEL_8812+2, RTL_R16( REG_BFMEE_SEL_8812+2) & 0x60);        
+            RTL_W16( REG_BFMEE_SEL_8812+2, RTL_R16( REG_BFMEE_SEL_8812+2) & 0x60);
         }
     }
 
-    if (BeamformerEntry.BeamformEntryCap == BEAMFORMING_CAP_NONE) 
+    if (BeamformerEntry.BeamformEntryCap == BEAMFORMING_CAP_NONE)
     {
         if(Idx == 0)
         {
 			ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("[Beamforming]@%s, BeamformerEntryCap == NONE, Idx=%d\n", __FUNCTION__, Idx));
 			RTL_W32( REG_BFMER0_INFO_8812, 0);
 			RTL_W16( REG_BFMER0_INFO_8812+4, 0);
-		}	
+		}
 		else
 		{
 			ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("[Beamforming]@%s, BeamformerEntryCap == NONE, Idx=%d\n", __FUNCTION__, Idx));
@@ -3424,8 +3424,8 @@ SetBeamformLeave8812(
         && ((pBeamformingInfo->BeamformerEntry[1]).BeamformEntryCap == BEAMFORMING_CAP_NONE)){
 		ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("[Beamforming]@%s, All BeamformerEntryCap == NONE, STOP feedback CSI\n", __FUNCTION__, Idx));
         RTL_W8( REG_SND_PTCL_CTRL_8812, 0xC8);
-	}	
-    
+	}
+
 }
 VOID
 SetBeamformStatus8812(
@@ -3439,7 +3439,7 @@ SetBeamformStatus8812(
 	RT_BEAMFORMING_ENTRY	BeamformEntry = pBeamformingInfo->BeamformeeEntry[Idx];
 	if(OPMODE & WIFI_ADHOC_STATE)
 		BeamCtrlVal = BeamformEntry.MacId;
-	else 
+	else
 		BeamCtrlVal = BeamformEntry.P_AID;
 	if(Idx == 0)
 		BeamCtrlReg = REG_TXBF_CTRL_8812;
@@ -3478,7 +3478,7 @@ VOID Beamforming_NDPARate_8812(
 
 	if(NDPARate == 0)
 	{
-// ???	
+// ???
 #if 0
 		if(Mode == 1 || Mode == 4)
 			NDPARate = 0x0c;		//MGN_MCS0;
@@ -3494,7 +3494,7 @@ VOID Beamforming_NDPARate_8812(
 	}
 
 	if(NDPARate < 0x0c)
-		BW = HT_CHANNEL_WIDTH_20;	
+		BW = HT_CHANNEL_WIDTH_20;
 
 	RTL_W8(REG_NDPA_OPT_CTRL_8812, (NDPARate<<2) |  (BW & 0x03));
 
@@ -3545,7 +3545,7 @@ VOID _Beamforming_CLK(struct rtl8192cd_priv *priv)
 		return;
 
 	SAVE_INT_AND_CLI(flags);
-	
+
 	// Stop Usb TxDMA
 	RTL_W16(PCIE_CTRL_REG, 0xff00 );
 
@@ -3568,10 +3568,10 @@ VOID _Beamforming_CLK(struct rtl8192cd_priv *priv)
 	for(Count = 0; Count < 100; Count++) {
 		if(RTL_R32(REG_SCH_TXCMD_8812) != 0)
 			continue;
-		else 
+		else
 			break;
 	}
-	
+
 	// Stop RX DMA path
 	u1btmp = RTL_R8(REG_RXDMA_CONTROL_8812);
 	RTL_W8(REG_RXDMA_CONTROL_8812, u1btmp| BIT2);
@@ -3607,34 +3607,34 @@ VOID _Beamforming_CLK(struct rtl8192cd_priv *priv)
 }
 
 
-#endif 
+#endif
 
 
 VOID RTL8812_MACID_PAUSE(
 	struct rtl8192cd_priv *priv,
-    BOOLEAN      bSleep,   
+    BOOLEAN      bSleep,
     u4Byte       aid
 )
 {
 	if (priv->pshare->rf_ft_var.enable_macid_sleep) {
 		if (bSleep) {
 			if (aid > MACID_REGION3_LIMIT)
-				RTL_W32(REG_MACID_PKT_SLEEP_3, RTL_R32(REG_MACID_PKT_SLEEP_3) | BIT(aid-MACID_REGION3_LIMIT-1));                
-            else if(aid > MACID_REGION2_LIMIT)                
+				RTL_W32(REG_MACID_PKT_SLEEP_3, RTL_R32(REG_MACID_PKT_SLEEP_3) | BIT(aid-MACID_REGION3_LIMIT-1));
+            else if(aid > MACID_REGION2_LIMIT)
 				RTL_W32(REG_MACID_PKT_SLEEP_2, RTL_R32(REG_MACID_PKT_SLEEP_2) | BIT(aid-MACID_REGION2_LIMIT-1));
 			else if(aid > MACID_REGION1_LIMIT)
                 RTL_W32(REG_MACID_PKT_SLEEP_1, RTL_R32(REG_MACID_PKT_SLEEP_1) | BIT(aid-MACID_REGION1_LIMIT-1));
-            else                
+            else
 				RTL_W32(REG_MACID_PKT_SLEEP_0, RTL_R32(REG_MACID_PKT_SLEEP_0) | BIT(aid));
 		} else {
 		    if (aid > MACID_REGION3_LIMIT)
-				RTL_W32(REG_MACID_PKT_SLEEP_3, RTL_R32(REG_MACID_PKT_SLEEP_3) & ~BIT(aid-MACID_REGION3_LIMIT-1));                
-            else if(aid > MACID_REGION2_LIMIT)                
+				RTL_W32(REG_MACID_PKT_SLEEP_3, RTL_R32(REG_MACID_PKT_SLEEP_3) & ~BIT(aid-MACID_REGION3_LIMIT-1));
+            else if(aid > MACID_REGION2_LIMIT)
 				RTL_W32(REG_MACID_PKT_SLEEP_2, RTL_R32(REG_MACID_PKT_SLEEP_2) & ~BIT(aid-MACID_REGION2_LIMIT-1));
 			else if(aid > MACID_REGION1_LIMIT)
                 RTL_W32(REG_MACID_PKT_SLEEP_1, RTL_R32(REG_MACID_PKT_SLEEP_1) & ~BIT(aid-MACID_REGION1_LIMIT-1));
-            else                
-				RTL_W32(REG_MACID_PKT_SLEEP_0, RTL_R32(REG_MACID_PKT_SLEEP_0) & ~BIT(aid));	
+            else
+				RTL_W32(REG_MACID_PKT_SLEEP_0, RTL_R32(REG_MACID_PKT_SLEEP_0) & ~BIT(aid));
 		}
 	}
 }
@@ -3646,9 +3646,9 @@ VOID RTL8812_MACID_PAUSE(
 #if defined(DFS) || defined(RTK_AC_SUPPORT) //for 11ac logo
 void SwitchChannel(struct rtl8192cd_priv *priv)
 {
-		
+
 	int ch = priv->pshare->dfsSwitchChannel;
-	int staidx = 0;	
+	int staidx = 0;
 //#ifndef SMP_SYNC
 	unsigned long flags=0;
 //#endif
@@ -3675,8 +3675,8 @@ void SwitchChannel(struct rtl8192cd_priv *priv)
 
 	priv->pshare->CurrentChannelBW = priv->pshare->is_40m_bw = priv->pmib->dot11nConfigEntry.dot11nUse40M;
 
-	if (priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_80 && 
-		priv->pmib->dot11RFEntry.band5GSelected == PHY_BAND_5G_3) 
+	if (priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_80 &&
+		priv->pmib->dot11RFEntry.band5GSelected == PHY_BAND_5G_3)
 	{
 		int channel = priv->pmib->dot11RFEntry.dot11channel;
 
@@ -3731,15 +3731,15 @@ void SwitchChannel(struct rtl8192cd_priv *priv)
 
 	while(pstat)
 	{
-#ifdef TX_SHORTCUT			
+#ifdef TX_SHORTCUT
 		if (!priv->pmib->dot11OperationEntry.disable_txsc) {
 			int i;
 			for (i=0; i<TX_SC_ENTRY_NUM; i++)
 				pstat->tx_sc_ent[i].hwdesc1.Dword7 &= set_desc(~TX_TxBufSizeMask);
 		}
-#endif			
+#endif
 
-#if defined(CONFIG_RTL_8812_SUPPORT) ||defined(CONFIG_RTL_8723B_SUPPORT) 
+#if defined(CONFIG_RTL_8812_SUPPORT) ||defined(CONFIG_RTL_8723B_SUPPORT)
 		if (GET_CHIP_VER(priv) == VERSION_8812E || GET_CHIP_VER(priv) == VERSION_8723B) {
 			UpdateHalRAMask8812(priv, pstat, 3);
 		}
@@ -3752,13 +3752,13 @@ void SwitchChannel(struct rtl8192cd_priv *priv)
 
 		pstat = findNextSTA(priv, &staidx);
 
-	}	
+	}
 
 #ifdef DFS
 	if (!priv->pmib->dot11DFSEntry.disable_DFS &&
 			(OPMODE & WIFI_AP_STATE) &&
 		(((priv->pmib->dot11RFEntry.dot11channel >= 52) &&
-		(priv->pmib->dot11RFEntry.dot11channel <= 64)) || 
+		(priv->pmib->dot11RFEntry.dot11channel <= 64)) ||
 		((priv->pmib->dot11RFEntry.dot11channel >= 100) &&
 		(priv->pmib->dot11RFEntry.dot11channel <= 140)))) {
 

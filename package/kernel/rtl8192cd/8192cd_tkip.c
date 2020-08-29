@@ -244,7 +244,7 @@ void michael(
 	{
 		if (tx)
 			rtl_cache_sync_wback(priv, (unsigned long)message, (num_blocks*4), PCI_DMA_TODEVICE);
-		
+
 		*(volatile unsigned int *)GDMACNR  = 0;
 		*(volatile unsigned int *)GDMACNR  = GDMA_ENABLE;
 		*(volatile unsigned int *)GDMAIMR  = 0;
@@ -933,7 +933,7 @@ unsigned int tkip_decrypt(struct rtl8192cd_priv *priv, struct rx_frinfo *pfrinfo
 				keylen = GET_GROUP_IDX2_ENCRYP_KEYLEN;
 				ttkey = GET_GROUP_ENCRYP2_KEY;
 			}
-			else{				
+			else{
 				keylen = GET_GROUP_ENCRYP_KEYLEN;
 				ttkey = GET_GROUP_ENCRYP_KEY;
 			}
@@ -1101,7 +1101,7 @@ do_encrypt:
 {
 	char tmpbuf[400], tmp1[100];
 	int i;
-	
+
 	sprintf(tmpbuf, "wep encrypt: iv=%d, keyid=%d, type=%s, key=",
 		(le32_to_cpup((u32 *)iv) & 0xFFFFFF), keyid,
 		(type==_WEP_40_PRIVACY_ ? "64b" : "128b"));
@@ -1224,7 +1224,7 @@ do_decrypt:
 {
 	char tmpbuf[400], tmp1[100];
 	int i;
-	
+
 	sprintf(tmpbuf, "wep decript: iv=%d, keyid=%d, type=%s, key=",
 		(le32_to_cpup((u32 *)iv) & 0xFFFFFF), (int)((iv[3]>>6)&3),
 		(type==_WEP_40_PRIVACY_ ? "64b" : "128b"));
@@ -1308,7 +1308,7 @@ int tkip_rx_mic(struct rtl8192cd_priv *priv, unsigned char *pframe, unsigned cha
             mickey = GET_UNICAST_TKIP_MIC1_KEY;
         }
         else
-        #endif     
+        #endif
 		if (IS_MCAST(da))
 		{
 	 		if((pframe[WLAN_HDR_A3_LEN + 3]&BIT(7))){
@@ -1317,7 +1317,7 @@ int tkip_rx_mic(struct rtl8192cd_priv *priv, unsigned char *pframe, unsigned cha
 			}
 			else{
 				keylen = GET_GROUP_MIC_KEYLEN;
-				mickey = GET_GROUP_TKIP_MIC1_KEY;		
+				mickey = GET_GROUP_TKIP_MIC1_KEY;
 			}
 		}
 		else

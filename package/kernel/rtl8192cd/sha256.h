@@ -30,7 +30,7 @@
  * @mac: Buffer for the hash
  * Returns: 0 on success, -1 on failure
  */
- 
+
 #define WPA_GET_BE16(a) ((u2Byte) (((a)[0] << 8) | (a)[1]))
 #define WPA_PUT_BE16(a, val)			\
 	do {					\

@@ -122,7 +122,7 @@
 #define		MBIST_DONE			0x178	// MACTOP BIST DONE.
 #define		MBIST_FAIL			0x17C	// MACTOP BIST FAIL.
 
-#define		C2H_SYNC_BYTE		0x1AF	// 8051 set to 0xFF, Driver set to 0x0 after read C2H content 
+#define		C2H_SYNC_BYTE		0x1AF	// 8051 set to 0xFF, Driver set to 0x0 after read C2H content
 #define		MCUTST_I			0x1C0	// MCU Firmware TST-I.
 #define		MCUTST_II			0x1C4	// MCU Firmware TST-II.
 #define		MCU_UNLOCK		 0x01C7	// is used for Unlock MCU infinite-loop

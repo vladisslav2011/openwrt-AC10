@@ -150,7 +150,7 @@ typedef struct _RT_PMAC_TX_INFO {
 	UCHAR			Ntx:4;				/* 0-7     Order of Ntx, Mode, and bEnPMacTx is reversed for MP API's due to difference alignment of C struct across platforms*/
 	UCHAR			Mode:3;				/* 0: Packet TX 3:Continuous TX */
 	UCHAR			bEnPMacTx:1;		/* 0: Disable PMac 1: Enable PMac*/
-#endif	
+#endif
 	UCHAR			TX_RATE;			/* MPT_RATE_E*/
 	UCHAR			TX_RATE_HEX;
 	UCHAR			TX_SC;
@@ -205,12 +205,12 @@ extern unsigned char TxPwrTrk_CCK_SwingTbl_CH14[TxPwrTrk_CCK_SwingTbl_Len][8];
 #ifdef COFNIG_RLE0412
     #define _ICU_UART0_MSK_	UART1_IE
     #define _UART_RBR_			0xb8002100
-    #define _UART_LSR_			0xb8002114	
+    #define _UART_LSR_			0xb8002114
 #else
     #define _ICU_UART0_MSK_	UART0_IE
     #define _UART_RBR_			0xb8002000
     #define _UART_LSR_			0xb8002014
-#endif	
+#endif
 #elif defined(USE_RTL8186_SDK)
 #ifdef CONFIG_RTL8672
 	#ifdef USE_RLX_BSP
@@ -257,7 +257,7 @@ extern unsigned char TxPwrTrk_CCK_SwingTbl_CH14[TxPwrTrk_CCK_SwingTbl_Len][8];
 	#define _GIMR_				GIMR
 #endif
 #define _ICU_UART_MSK_			_UART_IE
-#define _UART_RBR_				_UART_RBR 
+#define _UART_RBR_				_UART_RBR
 #define _UART_LSR_				_UART_LSR
 #else
 #if defined(__LINUX_2_6__) || defined(__ECOS)
@@ -318,7 +318,7 @@ static inline int IS_KEYBRD_HIT(void)
 #ifndef CONFIG_RTL_92C_SUPPORT
 #define 	VERSION_8188C  0x1000
 #define	VERSION_8192C  0x1001
-#endif	
+#endif
 #ifndef CONFIG_RTL_92D_SUPPORT
 #define VERSION_8192D 0x1002
 #endif
@@ -360,7 +360,7 @@ static inline int IS_KEYBRD_HIT(struct rtl8192cd_priv *priv)
 		if(lx4180_ReadStatus()&1)
 		{   //interrupt enabled.
 			if(uart1Getc())
-				return 1; 
+				return 1;
 		}else
 		{	//interrupt disabled
 			if (RTL_UART_R32(_UART_LSR_) & 0x01000000) { // data ready
@@ -500,7 +500,7 @@ static __inline__ int isLegalRate(unsigned int rate)
 	case _MCS23_RATE_:
 		res = 1;
 		break;
-#ifdef RTK_AC_SUPPORT  		//vht rate 
+#ifdef RTK_AC_SUPPORT  		//vht rate
 	case	_NSS1_MCS0_RATE_:
 	case	_NSS1_MCS1_RATE_:
 	case	_NSS1_MCS2_RATE_:
@@ -530,7 +530,7 @@ static __inline__ int isLegalRate(unsigned int rate)
 	case	_NSS3_MCS6_RATE_:
 	case	_NSS3_MCS7_RATE_:
 	case	_NSS3_MCS8_RATE_:
-	case	_NSS3_MCS9_RATE_:	
+	case	_NSS3_MCS9_RATE_:
 	case	_NSS4_MCS0_RATE_:
 	case	_NSS4_MCS1_RATE_:
 	case	_NSS4_MCS2_RATE_:
@@ -543,7 +543,7 @@ static __inline__ int isLegalRate(unsigned int rate)
 	case	_NSS4_MCS9_RATE_:
 		res = 1;
 		break;
-#endif		
+#endif
 	default:
 		res = 0;
 		break;
@@ -561,15 +561,15 @@ int GetPSDData(struct rtl8192cd_priv *priv,unsigned int point)
 		psd_val = RTL_R32(0x910);
 		psd_val &= 0xFFBFFC00;
 		psd_val |= point;
-		
+
 		RTL_W32(0x910, psd_val);
 		delay_ms(2);
 		psd_val |= 0x00400000;
-		
+
 		RTL_W32(0x910, psd_val);
 		delay_ms(2);
 		psd_val = RTL_R32(0xF44);
-		
+
 		psd_val &= 0x0000FFFF;
 	} else
 #endif
@@ -766,14 +766,14 @@ static void mp_8192CD_tx_setting(struct rtl8192cd_priv *priv)
 #endif
 
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
-	if (is_CCK_rate(priv->pshare->mp_datarate) 
+	if (is_CCK_rate(priv->pshare->mp_datarate)
 		&& (
 #ifdef CONFIG_RTL_92C_SUPPORT
-		(!IS_TEST_CHIP(priv) && (GET_CHIP_VER(priv) == VERSION_8192C)) 
+		(!IS_TEST_CHIP(priv) && (GET_CHIP_VER(priv) == VERSION_8192C))
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 #ifdef CONFIG_RTL_92C_SUPPORT
-		|| 
+		||
 #endif
 		(GET_CHIP_VER(priv) == VERSION_8192D)
 #endif
@@ -785,7 +785,7 @@ static void mp_8192CD_tx_setting(struct rtl8192cd_priv *priv)
 			if (priv->pshare->mp_txpwr_pathb % 2)
 				odd_pwr++;
 		}
-		
+
 		if(CHECKICIS92C()||(CHECKICIS92D()&&(RTL_R8(0xa07) & 0x40))) {
 			switch((odd_pwr<<1)| priv->pshare->mp_cck_txpwr_odd) {
 			case 1:
@@ -818,7 +818,7 @@ static void mpt_StartCckContTx(struct rtl8192cd_priv *priv)
 		PHY_SetBBReg(priv, 0x914, BIT(16), bDisable);
 		PHY_SetBBReg(priv, 0x914, BIT(17), bDisable);
 		PHY_SetBBReg(priv, 0x914, BIT(18), bDisable);
-	} 
+	}
 	else
 #endif
 	{
@@ -883,13 +883,13 @@ static void mpt_StopCckCoNtTx(struct rtl8192cd_priv *priv)
 
 
 #ifdef CONFIG_WLAN_HAL_8814AE
-	if(CHECKICIS8814()){		
+	if(CHECKICIS8814()){
 		//	PHY_SetBBReg(priv, rPMAC_Reset, bBBResetB, 0x0);
 		//	PHY_SetBBReg(priv, rPMAC_Reset, bBBResetB, 0x1);
 		PHY_SetBBReg(priv, 0x100, 0x100, 0x0);
 		PHY_SetBBReg(priv, 0x100, 0x100, 0x1);
 		PHY_SetBBReg(priv, rFPGA0_XA_HSSIParameter1, bMaskDWord, 0x01000100);
-		PHY_SetBBReg(priv, rFPGA0_XB_HSSIParameter1, bMaskDWord, 0x01000100);	
+		PHY_SetBBReg(priv, rFPGA0_XB_HSSIParameter1, bMaskDWord, 0x01000100);
 	}else
 #endif
 	{
@@ -914,7 +914,7 @@ static void mpt_StartOfdmContTx(struct rtl8192cd_priv *priv)
 			PHY_SetBBReg(priv, 0x808, BIT(29), bEnable);//set CCK block on
 	} else
 #endif
-	{	
+	{
 		if (!PHY_QueryBBReg(priv, rFPGA0_RFMOD, bOFDMEn))
 			PHY_SetBBReg(priv, rFPGA0_RFMOD, bOFDMEn, bEnable);//set OFDM block on
 	}
@@ -959,7 +959,7 @@ static void mpt_StartOfdmContTx(struct rtl8192cd_priv *priv)
 		PHY_SetBBReg(priv, rFPGA0_XA_HSSIParameter1, bMaskDWord, 0x01000500);
 		PHY_SetBBReg(priv, rFPGA0_XB_HSSIParameter1, bMaskDWord, 0x01000500);
 	}
-#endif	
+#endif
 #if 1//def CONFIG_RTL8672
 	// Commented out for background mode, sync with SD7, 2010-07-08 by Annie ---
 	// We will set 0x820 and 0x828 under Tx mode in mp_ctx(), 2010-09-17 by Family.
@@ -1004,7 +1004,7 @@ static void mpt_StopOfdmContTx(struct rtl8192cd_priv *priv)
 		PHY_SetBBReg(priv, rFPGA0_XB_HSSIParameter1, bMaskDWord, 0x01000100);
 	}else
 #endif
-	{	
+	{
 		PHY_SetBBReg(priv, 0x820, 0x400, 0x0);
 		PHY_SetBBReg(priv, 0x828, 0x400, 0x0);
 	}
@@ -1028,7 +1028,7 @@ static void mpt_ProSetCarrierSupp(struct rtl8192cd_priv *priv, int enable)
 		}
 		else
 #endif
-		{	
+		{
 			// 1. if CCK block on?
 			if(!PHY_QueryBBReg(priv, rFPGA0_RFMOD, bCCKEn))
 				PHY_SetBBReg(priv, rFPGA0_RFMOD, bCCKEn, bEnable);//set CCK block on
@@ -1066,22 +1066,22 @@ static void mpt_SetSingleTone_8814A(struct rtl8192cd_priv *priv, bool bSingleTon
 	static u4Byte		regIG0 = 0, regIG1 = 0, regIG2 = 0, regIG3 = 0;
 
 	if(bSingleTone)
-	{		
+	{
 		regIG0= PHY_QueryBBReg(priv, rA_TxScale_Jaguar, bMaskDWord);		// 0xC1C[31:21]
 		regIG1 = PHY_QueryBBReg(priv, rB_TxScale_Jaguar, bMaskDWord); 		// 0xE1C[31:21]
 		regIG2 = PHY_QueryBBReg(priv, rC_TxScale_Jaguar2, bMaskDWord);	// 0x181C[31:21]
 		regIG3 = PHY_QueryBBReg(priv, rD_TxScale_Jaguar2, bMaskDWord); 	// 0x1A1C[31:21]
 
 		switch(priv->pshare->mp_antenna_tx){
-		case ANTENNA_A: 
+		case ANTENNA_A:
 			StartPath = 0;
 			EndPath = 0;
 			break;
-		case ANTENNA_B:			
+		case ANTENNA_B:
 			StartPath = 1;
 			EndPath = 1;
 			break;
-		case ANTENNA_C: 
+		case ANTENNA_C:
 			StartPath = 2;
 			EndPath = 2;
 			break;
@@ -1122,7 +1122,7 @@ static void mpt_SetSingleTone_8814A(struct rtl8192cd_priv *priv, bool bSingleTon
 
 		for(StartPath; StartPath <= EndPath; StartPath++)
 		{
-			PHY_SetRFReg(priv, StartPath, RF_AC_Jaguar, 0xF0000, 0x2); // Tx mode: RF0x00[19:16]=4'b0010 
+			PHY_SetRFReg(priv, StartPath, RF_AC_Jaguar, 0xF0000, 0x2); // Tx mode: RF0x00[19:16]=4'b0010
 			PHY_SetRFReg(priv, StartPath, RF_AC_Jaguar, 0x1F, 0x0); // Lowest RF gain index: RF_0x0[4:0] = 0
 
 			PHY_SetRFReg(priv, StartPath, LNA_Low_Gain_3, BIT1, 0x1); // RF LO enabled
@@ -1136,15 +1136,15 @@ static void mpt_SetSingleTone_8814A(struct rtl8192cd_priv *priv, bool bSingleTon
 	else
 	{
 		switch(priv->pshare->mp_antenna_tx){
-		case ANTENNA_A: 
+		case ANTENNA_A:
 			StartPath = 0;
 			EndPath = 0;
 			break;
-		case ANTENNA_B:			
+		case ANTENNA_B:
 			StartPath = 1;
 			EndPath = 1;
 			break;
-		case ANTENNA_C: 
+		case ANTENNA_C:
 			StartPath = 2;
 			EndPath = 2;
 			break;
@@ -1177,7 +1177,7 @@ static void mpt_SetSingleTone_8814A(struct rtl8192cd_priv *priv, bool bSingleTon
 		for(StartPath; StartPath <= EndPath; StartPath++)
 		{
 			PHY_SetRFReg(priv, StartPath, LNA_Low_Gain_3, BIT1, 0x0); // RF LO disabled
-		}	
+		}
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x0); // Enable CCA
 
 		if(bEnPMacTx == FALSE)
@@ -1252,7 +1252,7 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 	if (CHECKICIS8812()||CHECKICIS8881A())
 		mp_chk_sw_ant_AC(priv);
 	else
-#endif	
+#endif
 #if defined(CONFIG_WLAN_HAL_8814AE)
 	if (CHECKICIS8814())
 		mp_chk_sw_ant_8814(priv);
@@ -1260,9 +1260,9 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 #endif
 #if defined(CONFIG_WLAN_HAL_8822BE)
 	if(CHECKICIS8822())
-		config_phydm_trx_mode_8822b(ODMPTR,priv->pshare->mp_antenna_tx,priv->pshare->mp_antenna_rx,1);			
+		config_phydm_trx_mode_8822b(ODMPTR,priv->pshare->mp_antenna_tx,priv->pshare->mp_antenna_rx,1);
 	else
-#endif		
+#endif
 #if defined(CONFIG_WLAN_HAL_8197F)
 	if (CHECKICIS97F()) {//wish
 		PHY_SetBBReg(priv, 0x998, BIT6, 0x0);
@@ -1277,7 +1277,7 @@ void mp_start_test(struct rtl8192cd_priv *priv)
         //Do Nothing
 	}
     else
-#endif		
+#endif
 	if ((get_rf_mimo_mode(priv) == MIMO_2T2R) && priv->pmib->dot11RFEntry.txbf) {
 		// Tx Path Selection by ctrl_reg in MP mode
 		PHY_SetBBReg(priv, 0x90C, BIT(30), 0);
@@ -1289,22 +1289,22 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 			PHY_SetBBReg(priv, 0x520, BIT(15), 1);
 			PHY_SetBBReg(priv, 0x524, BIT(11), 0);
 		}
-#endif	
+#endif
 
 	// initialize swing index
-#if 1	
+#if 1
 	{
 		if (priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_2G) {
-#if defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_RTL_8723B_SUPPORT)	
+#if defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_RTL_8723B_SUPPORT)
 			if (GET_CHIP_VER(priv) == VERSION_8188E || GET_CHIP_VER(priv) == VERSION_8723B) {
 #ifdef HIGH_POWER_EXT_PA
 				if (priv->pshare->rf_ft_var.use_ext_pa)
 					priv->pshare->mp_cck_swing_idx = 14;
 				else
-#endif					
+#endif
 					priv->pshare->mp_cck_swing_idx = 20;
 			} else
-#endif		
+#endif
 
 #if defined(CONFIG_WLAN_HAL_8192EE) || defined(CONFIG_WLAN_HAL_8197F)
 			if (GET_CHIP_VER(priv) == VERSION_8192E || GET_CHIP_VER(priv) == VERSION_8197F) {
@@ -1312,17 +1312,17 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 				if (priv->pshare->rf_ft_var.use_ext_pa)
 					priv->pshare->mp_cck_swing_idx = 30;
 				else
-#endif					
+#endif
 					priv->pshare->mp_cck_swing_idx = 20;
 			} else
-#endif		
+#endif
 			{
 				priv->pshare->mp_cck_swing_idx = 12;
-			}			
+			}
 		}
 		//printk("==> mp_ofdm_swing_idx=%d\n", priv->pshare->mp_ofdm_swing_idx);
 		//printk("==> mp_cck_swing_idx=%d\n", priv->pshare->mp_cck_swing_idx);
-	}	
+	}
 #endif
 	// change mode to mp mode
 	OPMODE_VAL(OPMODE | WIFI_MP_STATE);
@@ -1346,10 +1346,10 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 
 	// stop receiving packets
 #ifdef  CONFIG_WLAN_HAL
-	if (IS_HAL_CHIP(priv))	
+	if (IS_HAL_CHIP(priv))
 		RTL_W32(RCR, RTL_R32(RCR) & ~(RCR_APWRMGT | RCR_AMF | RCR_ADF |RCR_ACRC32 |RCR_AB | RCR_AM | RCR_APM | RCR_AAP));
 	else if(CONFIG_WLAN_NOT_HAL_EXIST)
-#endif			
+#endif
 	RTL_W32(RCR, RTL_R32(RCR) & ~(RCR_AB | RCR_AM | RCR_APM | RCR_AAP));
 	// Global setting for MP no ack CCK
 	RTL_W8(0x700, 0xe0);
@@ -1372,9 +1372,9 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 		} else {
 			RTL_W8(0xc50, 0x20);
 			RTL_W8(0xc58, 0x20);
-		}	
+		}
 	} else
-#endif	
+#endif
 #if defined(CONFIG_RTL_92C_SUPPORT)
 	if ((GET_CHIP_VER(priv)==VERSION_8192C)  || (GET_CHIP_VER(priv)==VERSION_8188C)) {
 #ifdef HIGH_POWER_EXT_PA
@@ -1382,14 +1382,14 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 			RTL_W8(0xc50, 0x2e);
 			if (get_rf_mimo_mode(priv) == MIMO_2T2R)
 				RTL_W8(0xc58, 0x2e);
-		} else		
+		} else
 #endif
 #ifdef HIGH_POWER_EXT_LNA
 		if (priv->pshare->rf_ft_var.use_ext_lna) {
 			RTL_W8(0xc50, 0x2a);
 			if (get_rf_mimo_mode(priv) == MIMO_2T2R)
 				RTL_W8(0xc58, 0x2a);
-		} else 
+		} else
 #endif
 		{
 			RTL_W8(0xc50, 0x20);
@@ -1399,22 +1399,22 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 	} else
 #endif
 	{
-#if (defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_RTL_8723B_SUPPORT))&& defined(HIGH_POWER_EXT_LNA) 
-		if ((GET_CHIP_VER(priv) == VERSION_8188E || GET_CHIP_VER(priv) == VERSION_8723B)&& priv->pshare->rf_ft_var.use_ext_lna) {			
+#if (defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_RTL_8723B_SUPPORT))&& defined(HIGH_POWER_EXT_LNA)
+		if ((GET_CHIP_VER(priv) == VERSION_8188E || GET_CHIP_VER(priv) == VERSION_8723B)&& priv->pshare->rf_ft_var.use_ext_lna) {
 			RTL_W8(0xc50, 0x1c);
 		}else
-#endif		
+#endif
 			RTL_W8(0xc50, 0x20);
 		if (get_rf_mimo_mode(priv) == MIMO_2T2R) {
-#if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8822BE)		
+#if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8822BE)
 		if ((GET_CHIP_VER(priv)==VERSION_8812E)||(GET_CHIP_VER(priv)==VERSION_8822B))
 			RTL_W8(0xe50, 0x20);
 		else
-#endif		
+#endif
 			RTL_W8(0xc58, 0x20);
 		}
-	
-#if defined(CONFIG_WLAN_HAL_8814AE)		
+
+#if defined(CONFIG_WLAN_HAL_8814AE)
 		if (GET_CHIP_VER(priv)==VERSION_8814A){
 			RTL_W8(0xe50, 0x20);
 			RTL_W8(0x1850, 0x20);
@@ -1432,19 +1432,19 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 			RTL_W32(0x700,0xffffffff);	/* Extension port MAC address*/
 			PHY_SetBBReg(priv,0x8c4,BIT(31),1); /* 0x8c4[31]=1 in MP mode; =0 in normal mode*/
 		}
-#endif	
+#endif
 	}
 
 	RTL_W8(0xa0a, 0x83);
 
 	priv->pshare->rf_ft_var.tpt_period=2;
-	priv->pshare->mp_rssi_weight = 5;	
+	priv->pshare->mp_rssi_weight = 5;
 	priv->pshare->mp_FA_cnt = 0;
 	priv->pshare->mp_CCA_cnt = 0;
 
 	mp_8192CD_tx_setting(priv);
 
-#if defined(CONFIG_WLAN_HAL_8814AE)		
+#if defined(CONFIG_WLAN_HAL_8814AE)
 	/*
 	*	Solve CCK Rx ACK problem when testing Rx
 	*	Assign MAC address
@@ -1453,14 +1453,14 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 		printk("[%s]set MACID\n",__FUNCTION__);
 		//RTL_W32(0x610,);	/* MAC address*/
 		RTL_W32(0x1610,0xffffffff);	/* Broadcast, so that tool won't ack */
-		RTL_W32(0x1620,0xffffffff);	
+		RTL_W32(0x1620,0xffffffff);
 		RTL_W32(0x1630,0xffffffff);
 		RTL_W32(0x1640,0xffffffff);
 		RTL_W32(0x700,0xffffffff);  /* Extension port MAC address*/
 	}
-#endif	
+#endif
 
-#if 0//def CONFIG_WLAN_HAL_8192EE	
+#if 0//def CONFIG_WLAN_HAL_8192EE
 	if (GET_CHIP_VER(priv) == VERSION_8192E) {
 		if (priv->pshare->PLL_reset_ok == false)
 			Check_92E_Spur_Valid(priv, true);
@@ -1485,18 +1485,18 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 	// Suggested by BB YN, fix Tx phase.
 	if ((GET_CHIP_VER(priv)==VERSION_8814A)&&(priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_5G)){
 		int i;
-		
+
 		for (i= RF92CD_PATH_A; i < RF92CD_PATH_MAX; i++) {
 			PHY_SetRFReg(priv, i, RF_WE_LUT, 0x80000,0x1); // RF Mode table write enable
 		}
-		
+
 		for (i= RF92CD_PATH_A; i < RF92CD_PATH_MAX; i++) {
 			PHY_SetRFReg(priv, i, RF_RCK_OS, 0xfffff,0x18000); // Select Rx mode
 			PHY_SetRFReg(priv, i, RF_TXPA_G1, 0xfffff,0xBE77F); // Set Table data
 			PHY_SetRFReg(priv, i, RF_TXPA_G2, 0xfffff,0x226BF); // Enable TXIQGEN in Rx mode
 		}
 		PHY_SetRFReg(priv, RF92CD_PATH_A, RF_TXPA_G2, 0xfffff,0xE26BF); // Enable TXIQGEN in Rx mode
-		
+
 		for (i= RF92CD_PATH_A; i < RF92CD_PATH_MAX; i++) {
 			PHY_SetRFReg(priv, i, RF_RCK_OS, 0xfffff,0x8000);
 			/*Select Standby mode*/
@@ -1504,7 +1504,7 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 			/*Set Table data*/
 			PHY_SetRFReg(priv, i, RF_TXPA_G2, 0xfffff,0xE20BF);
 			/*Enable TXIQGEN in Standby mode*/
-			
+
 		}
 
 
@@ -1605,7 +1605,7 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 #if defined(CONFIG_WLAN_HAL_8814AE)
 	printk("  iwpriv wlanx mp_ant_tx {a,b,c,d,ab,abc,abcd}\n");
 	printk("  iwpriv wlanx mp_ant_rx {a,b,c,d,ab,abc,abcd}\n");
-#else    
+#else
 	printk("  iwpriv wlanx mp_ant_tx {a,b,ab}\n");
 	printk("  iwpriv wlanx mp_ant_rx {a,b,ab}\n");
 #endif
@@ -1619,7 +1619,7 @@ void mp_start_test(struct rtl8192cd_priv *priv)
 	printk("        - default: tx infinitely (no background).\n");
 	printk("  iwpriv wlanx mp_query {rssi,weight=x}\n");
 #ifdef MP_PSD_SUPPORT
-	printk("  iwpriv wlanx mp_psd\n"); 
+	printk("  iwpriv wlanx mp_psd\n");
 #endif
 	printk("  iwpriv wlanx mp_ther\n");
 #if defined(CONFIG_WLAN_HAL_8192EE) || defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8881A) || defined(CONFIG_WLAN_HAL_8814AE)
@@ -1695,8 +1695,8 @@ void mp_stop_test(struct rtl8192cd_priv *priv)
 	OPMODE_VAL(OPMODE & ~WIFI_MP_STATE);
 
 	priv->pshare->ThermalValue = 0;
-	
-#if defined(CONFIG_WLAN_HAL_8814AE)		
+
+#if defined(CONFIG_WLAN_HAL_8814AE)
 	if (GET_CHIP_VER(priv)==VERSION_8814A)
 		PHY_SetBBReg(priv,0x8c4,BIT(31),0); /* 0x8c4[31]=1 in MP mode; =0 in normal mode*/
 #endif
@@ -1745,7 +1745,7 @@ void mp_set_datarate(struct rtl8192cd_priv *priv, unsigned char *data)
 	}
 #endif
 
-	/* Translate old rate coding to new rate coding. 8814  doesn't have to translate 
+	/* Translate old rate coding to new rate coding. 8814  doesn't have to translate
 	     becuase it uses mp_version so that MP tool gives new rate coding */
 	if(GET_CHIP_VER(priv) != VERSION_8814A){
 		if( rate >= 144 && rate <= 144 + 19){// For VHT NSS1 MCS0 to NSS2 MCS 9
@@ -1765,15 +1765,15 @@ void mp_set_datarate(struct rtl8192cd_priv *priv, unsigned char *data)
 
 	rate_org = priv->pshare->mp_datarate;
 	priv->pshare->mp_datarate = rate;
-#if 0	
+#if 0
 	for (eRFPath = RF92CD_PATH_A; eRFPath<priv->pshare->phw->NumTotalRFPath; eRFPath++) {
 		if (!PHYCheckIsLegalRfPath8192cPci(priv, eRFPath))
 			continue;
 		if (priv->pshare->CurrentChannelBW == HT_CHANNEL_WIDTH_20) {
-#if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8881A) || defined(CONFIG_RTL_88E_SUPPORT)			
+#if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8881A) || defined(CONFIG_RTL_88E_SUPPORT)
 			if (CHECKICIS8812() || CHECKICIS8881A() || (GET_CHIP_VER(priv) == VERSION_8188E))
 				PHY_SetRFReg(priv, (RF92CD_RADIO_PATH_E)eRFPath, rRfChannel, (BIT(10) | BIT(11)), 3);
-			else	
+			else
 #endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 				if(CHECKICIS92D()){
@@ -1786,8 +1786,8 @@ void mp_set_datarate(struct rtl8192cd_priv *priv, unsigned char *data)
 #if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8881A)
             if (CHECKICIS8812() || CHECKICIS8881A())
 				PHY_SetRFReg(priv, (RF92CD_RADIO_PATH_E)eRFPath, rRfChannel, (BIT(10) | BIT(11)), 1);
-			else	
-#endif		
+			else
+#endif
 #ifdef CONFIG_RTL_92D_SUPPORT
 				if(CHECKICIS92D()){
 					priv->pshare->RegRF18[eRFPath] &= (~BIT(11));
@@ -1799,22 +1799,22 @@ void mp_set_datarate(struct rtl8192cd_priv *priv, unsigned char *data)
 #if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8881A)
             if (CHECKICIS8812() || CHECKICIS8881A())
 				PHY_SetRFReg(priv, (RF92CD_RADIO_PATH_E)eRFPath, rRfChannel, (BIT(10) | BIT(11)), 0);
-#endif	
+#endif
 		}
 #ifdef CONFIG_RTL_92D_SUPPORT
 		if(CHECKICIS92D()){
 			PHY_SetRFReg(priv, (RF92CD_RADIO_PATH_E)eRFPath, rRfChannel, bMask20Bits, priv->pshare->RegRF18[eRFPath]);
 		}
-#endif		
+#endif
 		delay_us(100);
 	}
-#endif	
+#endif
 /*
 	if(CHECKICIS92C()) {
 		if (is_CCK_rate(priv->pshare->mp_datarate)) {
 			PHY_SetRFReg(priv, 0, 0x26, bMask20Bits, 0x0f400);
 		} else {
-			if(IS_UMC_A_CUT_88C(priv) || GET_CHIP_VER(priv) == VERSION_8192C ) 
+			if(IS_UMC_A_CUT_88C(priv) || GET_CHIP_VER(priv) == VERSION_8192C )
 				PHY_SetRFReg(priv, 0, 0x26, bMask20Bits, 0x4f000);
 			else
 				PHY_SetRFReg(priv, 0, 0x26, bMask20Bits, 0x4f200);
@@ -1850,7 +1850,7 @@ int mp_AC_find_Rx_Gain_Offset_ch_group(int channel)
 		idx = 1;
 	} else { //(channel >= 36)
 		idx = 0;
-	}  
+	}
 
 	return idx;
 
@@ -1862,7 +1862,7 @@ int mp_TransRxGainOffset2IG(int data)
 		return 0x1a;
 	else if ((data==4)||(data==5))
 		return 0x1c;
-	else if ((data == 2)||(data == 3)) 
+	else if ((data == 2)||(data == 3))
 		return 0x1e;
 	else if (data == 14)
 		return 0x22;
@@ -1870,7 +1870,7 @@ int mp_TransRxGainOffset2IG(int data)
 		return 0x24;
 	else if ((data == 10)||(data == 11))
 		return 0x26;
-	else if ((data == 8)||(data == 9)) 
+	else if ((data == 8)||(data == 9))
 		return 0x28;
 	else // ((data == 0)||(data == 1)||(data == 15))
 		return 0x20;
@@ -1883,7 +1883,7 @@ static unsigned int get_ig_reg(enum _CHIP_VERSION_ chip, unsigned char path){
 		panic_printk("[Error] [%s] path num not supported!\n",__FUNCTION__);
 		return 0;
 	}
-	
+
 	/* N-series IG registers*/
 	if(chip == VERSION_8197F || chip == VERSION_8192E || chip == VERSION_8188E || chip == VERSION_8192C){
 		switch(path){
@@ -1900,15 +1900,15 @@ static unsigned int get_ig_reg(enum _CHIP_VERSION_ chip, unsigned char path){
 		case RF92CD_PATH_A:
 			return 0xc50;
 		case RF92CD_PATH_B:
-			return 0xe50;	
-#if defined(CONFIG_WLAN_HAL_8814AE)				
+			return 0xe50;
+#if defined(CONFIG_WLAN_HAL_8814AE)
 		case RF92CD_PATH_C:
 			return 0x1850;
 		case RF92CD_PATH_D:
 			return 0x1a50;
-#endif			
+#endif
 		default:
-			return 0xc50;			
+			return 0xc50;
 		}
 	}else{
 		panic_printk("[Error] [%s] ic not supported!\n",__FUNCTION__);
@@ -1934,9 +1934,9 @@ void mp_set_rx_gain(struct rtl8192cd_priv *priv, unsigned char *data)
 		printk("Fail: not in MP mode\n");
 		return;
 	}
-	
+
 	if (get_value_by_token((char *)data, "on")){
-		
+
 		if(priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_2G)
 			group_idx = 0;
 		else if(priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_5G)
@@ -1947,17 +1947,17 @@ void mp_set_rx_gain(struct rtl8192cd_priv *priv, unsigned char *data)
 				panic_printk("[Error] get_ig_reg fail!\n",__FUNCTION__);
 				return;
 			}
-			
+
 			rx_gain_offset = *((priv->pmib->dot11RFEntry.pwrlevel5GHT40_1S_A)+path*MAX_5G_CHANNEL_NUM+group_idx);
 			initial_gain = mp_TransRxGainOffset2IG(rx_gain_offset);
 			panic_printk("path %d group_idx=%d, rx_gain_offset=%d, initial_gain %x, IG reg %x\n",path, group_idx, rx_gain_offset, initial_gain, ig_reg);
-		
+
 			if ((initial_gain > 0x28) || (initial_gain < 0x1a)){
 				panic_printk("Error initial_gain %x!!!\n",initial_gain);
 				continue;
 			}
 			RTL_W8(ig_reg, (RTL_R8(ig_reg) & 0x80)| initial_gain);
-		}		
+		}
 		return;
 	}else if (get_value_by_token((char *)data, "off")){
 		for(path = priv->pshare->phw->rx_path_start; path <= priv->pshare->phw->rx_path_end; path++){
@@ -2009,7 +2009,7 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 
     channel_org = priv->pmib->dot11RFEntry.dot11channel;
 	priv->pmib->dot11RFEntry.dot11channel = channel;
-	
+
 #if defined(CONFIG_RTL_8812_SUPPORT)
 	if(GET_CHIP_VER(priv)==VERSION_8812E)
 	{
@@ -2018,7 +2018,7 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 			PHY_SetRFReg(priv, eRFPath, rRfChannel, 0xff, channel);
 		}
 		PHY_SetOFDMTxPower_8812(priv, channel);
-			
+
 		if (priv->pshare->curr_band == BAND_2G)
 			PHY_SetCCKTxPower_8812(priv, channel);
 
@@ -2026,7 +2026,7 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 
         sprintf(tmpbuf, "Change channel %d to channel %d\n", channel_org, channel);
 	    printk(tmpbuf);
-		
+
 		return;
 	}
 #endif
@@ -2040,7 +2040,7 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 
 		priv->pmib->dot11RFEntry.dot11channel = channel;
-		
+
 		GET_HAL_INTERFACE(priv)->PHYSetOFDMTxPowerHandler(priv, channel);
 
 		if (priv->pshare->curr_band == BAND_2G)
@@ -2049,7 +2049,7 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 		PHY_IQCalibrate(priv);
         sprintf(tmpbuf, "Change channel %d to channel %d\n", channel_org, channel);
 	    printk(tmpbuf);
-		
+
 		return;
 	}
 #endif
@@ -2063,12 +2063,12 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 	}
 
 	priv->pmib->dot11RFEntry.dot11channel = channel;
-	
+
 	GET_HAL_INTERFACE(priv)->PHYSetOFDMTxPowerHandler(priv, channel);
 
 	if (priv->pshare->curr_band == BAND_2G)
 		GET_HAL_INTERFACE(priv)->PHYSetCCKTxPowerHandler(priv, channel);
-		
+
 	/* eliminate the 5280MHz & 5600MHz & 5760MHzspur of 8814A */
 	if(priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_5G) {
 		GET_HAL_INTERFACE(priv)->PHYSpurCalibration(priv);
@@ -2077,13 +2077,13 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 	if(priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_2G) {
 		set_CCK_swing_index(priv, priv->pshare->mp_cck_swing_idx);
 	}
-	
+
 	PHY_IQCalibrate(priv);
 	sprintf(tmpbuf, "Change channel %d to channel %d\n", channel_org, channel);
 	printk(tmpbuf);
-	
+
 	return;
-}	
+}
 #endif
 #if defined(CONFIG_WLAN_HAL_8881A)
     if(GET_CHIP_VER(priv)==VERSION_8881A)
@@ -2097,27 +2097,27 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
         if (priv->pshare->curr_band == BAND_2G)
 			GET_HAL_INTERFACE(priv)->PHYSetCCKTxPowerHandler(priv, channel);
 
-        PHY_IQCalibrate(priv); 
+        PHY_IQCalibrate(priv);
 
-		if (get_bonding_type_8881A() == BOND_8881AN) 
+		if (get_bonding_type_8881A() == BOND_8881AN)
 		{
 			unsigned int ch_band = PHY_QueryRFReg(priv, RF_PATH_A, 0x18, BIT(17)|BIT(18), 1);
-			if (ch_band == 0) 
+			if (ch_band == 0)
 				PHY_SetRFReg(priv, RF_PATH_A, 0x63, bMaskDWord, 0x114eb);
-			else if (ch_band == 1) 
+			else if (ch_band == 1)
 				PHY_SetRFReg(priv, RF_PATH_A, 0x63, bMaskDWord, 0x116e7);
-			else if (ch_band = 2) 
-				PHY_SetRFReg(priv, RF_PATH_A, 0x63, bMaskDWord, 0x11aeb);			
+			else if (ch_band = 2)
+				PHY_SetRFReg(priv, RF_PATH_A, 0x63, bMaskDWord, 0x11aeb);
 		}
 
 		sprintf(tmpbuf, "Change channel %d to channel %d\n", channel_org, channel);
 	    printk(tmpbuf);
-		
+
 		return;
     }
-    
+
 #endif //#if defined(CONFIG_WLAN_HAL_8881A)
-	
+
 
 	if (priv->pshare->rf_ft_var.use_frq_2_3G)
 		channel += 14;
@@ -2136,7 +2136,7 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 #ifdef CONFIG_RTL_92D_SUPPORT
 			if(CHECKICIS92D()) {
 				priv->pshare->RegRF18[eRFPath] = (val_read | val);
-				
+
 				if (priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_5G) {
 					/*
 					 *	Set Bit18 when channel >= 100, for 5G only
@@ -2162,7 +2162,7 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 					//PHY_SetRFReg(priv, eRFPath, rRfChannel, BIT(8), 0);
 					priv->pshare->RegRF18[eRFPath] &= (~BIT(16));
 					priv->pshare->RegRF18[eRFPath] &= (~BIT(8));
-					
+
 					// CLOAD for RF paht_A/B (MP-chip)
 					PHY_SetRFReg(priv, eRFPath, 0xB, BIT(16)|BIT(15)|BIT(14), 0x7);
 				}
@@ -2224,9 +2224,9 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 		SetIMR_n(priv, channel);
 
 		Update92DRFbyChannel(priv, channel);
-		
+
 		PHY_IQCalibrate(priv);
-#ifdef DPK_92D		
+#ifdef DPK_92D
 		if (priv->pmib->dot11RFEntry.phyBandSelect==PHY_BAND_5G && priv->pshare->rf_ft_var.dpk_on)
 			PHY_DPCalibrate(priv);
 #endif
@@ -2241,11 +2241,11 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 //#endif
 
 #if defined(CONFIG_WLAN_HAL_8192EE) || defined(CONFIG_WLAN_HAL_8197F)
-	if (GET_CHIP_VER(priv) == VERSION_8192E || 
+	if (GET_CHIP_VER(priv) == VERSION_8192E ||
 		(GET_CHIP_VER(priv) == VERSION_8197F )) {
 		if (channel == 13) {
 			PHY_SetBBReg(priv, 0xd18, BIT(27), 1);
-			PHY_SetBBReg(priv, 0xd2C, BIT(28), 1);			
+			PHY_SetBBReg(priv, 0xd2C, BIT(28), 1);
 			if (PHY_QueryRFReg(priv,0,0x33,bMask20Bits,1) == 0x6000d)
 				PHY_SetBBReg(priv, 0xd40, BIT(26), 0);
 			else
@@ -2261,13 +2261,13 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 	priv->pshare->working_channel = channel;
 
 	//CCK Shaping Filter
-	if (priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_2G 
-#ifdef HIGH_POWER_EXT_LNA		
+	if (priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_2G
+#ifdef HIGH_POWER_EXT_LNA
 		&& !(GET_CHIP_VER(priv) == VERSION_8188E && priv->pshare->rf_ft_var.use_ext_lna)
-#endif		
-		) 		
+#endif
+		)
 		set_CCK_swing_index(priv, priv->pshare->mp_cck_swing_idx);
-	
+
 //	mp_8192CD_tx_setting(priv);
 
 #ifdef CONFIG_RTL_92C_SUPPORT
@@ -2291,15 +2291,15 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 	if (!priv->pshare->rf_ft_var.disable_txpwrlmt){
 		int i;
 		int max_idx;
-		
+
 		find_pwr_limit(priv);
 
 		if (!priv->pshare->txpwr_lmt_OFDM || !priv->pshare->tgpwr_OFDM){
 			DEBUG_INFO("No limit for OFDM TxPower\n");
 			max_idx=255;
 		}else{
-			// maximum additional power index 
-			max_idx = (priv->pshare->txpwr_lmt_OFDM - priv->pshare->tgpwr_OFDM); 
+			// maximum additional power index
+			max_idx = (priv->pshare->txpwr_lmt_OFDM - priv->pshare->tgpwr_OFDM);
 		}
 
 		for (i=0; i<=7; i++) {
@@ -2308,31 +2308,31 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 			//printk("priv->pshare->phw->OFDMTxAgcOffset_A[%d]=%x\n",i, priv->pshare->phw->OFDMTxAgcOffset_A[i]);
 			//printk("priv->pshare->phw->OFDMTxAgcOffset_B[%d]=%x\n",i, priv->pshare->phw->OFDMTxAgcOffset_B[i]);
 		}
-		
+
 
 		if (!priv->pshare->txpwr_lmt_HT1S || !priv->pshare->tgpwr_HT1S){
 			DEBUG_INFO("No limit for HT1S TxPower\n");
 			max_idx=255;
 		}else{
-			// maximum additional power index 
+			// maximum additional power index
 			max_idx = (priv->pshare->txpwr_lmt_HT1S - priv->pshare->tgpwr_HT1S);
 		}
-		
+
 		for (i=0; i<=7; i++) {
 			priv->pshare->phw->MCSTxAgcOffset_A[i] = POWER_MIN_CHECK(priv->pshare->phw->MCSTxAgcOffset_A[i], max_idx);
 			priv->pshare->phw->MCSTxAgcOffset_B[i] = POWER_MIN_CHECK(priv->pshare->phw->MCSTxAgcOffset_B[i], max_idx);
 			//printk("priv->pshare->phw->MCSTxAgcOffset_A[%d]=%x\n",i, priv->pshare->phw->MCSTxAgcOffset_A[i]);
 			//printk("priv->pshare->phw->MCSTxAgcOffset_B[%d]=%x\n",i, priv->pshare->phw->MCSTxAgcOffset_B[i]);
 		}
-		
+
 		if (!priv->pshare->txpwr_lmt_HT2S || !priv->pshare->tgpwr_HT2S){
 			DEBUG_INFO("No limit for HT2S TxPower\n");
 			max_idx=255;
 		}else{
-			// maximum additional power index 
+			// maximum additional power index
 			max_idx = (priv->pshare->txpwr_lmt_HT2S - priv->pshare->tgpwr_HT2S);
 		}
-		
+
 		for (i=8; i<=15; i++) {
 			priv->pshare->phw->MCSTxAgcOffset_A[i] = POWER_MIN_CHECK(priv->pshare->phw->MCSTxAgcOffset_A[i], max_idx);
 			priv->pshare->phw->MCSTxAgcOffset_B[i] = POWER_MIN_CHECK(priv->pshare->phw->MCSTxAgcOffset_B[i], max_idx);
@@ -2344,7 +2344,7 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 			DEBUG_INFO("No limit for CCK TxPower\n");
 			max_idx=255;
 		}else{
-			// maximum additional power index 
+			// maximum additional power index
 			max_idx = (priv->pshare->txpwr_lmt_CCK - priv->pshare->tgpwr_CCK);
 		}
 
@@ -2393,8 +2393,8 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		ODMPTR->RFCalibrateInfo.DPPathBResult[2] = 0;
 		ODMPTR->RFCalibrateInfo.bDPPathAOK = 0;
 		ODMPTR->RFCalibrateInfo.bDPPathBOK = 0;
-		
-		for (i = 0; i < 3; i++) 
+
+		for (i = 0; i < 3; i++)
 			do_dpk_8197f(ODMPTR, TRUE, i);
 
 		if (ODMPTR->RFCalibrateInfo.bDPPathAOK == 1 && ODMPTR->RFCalibrateInfo.bDPPathBOK == 1)
@@ -2403,37 +2403,37 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 			printk("Check DPK value\n");
 
 		return strlen(data);
-		
+
 	} else if (!strcmp(data, "on")) {
-	
+
 		phy_dpk_enable_disable_8197f(ODMPTR, true);
 		printk("DPK on\n");
 
 		sprintf(data, " ");
 		return strlen(data);
-		
+
 	} else if (!strcmp(data, "off")) {
-	
+
 		phy_dpk_enable_disable_8197f(ODMPTR, false);
 		printk("DPK off\n");
 
 		sprintf(data, " ");
 		return strlen(data);
-		
+
 	} else if (!strcmp(data, "RF_DPK_DP_PATH_A_OK")) {
 
 		sprintf(data, "%d ", ODMPTR->RFCalibrateInfo.bDPPathAOK);
 
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-		
+
 	} else if (!strcmp(data, "RF_DPK_DP_PATH_B_OK")) {
 
 		sprintf(data, "%d ", ODMPTR->RFCalibrateInfo.bDPPathBOK);
 
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-		
+
 	} else if (!strcmp(data, "RF_DPK_PWSF_2G_A")) {
 		sprintf(data, "");
 
@@ -2444,7 +2444,7 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-		
+
 	} else if (!strcmp(data, "RF_DPK_PWSF_2G_B")) {
 		sprintf(data, "");
 
@@ -2455,7 +2455,7 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-		
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_EVEN_A0")) {
 		sprintf(data, "");
 
@@ -2466,10 +2466,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-		
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_ODD_A0")) {
 		sprintf(data, "");
-		
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_odd_a[0][i]);
@@ -2477,10 +2477,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-		
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_EVEN_B0")) {
 		sprintf(data, "");
-		
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_even_b[0][i]);
@@ -2488,10 +2488,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-		
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_ODD_B0")) {
 		sprintf(data, "");
-				
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_odd_b[0][i]);
@@ -2499,10 +2499,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-	
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_EVEN_A1")) {
 		sprintf(data, "");
-				
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_even_a[1][i]);
@@ -2510,10 +2510,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-	
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_ODD_A1")) {
 		sprintf(data, "");
-				
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_odd_a[1][i]);
@@ -2521,10 +2521,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-	
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_EVEN_B1")) {
 		sprintf(data, "");
-				
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_even_b[1][i]);
@@ -2532,10 +2532,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-	
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_ODD_B1")) {
 		sprintf(data, "");
-				
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_odd_b[1][i]);
@@ -2543,10 +2543,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-	
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_EVEN_A2")) {
 		sprintf(data, "");
-				
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_even_a[2][i]);
@@ -2554,10 +2554,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-	
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_ODD_A2")) {
 		sprintf(data, "");
-				
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_odd_a[2][i]);
@@ -2565,10 +2565,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-	
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_EVEN_B2")) {
 		sprintf(data, "");
-				
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_even_b[2][i]);
@@ -2576,10 +2576,10 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-	
+
 	} else if (!strcmp(data, "RF_DPK_LUT_2G_ODD_B2")) {
 		sprintf(data, "");
-				
+
 		for (i = 0; i < 64 ; i++)
 		{
 			sprintf(tmp_data, "%d ", ODMPTR->RFCalibrateInfo.lut_2g_odd_b[2][i]);
@@ -2587,20 +2587,20 @@ int mp_set_dpk(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-	
+
 	} else if (!strcmp(data, "sram_read")) {
 		sprintf(data, " ");
 
 		phy_lut_sram_read_8197f(ODMPTR, phy_dpk_channel_transfer_8197f(ODMPTR));
-		
+
 		printk("DPK_Result:%s\n", data);
 		return strlen(data) + 1;
-	
+
 	}
 	else
 	{
 		sprintf(data, " ");
-		printk("DPK command not found\n");		
+		printk("DPK command not found\n");
 		return strlen(data);
 	}
 }
@@ -2665,7 +2665,7 @@ void mp_tx_dpk_tracking(struct rtl8192cd_priv *priv, unsigned char *data)
 void mp_set_tx_power_8812(struct rtl8192cd_priv *priv, char pwrA, char pwrB)
 {
 	int base_A,base_B/*, byte0, byte1, byte2, byte3*/;
-	//unsigned int  writeVal = 0; 
+	//unsigned int  writeVal = 0;
 
 #if 1
 	base_A = (pwrA << 24) | (pwrA << 16) | (pwrA << 8) | (pwrA);
@@ -2814,7 +2814,7 @@ void mp_set_tx_power_8812(struct rtl8192cd_priv *priv, char pwrA, char pwrB)
 	byte3 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->MCSTxAgcOffset_B[4]);
 	writeVal = (byte3<<24) | (byte2<<16) |(byte1<<8) | byte0;
 	RTL_W32(rTxAGC_B_MCS7_MCS4_JAguar, writeVal);
-	
+
 	byte0 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->MCSTxAgcOffset_B[11]);
 	byte1 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->MCSTxAgcOffset_B[10]);
 	byte2 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->MCSTxAgcOffset_B[9]);
@@ -2828,7 +2828,7 @@ void mp_set_tx_power_8812(struct rtl8192cd_priv *priv, char pwrA, char pwrB)
 	byte3 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->MCSTxAgcOffset_B[12]);
 	writeVal = (byte3<<24) | (byte2<<16) |(byte1<<8) | byte0;
 	RTL_W32(rTxAGC_B_MCS15_MCS12_JAguar, writeVal);
-	
+
 	//4 VHT
 	byte0 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->VHTTxAgcOffset_B[3]);
 	byte1 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->VHTTxAgcOffset_B[2]);
@@ -2850,7 +2850,7 @@ void mp_set_tx_power_8812(struct rtl8192cd_priv *priv, char pwrA, char pwrB)
 	byte3 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->VHTTxAgcOffset_B[8]);
 	writeVal = (byte3<<24) | (byte2<<16) |(byte1<<8) | byte0;
 	RTL_W32(rTxAGC_B_Nss2Index1_Nss1Index8_JAguar, writeVal);
-		
+
 	byte0 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->VHTTxAgcOffset_B[15]);
 	byte1 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->VHTTxAgcOffset_B[14]);
 	byte2 = POWER_RANGE_CHECK(base_B + priv->pshare->phw->VHTTxAgcOffset_B[13]);
@@ -2864,7 +2864,7 @@ void mp_set_tx_power_8812(struct rtl8192cd_priv *priv, char pwrA, char pwrB)
 	byte3 = POWER_RANGE_CHECK(base_B - priv->pshare->phw->VHTTxAgcOffset_B[16]);
 	writeVal = (byte3<<24) | (byte2<<16) |(byte1<<8) | byte0;
 	RTL_W32(rTxAGC_B_Nss2Index9_Nss2Index6_JAguar, writeVal);
-#endif	
+#endif
 }
 
 #endif
@@ -2875,27 +2875,27 @@ void mp_set_tx_power_8814(struct rtl8192cd_priv *priv, char pwrA, char pwrB, cha
 	unsigned char i, pwr;
 	for(i = 0 ; i <= 3 ; i++){
 		switch(i){
-		case 0: 
-			pwr = pwrA; 
+		case 0:
+			pwr = pwrA;
 			break;
-		case 1: 
-			pwr = pwrB; 
+		case 1:
+			pwr = pwrB;
 			break;
-		case 2: 
-			pwr = pwrC; 
+		case 2:
+			pwr = pwrC;
 			break;
-		case 3: 
-			pwr = pwrD;	
+		case 3:
+			pwr = pwrD;
 			break;
 		}
 
 		PHYSetTxPower88XX(priv, TX_AGC_CCK_1M, TX_AGC_VHT_NSS3_MCS9, i, pwr);
 
 	}
-	
+
 #if 0
 	int base_A,base_B,base_C,base_D/*, byte0, byte1, byte2, byte3*/;
-	//unsigned int  writeVal = 0; 
+	//unsigned int  writeVal = 0;
 
  	base_A = (pwrA << 24) | (pwrA << 16) | (pwrA << 8) | (pwrA);
 	base_B = (pwrB << 24) | (pwrB << 16) | (pwrB << 8) | (pwrB);
@@ -2923,7 +2923,7 @@ void mp_set_tx_power_8814(struct rtl8192cd_priv *priv, char pwrA, char pwrB, cha
 	RTL_W32(rTxAGC_A_Nss3Index3_Nss3Index0_JAguar, base_A);
 	RTL_W32(rTxAGC_A_Nss3Index7_Nss3Index4_JAguar, base_A);
 	RTL_W32(rTxAGC_A_Nss3Index9_Nss3Index8_JAguar, base_A);
- 
+
 	RTL_W32(rTxAGC_B_Ofdm18_Ofdm6_JAguar, base_B);
 	RTL_W32(rTxAGC_B_Ofdm54_Ofdm24_JAguar, base_B);
 	RTL_W32(rTxAGC_B_MCS3_MCS0_JAguar, base_B);
@@ -2940,7 +2940,7 @@ void mp_set_tx_power_8814(struct rtl8192cd_priv *priv, char pwrA, char pwrB, cha
 	RTL_W32(rTxAGC_B_Nss3Index3_Nss3Index0_JAguar, base_B);
 	RTL_W32(rTxAGC_B_Nss3Index7_Nss3Index4_JAguar, base_B);
 	RTL_W32(rTxAGC_B_Nss3Index9_Nss3Index8_JAguar, base_B);
-	
+
 	RTL_W32(rTxAGC_C_Ofdm18_Ofdm6_JAguar, base_C);
 	RTL_W32(rTxAGC_C_Ofdm54_Ofdm24_JAguar, base_C);
 	RTL_W32(rTxAGC_C_MCS3_MCS0_JAguar, base_C);
@@ -2957,7 +2957,7 @@ void mp_set_tx_power_8814(struct rtl8192cd_priv *priv, char pwrA, char pwrB, cha
 	RTL_W32(rTxAGC_C_Nss3Index3_Nss3Index0_JAguar, base_C);
 	RTL_W32(rTxAGC_C_Nss3Index7_Nss3Index4_JAguar, base_C);
 	RTL_W32(rTxAGC_C_Nss3Index9_Nss3Index8_JAguar, base_C);
-	
+
 	RTL_W32(rTxAGC_D_Ofdm18_Ofdm6_JAguar, base_D);
 	RTL_W32(rTxAGC_D_Ofdm54_Ofdm24_JAguar, base_D);
 	RTL_W32(rTxAGC_D_MCS3_MCS0_JAguar, base_D);
@@ -2985,11 +2985,11 @@ void mp_set_tx_power_8822(struct rtl8192cd_priv *priv, char pwrA, char pwrB)
 	unsigned char i, pwr;
 	for(i = 0 ; i <= 1 ; i++){
 		switch(i){
-		case 0: 
-			pwr = pwrA; 
+		case 0:
+			pwr = pwrA;
 			break;
-		case 1: 
-			pwr = pwrB; 
+		case 1:
+			pwr = pwrB;
 			break;
 		}
 		PHYSetTxPower88XX(priv, TX_AGC_OFDM_6M, TX_AGC_VHT_NSS2_MCS9, i, pwr);
@@ -3036,7 +3036,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 		if (val) {
 			priv->pshare->mp_txpwr_pathb = _atoi(val, 10);
 		}
-#if defined(CONFIG_WLAN_HAL_8814AE)		
+#if defined(CONFIG_WLAN_HAL_8814AE)
 		val = get_value_by_token((char *)data, "pathc=");
 		if (val) {
 			priv->pshare->mp_txpwr_pathc = _atoi(val, 10);
@@ -3046,7 +3046,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 		if (val) {
 			priv->pshare->mp_txpwr_pathd = _atoi(val, 10);
 		}
-#endif		
+#endif
 	}
 /*
 #ifdef HIGH_POWER_EXT_PA
@@ -3054,7 +3054,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 		if(priv->pshare->mp_txpwr_patha > HP_OFDM_POWER_MAX)
 			priv->pshare->mp_txpwr_patha = HP_OFDM_POWER_MAX;
 		if(priv->pshare->mp_txpwr_pathb > HP_OFDM_POWER_MAX)
-			priv->pshare->mp_txpwr_pathb = HP_OFDM_POWER_MAX;		
+			priv->pshare->mp_txpwr_pathb = HP_OFDM_POWER_MAX;
 
 		sprintf(tmpbuf, "Set OFDM power level path_A:%d path_B:%d\n",
 			priv->pshare->mp_txpwr_patha, priv->pshare->mp_txpwr_pathb);
@@ -3069,7 +3069,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 		PHY_RF6052SetCCKTxPower(priv, *(ODMPTR->pChannel));
 		PHY_RF6052SetOFDMTxPower(priv, *(ODMPTR->pChannel));
 	} else
-#endif	
+#endif
 	{
 	baseA = priv->pshare->mp_txpwr_patha;
 	baseB = priv->pshare->mp_txpwr_pathb;
@@ -3079,11 +3079,11 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 		unsigned char path, pwr, rate;
 		for(path = 0 ; path <= 1 ; path++){
 			switch(path){
-			case 0: 
-				pwr = baseA; 
+			case 0:
+				pwr = baseA;
 				break;
-			case 1: 
-				pwr = baseB; 
+			case 1:
+				pwr = baseB;
 				break;
 			}
 			for (rate = ODM_RATE1M; rate <= ODM_RATEMCS15; rate++) //cck to mcs15
@@ -3105,9 +3105,9 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 	if(GET_CHIP_VER(priv)==VERSION_8822B)
 	{
 
-		panic_printk("Set 8822 power level path_A:%d path_B:%d\n", priv->pshare->mp_txpwr_patha, 
+		panic_printk("Set 8822 power level path_A:%d path_B:%d\n", priv->pshare->mp_txpwr_patha,
 				priv->pshare->mp_txpwr_pathb);
-	
+
 		mp_set_tx_power_8822(priv, baseA, baseB);
 		return;
 	}
@@ -3117,9 +3117,9 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 		{
 			baseC = priv->pshare->mp_txpwr_pathc;
 			baseD = priv->pshare->mp_txpwr_pathd;
-			panic_printk("Set 8814 power level path_A:%d path_B:%d path_C:%d path_D:%d\n", priv->pshare->mp_txpwr_patha, 
-					priv->pshare->mp_txpwr_pathb, 
-					priv->pshare->mp_txpwr_pathc, 
+			panic_printk("Set 8814 power level path_A:%d path_B:%d path_C:%d path_D:%d\n", priv->pshare->mp_txpwr_patha,
+					priv->pshare->mp_txpwr_pathb,
+					priv->pshare->mp_txpwr_pathc,
 					priv->pshare->mp_txpwr_pathd);
 			mp_set_tx_power_8814(priv, baseA, baseB, baseC, baseD);
 			return;
@@ -3136,7 +3136,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 			byte[i] = baseA;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3152,7 +3152,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 			byte[i] = baseA;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3168,7 +3168,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 			byte[i] = baseA;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3184,7 +3184,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 			byte[i] = baseA;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3196,14 +3196,14 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 	for (i=0; i<4; i++) {
 		if (priv->pshare->rf_ft_var.pwr_by_rate)
 		{
-			//_TXPWR_REDEFINE ?? #if 0 in FOX 
+			//_TXPWR_REDEFINE ?? #if 0 in FOX
 			byte[i] = POWER_RANGE_CHECK(baseA + priv->pshare->phw->MCSTxAgcOffset_A[i+8]);
 		}
 		else
 			byte[i] = baseA;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3215,14 +3215,14 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 	for (i=0; i<4; i++) {
 		if (priv->pshare->rf_ft_var.pwr_by_rate)
 		{
-			//_TXPWR_REDEFINE ?? #if 0 in FOX 
+			//_TXPWR_REDEFINE ?? #if 0 in FOX
 			byte[i] = POWER_RANGE_CHECK(baseA + priv->pshare->phw->MCSTxAgcOffset_A[i+12]);
 		}
 		else
 			byte[i] = baseA;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3240,7 +3240,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 			byte[i] = baseB;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3248,7 +3248,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 	writeVal = (byte[0]<<24) | (byte[1]<<16) |(byte[2]<<8) | byte[3];
 	RTL_W32(rTxAGC_B_Rate18_06, writeVal);
 
-	
+
 	// 54M ~ 24M
 	for (i=0; i<4; i++) {
 		if (priv->pshare->rf_ft_var.pwr_by_rate)
@@ -3257,7 +3257,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 			byte[i] = baseB;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3273,7 +3273,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 			byte[i] = baseB;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3289,7 +3289,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 			byte[i] = baseB;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3301,14 +3301,14 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 	for (i=0; i<4; i++) {
 		if (priv->pshare->rf_ft_var.pwr_by_rate)
 		{
-			//_TXPWR_REDEFINE ?? #if 0 in FOX 
+			//_TXPWR_REDEFINE ?? #if 0 in FOX
 			byte[i] = POWER_RANGE_CHECK(baseB + priv->pshare->phw->MCSTxAgcOffset_B[i+8]);
 		}
 		else
 			byte[i] = baseB;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3320,14 +3320,14 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 	for (i=0; i<4; i++) {
 		if (priv->pshare->rf_ft_var.pwr_by_rate)
 		{
-			//_TXPWR_REDEFINE ?? #if 0 in FOX 
+			//_TXPWR_REDEFINE ?? #if 0 in FOX
 			byte[i] = POWER_RANGE_CHECK(baseB + priv->pshare->phw->MCSTxAgcOffset_B[i+12]);
 		}
 		else
 			byte[i] = baseB;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=0; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_OFDM_POWER_MAX);
 	}
@@ -3341,11 +3341,11 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 		if(priv->pshare->mp_txpwr_patha > HP_CCK_POWER_MAX)
 			priv->pshare->mp_txpwr_patha = HP_CCK_POWER_MAX;
 		if(priv->pshare->mp_txpwr_pathb > HP_CCK_POWER_MAX)
-			priv->pshare->mp_txpwr_pathb = HP_CCK_POWER_MAX;	
+			priv->pshare->mp_txpwr_pathb = HP_CCK_POWER_MAX;
 
 		sprintf(tmpbuf, "Set CCK power level path_A:%d path_B:%d\n",
 			priv->pshare->mp_txpwr_patha, priv->pshare->mp_txpwr_pathb);
-		printk(tmpbuf);		
+		printk(tmpbuf);
 	}
 #endif
 */
@@ -3356,7 +3356,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 	else
 		writeVal = baseA;
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		writeVal = POWER_MIN_CHECK(writeVal, HP_CCK_POWER_MAX);
 	}
 #endif
@@ -3370,7 +3370,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 			byte[i] = baseB;
 	}
 #ifdef HIGH_POWER_EXT_PA
-	if (priv->pshare->rf_ft_var.use_ext_pa) {	
+	if (priv->pshare->rf_ft_var.use_ext_pa) {
 		for (i=1; i<4; i++)
 			byte[i] = POWER_MIN_CHECK(byte[i], HP_CCK_POWER_MAX);
 	}
@@ -3402,7 +3402,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 	mp_8192CD_tx_setting(priv);
 
 #ifdef HIGH_POWER_EXT_PA
-	if (!priv->pshare->rf_ft_var.use_ext_pa) 
+	if (!priv->pshare->rf_ft_var.use_ext_pa)
 #endif
 	{
 		sprintf(tmpbuf, "Set power level path_A:%d path_B:%d\n",
@@ -3425,7 +3425,7 @@ void mp_set_tx_power(struct rtl8192cd_priv *priv, unsigned char *data)
 		tmp_txpwr_dpk_1 += (priv->pshare->TxPowerLevelDPK[1]<<8);
 		tmp_txpwr_dpk_1 += (priv->pshare->TxPowerLevelDPK[1]<<16);
 		tmp_txpwr_dpk_1 += (priv->pshare->TxPowerLevelDPK[1]<<24);
-		
+
 		priv->pshare->phw->power_backup[0x00] = RTL_R32(rTxAGC_A_Rate18_06);
 		priv->pshare->phw->power_backup[0x01] = RTL_R32(rTxAGC_A_Rate54_24);
 		priv->pshare->phw->power_backup[0x02] = RTL_R32(rTxAGC_B_Rate18_06);
@@ -3506,13 +3506,13 @@ void mp_ctx(struct rtl8192cd_priv *priv, unsigned char *data)
 		printk("Fail: not in MP mode\n");
 		return;
 	}
-	
+
 	orgTCR = RTL_R32(TCR);
-	
+
 #if (IC_LEVEL >= LEVEL_8814) || (IC_LEVEL == LEVEL_92E)
 	if(CHECKICIS8814() || CHECKICIS97F() ||CHECKICIS8822() || (GET_CHIP_VER(priv) == VERSION_8192E)) //wish
 		mp_set_tmac_tx(priv);
-#endif	
+#endif
 	// get count
 	val = get_value_by_token((char *)data, "count=");
 	if (val) {
@@ -3659,7 +3659,7 @@ void mp_ctx(struct rtl8192cd_priv *priv, unsigned char *data)
 #if defined(CONFIG_PCI_HCI)
 		head = get_txhead(phw, BE_QUEUE);
 		tail = get_txtail(phw, BE_QUEUE);
-		
+
 		while (head != tail) {
 			DEBUG_INFO("BEQ head/tail=%d/%d\n", head, tail);
 			rtl8192cd_tx_dsr((unsigned long)priv);
@@ -3736,12 +3736,12 @@ void mp_ctx(struct rtl8192cd_priv *priv, unsigned char *data)
 			}
 		}
 #ifdef  CONFIG_WLAN_HAL
-		if (IS_HAL_CHIP(priv))		
-			RTL_W32(RCR, RTL_R32(RCR) & ~(RCR_APWRMGT | RCR_AMF | RCR_ADF |RCR_ACRC32 |RCR_AB | RCR_AM | RCR_APM | RCR_AAP));		
+		if (IS_HAL_CHIP(priv))
+			RTL_W32(RCR, RTL_R32(RCR) & ~(RCR_APWRMGT | RCR_AMF | RCR_ADF |RCR_ACRC32 |RCR_AB | RCR_AM | RCR_APM | RCR_AAP));
 		else if(CONFIG_WLAN_NOT_HAL_EXIST)
-#endif		
+#endif
 		RTL_W32(RCR, RTL_R32(RCR) & ~(RCR_AB | RCR_AM | RCR_APM | RCR_AAP));
-		
+
 
 #if defined(USE_RTL8186_SDK)
 		if (!background) {
@@ -3754,7 +3754,7 @@ void mp_ctx(struct rtl8192cd_priv *priv, unsigned char *data)
 
 		memset(&priv->net_stats, 0,  sizeof(struct net_device_stats));
 	}
-	
+
 #if defined(CONFIG_USB_HCI) || defined(CONFIG_SDIO_HCI)
 	if (background) {
 		RESTORE_INT(flags);
@@ -3775,7 +3775,7 @@ void mp_ctx(struct rtl8192cd_priv *priv, unsigned char *data)
 #endif
 		{
 #ifdef CONFIG_RTL_92C_SUPPORT
-			if( (IS_UMC_B_CUT_88C(priv) || GET_CHIP_VER(priv) == VERSION_8192C) 
+			if( (IS_UMC_B_CUT_88C(priv) || GET_CHIP_VER(priv) == VERSION_8192C)
 				&& ((priv->pmib->dot11RFEntry.dot11channel == 4)||(priv->pmib->dot11RFEntry.dot11channel == 12)))
 				PHY_SetRFReg(priv, 0, 0x26, bMask20Bits, 0x4f000);
 			else
@@ -3868,25 +3868,25 @@ if ((OPMODE & WIFI_MP_CTX_ST) &&  //2 Tx Single Tone
 #endif
 					PHY_SetRFReg(priv, eRFPath, 0x00, bMask20Bits, 0x20010);
 				delay_us(100);
-								
-				if (eRFPath == RF92CD_PATH_A) {								
+
+				if (eRFPath == RF92CD_PATH_A) {
 					//4 3 wire off
 					PHY_SetBBReg(priv, 0xc00, BIT(1)|BIT(0), 0);
-					
+
 					//4 RFE software pull low
 					priv->pshare->RegCB0 = RTL_R32(0xcb0);
-					RTL_W32(0xcb0, 0x77777777);	
+					RTL_W32(0xcb0, 0x77777777);
 #if defined(CONFIG_WLAN_HAL_8822BE)
 				if(CHECKICIS8822()){
 					priv->pshare->RegCB4 = RTL_R32(0xcb4);
-					RTL_W32(0xcb4, 0x00007777);	
+					RTL_W32(0xcb4, 0x00007777);
 					//trsw, pape pull high
-					PHY_SetBBReg(priv, 0xcbc, BIT(0)|BIT(1), 0x3); 
+					PHY_SetBBReg(priv, 0xcbc, BIT(0)|BIT(1), 0x3);
 					PHY_SetBBReg(priv, 0xcbc, BIT(3), 0x1);
 				}
 #else
 					//4 trsw, pape pull high
-					PHY_SetBBReg(priv, 0xcb4, BIT(21), 1);					
+					PHY_SetBBReg(priv, 0xcb4, BIT(21), 1);
 #if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8814AE)
 					PHY_SetBBReg(priv, 0xcb4, BIT(24), 1);
 #elif defined(CONFIG_WLAN_HAL_8881A)
@@ -3896,40 +3896,40 @@ if ((OPMODE & WIFI_MP_CTX_ST) &&  //2 Tx Single Tone
 				}
 				/*
 #if defined(CONFIG_WLAN_HAL_8814AE)
-				else if (eRFPath == RF92CD_PATH_C) {								
+				else if (eRFPath == RF92CD_PATH_C) {
 					PHY_SetBBReg(priv, 0xc00, BIT(1)|BIT(0), 0);
 					priv->pshare->RegCB0 = RTL_R32(0xcb0);
-					RTL_W32(0xcb0, 0x77777777);	
-					PHY_SetBBReg(priv, 0xcb4, BIT(21), 1);					
-					PHY_SetBBReg(priv, 0xcb4, BIT(24), 1);
-				}	
-				else if (eRFPath == RF92CD_PATH_D) {								
-					PHY_SetBBReg(priv, 0xc00, BIT(1)|BIT(0), 0);		
-					priv->pshare->RegCB0 = RTL_R32(0xcb0);
-					RTL_W32(0xcb0, 0x77777777);		
-					PHY_SetBBReg(priv, 0xcb4, BIT(21), 1);					
+					RTL_W32(0xcb0, 0x77777777);
+					PHY_SetBBReg(priv, 0xcb4, BIT(21), 1);
 					PHY_SetBBReg(priv, 0xcb4, BIT(24), 1);
 				}
-#endif    				
+				else if (eRFPath == RF92CD_PATH_D) {
+					PHY_SetBBReg(priv, 0xc00, BIT(1)|BIT(0), 0);
+					priv->pshare->RegCB0 = RTL_R32(0xcb0);
+					RTL_W32(0xcb0, 0x77777777);
+					PHY_SetBBReg(priv, 0xcb4, BIT(21), 1);
+					PHY_SetBBReg(priv, 0xcb4, BIT(24), 1);
+				}
+#endif
 */
-				else {					
+				else {
 					//4 3 wire off
 					PHY_SetBBReg(priv, 0xe00, BIT(1)|BIT(0), 0);
-				
+
 					//4 RFE software pull low
 					priv->pshare->RegEB0 = RTL_R32(0xeb0);
-					RTL_W32(0xeb0, 0x77777777);	
+					RTL_W32(0xeb0, 0x77777777);
 #if defined(CONFIG_WLAN_HAL_8822BE)
 				if(CHECKICIS8822()){
 					priv->pshare->RegEB4 = RTL_R32(0xeb4);
-					RTL_W32(0xeb4, 0x00007777);	
+					RTL_W32(0xeb4, 0x00007777);
 					//trsw, pape pull high
 					PHY_SetBBReg(priv, 0xebc, BIT(4)|BIT(5), 0x3);
 					PHY_SetBBReg(priv, 0xebc, BIT(11), 0x1);
 				}
-#else					
+#else
 					//4 trsw, pape pull high
-					PHY_SetBBReg(priv, 0xeb4, BIT(21), 1);					
+					PHY_SetBBReg(priv, 0xeb4, BIT(21), 1);
 #if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8814AE)
 					PHY_SetBBReg(priv, 0xeb4, BIT(24), 1);
 #elif defined(CONFIG_WLAN_HAL_8881A)
@@ -3938,21 +3938,21 @@ if ((OPMODE & WIFI_MP_CTX_ST) &&  //2 Tx Single Tone
 #endif
 				}
 			} else
-#endif	
+#endif
 			{
-			
+
 #if defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_WLAN_HAL_8192EE)//wish
 			if ((GET_CHIP_VER(priv)==VERSION_8188E) || (GET_CHIP_VER(priv)==VERSION_8192E)) {
 				PHY_SetRFReg(priv, eRFPath, LNA_Low_Gain_3, BIT(1) ,0x1);
 			}
 #ifdef HIGH_POWER_EXT_PA
 			if(priv->pshare->rf_ft_var.use_ext_pa){
-				PHY_SetBBReg(priv, 0x4c, BIT(23), 0x1);   
-				PHY_SetBBReg(priv, 0x4c, BIT(24), 0x1);   
-				PHY_SetBBReg(priv, 0x4c, BIT(25), 0x1);   
-				PHY_SetBBReg(priv, 0x4c, BIT(26), 0x1);   
-				PHY_SetBBReg(priv, 0x4c, BIT(27), 0x1);   
-				
+				PHY_SetBBReg(priv, 0x4c, BIT(23), 0x1);
+				PHY_SetBBReg(priv, 0x4c, BIT(24), 0x1);
+				PHY_SetBBReg(priv, 0x4c, BIT(25), 0x1);
+				PHY_SetBBReg(priv, 0x4c, BIT(26), 0x1);
+				PHY_SetBBReg(priv, 0x4c, BIT(27), 0x1);
+
 				PHY_SetBBReg(priv, 0x64, BIT(2), 0X1);
 				PHY_SetBBReg(priv, 0x64, BIT(3), 0X1);
 				PHY_SetBBReg(priv, 0x64, BIT(4), 0X1);
@@ -3964,14 +3964,14 @@ if ((OPMODE & WIFI_MP_CTX_ST) &&  //2 Tx Single Tone
 
 #if defined(CONFIG_WLAN_HAL_8197F)
 	if (GET_CHIP_VER(priv)==VERSION_8197F){
-		
-		PHY_SetBBReg(priv, 0x4c, BIT(23), 0x1);   
+
+		PHY_SetBBReg(priv, 0x4c, BIT(23), 0x1);
 		PHY_SetBBReg(priv, 0x4c, BIT(26), 0x1);
 		PHY_SetBBReg(priv, 0x64, BIT(7), 0x1);
 		PHY_SetBBReg(priv, 0x64, BIT(1), 0x1);
 		PHY_SetBBReg(priv, 0x64, BIT(0), 0x1);
         PHY_SetBBReg(priv, 0x78, BIT(16), 0x1);
-		
+
 		PHY_SetBBReg(priv, 0x88c, BIT(23)|BIT(22)|BIT(21)|BIT(20), 0xf);
 		PHY_SetRFReg(priv, eRFPath, 0x57, BIT(1) ,0x1);
 		PHY_SetRFReg(priv, eRFPath, 0x0, bMask20Bits ,0x20000);
@@ -3980,7 +3980,7 @@ if ((OPMODE & WIFI_MP_CTX_ST) &&  //2 Tx Single Tone
 #endif
 
 #ifdef CONFIG_RTL_88E_SUPPORT
-											
+
 		if (GET_CHIP_VER(priv) == VERSION_8188E
 #ifdef HIGH_POWER_EXT_PA
 			&& !priv->pshare->rf_ft_var.use_ext_pa
@@ -3988,18 +3988,18 @@ if ((OPMODE & WIFI_MP_CTX_ST) &&  //2 Tx Single Tone
 		){
 			PHY_SetRFReg(priv, eRFPath, LNA_Low_Gain_3, BIT(1) ,0x1);
 		}
-		
+
 #endif
 				// Start Single Tone.
 				PHY_SetBBReg(priv, rFPGA0_RFMOD, bCCKEn, 0x0);
 				PHY_SetBBReg(priv, rFPGA0_RFMOD, bOFDMEn, 0x0);
 
-#ifdef CONFIG_RTL_92D_SUPPORT // single tone 
+#ifdef CONFIG_RTL_92D_SUPPORT // single tone
 			if (priv->pmib->dot11RFEntry.phyBandSelect==PHY_BAND_5G){
 				temp_860 = PHY_QueryBBReg(priv, 0x860, bMaskDWord);
 				temp_864 = PHY_QueryBBReg(priv, 0x864, bMaskDWord);
 				temp_870 = PHY_QueryBBReg(priv, 0x870, bMaskDWord);
-				
+
 				if (eRFPath == RF92CD_PATH_A){
 					PHY_SetBBReg(priv, 0x860, BIT(11), 0x1);
 					PHY_SetBBReg(priv, 0x870, BIT(11), 0x1);
@@ -4016,12 +4016,12 @@ if ((OPMODE & WIFI_MP_CTX_ST) &&  //2 Tx Single Tone
 				PHY_SetRFReg(priv, RF92CD_PATH_A, 0x21, bMask20Bits, 0xd4000);
 			}
 			delay_us(100);
-			
+
 			if (GET_CHIP_VER(priv) != VERSION_8197F){
 #ifdef HIGH_POWER_EXT_PA
 				if(priv->pshare->rf_ft_var.use_ext_pa)
 					PHY_SetRFReg(priv, eRFPath, 0x00, bMask20Bits, 0x20000); //From suggestion of BS (RF Team)
-				else	
+				else
 #endif
 					PHY_SetRFReg(priv, eRFPath, 0x00, bMask20Bits, 0x20010);
 			}
@@ -4057,7 +4057,7 @@ if ((OPMODE & WIFI_MP_CTX_ST) &&  //2 Tx Single Tone
 
 				// 4. Turn On Continue Tx and turn off the other test modes.
 				PHY_SetBBReg(priv, rSingleTone_ContTx_Jaguar, BIT(16) | BIT(17) | BIT(18), 0x2);
-			} else 		
+			} else
 #endif
 			{
 				// 1. if OFDM block on?
@@ -4136,7 +4136,7 @@ if ((OPMODE & WIFI_MP_CTX_ST) &&  //2 Tx Single Tone
 			txinsn.fr_type	= _SKB_FRAME_TYPE_;
 			txinsn.pframe	= skb;
 			skb->cb[1] = 0;
-			
+
 #ifdef MCAST2UI_REFINE
 	        	memcpy(&skb->cb[10], skb->data, 6);
 #endif
@@ -4200,7 +4200,7 @@ congestion_handle:
 			{
 				#define CHECK_TX_MODE_CNT	40
 				int check_cnt;
-				
+
 				// must sure RF is in TX mode before enabling TXAGC function.
 				if ( priv->pshare->mp_antenna_tx & ANTENNA_A ) {
 					check_cnt = 0;
@@ -4210,7 +4210,7 @@ congestion_handle:
 					printk("RF(A) # of check tx mode = %d (%d)\n", check_cnt, tx_from_isr);
 					PHY_SetBBReg(priv, 0x820, 0x400, 0x1);
 				}
-				
+
 				if ( priv->pshare->mp_antenna_tx & ANTENNA_B ) {
 					check_cnt = 0;
 					while ( (PHY_QueryRFReg(priv, RF92CD_PATH_B, 0x00, 0x70000, 1) != 0x02) && (check_cnt < CHECK_TX_MODE_CNT) ) {
@@ -4245,11 +4245,11 @@ congestion_handle:
 				#undef CHECK_TX_MODE_CNT
 			}
 		}
-		else 
+		else
 		{
 			i--;
 			priv->pshare->mp_ctx_pkt--;
-			
+
 			//printk("Can't allocate sk_buff\n");
 			if (tx_from_isr) {
 #ifdef CONFIG_PCI_HCI
@@ -4352,22 +4352,22 @@ stop_tx:
 				if (CHECKICIS8812() || CHECKICIS8881A() || CHECKICIS8814() || CHECKICIS8822()) {
 					PHY_SetBBReg(priv, 0x808, BIT(28), 0x1);
 					PHY_SetBBReg(priv, 0x808, BIT(29), 0x1);
-					
+
 					PHY_SetRFReg(priv, eRFPath, LNA_Low_Gain_3, BIT(1), 0);
 					delay_us(100);
 					PHY_SetRFReg(priv, eRFPath, 0x00, bRFRegOffsetMask, 0x30000); // PAD all on.
 					delay_us(100);
 
-					if (eRFPath == RF92CD_PATH_A) {						
+					if (eRFPath == RF92CD_PATH_A) {
 						PHY_SetBBReg(priv, 0xc00, BIT(1)|BIT(0), 0x3);
-						RTL_W32(0xcb0, priv->pshare->RegCB0); 
+						RTL_W32(0xcb0, priv->pshare->RegCB0);
 						PHY_SetBBReg(priv, 0xcb4, BIT(21), 0);
 #if defined(CONFIG_WLAN_HAL_8822BE)
 				 	if (CHECKICIS8822()){
-						RTL_W32(0xcb4, priv->pshare->RegCB4); 
+						RTL_W32(0xcb4, priv->pshare->RegCB4);
 						PHY_SetBBReg(priv, 0xcbc, BIT(1)|BIT(0), 0);
 						PHY_SetBBReg(priv, 0xcbc, BIT(3), 0);
-					}				
+					}
 #else
 #if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8814AE)
 						PHY_SetBBReg(priv, 0xcb4, BIT(24), 0);
@@ -4375,25 +4375,25 @@ stop_tx:
 						PHY_SetBBReg(priv, 0xcb4, BIT(23), 0);
 #endif
 #endif
-					} else {										
+					} else {
 						PHY_SetBBReg(priv, 0xe00, BIT(1)|BIT(0), 0x3);
-						RTL_W32(0xeb0, priv->pshare->RegEB0); 
-						PHY_SetBBReg(priv, 0xeb4, BIT(21), 0);	
+						RTL_W32(0xeb0, priv->pshare->RegEB0);
+						PHY_SetBBReg(priv, 0xeb4, BIT(21), 0);
 #if defined(CONFIG_WLAN_HAL_8822BE)
 						if (CHECKICIS8822()){
-							RTL_W32(0xeb4, priv->pshare->RegEB4); 
+							RTL_W32(0xeb4, priv->pshare->RegEB4);
 							PHY_SetBBReg(priv, 0xebc, BIT(5)|BIT(4), 0);
 							PHY_SetBBReg(priv, 0xebc, BIT(11), 0);
-						}				
+						}
 #else
 
-#if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8814AE)						
+#if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8814AE)
 						PHY_SetBBReg(priv, 0xeb4, BIT(24), 0);
 #elif defined(CONFIG_WLAN_HAL_8881A)
 						PHY_SetBBReg(priv, 0xeb4, BIT(23), 0);
 #endif
 #endif
-					}					
+					}
 				} else
 #endif
 				{
@@ -4403,12 +4403,12 @@ stop_tx:
 				}
 #ifdef HIGH_POWER_EXT_PA
 				if(priv->pshare->rf_ft_var.use_ext_pa){
-					PHY_SetBBReg(priv, 0x4c, BIT(23), 0x0);   
-					PHY_SetBBReg(priv, 0x4c, BIT(24), 0x0);   
-					PHY_SetBBReg(priv, 0x4c, BIT(25), 0x0);   
-					PHY_SetBBReg(priv, 0x4c, BIT(26), 0x0);   
-					PHY_SetBBReg(priv, 0x4c, BIT(27), 0x0);   
-					
+					PHY_SetBBReg(priv, 0x4c, BIT(23), 0x0);
+					PHY_SetBBReg(priv, 0x4c, BIT(24), 0x0);
+					PHY_SetBBReg(priv, 0x4c, BIT(25), 0x0);
+					PHY_SetBBReg(priv, 0x4c, BIT(26), 0x0);
+					PHY_SetBBReg(priv, 0x4c, BIT(27), 0x0);
+
 					PHY_SetBBReg(priv, 0x64, BIT(2), 0X0);
 					PHY_SetBBReg(priv, 0x64, BIT(3), 0X0);
 					PHY_SetBBReg(priv, 0x64, BIT(4), 0X0);
@@ -4420,14 +4420,14 @@ stop_tx:
 
 #if defined(CONFIG_WLAN_HAL_8197F)
 	if (GET_CHIP_VER(priv)==VERSION_8197F){
-		
-		PHY_SetBBReg(priv, 0x4c, BIT(23), 0x0);   
+
+		PHY_SetBBReg(priv, 0x4c, BIT(23), 0x0);
 		PHY_SetBBReg(priv, 0x4c, BIT(26), 0x0);
 		PHY_SetBBReg(priv, 0x64, BIT(7), 0x0);
 		PHY_SetBBReg(priv, 0x64, BIT(1), 0x0);
 		PHY_SetBBReg(priv, 0x64, BIT(0), 0x0);
         PHY_SetBBReg(priv, 0x78, BIT(16), 0x0);
-		
+
 		PHY_SetBBReg(priv, 0x88c, BIT(23)|BIT(22)|BIT(21)|BIT(20), 0x0);
 		PHY_SetRFReg(priv, eRFPath, 0x57, BIT(1) ,0x0);
 		PHY_SetRFReg(priv, eRFPath, 0x0, bMask20Bits ,0x33da5);
@@ -4437,7 +4437,7 @@ stop_tx:
 
 
 #ifdef CONFIG_RTL_88E_SUPPORT
-											
+
 		if (GET_CHIP_VER(priv) == VERSION_8188E
 #ifdef HIGH_POWER_EXT_PA
 			&& !priv->pshare->rf_ft_var.use_ext_pa
@@ -4445,10 +4445,10 @@ stop_tx:
 		){
 			PHY_SetRFReg(priv, eRFPath, LNA_Low_Gain_3, BIT(1) ,0x0);
 		}
-		
+
 #endif
 
-#ifdef CONFIG_RTL_92D_SUPPORT // single tone 
+#ifdef CONFIG_RTL_92D_SUPPORT // single tone
 				if (priv->pmib->dot11RFEntry.phyBandSelect==PHY_BAND_5G){
 					PHY_SetBBReg(priv, rFPGA0_RFMOD, bOFDMEn, 0x1);
 					PHY_SetBBReg(priv, 0x860, bMaskDWord, temp_860);
@@ -4463,7 +4463,7 @@ stop_tx:
 					PHY_SetRFReg(priv, RF92CD_PATH_A, 0x21, bMask20Bits, 0x54000);
 				}
 				delay_us(100);
-				
+
 				if (GET_CHIP_VER(priv)!=VERSION_8197F)
 					PHY_SetRFReg(priv, eRFPath, 0x00, bMask20Bits, 0x30000); // PAD all on.
 
@@ -4491,7 +4491,7 @@ stop_tx:
 					PHY_SetBBReg(priv, 0x914, BIT(18), bDisable);		// single tone tx
 					PHY_SetBBReg(priv, 0x914, 0xffff, 0);
 				} else
-#endif		
+#endif
 				{
 					PHY_SetBBReg(priv, rOFDM1_LSTF, bOFDMContinueTx, bDisable);
 					PHY_SetBBReg(priv, rOFDM1_LSTF, bOFDMSingleCarrier, bDisable);
@@ -4512,9 +4512,9 @@ stop_tx:
 
 		PHY_SetBBReg(priv, rFPGA0_XA_HSSIParameter1, bContTxHSSI, 0);
 	}
-	
+
 	if (OPMODE & WIFI_MP_CTX_BACKGROUND) {
-		
+
 		printk("Stop continuous TX\n");
 
 		SAVE_INT_AND_CLI(flags);
@@ -4523,13 +4523,13 @@ stop_tx:
 		OPMODE_VAL(OPMODE & ~WIFI_MP_CTX_BACKGROUND_PENDING);
 		RESTORE_INT(flags);
 		SMP_UNLOCK(flags);
-		
+
 #if defined(CONFIG_PCI_HCI)
 		while (priv->pshare->skb_head != priv->pshare->skb_tail) {
 			DEBUG_INFO("[%s %d] skb_head/skb_tail=%d/%d, head/tail=%d/%d\n",
 				__FUNCTION__, __LINE__, priv->pshare->skb_head, priv->pshare->skb_tail,
 				get_txhead(phw, BE_QUEUE), get_txtail(phw, BE_QUEUE));
-			
+
 			rtl8192cd_tx_dsr((unsigned long)priv);
 			delay_us(50);
 		}
@@ -4544,7 +4544,7 @@ stop_tx:
 #endif
 		}
 #endif
-		
+
 		SAVE_INT_AND_CLI(flags);
 		SMP_LOCK(flags);
 		OPMODE_VAL(OPMODE & ~(WIFI_MP_CTX_BACKGROUND | WIFI_MP_CTX_BACKGROUND_PENDING | WIFI_MP_CTX_PACKET |
@@ -4552,7 +4552,7 @@ stop_tx:
 				WIFI_MP_CTX_BACKGROUND_STOPPING));
 		RESTORE_INT(flags);
 		SMP_UNLOCK(flags);
-		
+
 		for (i=0; i<NUM_MP_SKB; i++)
 			kfree(priv->pshare->skb_pool[i]->head);
 		kfree(priv->pshare->skb_pool_ptr);
@@ -4597,7 +4597,7 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 		printk("Fail: not in MP mode\n");
 		return;
 	}
-	
+
 	DEBUG_INFO("\nstrlen(data)=%d\n",strlen(data));
 	DEBUG_INFO("data=%s\n",data);
 	i=0;
@@ -4623,7 +4623,7 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 #endif
 	sPMacTxInfo[k-1] = (unsigned char)iPMacTxInfo[k-1];
 	i++;
-	
+
 	memcpy(&PMacTxInfo,sPMacTxInfo,sizeof(RT_PMAC_TX_INFO));
 
 
@@ -4639,7 +4639,7 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 	PMacTxInfo.PacketLength = ntohl(PMacTxInfo.PacketLength);
 
 
-	DEBUG_INFO("\nFinal:\nbEnPMacTx=%u\nMode=%u\nNtx=%u\n",PMacTxInfo.bEnPMacTx,PMacTxInfo.Mode,PMacTxInfo.Ntx); 
+	DEBUG_INFO("\nFinal:\nbEnPMacTx=%u\nMode=%u\nNtx=%u\n",PMacTxInfo.bEnPMacTx,PMacTxInfo.Mode,PMacTxInfo.Ntx);
 	DEBUG_INFO("TX_RATE=%u\nTX_RATE_HEX=%u\nTX_SC=%u\n",PMacTxInfo.TX_RATE,PMacTxInfo.TX_RATE_HEX,PMacTxInfo.TX_SC);
 	DEBUG_INFO("bSGI=%u\nbSPreamble=%u\nbSTBC=%u\n",PMacTxInfo.bSGI,PMacTxInfo.bSPreamble,PMacTxInfo.bSTBC);
 	DEBUG_INFO("bLDPC=%u\nNDP_sound=%u\nBandWidth=%u\n",PMacTxInfo.bLDPC,PMacTxInfo.NDP_sound,PMacTxInfo.BandWidth);
@@ -4667,17 +4667,17 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 	}
 	for(i=0;i<6;i++){
 		DEBUG_INFO("MacAddress[%d]=%u\n",i,PMacTxInfo.MacAddress[i]);
-	}	
+	}
 	if((GET_CHIP_VER(priv) == VERSION_8197F)||(GET_CHIP_VER(priv) == VERSION_8192E)){
 		PHY_SetBBReg(priv, 0xc04, 0xf0, 4); //Disable Rx antenna suggested by BB Yen-Cheng
-	} 	
+	}
 	if(PMacTxInfo.bEnPMacTx == FALSE){
 		printk("Stop PMac Tx\n");
 		panic_printk("[%s]bEnPMacTx = false\n",__FUNCTION__);
 		if(PMacTxInfo.Mode == 3){ 		/* Continuous Tx */
 			if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 			    PHY_SetBBReg(priv, 0xb04, 0xf, 2);		/*	TX Stop	*/
-			else 
+			else
 			    PHY_SetBBReg(priv, 0xf04, 0xf, 2);		/*	TX Stop	*/
 			if(is_CCK_rate(PMacTxInfo.TX_RATE))
 				mpt_StopCckCoNtTx(priv);
@@ -4701,8 +4701,8 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 			if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 				PHY_SetBBReg(priv, 0xb04, 0xf, 2); /* TX Stop*/
 			else
-				PHY_SetBBReg(priv, 0xf04, 0xf, 2); /* TX Stop*/ 
-		}		
+				PHY_SetBBReg(priv, 0xf04, 0xf, 2); /* TX Stop*/
+		}
 
 		if(PMacTxInfo.Mode == 2){ 		/* Single Tone Tx */
 			if(is_CCK_rate(PMacTxInfo.TX_RATE))   /* Stop HW TX -> Stop Continous TX -> Stop RF Setting*/
@@ -4710,7 +4710,7 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 			else
 				mpt_StopOfdmContTx(priv);
 
-#ifdef CONFIG_WLAN_HAL_8814AE			
+#ifdef CONFIG_WLAN_HAL_8814AE
 			mpt_SetSingleTone_8814A(priv, FALSE, TRUE);
 #endif
 		}
@@ -4746,40 +4746,40 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 			PHY_SetBBReg(priv, 0xf40, 0xffff0000, PMacTxInfo.SFD);
 			PHY_SetBBReg(priv, 0xf18, 0xffff0000, PMacTxInfo.PacketCount);
 		}
-		
+
 		u4bTmp = PMacTxInfo.SignalField |  (PMacTxInfo.ServiceField << 8 ) |  (PMacTxInfo.LENGTH << 16 ); /* 0xb40 7:0 SIGNAL	15:8 SERVICE	31:16 LENGTH*/
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 			PHY_SetBBReg(priv, 0xb40, bMaskDWord, u4bTmp);
 		else//97F
 			PHY_SetBBReg(priv, 0xf44, bMaskDWord, u4bTmp);
-		
+
 		u4bTmp = PMacTxInfo.CRC16[0] |  (PMacTxInfo.CRC16[1] << 8 );
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 			PHY_SetBBReg(priv, 0xb44, bMaskLWord, u4bTmp);
 		else//97F
 			PHY_SetBBReg(priv, 0xf48, bMaskLWord, u4bTmp);
-		
+
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B)){
 			if(PMacTxInfo.bSPreamble)
-				PHY_SetBBReg(priv, 0xb0c, BIT27, 0);	
+				PHY_SetBBReg(priv, 0xb0c, BIT27, 0);
 			else
-				PHY_SetBBReg(priv, 0xb0c, BIT27, 1);	
+				PHY_SetBBReg(priv, 0xb0c, BIT27, 1);
 		}else{//97F
 			if(PMacTxInfo.bSPreamble)
-				PHY_SetBBReg(priv, 0xf40, BIT0, 0);	
+				PHY_SetBBReg(priv, 0xf40, BIT0, 0);
 			else
-				PHY_SetBBReg(priv, 0xf40, BIT0, 1);	
+				PHY_SetBBReg(priv, 0xf40, BIT0, 1);
 		}
 	}
 	else{
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
-			PHY_SetBBReg(priv, 0xb18, 0xfffff, PMacTxInfo.PacketCount);			
+			PHY_SetBBReg(priv, 0xb18, 0xfffff, PMacTxInfo.PacketCount);
 		else{//97F
 			PHY_SetBBReg(priv, 0xf14, 0x00f00000, PMacTxInfo.PacketCount >> 16); // OFDM tx packet counter
 			PHY_SetBBReg(priv, 0xf18, 0x0000ffff, PMacTxInfo.PacketCount & 0xffff); // OFDM tx packet counter
 		}
 		u4bTmp = PMacTxInfo.LSIG[0] | ((PMacTxInfo.LSIG[1]) << 8 ) | ((PMacTxInfo.LSIG[2]) << 16 ) | ((PMacTxInfo.PacketPattern) << 24 );
-	
+
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 			PHY_SetBBReg(priv, 0xb08, bMaskDWord, u4bTmp);	/*	Set 0xb08[23:0] = LSIG, 0xb08[31:24] =  Data init octet*/
 		else//97F
@@ -4793,20 +4793,20 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 
 	if(is_HT_rate(PMacTxInfo.TX_RATE)){
 		u4bTmp |= PMacTxInfo.HT_SIG[0] | ((PMacTxInfo.HT_SIG[1]) << 8 ) | ((PMacTxInfo.HT_SIG[2]) << 16 );
-	
+
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 		    PHY_SetBBReg(priv, 0xb0c, bMaskDWord, u4bTmp);
 		else//97F
 		    PHY_SetBBReg(priv, 0xf0c, bMaskDWord, u4bTmp);
-		
+
 		u4bTmp = PMacTxInfo.HT_SIG[3] | ((PMacTxInfo.HT_SIG[4]) << 8 ) | ((PMacTxInfo.HT_SIG[5]) << 16 );
-	
+
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 		    PHY_SetBBReg(priv, 0xb10, 0xffffff, u4bTmp);
 		else//97F
 		    PHY_SetBBReg(priv, 0xf10, 0xffffff, u4bTmp);
 	}
-#ifdef RTK_AC_SUPPORT	
+#ifdef RTK_AC_SUPPORT
 	else if(is_VHT_rate(PMacTxInfo.TX_RATE)){
 		u4bTmp |= PMacTxInfo.VHT_SIG_A[0] | ((PMacTxInfo.VHT_SIG_A[1]) << 8 ) | ((PMacTxInfo.VHT_SIG_A[2]) << 16 );
 		PHY_SetBBReg(priv, 0xb0c, bMaskDWord, u4bTmp);
@@ -4836,23 +4836,23 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 		PHY_SetBBReg(priv, 0xb28, bMaskDWord, 0x00000040);	/* 0xb28 - 0xb34 24 byte Probe Request MAC Header*/
 															/*  & Duration & Frame control		*/
 		u4bTmp = PMacTxInfo.MacAddress[0] | (PMacTxInfo.MacAddress[1] << 8) | (PMacTxInfo.MacAddress[2] << 16)  | (PMacTxInfo.MacAddress[3] << 24); // Address1 [0:3]
-		PHY_SetBBReg(priv, 0xb2C, bMaskDWord, u4bTmp);	
+		PHY_SetBBReg(priv, 0xb2C, bMaskDWord, u4bTmp);
 		PHY_SetBBReg(priv, 0xb38, bMaskDWord, u4bTmp);		/* Address3 [3:0]	*/
 
 		//u4bTmp =PMacTxInfo.MacAddress[4] | (PMacTxInfo.MacAddress[5] << 8) | (Adapter->CurrentAddress[0] << 16)  | (Adapter->CurrentAddress[1] << 24);
 		u4bTmp =PMacTxInfo.MacAddress[4] | (PMacTxInfo.MacAddress[5] << 8) | (0xff << 16)  | (0xff << 24); /* Address2[0:1] & Address1 [5:4]*/
-		PHY_SetBBReg(priv, 0xb30, bMaskDWord, u4bTmp);	
-		
-		//u4bTmp = Adapter->CurrentAddress[2] | (Adapter->CurrentAddress[3] << 8) | (Adapter->CurrentAddress[4] << 16)  | (Adapter->CurrentAddress[5] << 24);	
+		PHY_SetBBReg(priv, 0xb30, bMaskDWord, u4bTmp);
+
+		//u4bTmp = Adapter->CurrentAddress[2] | (Adapter->CurrentAddress[3] << 8) | (Adapter->CurrentAddress[4] << 16)  | (Adapter->CurrentAddress[5] << 24);
 		u4bTmp = 0xff | (0xff << 8) | (0xff << 16)  | (0xff << 24);	/* Address2 [5:2]*/
-		PHY_SetBBReg(priv, 0xb34, bMaskDWord, u4bTmp);			
+		PHY_SetBBReg(priv, 0xb34, bMaskDWord, u4bTmp);
 
 		/* Sequence Control & Address3 [5:4]*/
 		//u4bTmp = PMacTxInfo.MacAddress[4] | (PMacTxInfo.MacAddress[5] << 8) ;
 		//PHY_SetBBReg(priv, 0xb38, bMaskDWord, u4bTmp);
 	}
 	else
-#endif		
+#endif
 	{
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B)){
 			PHY_SetBBReg(priv, 0xb20, bMaskDWord, PMacTxInfo.PacketPeriod);	/* for TX interval*/
@@ -4876,41 +4876,41 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 		//u4bTmp =PMacTxInfo.MacAddress[4] | (PMacTxInfo.MacAddress[5] << 8) | (Adapter->CurrentAddress[0] << 16)  | (Adapter->CurrentAddress[1] << 24);
 		u4bTmp =PMacTxInfo.MacAddress[4] | (PMacTxInfo.MacAddress[5] << 8) | (0xff << 16)  | (0xff << 24); /* Address2[0:1] & Address1 [5:4]*/
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
-			PHY_SetBBReg(priv, 0xb2c, bMaskDWord, u4bTmp);	
+			PHY_SetBBReg(priv, 0xb2c, bMaskDWord, u4bTmp);
 		else//97F
-			PHY_SetBBReg(priv, 0xf28, bMaskDWord, u4bTmp);	
-		
-		//u4bTmp = Adapter->CurrentAddress[2] | (Adapter->CurrentAddress[3] << 8) | (Adapter->CurrentAddress[4] << 16)  | (Adapter->CurrentAddress[5] << 24);	
+			PHY_SetBBReg(priv, 0xf28, bMaskDWord, u4bTmp);
+
+		//u4bTmp = Adapter->CurrentAddress[2] | (Adapter->CurrentAddress[3] << 8) | (Adapter->CurrentAddress[4] << 16)  | (Adapter->CurrentAddress[5] << 24);
 		u4bTmp = 0xff | (0xff << 8) | (0xff << 16)  | (0xff << 24);	/* Address2 [5:2]*/
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
-			PHY_SetBBReg(priv, 0xb30, bMaskDWord, u4bTmp);			
+			PHY_SetBBReg(priv, 0xb30, bMaskDWord, u4bTmp);
 		else//97F
-			PHY_SetBBReg(priv, 0xf2c, bMaskDWord, u4bTmp);			
-		
+			PHY_SetBBReg(priv, 0xf2c, bMaskDWord, u4bTmp);
+
 		u4bTmp = PMacTxInfo.MacAddress[4] | (PMacTxInfo.MacAddress[5] << 8) ;/* Sequence Control & Address3 [5:4]*/
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 			PHY_SetBBReg(priv, 0xb38, bMaskDWord, u4bTmp);
 		else//97F
 			PHY_SetBBReg(priv, 0xf34, bMaskDWord, u4bTmp);
 	}
-	
+
 	if((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
-		PHY_SetBBReg(priv, 0xb48, bMaskByte3, PMacTxInfo.TX_RATE_HEX);			
+		PHY_SetBBReg(priv, 0xb48, bMaskByte3, PMacTxInfo.TX_RATE_HEX);
 	else//97F
-		PHY_SetBBReg(priv, 0xf4c, bMaskByte3, PMacTxInfo.TX_RATE_HEX);	
-	
+		PHY_SetBBReg(priv, 0xf4c, bMaskByte3, PMacTxInfo.TX_RATE_HEX);
+
 	u4bTmp = (PMacTxInfo.TX_SC) | ((PMacTxInfo.BandWidth) << 4) | ((PMacTxInfo.m_STBC  -1) << 6) | ((PMacTxInfo.NDP_sound) << 8);
 	if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 		PHY_SetBBReg(priv, 0xb4c, 0x1ff, u4bTmp); /* 0xb4c 3:0 TXSC	5:4	BW	7:6 m_STBC	8 NDP_Sound*/
 	else//97F
 		PHY_SetBBReg(priv, 0xf50, 0x1ff, u4bTmp); /* 0xb4c 3:0 TXSC	5:4	BW	7:6 m_STBC	8 NDP_Sound*/
 
-	if(CHECKICIS8814()||CHECKICIS8822())		
+	if(CHECKICIS8814()||CHECKICIS8822())
 		if(IS_HAL_TEST_CHIP(priv))
 			offset = 0xb4c;
 		else
 			offset = 0xb44;
-		
+
 	if(is_OFDM_rate(PMacTxInfo.TX_RATE)){
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 			PHY_SetBBReg(priv, offset, 0xc0000000, 0);
@@ -4922,10 +4922,10 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 		else//97F
 			PHY_SetBBReg(priv, 0xf38, BIT8, 1);
 	}
-#ifdef RTK_AC_SUPPORT		
+#ifdef RTK_AC_SUPPORT
 	else if(is_VHT_rate(PMacTxInfo.TX_RATE))
 		PHY_SetBBReg(priv, offset, 0xc0000000, 2);
-#endif		
+#endif
 
 	if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 		PHY_SetBBReg(priv, 0xb00, BIT8, 1);		/*	Turn on PMAC*/
@@ -4939,7 +4939,7 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 			PHY_SetBBReg(priv, 0xf04, 0xf, 8);		/*	TX CCK ON	*/
 
 		if(!CHECKICIS97F() || (GET_CHIP_VER(priv) != VERSION_8192E))
-			PHY_SetBBReg(priv, 0xA84, BIT31, 0);	
+			PHY_SetBBReg(priv, 0xA84, BIT31, 0);
 	}
 	else{
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
@@ -4947,7 +4947,7 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 		else//97F
 			PHY_SetBBReg(priv, 0xf04, 0xf, 4);		/*	TX Ofdm ON	*/
 		}
-	// TODO: Single Tone  
+	// TODO: Single Tone
    /*
 	if(PMacTxInfo.Mode == OFDM_Single_Tone_TX)
 		mpt_SetSingleTone_8814A(Adapter, TRUE, TRUE);
@@ -4959,7 +4959,7 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 int mp_query_stats(struct rtl8192cd_priv *priv, unsigned char *data)
 {
 	char *val;
-	
+
 	if (!netif_running(priv->dev))
 	{
 		printk("\nFail: interface not opened\n");
@@ -4970,7 +4970,7 @@ int mp_query_stats(struct rtl8192cd_priv *priv, unsigned char *data)
 	{
 		printk("Fail: not in MP mode\n");
 		return 0;
-	}	
+	}
 
 	val = get_value_by_token((char *)data, "weight=");
 	if (val) {
@@ -4982,7 +4982,7 @@ int mp_query_stats(struct rtl8192cd_priv *priv, unsigned char *data)
 	}
 
 	val = get_value_by_token((char *)data, "rssi");
-	if (val) {		
+	if (val) {
 #ifdef USE_OUT_SRC
 #ifdef _OUTSRC_COEXIST
 		if (IS_OUTSRC_CHIP(priv))
@@ -5003,7 +5003,7 @@ int mp_query_stats(struct rtl8192cd_priv *priv, unsigned char *data)
 			priv->pshare->mp_FA_cnt = priv->pshare->FA_total_cnt;
 			priv->pshare->mp_CCA_cnt = priv->pshare->CCA_total_cnt;
 		}
-#endif	
+#endif
 		sprintf(data, "%d%%  rx %s%d (ss %d %d )(FA %d)(CCA %d)\n",
 				priv->pshare->mp_rssi,
 				((priv->pshare->mp_rx_rate&0x80) && (priv->pshare->mp_rx_rate< 0x90))? "MCS" : "",
@@ -5013,7 +5013,7 @@ int mp_query_stats(struct rtl8192cd_priv *priv, unsigned char *data)
 				priv->pshare->mp_CCA_cnt);
 		return strlen(data)+1;
 	}
-	
+
 
 	sprintf(data, "Tx OK:%d, Tx Fail:%d, Rx OK:%lu, CRC error:%lu",
 		(int)(priv->net_stats.tx_packets-priv->net_stats.tx_errors),
@@ -5033,46 +5033,46 @@ void mp_reset_rx_mac(struct rtl8192cd_priv *priv){
 		printk("\nFail: interface not opened\n");
 		return;
 	}
-	
+
 	if(!(OPMODE & WIFI_MP_STATE)){
 		printk("Fail: not in MP mode\n");
 		return;
 	}
-	
+
 	printk("Reset MAC Rx counter\n");
-	PHY_SetBBReg(priv, 0x664, BIT27, 0x1); 
+	PHY_SetBBReg(priv, 0x664, BIT27, 0x1);
 	PHY_SetBBReg(priv, 0x664, BIT27, 0x0);
 }
 
 void mp_reset_rx_phy(struct rtl8192cd_priv *priv){
-	
+
 	if (!netif_running(priv->dev))
 	{
 		printk("\nFail: interface not opened\n");
 		return;
 	}
-	
+
 	if(!(OPMODE & WIFI_MP_STATE)){
 		printk("Fail: not in MP mode\n");
 		return;
 	}
-	/* Jaguar AC series*/	
+	/* Jaguar AC series*/
 	if(GET_CHIP_VER(priv)==VERSION_8814A || GET_CHIP_VER(priv)==VERSION_8812E || GET_CHIP_VER(priv)==VERSION_8881A || GET_CHIP_VER(priv)==VERSION_8822B){
-		PHY_SetBBReg(priv, 0xB58, BIT0, 0x1); 
+		PHY_SetBBReg(priv, 0xB58, BIT0, 0x1);
 		PHY_SetBBReg(priv, 0xB58, BIT0, 0x0);
 	}else{ /* N series */
-		PHY_SetBBReg(priv, 0xF14, BIT16, 0x1); 
+		PHY_SetBBReg(priv, 0xF14, BIT16, 0x1);
 		PHY_SetBBReg(priv, 0xF14, BIT16, 0x0);
-		PHY_SetBBReg(priv, 0xD00, BIT27, 0x1); 
+		PHY_SetBBReg(priv, 0xD00, BIT27, 0x1);
 		PHY_SetBBReg(priv, 0xD00, BIT27, 0x0);
-		//PHY_SetBBReg(priv, 0xF00, BIT9, 0x0); 
-		//PHY_SetBBReg(priv, 0xF00, BIT9, 0x1); 
+		//PHY_SetBBReg(priv, 0xF00, BIT9, 0x0);
+		//PHY_SetBBReg(priv, 0xF00, BIT9, 0x1);
 	}
 }
 
 
 void mp_reset_rx_macphy(struct rtl8192cd_priv *priv){
-	
+
 	if (!netif_running(priv->dev)) {
 		printk("\nFail: interface not opened\n");
 		return;
@@ -5095,7 +5095,7 @@ void mp_IQCalibrate(struct rtl8192cd_priv *priv){
 		printk("\nFail: interface not opened\n");
 		return;
 	}
-	
+
 	printk("===> PHY_IQCalibrate\n");
 	PHY_IQCalibrate(priv);
 	printk("===> PHY_IQCalibrate\n");
@@ -5108,13 +5108,13 @@ void mp_LCCalibrate(struct rtl8192cd_priv *priv){
 		printk("\nFail: interface not opened\n");
 		return;
 	}
-	
+
 	printk("===> PHY_LCCalibrate\n");
-#if defined(CONFIG_WLAN_HAL_8822BE)	
+#if defined(CONFIG_WLAN_HAL_8822BE)
 	if(CHECKICIS8822())
 		;
 	else
-#endif		
+#endif
 	if(CHECKICIS97F())//wish
 		;
 	printk("<=== PHY_LCCalibrate\n");
@@ -5128,7 +5128,7 @@ void mp_cal_rx_mac(struct rtl8192cd_priv *priv){
 	//printk("===> mp_cal_rx_mac\n");
 
 	PHY_SetBBReg(priv, 0x664, BIT26|BIT28|BIT29|BIT30|BIT31, 0x0);		//0:  0000_00 0000_0000
-	mac_ofdm_ok     = PHY_QueryBBReg(priv, 0x664, bMaskLWord);	     
+	mac_ofdm_ok     = PHY_QueryBBReg(priv, 0x664, bMaskLWord);
 	PHY_SetBBReg(priv, 0x664, BIT26|BIT28|BIT29|BIT30|BIT31, 0x04);	//1: 0010_00 0000_1000
 	mac_ofdm_err    = PHY_QueryBBReg(priv, 0x664, bMaskLWord);
 
@@ -5137,17 +5137,17 @@ void mp_cal_rx_mac(struct rtl8192cd_priv *priv){
 	PHY_SetBBReg(priv, 0x664, BIT26|BIT28|BIT29|BIT30|BIT31, 0x10);	//4: 0000_10 0000_0010
 	mac_cck_err     = PHY_QueryBBReg(priv, 0x664, bMaskLWord);
 	PHY_SetBBReg(priv, 0x664, BIT26|BIT28|BIT29|BIT30|BIT31, 0x18);	//6: 0001_10 0000_0110
-	mac_ht_ok       = PHY_QueryBBReg(priv, 0x664, bMaskLWord);      
+	mac_ht_ok       = PHY_QueryBBReg(priv, 0x664, bMaskLWord);
 	PHY_SetBBReg(priv, 0x664, BIT26|BIT28|BIT29|BIT30|BIT31, 0x1C);	//7:  0011_10 0000_1110
-	mac_ht_err      = PHY_QueryBBReg(priv, 0x664, bMaskLWord);	
+	mac_ht_err      = PHY_QueryBBReg(priv, 0x664, bMaskLWord);
 
-	PHY_SetBBReg(priv, 0x664, BIT26|BIT28|BIT29|BIT30|BIT31, 0x1);	//16: 1000_00 0010_0000 
-//	mac_vht_ok     = (pHalData->BandSet == BAND_ON_BOTH) ? 	PHY_QueryMacReg(priv, 0x664, bMaskLWord) : 0; 
+	PHY_SetBBReg(priv, 0x664, BIT26|BIT28|BIT29|BIT30|BIT31, 0x1);	//16: 1000_00 0010_0000
+//	mac_vht_ok     = (pHalData->BandSet == BAND_ON_BOTH) ? 	PHY_QueryMacReg(priv, 0x664, bMaskLWord) : 0;
 	if(GET_CHIP_VER(priv)==VERSION_8814A || GET_CHIP_VER(priv)==VERSION_8812E || GET_CHIP_VER(priv)==VERSION_8881A)
-		mac_vht_ok     = PHY_QueryBBReg(priv, 0x664, bMaskLWord); 
+		mac_vht_ok     = PHY_QueryBBReg(priv, 0x664, bMaskLWord);
 	else
 		mac_vht_ok     = 0;
-			
+
 	PHY_SetBBReg(priv, 0x664, BIT26|BIT28|BIT29|BIT30|BIT31, 0x5);	//17:  1010_00 0010_1000
 	mac_vht_err    = PHY_QueryBBReg(priv, 0x664, bMaskLWord);
 
@@ -5157,19 +5157,19 @@ void mp_cal_rx_mac(struct rtl8192cd_priv *priv){
 		|| IS_HARDWARE_TYPE_8821S(pAdapter)
 		|| IS_HARDWARE_TYPE_8814A(pAdapter)
 		|| IS_HARDWARE_TYPE_8821B(pAdapter)
-		//Wait for 8822B USB/SDIO ready, hsiao_ho 2014.05.27 
+		//Wait for 8822B USB/SDIO ready, hsiao_ho 2014.05.27
 		//|| IS_HARDWARE_TYPE_8822B(pAdapter)
 		)
 	{*/
 		priv->pshare->mp_rx_mac_ok = mac_cck_ok + mac_ofdm_ok + mac_ht_ok + mac_vht_ok;
-		priv->pshare->mp_rx_mac_crc_err = mac_cck_err + mac_ofdm_err + mac_ht_err + mac_vht_err;	
+		priv->pshare->mp_rx_mac_crc_err = mac_cck_err + mac_ofdm_err + mac_ht_err + mac_vht_err;
 /*	}
 	else
 	{
 		mpt_ProResetRxCounters_MAC(pAdapter);
-		
+
 		pMptCtx->MptRxMacOkCnt += mac_cck_ok + mac_ofdm_ok + mac_ht_ok + mac_vht_ok;
-		pMptCtx->MptRxMacCrcErrCnt += mac_cck_err + mac_ofdm_err + mac_ht_err + mac_vht_err;	
+		pMptCtx->MptRxMacCrcErrCnt += mac_cck_err + mac_ofdm_err + mac_ht_err + mac_vht_err;
 	}
 */
 	//pMptCtx->MptIoValue = (ULONG)pMptCtx->MptRxMacOkCnt;
@@ -5178,26 +5178,26 @@ void mp_cal_rx_mac(struct rtl8192cd_priv *priv){
 
 void mp_cal_rx_phy(struct rtl8192cd_priv *priv){
 
-	UINT64		cck_ok=0, ofdm_ok=0, ht_ok=0, vht_ok=0;	
+	UINT64		cck_ok=0, ofdm_ok=0, ht_ok=0, vht_ok=0;
 	UINT64		cck_err=0, ofdm_err=0, ht_err=0, vht_err=0;
 
-	/* Jaguar AC series*/	
+	/* Jaguar AC series*/
 	if(GET_CHIP_VER(priv)==VERSION_8814A || GET_CHIP_VER(priv)==VERSION_8812E || GET_CHIP_VER(priv)==VERSION_8881A){
-		cck_ok      = PHY_QueryBBReg(priv, 0xF04, 0x3FFF);		// [13:0]  
-		ofdm_ok     = PHY_QueryBBReg(priv, 0xF14, 0x3FFF);		// [13:0]  
+		cck_ok      = PHY_QueryBBReg(priv, 0xF04, 0x3FFF);		// [13:0]
+		ofdm_ok     = PHY_QueryBBReg(priv, 0xF14, 0x3FFF);		// [13:0]
 		ht_ok       = PHY_QueryBBReg(priv, 0xF10, 0x3FFF);		// [13:0]
 		vht_ok      = PHY_QueryBBReg(priv, 0xF0C, 0x3FFF);		// [13:0]
-	                                                  
-		cck_err     = PHY_QueryBBReg(priv, 0xF04, 0x3FFF0000); // [29:16]						
+
+		cck_err     = PHY_QueryBBReg(priv, 0xF04, 0x3FFF0000); // [29:16]
 		ofdm_err    = PHY_QueryBBReg(priv, 0xF14, 0x3FFF0000); // [29:16]
-		ht_err      = PHY_QueryBBReg(priv, 0xF10, 0x3FFF0000); // [29:16]		
-		vht_err     = PHY_QueryBBReg(priv, 0xF0C, 0x3FFF0000); // [29:16]		
+		ht_err      = PHY_QueryBBReg(priv, 0xF10, 0x3FFF0000); // [29:16]
+		vht_err     = PHY_QueryBBReg(priv, 0xF0C, 0x3FFF0000); // [29:16]
 	}else {
 		cck_ok      = PHY_QueryBBReg(priv, 0xF88, bMaskDWord);
 		ofdm_ok     = PHY_QueryBBReg(priv, 0xF94, bMaskLWord);
 		ht_ok       = PHY_QueryBBReg(priv, 0xF90, bMaskLWord);
 		vht_ok      = 0;
-	    
+
 		cck_err     = PHY_QueryBBReg(priv, 0xF84, bMaskDWord);
 		ofdm_err    = PHY_QueryBBReg(priv, 0xF94, bMaskHWord);
 		ht_err      = PHY_QueryBBReg(priv, 0xF90, bMaskHWord);
@@ -5206,10 +5206,10 @@ void mp_cal_rx_phy(struct rtl8192cd_priv *priv){
 /*
 	if( IS_HARDWARE_TYPE_8192ES(pAdapter)
 		|| IS_HARDWARE_TYPE_8723BS(pAdapter)
-		|| IS_HARDWARE_TYPE_8821S(pAdapter) 
+		|| IS_HARDWARE_TYPE_8821S(pAdapter)
 		|| IS_HARDWARE_TYPE_8814A(pAdapter)
 		|| IS_HARDWARE_TYPE_8821B(pAdapter)
-		//Wait for 8822B USB/SDIO ready, hsiao_ho 2014.05.27 
+		//Wait for 8822B USB/SDIO ready, hsiao_ho 2014.05.27
 		//|| IS_HARDWARE_TYPE_8822B(pAdapter)
 		)
 	{*/
@@ -5246,7 +5246,7 @@ int mp_query_rx_macphy(struct rtl8192cd_priv *priv, unsigned char *data){
 	sprintf(data,"Rx MAC OK:%llu, Rx MAC Error:%llu, Rx PHY OK:%llu, Rx PHY Error:%llu",
 		priv->pshare->mp_rx_mac_ok, priv->pshare->mp_rx_mac_crc_err,
 		priv->pshare->mp_rx_phy_ok, priv->pshare->mp_rx_phy_crc_err);
-	
+
 	return strlen(data)+1;
 }
 
@@ -5289,13 +5289,13 @@ void mp_txpower_tracking(struct rtl8192cd_priv *priv, unsigned char *data)
 	}
 
 
-#if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT) 
+#if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
 	if (GET_CHIP_VER(priv) == VERSION_8192C || GET_CHIP_VER(priv) == VERSION_8188C || GET_CHIP_VER(priv) == VERSION_8192D) {
 		if ((target_ther < 0x07) || (target_ther > 0x1d)) {
 			panic_printk("Tx Power Tracking: unreasonable target ther %d, disable power tracking\n", target_ther);
 			target_ther = 0;
 			return;
-		} 
+		}
 	} else
 #endif
 	{
@@ -5320,7 +5320,7 @@ void mp_txpower_tracking(struct rtl8192cd_priv *priv, unsigned char *data)
 void mp_dig(struct rtl8192cd_priv *priv, unsigned char *data)
 {
 	char *val;
-	
+
 	if (!netif_running(priv->dev)) {
 		printk("\nFail: interface not opened\n");
 		return;
@@ -5335,21 +5335,21 @@ void mp_dig(struct rtl8192cd_priv *priv, unsigned char *data)
 		printk("Fail: %s() only support 92D/8812/8814/8822 !\n", __FUNCTION__);
 		return;
 	}
-	
+
 
 	val = get_value_by_token((char *)data, "on");
 	if (val) {
 		if (priv->pshare->mp_dig_on
-#ifdef CONFIG_RTL_92D_SUPPORT			
+#ifdef CONFIG_RTL_92D_SUPPORT
 			|| (GET_CHIP_VER(priv)==VERSION_8192D && timer_pending(&priv->pshare->MP_DIGTimer))
-#endif			
+#endif
 		)
 			return;
-		
+
 		priv->pshare->mp_dig_on = 1;
-			
+
 		priv->pshare->mp_dig_reg_backup = RTL_R8(0xc50);
-		printk("mp dig on! backup IG: 0x%x\n", priv->pshare->mp_dig_reg_backup);	
+		printk("mp dig on! backup IG: 0x%x\n", priv->pshare->mp_dig_reg_backup);
 
 #ifdef USE_OUT_SRC
 		ODM_MPT_DIG(ODMPTR);
@@ -5362,7 +5362,7 @@ void mp_dig(struct rtl8192cd_priv *priv, unsigned char *data)
 	if (val) {
 		if (priv->pshare->mp_dig_on==0)
 			return;
-		
+
 		priv->pshare->mp_dig_on = 0;
 #ifdef USE_OUT_SRC
 		ODM_CancelTimer(ODMPTR, &ODMPTR->MPT_DIGTimer);
@@ -5371,10 +5371,10 @@ void mp_dig(struct rtl8192cd_priv *priv, unsigned char *data)
 #ifdef __ECOS
 		del_timer_sync(&priv->pshare->MP_DIGTimer);
 #else
-		del_timer(&priv->pshare->MP_DIGTimer);	
+		del_timer(&priv->pshare->MP_DIGTimer);
 #endif
 #endif
-#endif	
+#endif
 		if (GET_CHIP_VER(priv) == VERSION_8814A) {
 			RTL_W8(0xc50, priv->pshare->mp_dig_reg_backup);
 			RTL_W8(0xe50, priv->pshare->mp_dig_reg_backup);
@@ -5387,8 +5387,8 @@ void mp_dig(struct rtl8192cd_priv *priv, unsigned char *data)
 			RTL_W8(0xc50, priv->pshare->mp_dig_reg_backup);
 			RTL_W8(0xc58, priv->pshare->mp_dig_reg_backup);
 		}
-		
-		printk("mp dig off\n");		
+
+		printk("mp dig off\n");
 		return;
 	}
 }
@@ -5494,7 +5494,7 @@ int mp_query_ther(struct rtl8192cd_priv *priv, unsigned char *data)
 	if ((GET_CHIP_VER(priv)==VERSION_8814A) || (GET_CHIP_VER(priv)==VERSION_8812E) || (GET_CHIP_VER(priv)==VERSION_8881A) || (GET_CHIP_VER(priv)==VERSION_8822B))
 		PHY_SetRFReg(priv, RF92CD_PATH_A, 0x42, BIT(17), 0x1);
 	else
-#endif	
+#endif
 #if defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_WLAN_HAL_8192EE) || defined(CONFIG_RTL_8723B_SUPPORT) || defined(CONFIG_WLAN_HAL_8197F)
 	if ((GET_CHIP_VER(priv)==VERSION_8188E) || (GET_CHIP_VER(priv)==VERSION_8192E) || (GET_CHIP_VER(priv) == VERSION_8723B) || (GET_CHIP_VER(priv) == VERSION_8197F))
 		PHY_SetRFReg(priv, RF92CD_PATH_A, 0x42, (BIT(17) | BIT(16)), 0x03);
@@ -5502,7 +5502,7 @@ int mp_query_ther(struct rtl8192cd_priv *priv, unsigned char *data)
 #endif
 	if (CHECKICIS92D())
 		PHY_SetRFReg(priv, RF92CD_PATH_A, RF_T_METER_92D, bMask20Bits, 0x30000);
-	else	
+	else
 		PHY_SetRFReg(priv, RF92CD_PATH_A, 0x24, bMask20Bits, 0x60);
 
 	// delay for 10ms
@@ -5513,15 +5513,15 @@ int mp_query_ther(struct rtl8192cd_priv *priv, unsigned char *data)
 	if ((GET_CHIP_VER(priv)==VERSION_8814A) || (GET_CHIP_VER(priv)==VERSION_8812E) || (GET_CHIP_VER(priv)==VERSION_8881A) || (GET_CHIP_VER(priv)==VERSION_8822B))
 		ther = PHY_QueryRFReg(priv, RF92CD_PATH_A, 0x42, 0xfc00, 1);
 	else
-#endif	
+#endif
 #if defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_WLAN_HAL_8192EE) || defined(CONFIG_RTL_8723B_SUPPORT) || defined(CONFIG_WLAN_HAL_8197F)
 	if ((GET_CHIP_VER(priv)==VERSION_8188E) || (GET_CHIP_VER(priv)==VERSION_8192E) || (GET_CHIP_VER(priv) == VERSION_8723B) || (GET_CHIP_VER(priv) == VERSION_8197F))
 		ther = PHY_QueryRFReg(priv, RF92CD_PATH_A, 0x42, 0xfc00, 1);
 	else
 #endif
-	if (CHECKICIS92D())	
+	if (CHECKICIS92D())
 		ther = PHY_QueryRFReg(priv, RF92CD_PATH_A, RF_T_METER_92D, 0xf800, 1);
-	else	
+	else
 		ther = PHY_QueryRFReg(priv, RF92CD_PATH_A, 0x24, bMask20Bits, 1) & 0x01f;
 
 #ifdef THER_TRIM
@@ -5548,7 +5548,7 @@ int mp_query_rssi(struct rtl8192cd_priv *priv, unsigned char *data)
 	unsigned int rssi=0;
 	char *val;
 	int rf_path=0;
-	
+
 	if (!netif_running(priv->dev)) {
 		printk("\nFail: interface not opened\n");
 		return 0;
@@ -5562,9 +5562,9 @@ int mp_query_rssi(struct rtl8192cd_priv *priv, unsigned char *data)
 	val = get_value_by_token((char *)data, "path=");
 	if (val) {
 		rf_path = _atoi(val, 10);
-		
+
 	}
-	
+
 	rssi=priv->pshare->mimorssi[rf_path];
 	//panic_printk("\npriv->pshare->mimorssi[%d] %d\n",rf_path,priv->pshare->mimorssi[rf_path]);
 
@@ -5596,8 +5596,8 @@ int mp_query_psd(struct rtl8192cd_priv *priv, unsigned char * data)
 	if (strlen(data) == 0) { //default value
 		psd_pts = 128;
 		psd_start = 64;
-		psd_stop = 128;   
-		
+		psd_stop = 128;
+
 	}
 	else
 	{
@@ -5619,7 +5619,7 @@ int mp_query_psd(struct rtl8192cd_priv *priv, unsigned char * data)
 		if (val) {
 			psd_stop=_atoi(val,10);
 		}else {
-			psd_stop = psd_pts;   
+			psd_stop = psd_pts;
 		}
 	}
 
@@ -5627,7 +5627,7 @@ int mp_query_psd(struct rtl8192cd_priv *priv, unsigned char * data)
 
 	i = psd_start;
 	while( i < psd_stop) {
-		
+
 		if( i>= psd_pts) {
 			psd_data = GetPSDData(priv,(i-psd_pts));
 		}
@@ -5830,7 +5830,7 @@ int mp_get_txpwr(struct rtl8192cd_priv *priv, unsigned char *data)
 	case 155:
 		pwrA = PHY_QueryBBReg(priv, 0xc44, bMaskByte3);
 		pwrB = PHY_QueryBBReg(priv, 0xe44, bMaskByte3);
-		break;	
+		break;
 	case 156:
 		pwrA = PHY_QueryBBReg(priv, 0xc48, bMaskByte0);
 		pwrB = PHY_QueryBBReg(priv, 0xe48, bMaskByte0);
@@ -5846,7 +5846,7 @@ int mp_get_txpwr(struct rtl8192cd_priv *priv, unsigned char *data)
 	case 159:
 		pwrA = PHY_QueryBBReg(priv, 0xc48, bMaskByte3);
 		pwrB = PHY_QueryBBReg(priv, 0xe48, bMaskByte3);
-		break;		
+		break;
 	case 160:
 		pwrA = PHY_QueryBBReg(priv, 0xc4c, bMaskByte0);
 		pwrB = PHY_QueryBBReg(priv, 0xe4c, bMaskByte0);
@@ -5862,7 +5862,7 @@ int mp_get_txpwr(struct rtl8192cd_priv *priv, unsigned char *data)
 	case 163:
 		pwrA = PHY_QueryBBReg(priv, 0xc4c, bMaskByte3);
 		pwrB = PHY_QueryBBReg(priv, 0xe4c, bMaskByte3);
-		break;	
+		break;
 #endif
 	}
 
@@ -6143,7 +6143,7 @@ int mp_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 			if (NULL == txinsn.phdr)
 				goto congestion_handle;
 			skb->cb[1] = 0;
-			
+
 #ifdef MCAST2UI_REFINE
 			memcpy(&skb->cb[10], skb->data, 6);
 #endif
@@ -6641,14 +6641,14 @@ void mp_set_bandwidth(struct rtl8192cd_priv *priv, unsigned char *data)
 		priv->pshare->offset_2nd_chan = HT_2NDCH_OFFSET_DONTCARE;
 		priv->pmib->dot11nConfigEntry.dot11nUse40M=0;
 		printk("CurrentChannelBW: 20MHz\n");
-	} 
+	}
 	else if (bw == 1) {
 		priv->pshare->is_40m_bw = 1;
 		priv->pshare->CurrentChannelBW = HT_CHANNEL_WIDTH_20_40;
 		priv->pshare->offset_2nd_chan = HT_2NDCH_OFFSET_BELOW;
 		priv->pmib->dot11nConfigEntry.dot11nUse40M=1;
 		printk("CurrentChannelBW: 40MHz\n");
-	} 
+	}
 	else if (bw == 2) {
 		priv->pshare->is_40m_bw = 2;
 		priv->pshare->CurrentChannelBW = HT_CHANNEL_WIDTH_80;
@@ -6691,7 +6691,7 @@ void mp_set_bandwidth(struct rtl8192cd_priv *priv, unsigned char *data)
 
 				case ANTENNA_AB:
 				case ANTENNA_BC:
-				case ANTENNA_CD:	
+				case ANTENNA_CD:
 					{
 						if (priv->pshare->is_40m_bw == HT_CHANNEL_WIDTH_80) {
 							PHY_SetBBReg(priv, 0x838, BIT0, 0x1);
@@ -6702,7 +6702,7 @@ void mp_set_bandwidth(struct rtl8192cd_priv *priv, unsigned char *data)
 							PHY_SetBBReg(priv, 0x838, 0x000f0000, 0x9);
 							PHY_SetBBReg(priv, 0x840, 0x0000f000, 0x6);
 							PHY_SetBBReg(priv, 0x8ac, 0x3c, 0x1);	//Set Primary channel 1.  80M=[4,2,1,3]
-						} else {			
+						} else {
 							PHY_SetBBReg(priv, 0x838, BIT0, 0x0);	//Disable 2nd CCA if not 80MHz
 							PHY_SetBBReg(priv, 0x82c, BIT27|BIT26|BIT25|BIT24, 0x5);
 							RTL_W8(0x830,0xa);
@@ -6710,7 +6710,7 @@ void mp_set_bandwidth(struct rtl8192cd_priv *priv, unsigned char *data)
 
 					}
 					break;
-			
+
 				case ANTENNA_ABC:
 				case ANTENNA_BCD:
 					{
@@ -6723,16 +6723,16 @@ void mp_set_bandwidth(struct rtl8192cd_priv *priv, unsigned char *data)
 							PHY_SetBBReg(priv, 0x838, 0x000f0000, 0x7);
 							PHY_SetBBReg(priv, 0x840, 0x0000f000, 0x6);
 							PHY_SetBBReg(priv, 0x8ac, 0x3c, 0x1);	//Set Primary channel 1.  80M=[4,2,1,3]
-						} else {				
+						} else {
 							PHY_SetBBReg(priv, 0x838, BIT0, 0x0);	//Disable 2nd CCA if not 80MHz
 							PHY_SetBBReg(priv, 0x82c, BIT27|BIT26|BIT25|BIT24, 0x3);
 							RTL_W8(0x830,0x8);
 						}
 					}
 					break;
-			
+
 				case ANTENNA_ABCD:
-				default:	
+				default:
 					{
 						if (priv->pshare->is_40m_bw == HT_CHANNEL_WIDTH_80) {
 							PHY_SetBBReg(priv, 0x838, BIT0, 0x1);
@@ -6750,10 +6750,10 @@ void mp_set_bandwidth(struct rtl8192cd_priv *priv, unsigned char *data)
 						}
 					}
 					break;
-			}	
+			}
 		}
 	}
-#endif		
+#endif
 
 //	mp_8192CD_tx_setting(priv);
 	return; // end here
@@ -6772,7 +6772,7 @@ __NOMIPS16
 int mp_arx(struct rtl8192cd_priv *priv, unsigned char *data)
 {
 	char *val;
-	
+
 	if (!netif_running(priv->dev)) {
 		printk("\nFail: interface not opened\n");
 		return 0;
@@ -6788,7 +6788,7 @@ int mp_arx(struct rtl8192cd_priv *priv, unsigned char *data)
 	}
 
 	if (!strcmp(data, "start")) {
-#if 0		
+#if 0
 #if defined(CONFIG_WLAN_HAL_8814AE)
 		if(GET_CHIP_VER(priv) == VERSION_8814A){
 			panic_printk("BB reset\n");
@@ -6798,8 +6798,8 @@ int mp_arx(struct rtl8192cd_priv *priv, unsigned char *data)
 #endif
 #endif
 		OPMODE_VAL(OPMODE | WIFI_MP_RX);
-		
-#if 0//defined(CONFIG_RTL_92D_SUPPORT) 
+
+#if 0//defined(CONFIG_RTL_92D_SUPPORT)
 		priv->pshare->mp_dig_on = 1;
 		mod_timer(&priv->pshare->MP_DIGTimer, jiffies + RTL_MILISECONDS_TO_JIFFIES(700));
 #endif
@@ -6840,12 +6840,12 @@ int mp_arx(struct rtl8192cd_priv *priv, unsigned char *data)
 		}
 #endif
 #ifdef  CONFIG_WLAN_HAL
-		if (IS_HAL_CHIP(priv))		
+		if (IS_HAL_CHIP(priv))
 			RTL_W32(RCR, RTL_R32(RCR) & ~(RCR_APWRMGT | RCR_AMF | RCR_ADF |RCR_ACRC32 |RCR_AB | RCR_AM | RCR_APM | RCR_AAP | RCR_APP_PHYSTS));
 		else if(CONFIG_WLAN_NOT_HAL_EXIST)
-#endif		
+#endif
 		RTL_W32(RCR, RTL_R32(RCR) & ~(RCR_AB | RCR_AM | RCR_APM | RCR_AAP | RCR_APP_PHYSTS));
-		
+
 
 		if (priv->pshare->rf_ft_var.use_frq_2_3G)
 			PHY_SetBBReg(priv, rCCK0_System, bCCKEqualizer, 0x1);
@@ -6857,14 +6857,14 @@ int mp_arx(struct rtl8192cd_priv *priv, unsigned char *data)
 			memset(priv->pshare->mp_filter_DA,0,6);
 			memset(priv->pshare->mp_filter_SA,0,6);
 			memset(priv->pshare->mp_filter_BSSID,0,6);
-		}	
-		
+		}
+
 		sprintf(data, "Received packet OK:%lu  CRC error:%lu\n", priv->net_stats.rx_packets, priv->net_stats.rx_crc_errors);
 		return strlen(data)+1;
 	} else if (!memcmp(data, "filter_SA",9)) {
-		OPMODE_VAL(OPMODE | WIFI_MP_ARX_FILTER);	
+		OPMODE_VAL(OPMODE | WIFI_MP_ARX_FILTER);
 		memset(priv->pshare->mp_filter_SA,'\0',6);
-		
+
 		priv->pshare->mp_filter_flag |=0x1;
 		val = get_value_by_token((char *)data, "filter_SA=");
 		val[2]='\0';
@@ -6887,12 +6887,12 @@ int mp_arx(struct rtl8192cd_priv *priv, unsigned char *data)
 															priv->pshare->mp_filter_SA[4],
 															priv->pshare->mp_filter_SA[5]);
 		return strlen(data)+1;
-		
+
 	} else if (!memcmp(data, "filter_DA",9)) {
-		OPMODE_VAL(OPMODE | WIFI_MP_ARX_FILTER);	
+		OPMODE_VAL(OPMODE | WIFI_MP_ARX_FILTER);
 		priv->pshare->mp_filter_flag |=0x2;
 		memset(priv->pshare->mp_filter_DA,'\0',6);
-		
+
 		val = get_value_by_token((char *)data, "filter_DA=");
 		val[2]='\0';
 		priv->pshare->mp_filter_DA[0]=_atoi(val,16);
@@ -6915,10 +6915,10 @@ int mp_arx(struct rtl8192cd_priv *priv, unsigned char *data)
 															priv->pshare->mp_filter_DA[5]);
 		return strlen(data)+1;
 	} else if (!memcmp(data, "filter_BSSID",12)) {
-		OPMODE_VAL(OPMODE | WIFI_MP_ARX_FILTER);	
+		OPMODE_VAL(OPMODE | WIFI_MP_ARX_FILTER);
 		priv->pshare->mp_filter_flag |=0x4;
 		memset(priv->pshare->mp_filter_BSSID,'\0',6);
-		
+
 		val = get_value_by_token((char *)data, "filter_BSSID=");
 		val[2]='\0';
 		priv->pshare->mp_filter_BSSID[0]=_atoi(val,16);
@@ -6941,14 +6941,14 @@ int mp_arx(struct rtl8192cd_priv *priv, unsigned char *data)
 															priv->pshare->mp_filter_BSSID[5]);
 		return strlen(data)+1;
 	} else if( (!memcmp(data, "filter_clean",12))  || (!memcmp(data, "filter_init",11))) {
-		OPMODE_VAL(OPMODE &  (~WIFI_MP_ARX_FILTER));	
+		OPMODE_VAL(OPMODE &  (~WIFI_MP_ARX_FILTER));
 		priv->pshare->mp_filter_flag=0;
 		memset(priv->pshare->mp_filter_SA,'\0',6);
 		memset(priv->pshare->mp_filter_DA,'\0',6);
 		memset(priv->pshare->mp_filter_BSSID,'\0',6);
 		sprintf(data,"reset arx filter table\n");
 		return strlen(data)+1;
-	} else if (!memcmp(data, "filter_print",12)) {		
+	} else if (!memcmp(data, "filter_print",12)) {
 		sprintf(data,"flag: %x\nSA: %02x:%02x:%02x:%02x:%02x:%02x\nDA: %02x:%02x:%02x:%02x:%02x:%02x\nBSSID: %02x:%02x:%02x:%02x:%02x:%02x\n",priv->pshare->mp_filter_flag,
 															priv->pshare->mp_filter_SA[0],
 															priv->pshare->mp_filter_SA[1],
@@ -6968,7 +6968,7 @@ int mp_arx(struct rtl8192cd_priv *priv, unsigned char *data)
 															priv->pshare->mp_filter_BSSID[3],
 															priv->pshare->mp_filter_BSSID[4],
 															priv->pshare->mp_filter_BSSID[5]);
-		
+
 		return strlen(data)+1;
 	}
 
@@ -7019,13 +7019,13 @@ static void mp_chk_sw_ant_AC(struct rtl8192cd_priv *priv)
 	switch(priv->pshare->mp_antenna_tx)
 	{
 	case ANTENNA_A:
-		PHY_SetBBReg(priv, 0x80c, 0xffff, 0x1111);		
+		PHY_SetBBReg(priv, 0x80c, 0xffff, 0x1111);
 		break;
 	case ANTENNA_B:
-		PHY_SetBBReg(priv, 0x80c, 0xffff, 0x2222);		
+		PHY_SetBBReg(priv, 0x80c, 0xffff, 0x2222);
 		break;
 	case ANTENNA_AB:
-		PHY_SetBBReg(priv, 0x80c, 0xffff, 0x3333);		
+		PHY_SetBBReg(priv, 0x80c, 0xffff, 0x3333);
 		break;
 	default:
 		break;
@@ -7034,22 +7034,22 @@ static void mp_chk_sw_ant_AC(struct rtl8192cd_priv *priv)
 	switch(priv->pshare->mp_antenna_rx)
 	{
 	case ANTENNA_A:
-		PHY_SetBBReg(priv, 0x808, 0xff, 0x11);	
+		PHY_SetBBReg(priv, 0x808, 0xff, 0x11);
 		PHY_SetBBReg(priv, 0xa04, 0xc000000, 0x0);	//0xa07[3:2]
 
 		// Reg0x00[19:16] RFMODE, 1:Idle, 3:Rx
-		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 3);	
+		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 1);
 		break;
 	case ANTENNA_B:
-		PHY_SetBBReg(priv, 0x808, 0xff, 0x22);	
-		PHY_SetBBReg(priv, 0xa04, 0xc000000, 0x1);	
+		PHY_SetBBReg(priv, 0x808, 0xff, 0x22);
+		PHY_SetBBReg(priv, 0xa04, 0xc000000, 0x1);
 		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 3);
 		break;
 	case ANTENNA_AB:	// For 8192S and 8192E/U...
-		PHY_SetBBReg(priv, 0x808, 0xff, 0x33);	
-		PHY_SetBBReg(priv, 0xa04, 0xc000000, 0x0);	
+		PHY_SetBBReg(priv, 0x808, 0xff, 0x33);
+		PHY_SetBBReg(priv, 0xa04, 0xc000000, 0x0);
 		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 3);
 		break;
@@ -7068,7 +7068,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 	if(is_CCK_rate(priv->pshare->mp_datarate)){
 		switch(priv->pshare->mp_antenna_tx)
 		{
-			case ANTENNA_B:				
+			case ANTENNA_B:
 				if(IS_TEST_CHIP(priv)){
 					PHY_SetBBReg(priv, 0xa04, 0xf0000000, 0x4);		//0xa07[7:4] = 0x4
 					PHY_SetBBReg(priv, 0x80c, 0xf, 0x2);		 	// 0x80C[3:0] = 4'b0010
@@ -7112,7 +7112,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 					PHY_SetBBReg(priv, 0xa04, 0xf0000000, 0x6); 	//0xa07[7:4] = 0x6
 					PHY_SetBBReg(priv, 0x80c, 0xf0, 0x6);		 	// 0x80C[7:4] = 0x6
 				}
-				break;			
+				break;
 			case ANTENNA_CD:
 				if(IS_TEST_CHIP(priv)){
 					PHY_SetBBReg(priv, 0xa04, 0xf0000000, 0x3); 	//0xa07[7:4] = 0x3
@@ -7121,7 +7121,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 					PHY_SetBBReg(priv, 0xa04, 0xf0000000, 0x3); 	//0xa07[7:4] = 0x3
 					PHY_SetBBReg(priv, 0x80c, 0xf0, 0xc);		 	// 0x80C[7:4] = 0xc
 				}
-				break;		
+				break;
 			case ANTENNA_ABC:
 				if(IS_TEST_CHIP(priv)){
 					PHY_SetBBReg(priv, 0xa04, 0xf0000000, 0xe); 	//0xa07[7:4] = 0xe
@@ -7139,7 +7139,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 					PHY_SetBBReg(priv, 0xa04, 0xf0000000, 0x7); 	//0xa07[7:4] = 0x7
 					PHY_SetBBReg(priv, 0x80c, 0xf0, 0xe);		 	// 0x80C[7:4] = 0xe
 				}
-				break;	
+				break;
 			case ANTENNA_ABCD:
 				if(IS_TEST_CHIP(priv)){
 					PHY_SetBBReg(priv, 0xa04, 0xf0000000, 0xf); 	//0xa07[7:4] = 0xf
@@ -7148,7 +7148,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 					PHY_SetBBReg(priv, 0xa04, 0xf0000000, 0xf); 	//0xa07[7:4] = 0xf
 					PHY_SetBBReg(priv, 0x80c, 0xf0, 0xf);		 	// 0x80C[7:4] = 0xf
 				}
-				break;	
+				break;
 			case ANTENNA_A:
 			default:
 				if(IS_TEST_CHIP(priv)){
@@ -7161,7 +7161,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 				break;
 		}
 	}else if(is_1SS_rate(priv->pshare->mp_datarate)){
-	
+
 		//PHY_SetBBReg(priv, 0x80c, BIT29, 0x0);// bit[29]=1'b0
 		//PHY_SetBBReg(priv, 0x93c, 0xc0000, 0x3);//bit[19:18]=2'b11
 		switch(priv->pshare->mp_antenna_tx)
@@ -7190,12 +7190,12 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 				PHY_SetBBReg(priv, 0x93c, 0xfff00000, 0x106);	// 0x93C[31:20]=0x106
 				if(IS_TEST_CHIP(priv))
 					PHY_SetBBReg(priv, 0x80c, 0xf, 0x6);			// 0x80C[3:0] = 4'b0110
-				break;				
+				break;
 			case ANTENNA_CD:
 				PHY_SetBBReg(priv, 0x93c, 0xfff00000, 0x40c);	// 0x93C[31:20]=0x40c
 				if(IS_TEST_CHIP(priv))
 					PHY_SetBBReg(priv, 0x80c, 0xf, 0xc);			// 0x80C[3:0] = 4'b1100
-				break;				
+				break;
 			case ANTENNA_ABC:
 				PHY_SetBBReg(priv, 0x93c, 0xfff00000, 0x247);	// 0x93C[31:20]=0x247
 				if(IS_TEST_CHIP(priv))
@@ -7210,16 +7210,16 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 				PHY_SetBBReg(priv, 0x93c, 0xfff00000, 0xe4f);	// 0x93C[31:20]=0x90e
 				if(IS_TEST_CHIP(priv))
 					PHY_SetBBReg(priv, 0x80c, 0xf, 0xe);			//0x80C[3:0] = 4'b0111
-				break;				
+				break;
 			case ANTENNA_A:
-			default:	
+			default:
 				PHY_SetBBReg(priv, 0x93c, 0xfff00000, 0x001);	// 0x93C[31:20]=12'b0000_0000_0001
 				if(IS_TEST_CHIP(priv))
 					PHY_SetBBReg(priv, 0x80c, 0xf, 0x1);			// 0x80C[3:0] = 4'b0001
 				break;
 		}
 	}else if(is_2SS_rate(priv->pshare->mp_datarate)){
-	
+
 		//PHY_SetBBReg(priv, 0x80c, BIT29, 0x0);// bit[29]=1'b0
 		//PHY_SetBBReg(priv, 0x93c, 0xc0000, 0x3);//bit[19:18]=2'b11
 		switch(priv->pshare->mp_antenna_tx)
@@ -7228,12 +7228,12 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 				PHY_SetBBReg(priv, 0x940, 0x0000fff0, 0x043);	// 0x940[15:4]=12'b0000_0100_0011
 				if(IS_TEST_CHIP(priv))
 					PHY_SetBBReg(priv, 0x80c, 0xf, 0x3);			// 0x80C[3:0] = 4'b0011
-				break;			
+				break;
 			case ANTENNA_CD:
 				PHY_SetBBReg(priv, 0x940, 0x0000fff0, 0x40c);	// 0x940[15:4]=12'b0000_0100_0011
 				if(IS_TEST_CHIP(priv))
 					PHY_SetBBReg(priv, 0x80c, 0xf, 0xc);			// 0x80C[3:0] = 4'b1100
-				break;				
+				break;
 			case ANTENNA_ABC:
 				PHY_SetBBReg(priv, 0x940, 0x0000fff0, 0x90d);	// 0x940[15:4]=0x90d
 				if(IS_TEST_CHIP(priv))
@@ -7248,16 +7248,16 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 				PHY_SetBBReg(priv, 0x940, 0x0000fff0, 0xe4f);	// 0x940[15:4]=0x90e
 				if(IS_TEST_CHIP(priv))
 					PHY_SetBBReg(priv, 0x80c, 0xf, 0xe);			//0x80C[3:0] = 4'b0111
-				break;					
+				break;
 			case ANTENNA_BC:
-			default:	
+			default:
 				PHY_SetBBReg(priv, 0x940, 0x0000fff0, 0x106);	// 0x940[15:4]=12'b0001_0000_0110
 				if(IS_TEST_CHIP(priv))
 					PHY_SetBBReg(priv, 0x80c, 0xf, 0x6);			// 0x80C[3:0] = 4'b0110
-				break;	
+				break;
 		}
 		}else if(is_3SS_rate(priv->pshare->mp_datarate)){
-	
+
 		//PHY_SetBBReg(priv, 0x80c, BIT29, 0x0);// bit[29]=1'b0
 		//PHY_SetBBReg(priv, 0x93c, 0xc0000, 0x3);//bit[19:18]=2'b11
 		switch(priv->pshare->mp_antenna_tx)
@@ -7272,7 +7272,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 				PHY_SetBBReg(priv, 0x940, 0x0fff0000, 0x90e);	// 0x940[27:16]=12'b1001_0000_1100
 				if(IS_TEST_CHIP(priv))
 					PHY_SetBBReg(priv, 0x80c, 0xf, 0xe);			//0x80C[3:0] = 4'b0111
-				break;				
+				break;
 		}
 	}
 	switch(priv->pshare->mp_antenna_rx)
@@ -7281,7 +7281,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
 		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);	/*BB reset 0x1002*/
 		PHY_SetBBReg(priv, 0x808, 0xff, 0x11);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);	
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
 		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x5);
 		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0xA);
@@ -7296,15 +7296,15 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 		break;
 	case ANTENNA_B:
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);	
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
 		PHY_SetBBReg(priv, 0x808, 0xff, 0x22);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);	
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
 		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x5);
 		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0xA);
-		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x5);	//0xa07[3:2]=2'b01, 0xa07[1:0]=2'b01 	
+		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x5);	//0xa07[3:2]=2'b01, 0xa07[1:0]=2'b01
 		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x1);	//0xA87[3:2]=2'b01
-		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1); 
+		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 1);
@@ -7315,13 +7315,13 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
 		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
 		PHY_SetBBReg(priv, 0x808, 0xff, 0x44);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);	
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
 		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x5);
 		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0xA);
-		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0xa);	//0xa07[3:2]=2'b10, 0xa07[1:0]=2'b10 			
+		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0xa);	//0xa07[3:2]=2'b10, 0xa07[1:0]=2'b10
 		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x2);	//0xA87[3:2]=2'b10
-		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1); 
+		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 1);
@@ -7332,13 +7332,13 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
 		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
 		PHY_SetBBReg(priv, 0x808, 0xff, 0x88);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);	
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
 		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x5);
 		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0xA);
-		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0xf);	//0xa07[3:2]=2'b11, 0xa07[1:0]=2'b11			
+		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0xf);	//0xa07[3:2]=2'b11, 0xa07[1:0]=2'b11
 		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x3);	//0xA87[3:2]=2'b11
-		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1); 
+		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 3);
@@ -7349,13 +7349,13 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
 		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
 		PHY_SetBBReg(priv, 0x808, 0xff, 0x33);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);	
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
 		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x5);
 		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0xA);
-		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x1); //0xa07[3:2]=2'b00, 0xa07[1:0]=2'b01	
+		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x1); //0xa07[3:2]=2'b00, 0xa07[1:0]=2'b01
 		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x0);	//0xA87[3:2]=2'b00
-		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 3); 
+		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 1);
@@ -7366,13 +7366,13 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
 		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
 		PHY_SetBBReg(priv, 0x808, 0xff, 0x66);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);	
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
 		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x5);
 		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0xA);
-		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x6); //0xa07[3:2]=2'b01, 0xa07[1:0]=2'b10	
+		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x6); //0xa07[3:2]=2'b01, 0xa07[1:0]=2'b10
 		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x1);	//0xA87[3:2]=2'b01
-		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1); 
+		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 1);
@@ -7383,64 +7383,64 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
 		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
 		PHY_SetBBReg(priv, 0x808, 0xff, 0xcc);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);	
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
 		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x5);
 		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0xA);
-		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0xb); //0xa07[3:2]=2'b10, 0xa07[1:0]=2'b11	
+		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0xb); //0xa07[3:2]=2'b10, 0xa07[1:0]=2'b11
 		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x2);	//0xA87[3:2]=2'b10
-		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1); 
+		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 1);
 		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 3);
 		PHY_SetBBReg(priv, 0xa2c, 0x040000, 0x0); //0xA2e[6,2] = 2'b00  disble 2R CCA
 		PHY_SetBBReg(priv, 0xa2c, 0x400000, 0x0); //0xA2e[6,2] = 2'b00  disble 2R CCA
-		break;		
+		break;
 	case ANTENNA_ABC:
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
 		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
 		PHY_SetBBReg(priv, 0x808, 0xff, 0x77);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);	
-		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
-		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x3);
-		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0x8);
-		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x1); //0xa07[3:2]=2'b00, 0xa07[1:0]=2'b01	
-		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x2);	//0xA87[3:2]=2'b10
-		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 3); 
-		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 3);
-		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 3);
-		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 1);
-		PHY_SetBBReg(priv, 0xa2c, 0x040000, 0x0); //0xA2e[6,2] = 2'b00  disble 2R CCA
-		PHY_SetBBReg(priv, 0xa2c, 0x400000, 0x0); //0xA2e[6,2] = 2'b00  disble 2R CCA
-		break;	
-	case ANTENNA_BCD:
-		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
-		PHY_SetBBReg(priv, 0x808, 0xff, 0xee);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);	
-		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
-		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x3);
-		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0x8);
-		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x6); //0xa07[3:2]=2'b01, 0xa07[1:0]=2'b10	
-		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x3);	//0xA87[3:2]=2'b11
-		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1); 
-		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 3);
-		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 3);
-		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 3);
-		PHY_SetBBReg(priv, 0xa2c, 0x040000, 0x0); //0xA2e[6,2] = 2'b00  disble 2R CCA
-		PHY_SetBBReg(priv, 0xa2c, 0x400000, 0x0); //0xA2e[6,2] = 2'b00  disble 2R CCA
-		break;	
-	case ANTENNA_ABCD:
-		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
-		PHY_SetBBReg(priv, 0x808, 0xff, 0xff);
-		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);	
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);
 		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
 		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x3);
 		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0x8);
 		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x1); //0xa07[3:2]=2'b00, 0xa07[1:0]=2'b01
 		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x2);	//0xA87[3:2]=2'b10
-		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 3); 
+		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 3);
+		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 3);
+		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 3);
+		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 1);
+		PHY_SetBBReg(priv, 0xa2c, 0x040000, 0x0); //0xA2e[6,2] = 2'b00  disble 2R CCA
+		PHY_SetBBReg(priv, 0xa2c, 0x400000, 0x0); //0xA2e[6,2] = 2'b00  disble 2R CCA
+		break;
+	case ANTENNA_BCD:
+		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
+		PHY_SetBBReg(priv, 0x808, 0xff, 0xee);
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);
+		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
+		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x3);
+		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0x8);
+		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x6); //0xa07[3:2]=2'b01, 0xa07[1:0]=2'b10
+		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x3);	//0xA87[3:2]=2'b11
+		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 1);
+		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 3);
+		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 3);
+		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 3);
+		PHY_SetBBReg(priv, 0xa2c, 0x040000, 0x0); //0xA2e[6,2] = 2'b00  disble 2R CCA
+		PHY_SetBBReg(priv, 0xa2c, 0x400000, 0x0); //0xA2e[6,2] = 2'b00  disble 2R CCA
+		break;
+	case ANTENNA_ABCD:
+		PHY_SetBBReg(priv, 0x838, BIT1, 0x1);
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x2);
+		PHY_SetBBReg(priv, 0x808, 0xff, 0xff);
+		//PHY_SetBBReg(priv, 0x1000, 0xff0000, 0x3);
+		PHY_SetBBReg(priv, 0x838, BIT1, 0x0);
+		PHY_SetBBReg(priv, rAGC_table_Jaguar, 0x0F000000, 0x3);
+		PHY_SetBBReg(priv, 0x830, 0x0000000F, 0x8);
+		PHY_SetBBReg(priv, 0xa04, 0xf000000, 0x1); //0xa07[3:2]=2'b00, 0xa07[1:0]=2'b01
+		PHY_SetBBReg(priv, 0xa84, 0xc000000, 0x2);	//0xA87[3:2]=2'b10
+		PHY_SetRFReg(priv, 0, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 1, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 2, 0x00, 0xf0000, 3);
 		PHY_SetRFReg(priv, 3, 0x00, 0xf0000, 3);
@@ -7482,7 +7482,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 
 			case ANTENNA_AB:
 			case ANTENNA_BC:
-			case ANTENNA_CD:	
+			case ANTENNA_CD:
 				{
 					if (priv->pshare->is_40m_bw == HT_CHANNEL_WIDTH_80) {
 						PHY_SetBBReg(priv, 0x838, BIT0, 0x1);
@@ -7493,7 +7493,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 						PHY_SetBBReg(priv, 0x838, 0x000f0000, 0x9);
 						PHY_SetBBReg(priv, 0x840, 0x0000f000, 0x6);
 						PHY_SetBBReg(priv, 0x8ac, 0x3c, 0x1);	//Set Primary channel 1.  80M=[4,2,1,3]
-					} else {			
+					} else {
 						PHY_SetBBReg(priv, 0x838, BIT0, 0x0);	//Disable 2nd CCA if not 80MHz
 						PHY_SetBBReg(priv, 0x82c, BIT27|BIT26|BIT25|BIT24, 0x5);
 						RTL_W8(0x830,0xa);
@@ -7501,7 +7501,7 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 
 				}
 				break;
-			
+
 			case ANTENNA_ABC:
 			case ANTENNA_BCD:
 				{
@@ -7514,16 +7514,16 @@ static void mp_chk_sw_ant_8814(struct rtl8192cd_priv *priv)
 						PHY_SetBBReg(priv, 0x838, 0x000f0000, 0x7);
 						PHY_SetBBReg(priv, 0x840, 0x0000f000, 0x6);
 						PHY_SetBBReg(priv, 0x8ac, 0x3c, 0x1);	//Set Primary channel 1.  80M=[4,2,1,3]
-					} else {				
+					} else {
 						PHY_SetBBReg(priv, 0x838, BIT0, 0x0);	//Disable 2nd CCA if not 80MHz
 						PHY_SetBBReg(priv, 0x82c, BIT27|BIT26|BIT25|BIT24, 0x3);
 						RTL_W8(0x830,0x8);
 					}
 				}
 				break;
-			
+
 			case ANTENNA_ABCD:
-			default:	
+			default:
 				{
 					if (priv->pshare->is_40m_bw == HT_CHANNEL_WIDTH_80) {
 						PHY_SetBBReg(priv, 0x838, BIT0, 0x1);
@@ -7643,7 +7643,7 @@ static void mp_chk_sw_ant(struct rtl8192cd_priv *priv)
 			{
 				PHY_SetRFReg(priv, ODM_RF_PATH_A, RF_WE_LUT, 0x80000,0x1); // RF Mode table write enable
 				PHY_SetRFReg(priv, ODM_RF_PATH_B, RF_WE_LUT, 0x80000,0x1); // RF Mode table write enable
-	
+
 				// Paath_A
 				PHY_SetRFReg(priv, ODM_RF_PATH_A, RF_RCK_OS, 0xfffff,0x18000); // Select RX mode 0x30=0x18000
 				PHY_SetRFReg(priv, ODM_RF_PATH_A, RF_TXPA_G1, 0xfffff,0x0000f); // Set Table data
@@ -7652,7 +7652,7 @@ static void mp_chk_sw_ant(struct rtl8192cd_priv *priv)
 				PHY_SetRFReg(priv, ODM_RF_PATH_B, RF_RCK_OS, 0xfffff,0x18000); // Select RX mode
 				PHY_SetRFReg(priv, ODM_RF_PATH_B, RF_TXPA_G1, 0xfffff,0x0000f); // Set Table data
 				PHY_SetRFReg(priv, ODM_RF_PATH_B, RF_TXPA_G2, 0xfffff,0x77fc2); // Enable TXIQGEN in RX mode
-	
+
 				PHY_SetRFReg(priv, ODM_RF_PATH_A, RF_WE_LUT, 0x80000,0x0); // RF Mode table write disable
 				PHY_SetRFReg(priv, ODM_RF_PATH_B, RF_WE_LUT, 0x80000,0x0); // RF Mode table write disable
 				RTL_W8(0xA2F, 0x10);
@@ -7723,17 +7723,17 @@ static void mp_chk_sw_ant(struct rtl8192cd_priv *priv)
 			case ANTENNA_A:
 			PHY_SetBBReg(priv, rOFDM0_TRxPathEnable, bMaskByte0, 0x11);
 			break;
-			
+
 			case ANTENNA_B:
-			PHY_SetBBReg(priv, rOFDM0_TRxPathEnable, bMaskByte0, 0x22); 			
+			PHY_SetBBReg(priv, rOFDM0_TRxPathEnable, bMaskByte0, 0x22);
 			break;
-			
-			case ANTENNA_AB:	
-			PHY_SetBBReg(priv, rOFDM0_TRxPathEnable, bMaskByte0, 0x33); 	
-			break;	
+
+			case ANTENNA_AB:
+			PHY_SetBBReg(priv, rOFDM0_TRxPathEnable, bMaskByte0, 0x33);
+			break;
 		}
 	}
-#endif			
+#endif
 }
 
 
@@ -7752,7 +7752,7 @@ void mp_set_ant_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 		return;
 	}
 	unsigned char tx2path=0;
-		
+
 	if (!strcmp(data, "a")) {
 		priv->pshare->mp_antenna_tx = ANTENNA_A;
 		priv->pshare->mp_antenna_rx = ANTENNA_A;
@@ -7761,7 +7761,7 @@ void mp_set_ant_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 		priv->pshare->mp_antenna_rx = ANTENNA_B;
 	} else if  (!strcmp(data, "c")) {
 		priv->pshare->mp_antenna_tx = ANTENNA_C;
-		priv->pshare->mp_antenna_rx = ANTENNA_C; 
+		priv->pshare->mp_antenna_rx = ANTENNA_C;
 	} else if  (!strcmp(data, "d")) {
 		priv->pshare->mp_antenna_tx = ANTENNA_D;
 		priv->pshare->mp_antenna_rx = ANTENNA_D;
@@ -7774,13 +7774,13 @@ void mp_set_ant_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 		priv->pshare->mp_antenna_rx = ANTENNA_BC;
 	} else if  (!strcmp(data, "cd")) {
 		priv->pshare->mp_antenna_tx = ANTENNA_CD;
-		priv->pshare->mp_antenna_rx = ANTENNA_CD;		
+		priv->pshare->mp_antenna_rx = ANTENNA_CD;
 	} else if  (!strcmp(data, "abc")) {
 		priv->pshare->mp_antenna_tx = ANTENNA_ABC;
 		priv->pshare->mp_antenna_rx = ANTENNA_ABC;
 	} else if  (!strcmp(data, "bcd")) {
-		priv->pshare->mp_antenna_tx = ANTENNA_BCD;		
-		priv->pshare->mp_antenna_rx = ANTENNA_BCD;		
+		priv->pshare->mp_antenna_tx = ANTENNA_BCD;
+		priv->pshare->mp_antenna_rx = ANTENNA_BCD;
 	} else if  (!strcmp(data, "abcd")) {
 		priv->pshare->mp_antenna_tx = ANTENNA_ABCD;
 		priv->pshare->mp_antenna_rx = ANTENNA_ABCD;
@@ -7796,20 +7796,20 @@ void mp_set_ant_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 	if (CHECKICIS8812() || CHECKICIS8881A())
 		mp_chk_sw_ant_AC(priv);
 	else
-#endif		
+#endif
 #if defined(CONFIG_WLAN_HAL_8814AE)
 	if (CHECKICIS8814())
 		mp_chk_sw_ant_8814(priv);
 	else
-#endif		
+#endif
 #if defined(CONFIG_WLAN_HAL_8822BE)
 	if (CHECKICIS8822())
-		config_phydm_trx_mode_8822b(ODMPTR,priv->pshare->mp_antenna_tx,priv->pshare->mp_antenna_rx,1);	
+		config_phydm_trx_mode_8822b(ODMPTR,priv->pshare->mp_antenna_tx,priv->pshare->mp_antenna_rx,1);
 	else
 #endif
 #if defined(CONFIG_WLAN_HAL_8197F)
 	if (CHECKICIS97F()) //wish
-		config_phydm_trx_mode_8197f(ODMPTR,priv->pshare->mp_antenna_tx,priv->pshare->mp_antenna_rx,tx2path);		
+		config_phydm_trx_mode_8197f(ODMPTR,priv->pshare->mp_antenna_tx,priv->pshare->mp_antenna_rx,tx2path);
 	else
 #endif
 		mp_chk_sw_ant(priv);
@@ -7824,8 +7824,8 @@ __NOMIPS16
 #endif
 void mp_set_ant_rx(struct rtl8192cd_priv *priv, unsigned char *data)
 {
-	int temp_IG;	
-		
+	int temp_IG;
+
 	if (!netif_running(priv->dev)) {
 		printk("\nFail: interface not opened\n");
 		return;
@@ -7841,7 +7841,7 @@ void mp_set_ant_rx(struct rtl8192cd_priv *priv, unsigned char *data)
 	} else if (!strcmp(data, "b")) {
 		priv->pshare->mp_antenna_rx = ANTENNA_B;
 	} else if  (!strcmp(data, "c")) {
-		priv->pshare->mp_antenna_rx = ANTENNA_C; 
+		priv->pshare->mp_antenna_rx = ANTENNA_C;
 	} else if  (!strcmp(data, "d")) {
 		priv->pshare->mp_antenna_rx = ANTENNA_D;
 	} else if (!strcmp(data, "ab")) {
@@ -7854,16 +7854,16 @@ void mp_set_ant_rx(struct rtl8192cd_priv *priv, unsigned char *data)
 	} else if  (!strcmp(data, "abc")) {
 		priv->pshare->mp_antenna_rx = ANTENNA_ABC;
 	} else if  (!strcmp(data, "bcd")) {
-		priv->pshare->mp_antenna_rx = ANTENNA_BCD;		
+		priv->pshare->mp_antenna_rx = ANTENNA_BCD;
 	} else if  (!strcmp(data, "abcd")) {
 		priv->pshare->mp_antenna_rx = ANTENNA_ABCD;
 	} else {
 #if defined(CONFIG_WLAN_HAL_8814AE)
 		printk("Usage: mp_ant_tx {a, b, c, d, bc, cd, bcd, or abcd}\n");
-#else	
+#else
 		printk("Usage: mp_ant_tx {a,b,ab}\n");
 #endif
-		
+
 		return;
 	}
 
@@ -7878,7 +7878,7 @@ void mp_set_ant_rx(struct rtl8192cd_priv *priv, unsigned char *data)
 		if (CHECKICIS8812() || CHECKICIS8881A())
 			mp_chk_sw_ant_AC(priv);
 		else
-#endif	
+#endif
 #if defined(CONFIG_WLAN_HAL_8814AE)
 		if (CHECKICIS8814()){
 			mp_chk_sw_ant_8814(priv);
@@ -7904,18 +7904,18 @@ void mp_set_ant_rx(struct rtl8192cd_priv *priv, unsigned char *data)
 			RTL_W8(rD_IGI_Jaguar, (RTL_R8(rD_IGI_Jaguar)&0x80)|temp_IG);
 			printk("Finish toggling for 8814\n");
 		} else
-#endif	
+#endif
 #if defined(CONFIG_WLAN_HAL_8822BE)
 		if (CHECKICIS8822()){
-			priv->pshare->mp_antenna_tx=priv->pshare->mp_antenna_rx; //suggested by BB and RF	
-			config_phydm_trx_mode_8822b(ODMPTR,priv->pshare->mp_antenna_tx,priv->pshare->mp_antenna_rx,1);		
+			priv->pshare->mp_antenna_tx=priv->pshare->mp_antenna_rx; //suggested by BB and RF
+			config_phydm_trx_mode_8822b(ODMPTR,priv->pshare->mp_antenna_tx,priv->pshare->mp_antenna_rx,1);
 		}else
-#endif	
-#if defined(CONFIG_WLAN_HAL_8197F) 
-		if (CHECKICIS97F())//wish		
-			config_phydm_trx_mode_8197f(ODMPTR,priv->pshare->mp_antenna_tx,priv->pshare->mp_antenna_rx,tx2path);		
+#endif
+#if defined(CONFIG_WLAN_HAL_8197F)
+		if (CHECKICIS97F())//wish
+			config_phydm_trx_mode_8197f(ODMPTR,priv->pshare->mp_antenna_tx,priv->pshare->mp_antenna_rx,tx2path);
 		else
-#endif	
+#endif
 			mp_chk_sw_ant(priv);
 	printk("switch Rx antenna to %s\n", data);
 }
@@ -7938,13 +7938,13 @@ void mp_set_phypara(struct rtl8192cd_priv *priv, unsigned char *data)
 		return;
 	}
 
-#ifdef CONFIG_RTL_92C_SUPPORT	
+#ifdef CONFIG_RTL_92C_SUPPORT
 	if (GET_CHIP_VER(priv) == VERSION_8192C || GET_CHIP_VER(priv) == VERSION_8188C) {
 		printk("Fail: xcap is not support for 92C!\n");
 		return;
 	}
 #endif
-	
+
 	// get CrystalCap value
 	val = get_value_by_token((char *)data, "xcap=");
 	if (val) {
@@ -7970,7 +7970,7 @@ void mp_set_phypara(struct rtl8192cd_priv *priv, unsigned char *data)
 			PHY_SetBBReg(priv, 0x24, 0xF0, xcap & 0x0F);
 			PHY_SetBBReg(priv, 0x28, 0xF0000000, ((xcap & 0xF0) >> 4));
 		}
-	} 
+	}
 #if defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_RTL_8723B_SUPPORT)
 	if(GET_CHIP_VER(priv) == VERSION_8188E || GET_CHIP_VER(priv) == VERSION_8723B){
 		if(xcap > 0 && xcap < 0x3F) {
@@ -8036,7 +8036,7 @@ void mp_set_phypara(struct rtl8192cd_priv *priv, unsigned char *data)
 #if defined(CONFIG_RTL_92D_SUPPORT) || defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8881A)
 void mp_set_phyBand(struct rtl8192cd_priv *priv, unsigned char *data)
 {
-#if defined(CONFIG_RTL_92D_SUPPORT) 
+#if defined(CONFIG_RTL_92D_SUPPORT)
 	unsigned int eRFPath, curMaxRFPath=((priv->pmib->dot11RFEntry.macPhyMode==SINGLEMAC_SINGLEPHY)?RF92CD_PATH_MAX : RF92CD_PATH_B);
 #endif
 	if (!netif_running(priv->dev)) {
@@ -8072,7 +8072,7 @@ void mp_set_phyBand(struct rtl8192cd_priv *priv, unsigned char *data)
 	if((GET_CHIP_VER(priv)==VERSION_8812E) || (GET_CHIP_VER(priv)==VERSION_8881A))
 	{
 		/*
-		 *	Stop RX/Tx 
+		 *	Stop RX/Tx
 		 */
 		PHY_SetBBReg(priv, 0x808, 0xff, 0x00);
 		PHY_SetBBReg(priv, 0xa04, 0xc000000, 0x0);
@@ -8084,7 +8084,7 @@ void mp_set_phyBand(struct rtl8192cd_priv *priv, unsigned char *data)
 
 #if defined(CONFIG_WLAN_HAL_8881A)
             if (GET_CHIP_VER(priv) == VERSION_8881A) {
-               GET_HAL_INTERFACE(priv)->PHYUpdateBBRFValHandler(priv, 
+               GET_HAL_INTERFACE(priv)->PHYUpdateBBRFValHandler(priv,
                     priv->pmib->dot11RFEntry.dot11channel,priv->pshare->offset_2nd_chan);
             }
 #endif //#if defined(CONFIG_WLAN_HAL_8881A)
@@ -8094,12 +8094,12 @@ void mp_set_phyBand(struct rtl8192cd_priv *priv, unsigned char *data)
 			UpdateBBRFVal8812(priv, priv->pmib->dot11RFEntry.dot11channel);
 #endif //#if defined(CONFIG_RTL_8812_SUPPORT)
 
-		if (priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_5G) 
+		if (priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_5G)
 			RTL_W16(RRSR, 0x150);
 		else
 			RTL_W16(RRSR, 0x15D);
 
-		/* 
+		/*
 	 	 *	Recovery RX/Tx
 	 	 */
 		PHY_SetBBReg(priv, 0x808, 0xff, 0x33);
@@ -8109,7 +8109,7 @@ void mp_set_phyBand(struct rtl8192cd_priv *priv, unsigned char *data)
 		 *	IQK
 		 */
 		//PHY_IQCalibrate(priv);
-#if 0		
+#if 0
 		/*
 		 *	Set Rx AGC
 		 */
@@ -8128,10 +8128,10 @@ void mp_set_phyBand(struct rtl8192cd_priv *priv, unsigned char *data)
 			return;
 	}
 #endif
-#if defined(CONFIG_RTL_92D_SUPPORT) 
+#if defined(CONFIG_RTL_92D_SUPPORT)
 	if (GET_CHIP_VER(priv)==VERSION_8192D) {
 	/*
-	 *	Stop RX/Tx 
+	 *	Stop RX/Tx
 	 */
 	PHY_SetBBReg(priv, rOFDM0_TRxPathEnable, bMaskByte0, 0x00);
 	PHY_SetBBReg(priv, rOFDM1_TRxPathEnable, bDWord, 0x0);
@@ -8149,7 +8149,7 @@ void mp_set_phyBand(struct rtl8192cd_priv *priv, unsigned char *data)
 	PHY_SetBBReg(priv, rFPGA0_RFMOD, BIT(25) | BIT(24), 0);
 	PHY_ConfigBBWithParaFile(priv, AGCTAB);
 	PHY_SetBBReg(priv, rFPGA0_RFMOD, BIT(25) | BIT(24), 3);
-	
+
 	for(eRFPath = RF92CD_PATH_A; eRFPath <curMaxRFPath; eRFPath++) {
 		priv->pshare->RegRF18[eRFPath] = PHY_QueryRFReg(priv, eRFPath, 0x18, bMask20Bits, 1);
 		priv->pshare->RegRF28[eRFPath] = PHY_QueryRFReg(priv, eRFPath, 0x28, bMask20Bits, 1);
@@ -8164,7 +8164,7 @@ void mp_set_phyBand(struct rtl8192cd_priv *priv, unsigned char *data)
 		RTL_W16(RRSR, 0x15D);
 	}
 
-	/* 
+	/*
 	 *	Recovery RX/Tx
 	 */
 	PHY_SetBBReg(priv, rOFDM0_TRxPathEnable, bMaskByte0, 0x33);
@@ -8265,7 +8265,7 @@ void mp_help(struct rtl8192cd_priv *priv)
 #if defined(CONFIG_WLAN_HAL_8814AE)
 	printk("  iwpriv wlanx mp_ant_tx {a,b,c,d,ab,abc,abcd}\n");
 	printk("  iwpriv wlanx mp_ant_rx {a,b,c,d,ab,abc,abcd}\n");
-#else    
+#else
 	printk("  iwpriv wlanx mp_ant_tx {a,b,ab}\n");
 	printk("  iwpriv wlanx mp_ant_rx {a,b,ab}\n");
 #endif
@@ -8279,7 +8279,7 @@ void mp_help(struct rtl8192cd_priv *priv)
 	printk("		- default: tx infinitely (no background).\n");
 	printk("  iwpriv wlanx mp_query\n");
 #ifdef MP_PSD_SUPPORT
-	printk("  iwpriv wlanx mp_psd\n"); 
+	printk("  iwpriv wlanx mp_psd\n");
 #endif
 	printk("  iwpriv wlanx mp_ther\n");
 #if (IC_LEVEL >= LEVEL_8812)

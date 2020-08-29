@@ -93,7 +93,7 @@ unsigned short chkMeshSeq(struct path_sel_entry *pPathselEntry, unsigned short s
 
     pPathselEntry->RecentSeq[idx] = seq;
     return 1;
-   
+
 }
 
 /*return value 0: succeed, other: fail*/
@@ -109,9 +109,9 @@ int insert_PREQ_entry(unsigned char *targetMac, DRV_PRIV *priv)
     retryEntry= (struct mesh_rreq_retry_entry*) HASH_SEARCH(priv->mesh_rreq_retry_queue, targetMac);
     if(	retryEntry== NULL)
     {
-        rreqEntry.TimeStamp = rreqEntry.createTime = jiffies;		
+        rreqEntry.TimeStamp = rreqEntry.createTime = jiffies;
         rreqEntry.Retries = 0;
-        memcpy(rreqEntry.MACAddr, targetMac, MACADDRLEN);		
+        memcpy(rreqEntry.MACAddr, targetMac, MACADDRLEN);
         rreqEntry.pktqueue.head = rreqEntry.pktqueue.tail = 0;
         if(HASH_TABLE_SUCCEEDED != HASH_INSERT(priv->mesh_rreq_retry_queue, targetMac, &rreqEntry)) {
             ret = 1;
@@ -119,12 +119,12 @@ int insert_PREQ_entry(unsigned char *targetMac, DRV_PRIV *priv)
         }
 
         mesh_route_debug("PREQ to find %02x:%02x:%02x:%02x:%02x:%02x queued at %lu\n",
-                targetMac[0],targetMac[1],targetMac[2],targetMac[3],targetMac[4],targetMac[5],jiffies);  
+                targetMac[0],targetMac[1],targetMac[2],targetMac[3],targetMac[4],targetMac[5],jiffies);
 
         retryEntry = (struct mesh_rreq_retry_entry*) HASH_SEARCH(priv->mesh_rreq_retry_queue, targetMac);
 
 
-        if(priv->rreq_head == NULL) {           
+        if(priv->rreq_head == NULL) {
             retryEntry->rreq_prev = retryEntry->rreq_next =  NULL;
             priv->rreq_head = priv->rreq_tail = retryEntry;
         }
@@ -133,20 +133,20 @@ int insert_PREQ_entry(unsigned char *targetMac, DRV_PRIV *priv)
             retryEntry->rreq_prev = priv->rreq_tail;
             priv->rreq_tail->rreq_next = retryEntry;
             priv->rreq_tail = retryEntry;
-        }      
+        }
     }
     else
     {
         mesh_route_debug("PREQ to find %02x:%02x:%02x:%02x:%02x:%02x refreshed at %lu\n",
                 retryEntry->MACAddr[0],retryEntry->MACAddr[1],retryEntry->MACAddr[2],retryEntry->MACAddr[3],retryEntry->MACAddr[4],retryEntry->MACAddr[5],jiffies);
-        retryEntry->TimeStamp=retryEntry->createTime=jiffies;		
-        retryEntry->Retries = 0;					
+        retryEntry->TimeStamp=retryEntry->createTime=jiffies;
+        retryEntry->Retries = 0;
     }
-    
+
 ret:
     RESTORE_INT(flags);
     SMP_UNLOCK_MESH_PREQ(flags);
-    
+
     return ret;
 }
 
@@ -154,7 +154,7 @@ void GEN_PREQ_PACKET(char *targetMac, DRV_PRIV *priv)
 {
     DOT11s_GEN_RREQ_PACKET rreq_event;
     memset((void*)&rreq_event, 0x0, sizeof(DOT11s_GEN_RREQ_PACKET));
-    rreq_event.EventId = DOT11_EVENT_PATHSEL_GEN_RREQ;	
+    rreq_event.EventId = DOT11_EVENT_PATHSEL_GEN_RREQ;
     rreq_event.IsMoreEvent = 0;
     memcpy(rreq_event.MyMACAddr,  GET_MY_HWADDR ,MACADDRLEN);
     memcpy(rreq_event.destMACAddr,  targetMac ,MACADDRLEN);
@@ -163,7 +163,7 @@ void GEN_PREQ_PACKET(char *targetMac, DRV_PRIV *priv)
     DOT11_EnQueue2((unsigned long)priv, priv->pathsel_queue, (unsigned char*)&rreq_event, sizeof(DOT11s_GEN_RREQ_PACKET));
     notifyPathSelection(priv);
 }
-		   
+
 
 //modify by Joule for MESH HEADER
 unsigned char* getMeshHeader(DRV_PRIV *priv, int wep_mode, unsigned char* pframe)
@@ -216,17 +216,17 @@ unsigned char* getMeshHeader(DRV_PRIV *priv, int wep_mode, unsigned char* pframe
 }
 
 void notifyPathSelection(DRV_PRIV *priv)
-{ 
+{
         struct task_struct *p;
-        
+
         if(priv->pid_pathsel != 0){
-                read_lock(&tasklist_lock); 
+                read_lock(&tasklist_lock);
                 p = find_task_by_vpid(priv->pid_pathsel);
                 read_unlock(&tasklist_lock);
                 if(p)
                 {
                         // printk("send signal from kernel\n");
-                        send_sig(SIGUSR1,p,0); 
+                        send_sig(SIGUSR1,p,0);
                 }
                 else {
                         priv->pid_pathsel = 0;
@@ -245,7 +245,7 @@ void notifyPathSelection(DRV_PRIV *priv)
  // chuangch 10.19
  #ifdef MESH_ROUTE_MAINTENANCE
  void route_maintenance(DRV_PRIV *priv)
- { 
+ {
     const int tbl_sz = 1 << priv->pathsel_table->table_size_power;
     int i;
     unsigned long now = jiffies, time_diff;
@@ -264,9 +264,9 @@ void notifyPathSelection(DRV_PRIV *priv)
             if(((entry->metric > ((int)(entry->hopcount))<<8 )
                 && (time_diff > HWMP_PREQ_REFRESH_PERIOD ))
                 || (time_diff > HWMP_PREQ_REFRESH_PERIOD2))
-            {				
+            {
                 entry->routeMaintain = jiffies;
-                memcpy(destMAC, entry->destMAC, MACADDRLEN);  
+                memcpy(destMAC, entry->destMAC, MACADDRLEN);
                 is_maintain = 1;
             }
         }
@@ -280,13 +280,13 @@ void notifyPathSelection(DRV_PRIV *priv)
     }
 }
  #endif
- 
+
 void aodv_expire(void *task_priv)
 {
     DRV_PRIV *priv = (DRV_PRIV *)task_priv;
     struct sk_buff *pskb;
     struct mesh_rreq_retry_entry *retryEntry;
-    
+
     unsigned long flags;
     #ifdef SMP_SYNC
     unsigned long path_flag;
@@ -295,7 +295,7 @@ void aodv_expire(void *task_priv)
     SMP_LOCK_MESH_PREQ(flags);
 
     retryEntry = priv->rreq_head;
-    while(retryEntry) 
+    while(retryEntry)
     {
         if(time_after(jiffies, (UINT32)(retryEntry->TimeStamp)+ HWMP_NETDIAMETER_TRAVERSAL_TIME)) {
             if (retryEntry->Retries > HWMP_MAX_PREQ_RETRIES )
@@ -311,7 +311,7 @@ void aodv_expire(void *task_priv)
                 }
                 HASH_DELETE(priv->mesh_rreq_retry_queue,retryEntry->MACAddr);
 
-    
+
                 if(retryEntry == priv->rreq_head) { /*head*/
                     priv->rreq_head = retryEntry->rreq_next;
                 }
@@ -326,18 +326,18 @@ void aodv_expire(void *task_priv)
 
                 if(retryEntry->rreq_next) {
                     retryEntry->rreq_next->rreq_prev = retryEntry->rreq_prev;
-                }                
+                }
 
 
 #if defined(RTK_MESH_REMOVE_PATH_AFTER_AODV_TIMEOUT)
                 SMP_LOCK_MESH_PATH(path_flag);
                 HASH_DELETE(priv->pathsel_table,retryEntry->MACAddr);
                 SMP_UNLOCK_MESH_PATH(path_flag);
-                
+
                 mesh_route_debug("Path to %02x:%02x:%02x:%02x:%02x:%02x removed at %lu\n",
                             retryEntry->MACAddr[0],retryEntry->MACAddr[1],retryEntry->MACAddr[2],retryEntry->MACAddr[3],retryEntry->MACAddr[4],retryEntry->MACAddr[5],jiffies);
-#endif                
-            } 
+#endif
+            }
             else {
                 GEN_PREQ_PACKET(retryEntry->MACAddr, priv);
                 retryEntry->TimeStamp=jiffies;
@@ -349,18 +349,18 @@ void aodv_expire(void *task_priv)
 
 
             } // (retryEntry->ptr!=NULL) and (not too old)
-        } // if(time_after) 
+        } // if(time_after)
 
         retryEntry = retryEntry->rreq_next;
     } // end of for(i=(priv->RreqBegin);i<AODV_RREQ_TABLE_SIZE;i++)
 
 
     RESTORE_INT(flags);
-    SMP_UNLOCK_MESH_PREQ(flags); 
+    SMP_UNLOCK_MESH_PREQ(flags);
     return;
-	 
+
  }
- 
+
 
 void init_mpp_pool(struct mpp_tb* pTB)
 {
@@ -377,13 +377,13 @@ int pathsel_modify_table_entry(DRV_PRIV *priv, struct path_sel_entry *pEntry)
 {
     struct path_sel_entry *entry;
     unsigned long flags;
-    
+
     /*prevent update path relative to any invalid neighbor*/
     if(get_stainfo(priv, pEntry->nexthopMAC)) {
-        pEntry->priv = priv;                
+        pEntry->priv = priv;
     }
 #if defined(CONFIG_RTL_MESH_SINGLE_IFACE)
-    else if(priv->mesh_priv_sc && IS_DRV_OPEN(priv->mesh_priv_sc) && 
+    else if(priv->mesh_priv_sc && IS_DRV_OPEN(priv->mesh_priv_sc) &&
             GET_MIB(priv->mesh_priv_sc)->dot1180211sInfo.mesh_enable &&
             get_stainfo(priv->mesh_priv_sc, pEntry->nexthopMAC)) {
         pEntry->priv = priv->mesh_priv_sc;
@@ -412,14 +412,14 @@ int pathsel_modify_table_entry(DRV_PRIV *priv, struct path_sel_entry *pEntry)
 
         RESTORE_INT(flags);
         SMP_UNLOCK_MESH_PATH(flags);
-        
+
         #if defined(RTL_MESH_TXCACHE)
         expire_mesh_txcache(priv, pEntry->destMAC);
         #endif
 
         return 0;
     }
-    
+
     RESTORE_INT(flags);
     SMP_UNLOCK_MESH_PATH(flags);
 
@@ -444,11 +444,11 @@ int sync_proxy_info(struct rtl8192cd_priv *priv,unsigned char *sta, unsigned cha
         return -1;
     }
 
-    SMP_LOCK_MESH_PROXY(flags);    
+    SMP_LOCK_MESH_PROXY(flags);
     pEntry = HASH_SEARCH(priv->proxy_table, sta);
 
-    if(action == 2) { //delete        
-        if(pEntry) {           
+    if(action == 2) { //delete
+        if(pEntry) {
             mesh_proxy_debug("[Sync]Remove Proxy table: %02x:%02x:%02x:%02x:%02x:%02x/%02x:%02x:%02x:%02x:%02x:%02x\n",
                             pEntry->owner[0],pEntry->owner[1],pEntry->owner[2],pEntry->owner[3],pEntry->owner[4],pEntry->owner[5],
                             pEntry->sta[0],pEntry->sta[1],pEntry->sta[2],pEntry->sta[3],pEntry->sta[4],pEntry->sta[5]);
@@ -513,7 +513,7 @@ int set_metric_manually(DRV_PRIV *priv,unsigned char *str)
 
     panic_printk("%s %d %02x:%02x:%02x:%02x:%02x:%02x %d\n",__func__,__LINE__,
         mac_address[0],mac_address[1],mac_address[2],mac_address[3],mac_address[4],mac_address[5],metric);
-	
+
 	if (1 == GET_MIB(priv)->dot1180211sInfo.mesh_enable) {
 		phead = &priv->mesh_mp_hdr;
 		if (!netif_running(priv->dev) || list_empty(phead))

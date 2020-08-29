@@ -64,7 +64,7 @@ const static OP_CLASS global_op_class[] =
 {
     {81,  1,  beacon_channel_81},
     {115, 0,  beacon_channel_115},
-    {118, 0,  beacon_channel_118},    
+    {118, 0,  beacon_channel_118},
     {121, 0,  beacon_channel_121},
     {124, 0,  beacon_channel_124},
     {125, 0,  beacon_channel_125},
@@ -86,7 +86,7 @@ const static OP_CLASS eu_op_class[] =
 {
     {1,   0,  beacon_channel_115},
     {2,   0,  beacon_channel_118},
-    {3,   0,  beacon_channel_121},    
+    {3,   0,  beacon_channel_121},
     {4,   1,  beacon_channel_81},
     {17,  0,  beacon_channel_125},
 };
@@ -306,7 +306,7 @@ unsigned char rm_get_op_class(struct rtl8192cd_priv *priv, unsigned char channel
             op_class_array_len = sizeof(global_op_class)/ sizeof(OP_CLASS);;
             break;
     }
-    
+
 
     for(i = 0; i < op_class_array_len; i++)
     {
@@ -314,7 +314,7 @@ unsigned char rm_get_op_class(struct rtl8192cd_priv *priv, unsigned char channel
         for(j = 0; j < channel_array[0]; j++) {
             if(channel == channel_array[j+1])
                 return op_class_array[i].op_class;
-        }        
+        }
     }
 
 
@@ -416,15 +416,15 @@ static int issue_beacon_measurement_request(struct rtl8192cd_priv *priv, struct 
     txinsn.fr_type = _PRE_ALLOCMEM_;
     txinsn.tx_rate = find_rate(priv, NULL, 0, 1);
     #ifndef TX_LOWESTRATE
-    txinsn.lowest_tx_rate = txinsn.tx_rate;    
-    #endif	
+    txinsn.lowest_tx_rate = txinsn.tx_rate;
+    #endif
     txinsn.fixed_rate = 1;
-#ifdef CONFIG_IEEE80211W		
+#ifdef CONFIG_IEEE80211W
 	if(pstat)
 		txinsn.isPMF = pstat->isPMF;
 	else
-		txinsn.isPMF = 0;	
-#endif		
+		txinsn.isPMF = 0;
+#endif
 
     pbuf = txinsn.pframe = get_mgtbuf_from_poll(priv);
     if (pbuf == NULL)
@@ -453,15 +453,15 @@ static int issue_beacon_measurement_request(struct rtl8192cd_priv *priv, struct 
     SetFrameSubType((txinsn.phdr), WIFI_WMM_ACTION);
 #ifdef CONFIG_IEEE80211W
 	if (txinsn.isPMF)
-		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy 
-#endif	
+		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy
+#endif
     memcpy((void *)GetAddr1Ptr((txinsn.phdr)), pstat->hwaddr, MACADDRLEN);
     memcpy((void *)GetAddr2Ptr((txinsn.phdr)), GET_MY_HWADDR, MACADDRLEN);
     memcpy((void *)GetAddr3Ptr((txinsn.phdr)), BSSID, MACADDRLEN);
 
 #if defined(WIFI_WMM)
     ret = check_dz_mgmt(priv, pstat, &txinsn);
-    
+
     if (ret < 0)
         goto issue_beacon_request_fail;
     else if (ret==1)
@@ -728,7 +728,7 @@ enum MEASUREMENT_RESULT rm_parse_beacon_request(struct rtl8192cd_priv *priv,
             priv->rm.beacon_report[priv->rm.beacon_report_num].subelements_len = 0;
             priv->rm.beacon_report_num++;
         }
-        
+
         ret = MEASUREMENT_SUCCEED;
         goto end_parse_beacon_req;
     }
@@ -809,8 +809,8 @@ enum MEASUREMENT_RESULT  rm_do_beacon_measure(struct rtl8192cd_priv *priv)
 
     /* check if other scan procesure is on-going*/
     skip = 0;
-    if(priv->ss_req_ongoing || 
-       priv->pmib->dot11OperationEntry.opmode & WIFI_SITE_MONITOR || 
+    if(priv->ss_req_ongoing ||
+       priv->pmib->dot11OperationEntry.opmode & WIFI_SITE_MONITOR ||
        ((OPMODE & WIFI_AP_STATE) && (priv->ext_stats.tx_avarage>>17) > 0)
        )
     {
@@ -825,8 +825,8 @@ enum MEASUREMENT_RESULT  rm_do_beacon_measure(struct rtl8192cd_priv *priv)
             {
                 check_priv =  GET_ROOT(priv)->pvap_priv[i];
                 if (IS_DRV_OPEN(check_priv) &&
-                        ( check_priv->ss_req_ongoing || 
-                          check_priv->pmib->dot11OperationEntry.opmode & WIFI_SITE_MONITOR || 
+                        ( check_priv->ss_req_ongoing ||
+                          check_priv->pmib->dot11OperationEntry.opmode & WIFI_SITE_MONITOR ||
                           ((GET_MIB(check_priv))->dot11OperationEntry.opmode & WIFI_AP_STATE && (check_priv->ext_stats.tx_avarage>>17) > 0)
                         )
                    )
@@ -853,7 +853,7 @@ enum MEASUREMENT_RESULT  rm_do_beacon_measure(struct rtl8192cd_priv *priv)
 
     if(skip == 0 && priv->rm.beacon_last_time > 0) {
         if(RTL_JIFFIES_TO_SECOND(jiffies - priv->rm.beacon_last_time) < MIN_BEACON_INTERVAL) {
-            skip = 1; 
+            skip = 1;
         }
     }
 
@@ -868,7 +868,7 @@ enum MEASUREMENT_RESULT  rm_do_beacon_measure(struct rtl8192cd_priv *priv)
         memcpy(priv->ss_ssid, priv->rm.beacon_req.ssid, priv->ss_ssidlen);
         priv->ss_ssid[priv->ss_ssidlen] = 0;
         priv->ss_req_ongoing = SSFROM_11K_BEACONREQ;
-        priv->rm.beacon_last_time = jiffies;        
+        priv->rm.beacon_last_time = jiffies;
         start_clnt_ss(priv);
         return MEASUREMENT_PROCESSING;
     }
@@ -941,7 +941,7 @@ int rm_beacon_measurement_request(struct rtl8192cd_priv *priv, unsigned char *ma
             {
                 goto beacon_req_fail;
             }
-            
+
             /* check if  report_details is supported*/
             if(beacon_req->report_detail > 2) {
                 goto beacon_req_fail;
@@ -990,8 +990,8 @@ int rm_beacon_measurement_request(struct rtl8192cd_priv *priv, unsigned char *ma
                 if((pstat->state & (WIFI_SLEEP_STATE | WIFI_ASOC_STATE)) ==
                             (WIFI_SLEEP_STATE | WIFI_ASOC_STATE)) {
                     measure_time += 3000; /*if sta is in sleep mode, wait more time*/
-                }                    
-                
+                }
+
                 mod_timer(&pstat->rm_timer, jiffies + RTL_MILISECONDS_TO_JIFFIES(measure_time));
             }
 
@@ -1038,11 +1038,11 @@ int rm_get_beacon_report(struct rtl8192cd_priv *priv, unsigned char *macaddr, un
 		pstat->rm.neighbor_ap_num = pstat->rm.beacon_report_num;
 	#endif
 	#ifdef CONFIG_IEEE80211V
-		  if(WNM_ENABLE && 
+		  if(WNM_ENABLE &&
 		  	pstat->bssTransSupport &&
 		 	priv->pmib->wnmEntry.Is11kDaemonOn)
 		  	pstat->rcvNeighborReport = TRUE;
-	#endif		
+	#endif
             }
 
             if(pstat->rm.measure_result == MEASUREMENT_SUCCEED ||
@@ -1335,8 +1335,8 @@ unsigned char *construct_ap_channel_rep_ie(struct rtl8192cd_priv *priv, unsigned
     {
         if(priv->rm_ap_channel_report[i].len)
         {
-            pbuf = set_ie(pbuf, _AP_CHANNEL_REPORT_IE_, 
-                priv->rm_ap_channel_report[i].len, 
+            pbuf = set_ie(pbuf, _AP_CHANNEL_REPORT_IE_,
+                priv->rm_ap_channel_report[i].len,
                 &priv->rm_ap_channel_report[i].op_class, frlen);
         }
     }
@@ -1377,7 +1377,7 @@ void rm_parse_ap_channel_report(struct rtl8192cd_priv *priv, unsigned char *pfra
     for(; i < MAX_AP_CHANNEL_REPORT; i++)
     {
         priv->rm_ap_channel_report[i].len = 0;
-    }    
+    }
 }
 
 

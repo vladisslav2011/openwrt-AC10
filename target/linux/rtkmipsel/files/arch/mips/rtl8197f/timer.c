@@ -28,6 +28,7 @@ const unsigned int cpu_clksel_table[]={ 450, 500, 550, 600, 650,700,
 
 const unsigned int cpu_clkdiv_table[]={1, 2, 4, 8};
 
+EXPORT_SYMBOL(mips_hpt_frequency);
 
 #ifdef CONFIG_CEVT_EXT
 void inline bsp_timer_ack(void)

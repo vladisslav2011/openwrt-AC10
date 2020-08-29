@@ -79,7 +79,7 @@ int DOT11_DeQueue2(unsigned long task_priv, DOT11_QUEUE2 *q, unsigned char *item
         q->Head++;
 ret:
     RESTORE_INT(flags);
-    SMP_UNLOCK_MESH_QUEUE(flags);    
+    SMP_UNLOCK_MESH_QUEUE(flags);
     return ret;
 }
 

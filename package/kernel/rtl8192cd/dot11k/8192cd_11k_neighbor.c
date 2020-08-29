@@ -51,7 +51,7 @@ unsigned char * construct_neighbor_report_ie(unsigned char *pbuf, unsigned int *
 {
     report->bssinfo.value = cpu_to_le32(report->bssinfo.value);
     pbuf = set_ie(pbuf, _NEIGHBOR_REPORT_IE_, sizeof(struct dot11k_neighbor_report), (unsigned char*)report, frlen);
-    report->bssinfo.value = le32_to_cpu(report->bssinfo.value);    
+    report->bssinfo.value = le32_to_cpu(report->bssinfo.value);
     return pbuf;
 }
 
@@ -73,11 +73,11 @@ static int issue_neighbor_report_response(struct rtl8192cd_priv *priv, struct st
     txinsn.lowest_tx_rate = txinsn.tx_rate;
     #endif
     txinsn.fixed_rate = 1;
-#ifdef CONFIG_IEEE80211W		
+#ifdef CONFIG_IEEE80211W
     if(pstat)
 		txinsn.isPMF = pstat->isPMF;
     else
-		txinsn.isPMF = 0;	
+		txinsn.isPMF = 0;
 #endif
     pbuf = txinsn.pframe = get_mgtbuf_from_poll(priv);
     if (pbuf == NULL)
@@ -103,7 +103,7 @@ static int issue_neighbor_report_response(struct rtl8192cd_priv *priv, struct st
             break;
 
         if(ssid) {
-            if(strlen(priv->rm_neighbor_info[i].ssid)) {                
+            if(strlen(priv->rm_neighbor_info[i].ssid)) {
                 if(ssid_len != strlen(priv->rm_neighbor_info[i].ssid) ||
                     memcmp((unsigned char*)priv->rm_neighbor_info[i].ssid, ssid, ssid_len))
                     continue;
@@ -121,7 +121,7 @@ static int issue_neighbor_report_response(struct rtl8192cd_priv *priv, struct st
     SetFrameSubType((txinsn.phdr), WIFI_WMM_ACTION);
 #ifdef CONFIG_IEEE80211W
     if (txinsn.isPMF)
-		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy 
+		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy
 #endif
     memcpy((void *)GetAddr1Ptr((txinsn.phdr)), pstat->hwaddr, MACADDRLEN);
     memcpy((void *)GetAddr2Ptr((txinsn.phdr)), GET_MY_HWADDR, MACADDRLEN);
@@ -152,7 +152,7 @@ void OnNeighborReportRequest(struct rtl8192cd_priv *priv, struct stat_info *psta
 {
     int len;
     unsigned char * p;
-        
+
     if((OPMODE & WIFI_AP_STATE) == 0)
         return;
 
@@ -202,7 +202,7 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
 
     if (SSID_LEN != len || memcmp(SSID, p+2, len))
         return 0;
-    
+
     ssid_ptr = p+2;
     ssid_len = len;
 
@@ -222,10 +222,10 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
     }
     if(i == MAX_NEIGHBOR_REPORT && empty_slot != -1)   /*not found, and has empty slot*/
     {
-        i = empty_slot;        
+        i = empty_slot;
         memcpy(priv->rm_neighbor_report[i].bssid, bssid, MACADDRLEN);
     }
-    
+
     if(i == MAX_NEIGHBOR_REPORT)  /*not found and no empty slot, find the oldest neighbor and replace it*/
     {
         for(i = 0; i < MAX_NEIGHBOR_REPORT; i++)
@@ -237,8 +237,8 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
                     oldest_idx = i;
                 }
             }
-        }        
-        i = oldest_idx;        
+        }
+        i = oldest_idx;
         memcpy(priv->rm_neighbor_report[i].bssid, bssid, MACADDRLEN);
     }
 
@@ -261,13 +261,13 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
     }
     if(cap_info & 0x10) { /*Radio Measurement*/
         priv->rm_neighbor_report[i].bssinfo.field.cap_rm = 1;
-    }            
+    }
     if(cap_info & 0x40) { /*Delayed Block Ack*/
         priv->rm_neighbor_report[i].bssinfo.field.cap_delay_ba = 1;
-    }  
+    }
     if(cap_info & 0x80) { /*Immediate  Block Ack*/
         priv->rm_neighbor_report[i].bssinfo.field.cap_im_ba = 1;
-    } 
+    }
 
     /* checking MDID IE */
     if(FT_ENABLE) {
@@ -279,12 +279,12 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
                 mdid_cap |= BIT(0);
             if (priv->pmib->dot11FTEntry.dot11FTResourceRequestSupported)
                 mdid_cap |= BIT(1);
-       
+
             if(memcmp(p+2, MDID, 2) == 0 && mdid_cap == p[4])
                 priv->rm_neighbor_report[i].bssinfo.field.mde = 1;
         }
     }
-    
+
     /* checking HT_CAP IE */
     p = get_ie(pframe + WLAN_HDR_A3_LEN + _BEACON_IE_OFFSET_, _HT_CAP_, &len,
          pfrinfo->pktlen - WLAN_HDR_A3_LEN - _BEACON_IE_OFFSET_);
@@ -293,7 +293,7 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
         if (priv->ht_cap_len == len) {
             if(memcmp(p+2, (unsigned char *)&priv->ht_cap_buf, priv->ht_cap_len) == 0) /*get HT CAP ie, check the content is same as our AP*/
                 priv->rm_neighbor_report[i].bssinfo.field.high_tp = 1;
-        }   
+        }
     }
 
     /* checking BSS Load IE */
@@ -302,7 +302,7 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
     if (p)
     {
         sta_count = le16_to_cpu(*(unsigned short *)(p+2));
-        channel_utilization = p+4; 
+        channel_utilization = p+4;
     }
 
     memcpy(priv->rm_neighbor_info[i].ssid, ssid_ptr, ssid_len);
@@ -310,7 +310,7 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
     priv->rm_neighbor_info[i].aging = 0;
     priv->rm_neighbor_info[i].bssload.sta_count = sta_count;
     priv->rm_neighbor_info[i].bssload.channel_utilization = channel_utilization;
-    priv->rm_neighbor_bitmask[i>>3] |= (1<<(i&7));        
+    priv->rm_neighbor_bitmask[i>>3] |= (1<<(i&7));
 
 #ifdef CONFIG_IEEE80211V
     if(WNM_ENABLE) {
@@ -318,7 +318,7 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
    		priv->rm_neighbor_report[i].subelemnt.len = 1;
    		priv->rm_neighbor_report[i].subelemnt.preference = getPreferredVal(priv, channel_utilization, pfrinfo->rssi<<1, 0);
     }
-#endif		
+#endif
 
 }
 
@@ -342,7 +342,7 @@ void OnNeighborReportResponse(struct rtl8192cd_priv *priv, struct stat_info *pst
     len = 3;
     while(len + 5 <= frame_len)
     {
-   
+
         element_id = pframe[len];
         element_len = pframe[len + 1];
         /*parsing every radio measurment report element*/
@@ -381,12 +381,12 @@ static int issue_neighbor_report_request(struct rtl8192cd_priv *priv, struct sta
     txinsn.lowest_tx_rate = txinsn.tx_rate;
     #endif
     txinsn.fixed_rate = 1;
-#ifdef CONFIG_IEEE80211W		
+#ifdef CONFIG_IEEE80211W
     if(pstat)
 		txinsn.isPMF = pstat->isPMF;
     else
-		txinsn.isPMF = 0;	
-#endif	
+		txinsn.isPMF = 0;
+#endif
 
     pbuf = txinsn.pframe = get_mgtbuf_from_poll(priv);
     if (pbuf == NULL)
@@ -427,7 +427,7 @@ static int issue_neighbor_report_request(struct rtl8192cd_priv *priv, struct sta
     SetFrameSubType((txinsn.phdr), WIFI_WMM_ACTION);
 #ifdef CONFIG_IEEE80211W
 	if (txinsn.isPMF)
-		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy 
+		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy
 #endif
     memcpy((void *)GetAddr1Ptr((txinsn.phdr)), pstat->hwaddr, MACADDRLEN);
     memcpy((void *)GetAddr2Ptr((txinsn.phdr)), GET_MY_HWADDR, MACADDRLEN);
@@ -527,7 +527,7 @@ int rtl8192cd_proc_neighbor_read(char *buf, char **start, off_t offset,
         panic_printk("\nwarning: invalid command!\n");
         return pos;
     }
-    
+
     PRINT_ONE(" -- NEIGHBOR REPORT info -- ", "%s", 1);
     j = 1;
     for (i = 0 ; i < MAX_NEIGHBOR_REPORT; i++)
@@ -542,15 +542,15 @@ int rtl8192cd_proc_neighbor_read(char *buf, char **start, off_t offset,
         PRINT_ONE("    Operating Class:", "%s", 0);
         PRINT_ONE(priv->rm_neighbor_report[i].op_class, "%d", 1);
         PRINT_ONE("    Channel:", "%s", 0);
-        PRINT_ONE(priv->rm_neighbor_report[i].channel, "%d", 1); 
+        PRINT_ONE(priv->rm_neighbor_report[i].channel, "%d", 1);
         PRINT_ONE("    Phy Type:", "%s", 0);
         PRINT_ONE(priv->rm_neighbor_report[i].phytype, "%d", 1);
 #ifdef CONFIG_IEEE80211V
 	 if(WNM_ENABLE) {
 		PRINT_ONE("    Preference:", "%s", 0);
-	 	PRINT_ONE(priv->rm_neighbor_report[i].subelemnt.preference, "%d", 1);	
+	 	PRINT_ONE(priv->rm_neighbor_report[i].subelemnt.preference, "%d", 1);
 	 }
-#endif							
+#endif
         PRINT_ONE("    SSID:", "%s", 0);
         PRINT_ONE(priv->rm_neighbor_info[i].ssid, "%s", 1);
         PRINT_ONE("    Aging:", "%s", 0);
@@ -558,7 +558,7 @@ int rtl8192cd_proc_neighbor_read(char *buf, char **start, off_t offset,
         PRINT_ONE("    Sta Count:", "%s", 0);
         PRINT_ONE(priv->rm_neighbor_info[i].bssload.sta_count, "%d", 1);
         PRINT_ONE("    Channel Utilization:", "%s", 0);
-        PRINT_ONE(priv->rm_neighbor_info[i].bssload.channel_utilization, "%d", 1);        
+        PRINT_ONE(priv->rm_neighbor_info[i].bssload.channel_utilization, "%d", 1);
         j++;
     }
 
@@ -614,13 +614,13 @@ int rtl8192cd_proc_neighbor_write(struct file *file, const char *buffer,
     tokptr = strsep((char **)&tmpptr, " ");
     if(!memcmp(tokptr, "add", 3))
         command = 1;
-    else if (!memcmp(tokptr, "delall", 6)) 
+    else if (!memcmp(tokptr, "delall", 6))
         command = 3;
     else if(!memcmp(tokptr, "del", 3))
         command = 2;
 
     if(command)
-    {        
+    {
         if(command == 1 || command == 2) {
             tokptr = strsep((char **)&tmpptr," ");
             if(tokptr)
@@ -630,16 +630,16 @@ int rtl8192cd_proc_neighbor_write(struct file *file, const char *buffer,
                 goto end;
             }
         }
-        
+
         if(command == 1)   /*add*/
         {
             tokptr = strsep((char **)&tmpptr," ");
             if(tokptr)
             {
-            	if ((!memcmp(tokptr, "0x", 2)) || (!memcmp(tokptr, "0X", 2)))            	           	
-                    report.bssinfo.value = _atoi(tokptr+2, 16);            	
-            	else            	
-                    report.bssinfo.value = _atoi(tokptr, 10);            	         
+            	if ((!memcmp(tokptr, "0x", 2)) || (!memcmp(tokptr, "0X", 2)))
+                    report.bssinfo.value = _atoi(tokptr+2, 16);
+            	else
+                    report.bssinfo.value = _atoi(tokptr, 10);
 
             }
             else {
@@ -709,16 +709,16 @@ int rtl8192cd_proc_neighbor_write(struct file *file, const char *buffer,
                         sta_count = channel_utilization = 0;
                         error_code = 1;
                         goto end;
-                    }                            
+                    }
                     channel_utilization= _atoi(tokptr, 10);
             }
             else {
                     error_code = 1;
                     goto end;
                 }
-                    
-            }            
-      
+
+            }
+
             for(i = 0, empty_slot = -1; i < MAX_NEIGHBOR_REPORT; i++)
             {
                 if((priv->rm_neighbor_bitmask[i>>3] & (1<<(i&7))) == 0)
@@ -749,7 +749,7 @@ int rtl8192cd_proc_neighbor_write(struct file *file, const char *buffer,
                     }
                 }
                 i = oldest_idx;
-            
+
             }
             memcpy(&priv->rm_neighbor_report[i], &report, sizeof(struct dot11k_neighbor_report));
 #ifdef CONFIG_IEEE80211V
@@ -758,15 +758,15 @@ int rtl8192cd_proc_neighbor_write(struct file *file, const char *buffer,
 	   		priv->rm_neighbor_report[i].subelemnt.len = 1;
 	   		priv->rm_neighbor_report[i].subelemnt.preference = getPreferredVal(priv, channel_utilization, 0, 0);
    		}
-#endif		
+#endif
             if(ssid_ptr)
                strcpy(priv->rm_neighbor_info[i].ssid, ssid_ptr);
             else
                priv->rm_neighbor_info[i].ssid[0] = 0;
             priv->rm_neighbor_info[i].aging = 0;
             priv->rm_neighbor_info[i].bssload.sta_count = sta_count;
-            priv->rm_neighbor_info[i].bssload.channel_utilization = channel_utilization;            
-            priv->rm_neighbor_bitmask[i>>3] |= (1<<(i&7));            
+            priv->rm_neighbor_info[i].bssload.channel_utilization = channel_utilization;
+            priv->rm_neighbor_bitmask[i>>3] |= (1<<(i&7));
         }
         else if(command == 2)  /*delete*/
         {
@@ -774,7 +774,7 @@ int rtl8192cd_proc_neighbor_write(struct file *file, const char *buffer,
             {
                 if((priv->rm_neighbor_bitmask[i>>3] & (1<<(i&7))) == 0)
                     continue;
-            
+
                 if(0 == memcmp(report.bssid, priv->rm_neighbor_report[i].bssid, MACADDRLEN)) {
                     priv->rm_neighbor_bitmask[i>>3] &= ~(1<<(i&7));
                     break;

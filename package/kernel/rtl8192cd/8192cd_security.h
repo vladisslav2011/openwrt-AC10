@@ -186,7 +186,7 @@ typedef enum{
 		DOT11_EVENT_WSC_SET_MIB=42,
 		DOT11_EVENT_WSC_GET_MIB=43,
 		DOT11_EVENT_REQUEST_F_INCLUDE_WPS=44,
-		
+
 
 		DOT11_EVENT_WSC_INIT_IND = 70,
 		DOT11_EVENT_WSC_EXIT_IND = 71,
@@ -212,15 +212,15 @@ typedef enum{
 
 #ifdef P2P_SUPPORT
 		DOT11_EVENT_WSC_SWITCH_MODE = 100,
-		DOT11_EVENT_WSC_STOP = 101,				
-		DOT11_EVENT_WSC_SWITCH_WLAN_MODE = 108,						
+		DOT11_EVENT_WSC_STOP = 101,
+		DOT11_EVENT_WSC_SWITCH_WLAN_MODE = 108,
 #endif
-	/* support  Assigned MAC Addr,Assigned SSID,dymanic change STA's PIN code, 2011-0505 */	
+	/* support  Assigned MAC Addr,Assigned SSID,dymanic change STA's PIN code, 2011-0505 */
 		DOT11_EVENT_WSC_SET_MY_PIN = 102,
 		DOT11_EVENT_WSC_SPEC_SSID = 103,
 		DOT11_EVENT_WSC_SPEC_MAC_IND = 104,
-	/* support  Assigned MAC Addr,Assigned SSID,dymanic change STA's PIN code, 2011-0505 */			
-				
+	/* support  Assigned MAC Addr,Assigned SSID,dymanic change STA's PIN code, 2011-0505 */
+
 #endif
 #ifdef	CONFIG_RTK_MESH
 	DOT11_EVENT_PATHSEL_GEN_RREQ = 59,
@@ -256,7 +256,7 @@ typedef enum{
 #endif
 #endif
 	DOT11_EVENT_WSC_RM_PBC_STA=106,
-	DOT11_EVENT_WSC_CHANGE_MAC_IND = 107,		
+	DOT11_EVENT_WSC_CHANGE_MAC_IND = 107,
 #ifdef HS2_SUPPORT
 	DOT11_EVENT_WNM_NOTIFY = 109,
 	DOT11_EVENT_GAS_INIT_REQ = 110,
@@ -274,11 +274,11 @@ typedef enum{
 	DOT11_EVENT_SET_PMF = 120,
 	DOT11_EVENT_GET_IGTK_PN = 121,
 	DOT11_EVENT_INIT_PMF = 122,	// HS2 R2 logo test
-#endif	
+#endif
 #ifdef RSSI_MONITOR_NCR
 	DOT11_EVENT_RSSI_MONITOR_REPORT = 122,
-	DOT11_EVENT_RSSI_MONITOR_SETTYPE = 123,	
-#endif	
+	DOT11_EVENT_RSSI_MONITOR_SETTYPE = 123,
+#endif
 #ifdef CONFIG_IEEE80211R
 	DOT11_EVENT_FT_GET_EVENT		= 125,
 	DOT11_EVENT_FT_IMD_ASSOC_IND	= 126,
@@ -294,7 +294,7 @@ typedef enum{
 	DOT11_EVENT_FT_AUTH_INSERT_R1	= 136,
 	DOT11_EVENT_FT_TRIGGER_EVENT	= 137,
 #endif
-#if defined(SUPPORT_UCFGING_LED) 
+#if defined(SUPPORT_UCFGING_LED)
 	DOT11_EVENT_UCFGING_LED	= 139,
 #endif
 #ifdef INDICATE_LINK_CHANGE
@@ -304,7 +304,7 @@ typedef enum{
 	DOT11_EVENT_USER_SETIE	= 141,
 #endif
 	DOT11_EVENT_UNKNOWN = 142
-	
+
 } DOT11_EVENT;
 
 #ifdef WIFI_SIMPLE_CONFIG
@@ -816,7 +816,7 @@ typedef struct _DOT11_SET_USERIE{
     char            USERIE[256];
 }DOT11_SET_USERIE;
 #endif
-#if defined(SUPPORT_UCFGING_LED) 
+#if defined(SUPPORT_UCFGING_LED)
 typedef struct _DOT11_SET_UCFGING_LED {
 	unsigned char	EventId;
 	unsigned int	State;
@@ -942,7 +942,7 @@ typedef	union _DOT11_RSN_CAPABILITY{
 		unsigned short MFPR:1; // B6
 #else
 		unsigned short Reserved1:2; // B7 B6
-#endif		
+#endif
 		unsigned short GtksaReplayCounter:2; // B5 B4
 		unsigned short PtksaReplayCounter:2; // B3 B2
 		unsigned short NoPairwise:1; // B1
@@ -994,13 +994,13 @@ typedef struct _DOT11_HS2_GAS_REQ{
 	unsigned short	Reqlen;
 	unsigned char   Req[MAX_GAS_CONTENTS_LEN];
 }DOT11_HS2_GAS_REQ;
-/*==========HS2_SUPPORT==========*/ 
+/*==========HS2_SUPPORT==========*/
 typedef struct _DOT11_WNM_NOTIFY{
         unsigned char   EventId;
         unsigned char   IsMoreEvent;
 		unsigned char   macAddr[6];
         unsigned char   remedSvrURL[2048];
-#if 1		
+#if 1
 		unsigned char   serverMethod;
 #endif
 }DOT11_WNM_NOTIFY;
@@ -1030,7 +1030,7 @@ typedef struct _DOT11_BSS_SessInfo_URL{
         unsigned char   URL[2048];
 }DOT11_BSS_SessInfo_URL;
 
-/*==========HS2_SUPPORT==========*/ 
+/*==========HS2_SUPPORT==========*/
 
 typedef struct _DOT11_HS2_GAS_RSP{
 	unsigned char   EventId;
@@ -1053,7 +1053,7 @@ typedef struct _DOT11_HS2_TSM_REQ{
 	unsigned char   MACAddr[MACADDRLEN];
 	unsigned char   Req_mode;
 	unsigned char	Validity_intval;
-	unsigned char   Disassoc_timer; 	/*HS2 R2 logo test*/ 
+	unsigned char   Disassoc_timer; 	/*HS2 R2 logo test*/
 	unsigned char	term_len;
 	unsigned char	url_len;
 	unsigned char	list_len;
@@ -1064,7 +1064,7 @@ typedef struct _DOT11_HS2_TSM_REQ{
 #endif
 
 #ifdef CONFIG_IEEE80211W
-/*HS2 R2 logo test*/ 
+/*HS2 R2 logo test*/
 typedef struct _DOT11_INIT_11W_Flags {
 	unsigned char	EventId;
 	unsigned char	IsMoreEvent;

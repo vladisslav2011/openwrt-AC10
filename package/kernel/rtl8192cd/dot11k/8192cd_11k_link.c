@@ -52,12 +52,12 @@ static int issue_link_measurement_request(struct rtl8192cd_priv *priv, struct st
     txinsn.lowest_tx_rate = txinsn.tx_rate;
     #endif
     txinsn.fixed_rate = 1;
-#ifdef CONFIG_IEEE80211W		
+#ifdef CONFIG_IEEE80211W
 	if(pstat)
 		txinsn.isPMF = pstat->isPMF;
 	else
-		txinsn.isPMF = 0;	
-#endif	
+		txinsn.isPMF = 0;
+#endif
     pbuf = txinsn.pframe = get_mgtbuf_from_poll(priv);
     if (pbuf == NULL)
         goto issue_link_request_fail;
@@ -92,7 +92,7 @@ static int issue_link_measurement_request(struct rtl8192cd_priv *priv, struct st
     SetFrameSubType((txinsn.phdr), WIFI_WMM_ACTION);
 #ifdef CONFIG_IEEE80211W
 	if (txinsn.isPMF)
-		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy 
+		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy
 #endif
     memcpy((void *)GetAddr1Ptr((txinsn.phdr)), pstat->hwaddr, MACADDRLEN);
     memcpy((void *)GetAddr2Ptr((txinsn.phdr)), GET_MY_HWADDR, MACADDRLEN);
@@ -136,12 +136,12 @@ static int issue_link_measurement_report(struct rtl8192cd_priv *priv, struct sta
     txinsn.lowest_tx_rate = txinsn.tx_rate;
     #endif
     txinsn.fixed_rate = 1;
-#ifdef CONFIG_IEEE80211W		
+#ifdef CONFIG_IEEE80211W
 	if(pstat)
 		txinsn.isPMF = pstat->isPMF;
 	else
-		txinsn.isPMF = 0;	
-#endif	
+		txinsn.isPMF = 0;
+#endif
     pbuf = txinsn.pframe = get_mgtbuf_from_poll(priv);
     if (pbuf == NULL)
         goto issue_link_report_fail;
@@ -167,7 +167,7 @@ static int issue_link_measurement_report(struct rtl8192cd_priv *priv, struct sta
     SetFrameSubType((txinsn.phdr), WIFI_WMM_ACTION);
 #ifdef CONFIG_IEEE80211W
 	if (txinsn.isPMF)
-		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy 
+		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy
 #endif
     memcpy((void *)GetAddr1Ptr((txinsn.phdr)), pstat->hwaddr, MACADDRLEN);
     memcpy((void *)GetAddr2Ptr((txinsn.phdr)), GET_MY_HWADDR, MACADDRLEN);

@@ -3,14 +3,14 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	RateAdaptive.c
-	
+
 Abstract:
 	Implement Rate Adaptive functions for common operations.
-	    
+
 Major Change History:
 	When       Who               What
-	---------- ---------------   -------------------------------	
-	2011-08-12 Page            Create.	
+	---------- ---------------   -------------------------------
+	2011-08-12 Page            Create.
 
 --*/
 #ifdef __ECOS
@@ -82,7 +82,7 @@ static u1Byte	RETRY_PENALTY_IDX[2][RATESIZE] = {{4,4,4,5,4,4,5,7,7,7,8,0x0a,	   
 													5,5,7,7,8,0x0b,0x0d,0x0f},	 		   // 0329 R01
 													{4,4,4,5,7,7,9,9,0x0c,0x0e,0x10,0x12,	   // SS<TH
 													4,4,5,5,6,0x0a,0x11,0x13,
-													9,9,9,9,0x0c,0x0e,0x11,0x13}};	
+													9,9,9,9,0x0c,0x0e,0x11,0x13}};
 #endif
 // wilson modify
 static unsigned char	RETRY_PENALTY_IDX[2][RATESIZE] = {{4,4,4,5,4,4,5,7,7,7,8,0x0a,	       // SS>TH
@@ -90,10 +90,10 @@ static unsigned char	RETRY_PENALTY_IDX[2][RATESIZE] = {{4,4,4,5,4,4,5,7,7,7,8,0x
 													5,5,7,7,8,0x0b,0x0d,0x0f},	 		   // 0329 R01
 													{0x0a,0x0a,0x0a,0x0a,0x0c,0x0c,0x0e,0x10,0x11,0x12,0x12,0x13,	   // SS<TH
 													0x0e,0x0f,0x10,0x10,0x11,0x14,0x14,0x15,
-													9,9,9,9,0x0c,0x0e,0x11,0x13}};	
+													9,9,9,9,0x0c,0x0e,0x11,0x13}};
 static unsigned char	RETRY_PENALTY_UP_IDX[RATESIZE] = {0x10,0x10,0x10,0x10,0x11,0x11,0x12,0x12,0x12,0x13,0x13,0x14,	       // SS>TH
 													0x13,0x13,0x14,0x14,0x15,0x15,0x15,0x15,
-													0x11,0x11,0x12,0x13,0x13,0x13,0x14,0x15};	
+													0x11,0x11,0x12,0x13,0x13,0x13,0x14,0x15};
 
 /*static unsigned char	RSSI_THRESHOLD[RATESIZE] = {0,0,0,0,
 													0,0,0,0,0,0x24,0x26,0x2a,
@@ -119,7 +119,7 @@ static unsigned char	 TRYING_NECESSARY[RATESIZE] = {2,2,2,2,
 static u1Byte	 POOL_RETRY_TH[RATESIZE] = {30,30,30,30,
 													30,30,25,25,20,15,15,10,
 													30,25,25,20,15,10,10,10,
-													30,25,25,20,15,10,10,10}; 		
+													30,25,25,20,15,10,10,10};
 #endif
 
 static unsigned char	DROPING_NECESSARY[RATESIZE] = {1,1,1,1,
@@ -144,7 +144,7 @@ static unsigned int	INIT_RATE_FALLBACK_TABLE[16]={0x0f8ff015,  // 0: 40M BGN mod
 											0,			// 13:
 											0,			// 14:
 											0,			// 15:
-											
+
 	};
 #endif
 static unsigned char PendingForRateUpFail[5]={2,10,24,40,60};
@@ -290,9 +290,9 @@ int ARFBRefresh(struct rtl8192cd_priv *priv, PSTATION_RA_INFO  pRaInfo)
 	pRaInfo->RAWaitingCounter=0;
 	pRaInfo->RAExtendCounter=0;
 #endif
-	
-/*	panic_printk("%s %d: RateID=%d RateMask=%8.8x RAUseRate=%8.8x HighestRate=%d\n", 
-				__FUNCTION__, __LINE__, 
+
+/*	panic_printk("%s %d: RateID=%d RateMask=%8.8x RAUseRate=%8.8x HighestRate=%d\n",
+				__FUNCTION__, __LINE__,
 				pRaInfo->RateID, pRaInfo->RateMask, pRaInfo->RAUseRate, pRaInfo->HighestRate);*/
 	return 0;
 }
@@ -311,8 +311,8 @@ static int RateDown(struct rtl8192cd_priv *priv, PSTATION_RA_INFO  pRaInfo)
 	LowestRate = pRaInfo->LowestRate;
 	HighestRate = pRaInfo->HighestRate;
 
-/*	panic_printk("%s %d: RateID=%d LowestRate=%d HighestRate=%d RateSGI=%d\n", 
-				__FUNCTION__, __LINE__, 
+/*	panic_printk("%s %d: RateID=%d LowestRate=%d HighestRate=%d RateSGI=%d\n",
+				__FUNCTION__, __LINE__,
 				RateID, LowestRate, HighestRate, pRaInfo->RateSGI);*/
 
 	if (RateID > HighestRate) {
@@ -324,7 +324,7 @@ static int RateDown(struct rtl8192cd_priv *priv, PSTATION_RA_INFO  pRaInfo)
 			for (i=RateID-1; i>LowestRate;i--) {
 				if (pRaInfo->RAUseRate & BIT(i)) {
 					RateID=i;
-					goto RateDownFinish;					
+					goto RateDownFinish;
 				}
 			}
 		}
@@ -347,7 +347,7 @@ RateDownFinish:
 	if(pRaInfo->RAPendingCounter>=4)
 		pRaInfo->RAPendingCounter=4;
 #endif
-	
+
 	pRaInfo->DecisionRate=RateID;
 	RTL8188E_SetTxReportTimeByRA(priv, 2);
 
@@ -382,7 +382,7 @@ static int RateUp(struct rtl8192cd_priv *priv, PSTATION_RA_INFO  pRaInfo)
 	RTL8188E_SetTxReportTimeByRA(priv, 0);
 /*	panic_printk("%s %d, Decrease RPT Timing\n", __FUNCTION__, __LINE__);*/
 #endif
-	
+
 	if (RateID < HighestRate) {
 		for (i=RateID+1; i<=HighestRate; i++) {
 			if (pRaInfo->RAUseRate & BIT(i)) {
@@ -430,10 +430,10 @@ void StartRateTrying(IN	PADAPTER	Adapter, IN PSTATION_RA_INFO  pRaInfo)
 
 	// Test for Wilson
 	PlatformEFIOWrite2Byte(Adapter, REG_TX_RPT_TIME,0x0138);
-	RT_TRACE(COMP_RATE_ADAPTIVE, DBG_LOUD, 
+	RT_TRACE(COMP_RATE_ADAPTIVE, DBG_LOUD,
 					("StartRateTrying(): "));
 	// Need to Modify (Try bit?, Try timing)
-	
+
 
 }
 
@@ -451,7 +451,7 @@ u1Byte EndRateTrying(IN	PADAPTER	Adapter, IN PSTATION_RA_INFO  pRaInfo)
 		TryResult=1;
 
 	return TryResult;
-	
+
 
 }
 #endif
@@ -476,10 +476,10 @@ void SetTxRPTTiming(IN	PADAPTER	Adapter, int extend)
 		if(idx!=0)
 			idx-=1;
 	}
-	WriteTxRPTTiming=DynamicTxRPTTiming[idx];  
+	WriteTxRPTTiming=DynamicTxRPTTiming[idx];
 	TxRPTTiming_idx=idx;
 	PlatformEFIOWrite2Byte(Adapter, REG_TX_RPT_TIME, WriteTxRPTTiming);
-		
+
 }
 */
 
@@ -489,11 +489,11 @@ void RateDecision(struct rtl8192cd_priv *priv, PSTATION_RA_INFO  pRaInfo)
 	unsigned char RateID = 0, RtyPtID = 0, PenaltyID1 = 0, PenaltyID2 = 0;
 	//unsigned int pool_retry;
 	//unsigned char Try_Result=0;
-	
+
 	if (pRaInfo->Active && (pRaInfo->TOTAL > 0)) /* STA used and data packet exits */ {
 #if 0
 		if (pRaInfo->TryingState==1){
-			
+
 			pRaInfo->TryingState=0;
 			Try_Result=EndRateTrying(Adapter,pRaInfo);
 			if (Try_Result==1) // Try good
@@ -510,14 +510,14 @@ void RateDecision(struct rtl8192cd_priv *priv, PSTATION_RA_INFO  pRaInfo)
 		// Start RA decision
 		if (pRaInfo->PreRate > pRaInfo->HighestRate)
 			RateID = pRaInfo->HighestRate;
-		else 
+		else
 			RateID = pRaInfo->PreRate;
 		if (pRaInfo->RssiStaRA > RSSI_THRESHOLD[RateID])
 			RtyPtID=0;
 		else
 			RtyPtID=1;
 		PenaltyID1 = RETRY_PENALTY_IDX[RtyPtID][RateID]; //TODO by page
-		
+
 /*		panic_printk("%s %d: NscDown init is %d\n", __FUNCTION__, __LINE__, pRaInfo->NscDown);*/
 		//pool_retry=pRaInfo->RTY[2]+pRaInfo->RTY[3]+pRaInfo->RTY[4]+pRaInfo->DROP;
 		pRaInfo->NscDown += pRaInfo->RTY[0] * RETRY_PENALTY[PenaltyID1][0];
@@ -531,7 +531,7 @@ void RateDecision(struct rtl8192cd_priv *priv, PSTATION_RA_INFO  pRaInfo)
 			pRaInfo->NscDown -= pRaInfo->TOTAL * RETRY_PENALTY[PenaltyID1][5];
 		else
 			pRaInfo->NscDown=0;
-		
+
 		// rate up
 		PenaltyID2 = RETRY_PENALTY_UP_IDX[RateID];
 /*		panic_printk("%s %d: NscUp init is %d\n", __FUNCTION__, __LINE__, pRaInfo->NscUp);*/
@@ -546,9 +546,9 @@ void RateDecision(struct rtl8192cd_priv *priv, PSTATION_RA_INFO  pRaInfo)
 			pRaInfo->NscUp -= pRaInfo->TOTAL * RETRY_PENALTY[PenaltyID2][5];
 		else
 			pRaInfo->NscUp = 0;
-		/*printk("%s %d, RTY0 %d, RTY1 %d, RTY2 %d, RTY3 %d, RTY4 %d, userate 0x%08x\n", 
+		/*printk("%s %d, RTY0 %d, RTY1 %d, RTY2 %d, RTY3 %d, RTY4 %d, userate 0x%08x\n",
 			__FUNCTION__, __LINE__, pRaInfo->RTY[0], pRaInfo->RTY[1], pRaInfo->RTY[2], pRaInfo->RTY[3], pRaInfo->RTY[4], pRaInfo->RAUseRate);*/
-/*		panic_printk("%s %d: RssiStaRa= %d RtyPtID=%d PenaltyID1=0x%x  PenaltyID2=0x%x RateID=%d NscDown=%d NscUp=%d\n", 
+/*		panic_printk("%s %d: RssiStaRa= %d RtyPtID=%d PenaltyID1=0x%x  PenaltyID2=0x%x RateID=%d NscDown=%d NscUp=%d\n",
 			__FUNCTION__, __LINE__,
 			pRaInfo->RssiStaRA,RtyPtID, PenaltyID1,PenaltyID2, RateID, pRaInfo->NscDown, pRaInfo->NscUp);*/
 		if ((pRaInfo->NscDown < N_THRESHOLD_LOW[RateID]) ||(pRaInfo->DROP>DROPING_NECESSARY[RateID]))
@@ -559,7 +559,7 @@ void RateDecision(struct rtl8192cd_priv *priv, PSTATION_RA_INFO  pRaInfo)
 #if 0
 		RateDecisionFinish:
 #endif
-		if ((pRaInfo->DecisionRate)==(pRaInfo->PreRate)) 
+		if ((pRaInfo->DecisionRate)==(pRaInfo->PreRate))
 			DynamicTxRPTTimingCounter+=1;
 		else
 			DynamicTxRPTTimingCounter=0;
@@ -572,7 +572,7 @@ void RateDecision(struct rtl8192cd_priv *priv, PSTATION_RA_INFO  pRaInfo)
 
 		pRaInfo->RptTime = DynamicTxRPTTiming[TxRPTTiming_idx];
 		pRaInfo->PreRate = pRaInfo->DecisionRate;
-			
+
 		ResetRaCounter( pRaInfo);
 	}
 }

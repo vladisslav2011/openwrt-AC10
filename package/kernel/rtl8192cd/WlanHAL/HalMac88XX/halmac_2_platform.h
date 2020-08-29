@@ -3,8 +3,8 @@
 
 /*==========================================================
 					Search The Keyword [Driver]
-					Search The Keyword [Driver] 					
-					Search The Keyword [Driver] 
+					Search The Keyword [Driver]
+					Search The Keyword [Driver]
 ===========================================================*/
 
 
@@ -54,7 +54,7 @@ typedef unsigned long           	u32;
 typedef char				s8;
 typedef short				s16;
 typedef long				s32;
-#endif 
+#endif
 
 typedef u8 *pu8;
 typedef u16 *pu16;
@@ -69,7 +69,7 @@ typedef s32 *ps32;
 #define HALMAC_PLATFORM_LITTLE_ENDIAN                  1
 #define HALMAC_PLATFORM_BIG_ENDIAN                     0
 
-/* Note : Named HALMAC_PLATFORM_LITTLE_ENDIAN / HALMAC_PLATFORM_BIG_ENDIAN is not mandatory. 
+/* Note : Named HALMAC_PLATFORM_LITTLE_ENDIAN / HALMAC_PLATFORM_BIG_ENDIAN is not mandatory.
 		  But Little endian must be '1'. Big endian must be '0'. */
 /*[Driver] config the system endian*/
 

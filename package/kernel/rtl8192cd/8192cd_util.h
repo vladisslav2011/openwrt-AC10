@@ -32,7 +32,7 @@
 #else
 #if !defined(__ECOS) && !defined(__OSK__)
 	#include <asm/rtl865x/platform.h>
-#endif	
+#endif
 #endif
 #endif
 
@@ -63,11 +63,11 @@
 #ifdef GREEN_HILL
 #define	SAVE_INT_AND_CLI(x)		{ x = save_and_cli(); }
 #define RESTORE_INT(x)			restore_flags(x)
-#define SMP_LOCK(__x__)	
+#define SMP_LOCK(__x__)
 #define SMP_UNLOCK(__x__)
 #define SMP_TRY_LOCK(__x__,__y__)
-#define SMP_LOCK_XMIT(__x__)		
-#define SMP_UNLOCK_XMIT(__x__)		
+#define SMP_LOCK_XMIT(__x__)
+#define SMP_UNLOCK_XMIT(__x__)
 #define SMP_LOCK_ACL(__x__)
 #define SMP_UNLOCK_ACL(__x__)
 #define SMP_LOCK_HASH_LIST(__x__)
@@ -82,10 +82,10 @@
 #define SMP_UNLOCK_WAKEUP_LIST(__x__)
 #define SMP_LOCK_STACONTROL_LIST(__X__)
 #define SMP_UNLOCK_STACONTROL_LIST(__X__)
-#define SMP_LOCK_SKB(__x__)			
+#define SMP_LOCK_SKB(__x__)
 #define SMP_UNLOCK_SKB(__x__)
-#define SMP_LOCK_BUF(__x__)			
-#define SMP_UNLOCK_BUF(__x__)	
+#define SMP_LOCK_BUF(__x__)
+#define SMP_UNLOCK_BUF(__x__)
 #define SMP_LOCK_RECV(__x__)
 #define SMP_UNLOCK_RECV(__x__)
 #ifdef RTK_129X_PLATFORM
@@ -112,11 +112,11 @@
 #define SAVE_INT_AND_CLI(x)		{ x=lx4180_ReadStatus();lx4180_WriteStatus(x&(~1)); }
 #define RESTORE_INT(x)			{ lx4180_WriteStatus(x); }
 
-#define SMP_LOCK(__x__)	
+#define SMP_LOCK(__x__)
 #define SMP_UNLOCK(__x__)
 #define SMP_TRY_LOCK(__x__,__y__)
-#define SMP_LOCK_XMIT(__x__)		
-#define SMP_UNLOCK_XMIT(__x__)		
+#define SMP_LOCK_XMIT(__x__)
+#define SMP_UNLOCK_XMIT(__x__)
 #define SMP_LOCK_ACL(__x__)
 #define SMP_UNLOCK_ACL(__x__)
 #define SMP_LOCK_HASH_LIST(__x__)
@@ -133,10 +133,10 @@
 #define SMP_UNLOCK_MESH_ACL(__x__)
 #define SMP_LOCK_MESH_MP_HDR(__X__)
 #define SMP_UNLOCK_MESH_MP_HDR(__X__)
-#define SMP_LOCK_SKB(__x__)			
+#define SMP_LOCK_SKB(__x__)
 #define SMP_UNLOCK_SKB(__x__)
-#define SMP_LOCK_BUF(__x__)			
-#define SMP_UNLOCK_BUF(__x__)	
+#define SMP_LOCK_BUF(__x__)
+#define SMP_UNLOCK_BUF(__x__)
 #define SMP_LOCK_RECV(__x__)
 #define SMP_UNLOCK_RECV(__x__)
 #define SMP_LOCK_RX_DATA(__x__)
@@ -376,11 +376,11 @@
 #define SAVE_INT_AND_CLI(__x__)		spin_lock_irqsave(&priv->pshare->lock, (__x__))
 #define RESTORE_INT(__x__)			spin_unlock_irqrestore(&priv->pshare->lock, (__x__))
 #ifndef __ECOS
-#define SMP_LOCK(__x__)	
+#define SMP_LOCK(__x__)
 #define SMP_UNLOCK(__x__)
 #endif
-#define SMP_LOCK_XMIT(__x__)		
-#define SMP_UNLOCK_XMIT(__x__)		
+#define SMP_LOCK_XMIT(__x__)
+#define SMP_UNLOCK_XMIT(__x__)
 #define SMP_LOCK_ACL(__x__)
 #define SMP_UNLOCK_ACL(__x__)
 #define SMP_LOCK_HASH_LIST(__x__)
@@ -395,10 +395,10 @@
 #define SMP_UNLOCK_WAKEUP_LIST(__x__)
 #define SMP_LOCK_STACONTROL_LIST(__X__)
 #define SMP_UNLOCK_STACONTROL_LIST(__X__)
-#define SMP_LOCK_SKB(__x__)			
-#define SMP_UNLOCK_SKB(__x__)		
-#define SMP_LOCK_BUF(__x__)			
-#define SMP_UNLOCK_BUF(__x__)	
+#define SMP_LOCK_SKB(__x__)
+#define SMP_UNLOCK_SKB(__x__)
+#define SMP_LOCK_BUF(__x__)
+#define SMP_UNLOCK_BUF(__x__)
 #define SMP_LOCK_RECV(__x__)
 #define SMP_UNLOCK_RECV(__x__)
 #ifdef RTK_129X_PLATFORM
@@ -434,7 +434,7 @@
 #define REMAP_AID(p)   p->remapped_aid
 
 
-/*NOTE if 1.5 seconds should be RTL_SECONDS_TO_JIFFIES(15)/10 
+/*NOTE if 1.5 seconds should be RTL_SECONDS_TO_JIFFIES(15)/10
   *RTL_MILISECONDS_TO_JIFFIES shoud consider the HZ value
   *for example HZ=100, x should large than 10
   */
@@ -511,21 +511,21 @@
 #define IS_C_CUT_8192E(priv)	((GET_CHIP_VER(priv) == VERSION_8192E) && ((priv->pshare->version_id&0xf0)>>4 == 0x2))
 #define IS_D_CUT_8192E(priv)	((GET_CHIP_VER(priv) == VERSION_8192E) && ((priv->pshare->version_id&0xf0)>>4 == 0x3))
 
-/*check addr1, addr2 is 2 byte alignment first,  
+/*check addr1, addr2 is 2 byte alignment first,
     to prevent 97D and older CUP which do not support unalignment access have kernel unaligned access core dump*/
 #if 0
 #define isEqualMACAddr(addr1,addr2) ((((unsigned long)(addr1)&0x01) == 0 && ((unsigned long)(addr2)&0x01) == 0)? \
                                       ((*(unsigned short*)(addr1) == *(unsigned short*)(addr2)) && (*(unsigned short*)(addr1+2) == *(unsigned short*)(addr2+2)) && (*(unsigned short*)(addr1+4) == *(unsigned short*)(addr2+4))) : \
                                        !memcmp(addr1, addr2, MACADDRLEN)  \
                                      )
-#else 
+#else
 #define isEqualMACAddr(addr1,addr2) ((((unsigned long)(addr1)|(unsigned long)(addr2))&0x01) ? \
 									((*(unsigned char*)(addr1) ^ (*(unsigned char*)(addr2))) | (*(unsigned char*)(addr1+1) ^ (*(unsigned char*)(addr2+1))) | (*(unsigned char*)(addr1+2) ^ (*(unsigned char*)(addr2+2)))|\
 									(*(unsigned char*)(addr1+3) ^ (*(unsigned char*)(addr2+3))) | (*(unsigned char*)(addr1+4) ^ (*(unsigned char*)(addr2+4))) | (*(unsigned char*)(addr1+5) ^ (*(unsigned char*)(addr2+5))))==0 :\
 									((*(unsigned short*)(addr1) ^ (*(unsigned short*)(addr2))) | (*(unsigned short*)(addr1+2) ^ (*(unsigned short*)(addr2+2))) | (*(unsigned short*)(addr1+4) ^ (*(unsigned short*)(addr2+4))))==0  \
                                      )
-                                     
-static inline int rtk_memcmp(unsigned char *addr1, unsigned char *addr2, unsigned int len)                         
+
+static inline int rtk_memcmp(unsigned char *addr1, unsigned char *addr2, unsigned int len)
 {
 	unsigned int k, result=0;
 	if(((unsigned long)(addr1)|(unsigned long)(addr2)| len) &1) {
@@ -534,14 +534,14 @@ static inline int rtk_memcmp(unsigned char *addr1, unsigned char *addr2, unsigne
 		return result;
 	} else {
 		unsigned short *s1 = (unsigned short *)addr1;
-		unsigned short *s2 = (unsigned short *)addr2;		
+		unsigned short *s2 = (unsigned short *)addr2;
 		for(k = 0; k<(len/2); k++, s1++, s2++)
 			result |= ((*s1) ^(*s2));
-		return result;		
+		return result;
 	}
 }
 
-#if 1                                    
+#if 1
 #define copyMACAddr(addr1,addr2)  {\
 									if(((unsigned long)(addr1)|(unsigned long)(addr2))&0x01) { \
 									(*(unsigned char*)(addr1) = (*(unsigned char*)(addr2))) ; (*(unsigned char*)(addr1+1) = (*(unsigned short*)(addr2+1))) ; (*(unsigned char*)(addr1+2) = (*(unsigned char*)(addr2+2)));\
@@ -549,7 +549,7 @@ static inline int rtk_memcmp(unsigned char *addr1, unsigned char *addr2, unsigne
 									(*(unsigned short*)(addr1) = (*(unsigned short*)(addr2))) ; (*(unsigned short*)(addr1+2) = (*(unsigned short*)(addr2+2))) ; (*(unsigned short*)(addr1+4) = (*(unsigned short*)(addr2+4))); } \
 									};
 #else
-#define copyMACAddr(addr1,addr2)	memcpy(addr1, addr2, MACADDRLEN);	
+#define copyMACAddr(addr1,addr2)	memcpy(addr1, addr2, MACADDRLEN);
 #endif
 #endif
 
@@ -557,7 +557,7 @@ static inline int rtk_memcmp(unsigned char *addr1, unsigned char *addr2, unsigne
                                      ((*(unsigned short*)(addr1) == *(unsigned short*)(addr2)) && (*(unsigned short*)(addr1+2) == *(unsigned short*)(addr2+2))) : \
                                      !memcmp(addr1, addr2, 4)\
                                    )
-                                   
+
 #define RTL_SET_MASK(reg,mask,val,shift) (((reg)&(~(mask)))|((val)<<(shift)))
 
 #ifdef CONFIG_PCI_HCI
@@ -749,7 +749,7 @@ static __inline__ unsigned char RTL_R8_F(struct rtl8192cd_priv *priv, unsigned i
 	  if(!(REG32(0xB8000064)&BIT0)){
 	  	panic_printk("Should not access WiFi register since 0xB8000064[0]=0\n");
 		return;
-	  } 			   
+	  }
 	}
 #endif
 
@@ -797,7 +797,7 @@ static __inline__ unsigned short RTL_R16_F(struct rtl8192cd_priv *priv, unsigned
 	  if(!(REG32(0xB8000064)&BIT0)){
 		panic_printk("Should not access WiFi register since 0xB8000064[0]=0\n");
 		return;
-	  } 			   
+	  }
 	}
 #endif
 
@@ -854,7 +854,7 @@ static __inline__ unsigned int RTL_R32_F(struct rtl8192cd_priv *priv, unsigned i
 	  if(!(REG32(0xB8000064)&BIT0)){
 		panic_printk("Should not access WiFi register since 0xB8000064[0]=0\n");
 		return;
-	  } 			   
+	  }
 	}
 #endif
 
@@ -897,13 +897,13 @@ static __inline__ unsigned int RTL_R32_F(struct rtl8192cd_priv *priv, unsigned i
 static __inline__ void RTL_W8_F(struct rtl8192cd_priv *priv, unsigned int reg, unsigned char val8)
 {
 	unsigned long ioaddr = priv->pshare->ioaddr;
-	
+
 #if defined(CONFIG_WLAN_HAL_8197F)
 	if (GET_CHIP_VER(priv) == VERSION_8197F) {
 	  if(!(REG32(0xB8000064)&BIT0)){
 		panic_printk("Should not access WiFi register since 0xB8000064[0]=0\n");
 		return;
-	  } 			   
+	  }
 	}
 #endif
 
@@ -946,11 +946,11 @@ static __inline__ void RTL_W16_F(struct rtl8192cd_priv *priv, unsigned int reg, 
 	  if(!(REG32(0xB8000064)&BIT0)){
 		panic_printk("Should not access WiFi register since 0xB8000064[0]=0\n");
 		return;
-	  } 			   
+	  }
 	}
 #endif
 
-	if (reg & 0x00000001) 
+	if (reg & 0x00000001)
 		panic_printk("Unaligned write to reg 0x%08x!, val16=0x%08x!\n", reg, val16);
 
 #ifdef CHECK_SWAP
@@ -997,11 +997,11 @@ static __inline__ void RTL_W32_F(struct rtl8192cd_priv *priv, unsigned int reg, 
 	  if(!(REG32(0xB8000064)&BIT0)){
 		panic_printk("Should not access WiFi register since 0xB8000064[0]=0\n");
 		return;
-	  } 			   
+	  }
 	}
 #endif
 
-	if (reg & 0x00000003) 
+	if (reg & 0x00000003)
 		panic_printk("Unaligned write to reg 0x%08x!, val32=0x%08x!\n", reg, val32);
 
 #ifdef CHECK_SWAP
@@ -1339,7 +1339,7 @@ static __inline__ int is_HT_rate(unsigned char rate)
 static __inline__ int is_2T_rate(unsigned char rate)
 {
 #ifdef RTK_AC_SUPPORT
-	if ((rate >= _NSS2_MCS0_RATE_) && (rate <= _NSS2_MCS9_RATE_)) 
+	if ((rate >= _NSS2_MCS0_RATE_) && (rate <= _NSS2_MCS9_RATE_))
 		return TRUE;
 	else
 #endif
@@ -1350,7 +1350,7 @@ static __inline__ int is_2T_rate(unsigned char rate)
 static __inline__ int is_3T_rate(unsigned char rate)
 {
 #ifdef RTK_AC_SUPPORT
-	if ((rate >= _NSS3_MCS0_RATE_) && (rate <= _NSS3_MCS9_RATE_)) 
+	if ((rate >= _NSS3_MCS0_RATE_) && (rate <= _NSS3_MCS9_RATE_))
 		return TRUE;
 	else
 #endif
@@ -1360,7 +1360,7 @@ static __inline__ int is_3T_rate(unsigned char rate)
 static __inline__ int is_4T_rate(unsigned char rate)
 {
 #ifdef RTK_AC_SUPPORT
-	if ((rate >= _NSS4_MCS0_RATE_) && (rate <= _NSS4_MCS9_RATE_)) 
+	if ((rate >= _NSS4_MCS0_RATE_) && (rate <= _NSS4_MCS9_RATE_))
 		return TRUE;
 	else
 #endif
@@ -1370,7 +1370,7 @@ static __inline__ int is_4T_rate(unsigned char rate)
 static __inline__ int is_auto_rate(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 {
 #ifdef WDS
-		if (pstat->state & WIFI_WDS) 
+		if (pstat->state & WIFI_WDS)
 			return ((priv->pmib->dot11WdsInfo.entry[pstat->wds_idx].txRate==0) ? 1: 0);
 		else
 #endif
@@ -1382,8 +1382,8 @@ static __inline__ int is_fixedMCSTxRate(struct rtl8192cd_priv *priv, struct stat
 #ifdef WDS
 	if (pstat->state & WIFI_WDS)
 		return (priv->pmib->dot11WdsInfo.entry[pstat->wds_idx].txRate & 0xffff000) ;
-	else			
-#endif		
+	else
+#endif
 	return (priv->pmib->dot11StationConfigEntry.fixedTxRate & 0xffff000);
 }
 
@@ -1400,10 +1400,10 @@ static __inline__ int is_VHT_rate(unsigned char rate)
 static __inline__ int is_fixedVHTTxRate(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 {
 #ifdef WDS
-	if (pstat->state & WIFI_WDS) 
-		return ((priv->pmib->dot11WdsInfo.entry[pstat->wds_idx].txRate & BIT(31)) ? 1 : 0); 
-	else			
-#endif		
+	if (pstat->state & WIFI_WDS)
+		return ((priv->pmib->dot11WdsInfo.entry[pstat->wds_idx].txRate & BIT(31)) ? 1 : 0);
+	else
+#endif
 	return ((priv->pmib->dot11StationConfigEntry.fixedTxRate & BIT(31)) ? 1 : 0);
 }
 #endif
@@ -1443,7 +1443,7 @@ static __inline__ int is_MCS_4SS_rate(unsigned char rate)
 static __inline__ int is_1SS_rate(unsigned char rate)
 {
 #ifdef RTK_AC_SUPPORT
-	if ((rate >= _NSS1_MCS0_RATE_) && (rate <= _NSS1_MCS9_RATE_)) 
+	if ((rate >= _NSS1_MCS0_RATE_) && (rate <= _NSS1_MCS9_RATE_))
 		return TRUE;
 	else
 #endif
@@ -1453,7 +1453,7 @@ static __inline__ int is_1SS_rate(unsigned char rate)
 static __inline__ int is_2SS_rate(unsigned char rate)
 {
 #ifdef RTK_AC_SUPPORT
-	if ((rate >= _NSS2_MCS0_RATE_) && (rate <= _NSS2_MCS9_RATE_)) 
+	if ((rate >= _NSS2_MCS0_RATE_) && (rate <= _NSS2_MCS9_RATE_))
 		return TRUE;
 	else
 #endif
@@ -1463,7 +1463,7 @@ static __inline__ int is_2SS_rate(unsigned char rate)
 static __inline__ int is_3SS_rate(unsigned char rate)
 {
 #ifdef RTK_AC_SUPPORT
-	if ((rate >= _NSS3_MCS0_RATE_) && (rate <= _NSS3_MCS9_RATE_)) 
+	if ((rate >= _NSS3_MCS0_RATE_) && (rate <= _NSS3_MCS9_RATE_))
 		return TRUE;
 	else
 #endif
@@ -1473,7 +1473,7 @@ static __inline__ int is_3SS_rate(unsigned char rate)
 static __inline__ int is_4SS_rate(unsigned char rate)
 {
 #ifdef RTK_AC_SUPPORT
-	if ((rate >= _NSS4_MCS0_RATE_) && (rate <= _NSS4_MCS9_RATE_)) 
+	if ((rate >= _NSS4_MCS0_RATE_) && (rate <= _NSS4_MCS9_RATE_))
 		return TRUE;
 	else
 #endif
@@ -1513,7 +1513,7 @@ static __inline__ void rtl_cache_sync_wback(struct rtl8192cd_priv *priv, unsigne
 		if (direction == PCI_DMA_FROMDEVICE)
 		    _dma_cache_inv((unsigned long)bus_to_virt(start-CONFIG_LUNA_SLAVE_PHYMEM_OFFSET), size);
 		else
-#endif		
+#endif
     		_dma_cache_wback_inv((unsigned long)bus_to_virt(start-CONFIG_LUNA_SLAVE_PHYMEM_OFFSET), size);
 #endif
 }
@@ -1574,7 +1574,7 @@ static __inline__ int can_enable_rx_ldpc(struct rtl8192cd_priv *priv)
 {
 	if(priv->pmib->dot11nConfigEntry.dot11nLDPC == 3) //force enable rx ldpc
 		return 1;
-		
+
 	if(GET_CHIP_VER(priv) == VERSION_8197F)
 		return 0;
 	else if(GET_CHIP_VER(priv) >= VERSION_8814A)
@@ -1623,7 +1623,7 @@ static __inline__ int get_rf_NTx(unsigned char mimo_mode)
 
 }
 
-#ifdef RTK_AC_SUPPORT	
+#ifdef RTK_AC_SUPPORT
 static __inline__ int get_sta_vht_mimo_mode(struct stat_info *pstat) {
 
 	u1Byte		sta_mimo_mode = -1;
@@ -1637,7 +1637,7 @@ static __inline__ int get_sta_vht_mimo_mode(struct stat_info *pstat) {
 		if(((le32_to_cpu(pstat->vht_cap_buf.vht_support_mcs[0])>>4)&3)==3) // no support RX 3ss
 			sta_mimo_mode = MIMO_2T2R;
 		if(((le32_to_cpu(pstat->vht_cap_buf.vht_support_mcs[0])>>2)&3)==3) // no support RX 2ss
-			sta_mimo_mode = MIMO_1T1R; 	
+			sta_mimo_mode = MIMO_1T1R;
 	}
 	return sta_mimo_mode;
 }
@@ -1656,10 +1656,10 @@ static __inline__ int get_rf_mimo_mode(struct rtl8192cd_priv *priv)
 		return MIMO_1T1R;
 #ifdef CONFIG_RTL_92D_SUPPORT
 	else if ((priv->pshare->phw->MIMO_TR_hw_support == MIMO_1T2R) ||
-		(priv->pmib->dot11RFEntry.MIMO_TR_mode == MIMO_1T2R)) 
+		(priv->pmib->dot11RFEntry.MIMO_TR_mode == MIMO_1T2R))
 		return MIMO_1T2R;
 #endif
-	else if (priv->pshare->phw->MIMO_TR_hw_support == MIMO_2T2R || 
+	else if (priv->pshare->phw->MIMO_TR_hw_support == MIMO_2T2R ||
 		priv->pmib->dot11RFEntry.MIMO_TR_mode == MIMO_2T2R ||
 		priv->pmib->dot11RFEntry.MIMO_TR_mode == MIMO_2T4R)
 		return MIMO_2T2R;
@@ -1681,7 +1681,7 @@ static __inline__ unsigned int get_supported_mcs(struct rtl8192cd_priv *priv)
 		return (priv->pmib->dot11nConfigEntry.dot11nSupportedMCS & 0xffff);
 	else if(get_rf_mimo_mode(priv) == MIMO_3T3R)
 		return (priv->pmib->dot11nConfigEntry.dot11nSupportedMCS & 0xffffff);
-	
+
 	return (priv->pmib->dot11nConfigEntry.dot11nSupportedMCS & 0xffff); //2ss as default
 }
 
@@ -1720,7 +1720,7 @@ static __inline__ void tx_sum_up(struct rtl8192cd_priv *priv, struct stat_info *
 #ifdef TRX_DATA_LOG
 		if (txcfg->fr_type == _SKB_FRAME_TYPE_)
 			priv->ext_stats.tx_data_packets++;
-#endif	
+#endif
 		priv->ext_stats.tx_byte_cnt += pktlen;
 
 		// bcm old 11n chipset iot debug, and TXOP enlarge
@@ -1743,14 +1743,14 @@ static __inline__ void tx_sum_up(struct rtl8192cd_priv *priv, struct stat_info *
 			pstat->tx_pkts++;
 		} else
 #endif
-        if(pstat->sta_in_firmware != 1)		
+        if(pstat->sta_in_firmware != 1)
 #endif //TXREPORT
 		{
 #ifdef CONFIG_RTL8672
 			if (txcfg->fr_type == _SKB_FRAME_TYPE_
 #ifdef SUPPORT_TX_MCAST2UNI
 				&& !txcfg->isMC2UC
-#endif		
+#endif
 			)
 #endif
 #ifdef DONT_COUNT_PROBE_PACKET
@@ -1774,19 +1774,19 @@ static __inline__ void rx_sum_up(struct rtl8192cd_priv *priv, struct stat_info *
 	struct net_device_stats *pnet_stats;
 
 	if (priv) {
-		pnet_stats = &(priv->net_stats);       
+		pnet_stats = &(priv->net_stats);
 		pnet_stats->rx_packets++;
 		pnet_stats->rx_bytes += pfrinfo->pktlen;
 
 #ifdef RX_CRC_EXPTIMER
         priv->ext_stats.rx_packets_exptimer++;
 		priv->ext_stats.rx_packets_by_rate[pfrinfo->rx_rate]++;
-#endif        
+#endif
 
 #ifdef TRX_DATA_LOG
 		if (pfrinfo->bdata && !priv->pmib->miscEntry.func_off)
 			priv->ext_stats.rx_data_packets++;
-#endif	
+#endif
 
 		if (pfrinfo->retry)
 			priv->ext_stats.rx_retrys++;
@@ -1815,11 +1815,11 @@ static __inline__ void rx_sum_up(struct rtl8192cd_priv *priv, struct stat_info *
 #ifdef RTK_AC_SUPPORT
 		if (pfrinfo->rx_rate >= VHT_RATE_ID && (pfrinfo->rx_rate <= (_NSS4_MCS9_RATE_)))
 			p_dm_soml_table->num_vht_bytes[pfrinfo->rx_rate-VHT_RATE_ID] += pfrinfo->pktlen;
-#endif		
+#endif
 			}
 		}
 #endif
-#endif		
+#endif
 
 	}
 
@@ -2037,7 +2037,7 @@ static inline int rtw_inc_and_chk_continual_urb_error(struct rtl8192cd_priv *pri
 */
 static inline void rtw_reset_continual_urb_error(struct rtl8192cd_priv *priv)
 {
-	atomic_set(&priv->pshare->continual_urb_error, 0);	
+	atomic_set(&priv->pshare->continual_urb_error, 0);
 }
 
 #endif // CONFIG_USB_HCI
@@ -2086,7 +2086,7 @@ static inline int hash_list_add(struct rtl8192cd_priv *priv, struct stat_info *p
 	int ret = 0;
 
 	SMP_LOCK_HASH_LIST(flags);
-	
+
 	index = wifi_mac_hash(pstat->hwaddr);
 	plist = priv->stat_hash;
 	plist += index;
@@ -2124,7 +2124,7 @@ static inline int hash_list_add(struct rtl8192cd_priv *priv, struct stat_info *p
 	unsigned int index;
 	struct list_head *plist;
 	int ret = 0;
-	
+
 	index = wifi_mac_hash(pstat->hwaddr);
 	plist = priv->stat_hash;
 	plist += index;
@@ -2163,18 +2163,18 @@ static inline int asoc_list_del(struct rtl8192cd_priv *priv, struct stat_info *p
 {
 #ifdef SMP_SYNC
 	unsigned long flags = 0;
-#endif	
+#endif
 	int ret = 0;
 
 	SMP_LOCK_ASOC_LIST(flags);
-	
+
 	if (!list_empty(&pstat->asoc_list)) {
 		list_del_init(&pstat->asoc_list);
 		ret = 1;
 	}
 
 	SMP_UNLOCK_ASOC_LIST(flags);
-	
+
 	return ret;
 }
 
@@ -2182,18 +2182,18 @@ static inline int asoc_list_add(struct rtl8192cd_priv *priv, struct stat_info *p
 {
 #ifdef SMP_SYNC
 	unsigned long flags = 0;
-#endif		
+#endif
 	int ret = 0;
 
 	SMP_LOCK_ASOC_LIST(flags);
-	
+
 	if (list_empty(&pstat->asoc_list)) {
 		list_add_tail(&pstat->asoc_list, &priv->asoc_list);
 		ret = 1;
 	}
 
 	SMP_UNLOCK_ASOC_LIST(flags);
-	
+
 	return ret;
 }
 
@@ -2203,16 +2203,16 @@ static inline int auth_list_del(struct rtl8192cd_priv *priv, struct stat_info *p
 		unsigned long flags = 0;
 #endif
 		int ret = 0;
-	
+
 #ifdef SMP_SYNC
 		SMP_LOCK_AUTH_LIST(flags);
 #endif
-	
+
 		if (!list_empty(&pstat->auth_list)) {
 			list_del_init(&pstat->auth_list);
 			ret = 1;
 		}
-	
+
 #ifdef SMP_SYNC
 		SMP_UNLOCK_AUTH_LIST(flags);
 #endif
@@ -2225,7 +2225,7 @@ static inline int auth_list_add(struct rtl8192cd_priv *priv, struct stat_info *p
 		unsigned long flags = 0;
 #endif
 		int ret = 0;
-	
+
 #ifdef SMP_SYNC
 		SMP_LOCK_AUTH_LIST(flags);
 #endif
@@ -2233,11 +2233,11 @@ static inline int auth_list_add(struct rtl8192cd_priv *priv, struct stat_info *p
 			list_add_tail(&pstat->auth_list, &priv->auth_list);
 			ret = 1;
 		}
-	
+
 #ifdef SMP_SYNC
 		SMP_UNLOCK_AUTH_LIST(flags);
 #endif
-	
+
 		return ret;
 
 }
@@ -2248,16 +2248,16 @@ static inline int sleep_list_del(struct rtl8192cd_priv *priv, struct stat_info *
 		unsigned long flags = 0;
 #endif
 		int ret = 0;
-	
+
 		SMP_LOCK_SLEEP_LIST(flags);
-	
+
 		if (!list_empty(&pstat->sleep_list)) {
 			list_del_init(&pstat->sleep_list);
 			ret = 1;
 		}
-	
+
 		SMP_UNLOCK_SLEEP_LIST(flags);
-	
+
 		return ret;
 
 }
@@ -2268,16 +2268,16 @@ static inline int sleep_list_add(struct rtl8192cd_priv *priv, struct stat_info *
 		unsigned long flags = 0;
 #endif
 		int ret = 0;
-	
+
 		SMP_LOCK_SLEEP_LIST(flags);
-	
+
 		if (list_empty(&pstat->sleep_list)) {
 			list_add_tail(&pstat->sleep_list, &priv->sleep_list);
 			ret = 1;
 		}
-	
+
 		SMP_UNLOCK_SLEEP_LIST(flags);
-	
+
 		return ret;
 
 }
@@ -2288,20 +2288,20 @@ static inline int wakeup_list_del(struct rtl8192cd_priv *priv, struct stat_info 
 		unsigned long flags = 0;
 #endif
 		int ret = 0;
-	
+
 #ifdef SMP_SYNC
 		SMP_LOCK_WAKEUP_LIST(flags);
 #endif
-	
+
 		if (!list_empty(&pstat->wakeup_list)) {
 			list_del_init(&pstat->wakeup_list);
 			ret = 1;
 		}
-	
+
 #ifdef SMP_SYNC
 		SMP_UNLOCK_WAKEUP_LIST(flags);
 #endif
-	
+
 		return ret;
 
 }
@@ -2312,20 +2312,20 @@ static inline int wakeup_list_add(struct rtl8192cd_priv *priv, struct stat_info 
 		unsigned long flags = 0;
 #endif
 		int ret = 0;
-	
+
 #ifdef SMP_SYNC
 		SMP_LOCK_WAKEUP_LIST(flags);
 #endif
-	
+
 		if (list_empty(&pstat->wakeup_list)) {
 			list_add_tail(&pstat->wakeup_list, &priv->wakeup_list);
 			ret = 1;
 		}
-	
+
 #ifdef SMP_SYNC
 		SMP_UNLOCK_WAKEUP_LIST(flags);
 #endif
-	
+
 		return ret;
 
 }
@@ -2340,7 +2340,7 @@ static inline int hash_list_add(struct rtl8192cd_priv *priv, struct stat_info *p
 	unsigned int index;
 	struct list_head *plist;
 	int ret = 0;
-	
+
 	index = wifi_mac_hash(pstat->hwaddr);
 	plist = priv->stat_hash;
 	plist += index;
@@ -2493,7 +2493,7 @@ static inline int wakeup_list_add(struct rtl8192cd_priv *priv, struct stat_info 
 
 
 
-#if defined(CONFIG_WLAN_HAL_8197F) 
+#if defined(CONFIG_WLAN_HAL_8197F)
 extern struct stat_info *get_stainfo_hash(struct rtl8192cd_priv *priv, unsigned char *hwaddr);
 
 static inline struct stat_info *get_stainfo(struct rtl8192cd_priv *priv, unsigned char *hwaddr)
@@ -2519,7 +2519,7 @@ static inline struct stat_info *get_stainfo(struct rtl8192cd_priv *priv, unsigne
 	    if(pstat && isEqualMACAddr(hwaddr, pstat->hwaddr))
 			return pstat;
 	}
-	
+
 	return get_stainfo_hash(priv, hwaddr);
 }
 

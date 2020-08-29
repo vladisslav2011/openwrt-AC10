@@ -190,7 +190,7 @@ void peer_expire(DRV_PRIV* priv)
             mesh_cnt_ASSOC_PeerLink_CAP(priv, pstat, DECREASE);	// Delete 1 MP (Inside call path select process.. )
 
             clear_route_info(priv, pstat->hwaddr);	// call del pathselection table entry
-            
+
             if (SUCCESS != free_stainfo(priv, pstat))
                 break;	// free fail
         }
@@ -219,7 +219,7 @@ int pathsel_table_expire(DRV_PRIV* priv)
     for (i = 0; i < tbl_sz; i++)
     {
         is_delete = 0;
-        
+
         SAVE_INT_AND_CLI(flags);
         SMP_LOCK_MESH_PATH(flags);
         if (priv->pathsel_table->entry_array[i].dirty)
@@ -229,7 +229,7 @@ int pathsel_table_expire(DRV_PRIV* priv)
             {
                 priv->pathsel_table->entry_array[i].dirty = 0;
                 memcpy(destMAC, pPathEntry->destMAC, MACADDRLEN);
-                is_delete = 1;                
+                is_delete = 1;
             }
         }
         RESTORE_INT(flags);
@@ -240,12 +240,12 @@ int pathsel_table_expire(DRV_PRIV* priv)
             #if defined(RTL_MESH_TXCACHE)
             expire_mesh_txcache(priv, destMAC);
             #endif
-            remove_proxy_owner(priv, destMAC);  
+            remove_proxy_owner(priv, destMAC);
         }
     }
 
 
-    
+
     return 0;
 }
 
@@ -260,7 +260,7 @@ int pathsel_table_expire(DRV_PRIV* priv)
 int proxy_table_expire(DRV_PRIV* priv)
 {
     unsigned long tbl_sz;
-#ifdef SMP_SYNC    
+#ifdef SMP_SYNC
     unsigned long flags;
 #endif
 
@@ -500,7 +500,7 @@ int mesh_channel_switch_initiate(struct rtl8192cd_priv *priv)
 
             bss_bw = HT_CHANNEL_WIDTH_20_40;
 #ifdef RTK_AC_SUPPORT
-            if(priv->pmib->dot11BssType.net_work_type & WIRELESS_11AC)          
+            if(priv->pmib->dot11BssType.net_work_type & WIRELESS_11AC)
             {
                 if((priv->pmib->dot11Bss.t_stamp[1] & (BSS_BW_MASK << BSS_BW_SHIFT))
                         == (HT_CHANNEL_WIDTH_80 << BSS_BW_SHIFT))
@@ -582,7 +582,7 @@ int static mesh_DFS_check(DRV_PRIV *priv, struct rx_frinfo *pfrinfo, UINT32 prec
             }
 
         }
-       
+
         // check Mesh Channel Switch
         p = get_ie(pframe + WLAN_HDR_A3_LEN + _BEACON_IE_OFFSET_, _MESH_CHANNEL_SWITCH_IE_, &len,
                    pfrinfo->pktlen - WLAN_HDR_A3_LEN - _BEACON_IE_OFFSET_);
@@ -608,16 +608,16 @@ int static mesh_DFS_check(DRV_PRIV *priv, struct rx_frinfo *pfrinfo, UINT32 prec
 
            	if (timer_pending(&priv->DFS_timer))
     			del_timer(&priv->DFS_timer);
-            
-			InsertChannel(priv->NOP_chnl, &priv->NOP_chnl_num, priv->pmib->dot11RFEntry.dot11channel);			
+
+			InsertChannel(priv->NOP_chnl, &priv->NOP_chnl_num, priv->pmib->dot11RFEntry.dot11channel);
 			RemoveChannel(priv, priv->available_chnl, &priv->available_chnl_num, priv->pmib->dot11RFEntry.dot11channel);
             #ifdef UNIVERSAL_REPEATER
 	    	if (IS_DRV_OPEN(GET_VXD_PRIV(priv))){
 				RemoveChannel(priv->pvxd_priv, priv->pvxd_priv->available_chnl, &priv->pvxd_priv->available_chnl_num, priv->pmib->dot11RFEntry.dot11channel);
 				InsertChannel(priv->pvxd_priv->NOP_chnl, &priv->pvxd_priv->NOP_chnl_num, priv->pmib->dot11RFEntry.dot11channel);
     		}
-            #endif           
-            
+            #endif
+
             priv->pshare->dfsSwitchChannel = swchnl_channel;
             priv->pshare->dfsSwitchChCountDown = MESH_DFS_SWITCH_COUNTDOWN;
             if(used80M)
@@ -625,14 +625,14 @@ int static mesh_DFS_check(DRV_PRIV *priv, struct rx_frinfo *pfrinfo, UINT32 prec
             else if(centerChnl != swchnl_channel) {
                 priv->pmib->dot11nConfigEntry.dot11nUse40M = 1;
             }
-            else 
+            else
                 priv->pmib->dot11nConfigEntry.dot11nUse40M = 0;
 
 
             STADEBUG("Detect DFS from other MAP dfsSwitchChannel: %d, dfsSwitchChCountDown: %d, dot11nUse40M: %d\n",
                 priv->pshare->dfsSwitchChannel, priv->pshare->dfsSwitchChCountDown, priv->pmib->dot11nConfigEntry.dot11nUse40M);
 
-            
+
             priv->mesh_swchnl_ttl = swchnl_ttl - 1;
             priv->mesh_swchnl_flag = swchnl_flag & ~BIT1; /*erase initiator bit*/
             priv->mesh_swchnl_reason = swchnl_reason;
@@ -645,7 +645,7 @@ int static mesh_DFS_check(DRV_PRIV *priv, struct rx_frinfo *pfrinfo, UINT32 prec
                 priv->mesh_ChannelPrecedence = precedence;
                 priv->mesh_fix_channel = 1;
             }
-            
+
             GET_ROOT(priv)->pmib->dot11DFSEntry.DFS_detected = 1;
 
         }
@@ -659,7 +659,7 @@ int mesh_DFS_switch_channel(struct rtl8192cd_priv *priv)
     struct rtl8192cd_priv * priv_root = GET_ROOT(priv);
     if(GET_MIB(priv_root)->dot1180211sInfo.mesh_enable)
     {
-        if(MESH_PEER_LINK_CAP_NUM(priv) == GET_MIB(priv)->dot1180211sInfo.mesh_max_neightbor) {            
+        if(MESH_PEER_LINK_CAP_NUM(priv) == GET_MIB(priv)->dot1180211sInfo.mesh_max_neightbor) {
 #if 1
 			STADEBUG("Detect DFS and no mesh neightbor exist, prepare to switch channel\n");
 			priv_root->mesh_swchnl_ttl = _MESH_HEADER_TTL_;
@@ -672,13 +672,13 @@ int mesh_DFS_switch_channel(struct rtl8192cd_priv *priv)
             priv->pshare->dfsSwitchChannel = 0;
             priv->auto_channel = 1;
             priv->pmib->dot11RFEntry.dot11channel = priv->available_chnl[0];
-            priv->mesh_ChannelPrecedence = 0;   
+            priv->mesh_ChannelPrecedence = 0;
             priv->mesh_fix_channel = 0;
             RTL_W8(TXPAUSE, STOP_BCN);
             start_clnt_ss(priv);
-#endif			
+#endif
         }
-        else {           
+        else {
             STADEBUG("Detect DFS and has mesh neightbor exist, prepare to switch channel\n");
             priv_root->mesh_swchnl_ttl = _MESH_HEADER_TTL_;
             priv_root->mesh_swchnl_flag = (BIT1|BIT2);/*BIT1: initiator, BIT2: reason valid*/
@@ -738,7 +738,7 @@ static UINT16 getDataRateOffset(struct stat_info *pstat)
         return query_vht_rate(pstat);
     }
     else
-#endif 
+#endif
     if (is_MCS_rate(pstat->current_tx_rate))
         return(pstat->current_tx_rate&0x7f);
     else
@@ -1959,7 +1959,7 @@ issue_LocalLinkStateANNOU_MP_fail:
 void  issue_proxyupdate_ADD(DRV_PRIV *priv, unsigned char * proxiedmac)
 {
     unsigned long flags = 0;
-    
+
     struct proxyupdate_table_entry puEntry;
     struct path_sel_entry* pPathEntry;
     int i, tbl_sz;
@@ -1975,7 +1975,7 @@ void  issue_proxyupdate_ADD(DRV_PRIV *priv, unsigned char * proxiedmac)
     for (i = 0; i < tbl_sz; i++)
     {
         puEntry.priv = NULL;
-        
+
         SAVE_INT_AND_CLI(flags);
         SMP_LOCK_MESH_PATH(flags);
         if (priv->pathsel_table->entry_array[i].dirty)
@@ -1997,7 +1997,7 @@ void  issue_proxyupdate_ADD(DRV_PRIV *priv, unsigned char * proxiedmac)
             SMP_LOCK_MESH_PROXYUPDATE(flags);
             HASH_INSERT(priv->proxyupdate_table, &puEntry.PUSN, &puEntry);
             SMP_UNLOCK_MESH_PROXYUPDATE(flags);
-                
+
             issue_proxyupdate_MP(puEntry.priv, &puEntry);
         }
     }
@@ -2237,7 +2237,7 @@ static void mesh_PeerLinkEstablish(DRV_PRIV *priv,  struct stat_info *pstat)
     MESH_DEBUG_MSG("Mesh Stress Testing: MP establish, Current expire = %d (jiffies), Test count = %lu\n", tmp, priv->mesh_stressTestCounter);
 #else	// MESH_BOOTSEQ_STRESS_TEST
     pstat->mesh_neighbor_TBL.expire = jiffies + MESH_EXPIRE_TO;
-#endif	// MESH_BOOTSEQ_STRESS_TEST	
+#endif	// MESH_BOOTSEQ_STRESS_TEST
 
     pstat->mesh_neighbor_TBL.BSexpire_LLSAperiod = jiffies;	// Start Local Link State Announcement immediately.
     pstat->state |= WIFI_ASOC_STATE;	// Can't transfer data if absence.
@@ -2281,11 +2281,11 @@ static void mesh_PeerLinkEstablish(DRV_PRIV *priv,  struct stat_info *pstat)
 	Entry.priv = priv;
 #if defined(CONFIG_RTL_MESH_SINGLE_IFACE)
 	priv = priv->mesh_priv_first;
-#endif	
+#endif
 	SMP_LOCK_MESH_PATH(flags);
 	HASH_INSERT( priv->pathsel_table, Entry.destMAC, &Entry);
 	SMP_UNLOCK_MESH_PATH(flags);
-	
+
     MESH_DEBUG_MSG("Mesh: New MP is establish... MAC=%02X:%02X:%02X:%02X:%02X:%02X State=%d\n"
                    , pstat->hwaddr[0], pstat->hwaddr[1], pstat->hwaddr[2], pstat->hwaddr[3], pstat->hwaddr[4], pstat->hwaddr[5], pstat->mesh_neighbor_TBL.State);
 
@@ -2305,7 +2305,7 @@ static void mesh_PeerLinkEstablish(DRV_PRIV *priv,  struct stat_info *pstat)
 void mesh_auth_timer(unsigned long pVal)
 {
 
- 
+
 #ifndef SMP_SYNC
     unsigned long		flags;
 #endif
@@ -2644,7 +2644,7 @@ reInitial:
 int close_MeshPeerLink(DRV_PRIV *priv, UINT8 *da)
 {
     struct stat_info *pstat;
-#ifndef SMP_SYNC    
+#ifndef SMP_SYNC
     unsigned long	flags;
 #endif
     pstat = get_stainfo(priv, da);
@@ -2740,7 +2740,7 @@ static void mesh_auto_channel_check(DRV_PRIV *priv, struct rx_frinfo *pfrinfo, U
 
         if(priv->pshare->is_40m_bw == HT_CHANNEL_WIDTH_20_40 ||
             priv->pshare->is_40m_bw == HT_CHANNEL_WIDTH_80) {
-            #if defined(RTK_5G_SUPPORT) 
+            #if defined(RTK_5G_SUPPORT)
             if (priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_5G) {
                 if((priv->pmib->dot11RFEntry.dot11channel>144) ? ((priv->pmib->dot11RFEntry.dot11channel-1)%8) : (priv->pmib->dot11RFEntry.dot11channel%8)) {
                     priv->pmib->dot11nConfigEntry.dot11n2ndChOffset = HT_2NDCH_OFFSET_ABOVE;
@@ -2750,7 +2750,7 @@ static void mesh_auto_channel_check(DRV_PRIV *priv, struct rx_frinfo *pfrinfo, U
                     priv->pshare->offset_2nd_chan = HT_2NDCH_OFFSET_BELOW;
                 }
             }
-            else 
+            else
             #endif
             {
                 if(offset_2nd_chan) {
@@ -2766,7 +2766,7 @@ static void mesh_auto_channel_check(DRV_PRIV *priv, struct rx_frinfo *pfrinfo, U
                         priv->pshare->offset_2nd_chan = HT_2NDCH_OFFSET_BELOW;
                 }
             }
-        }        
+        }
     }
 }
 #endif
@@ -2804,7 +2804,7 @@ unsigned int OnAssocReq_MP(DRV_PRIV *priv, struct rx_frinfo *pfrinfo)
     pmib = GET_MIB(priv);
     pframe = get_pframe(pfrinfo);
     pstat = get_stainfo(priv, GetAddr2Ptr(pframe));
-  
+
 
     if (!(OPMODE & WIFI_AP_STATE)
             || (pmib->dot11sKeysTable.dot11Privacy && pmib->dot11sKeysTable.keyInCam == FALSE ))
@@ -3199,7 +3199,7 @@ unsigned int OnAssocReq_MP(DRV_PRIV *priv, struct rx_frinfo *pfrinfo)
     }
 
     assign_tx_rate(priv, pstat, pfrinfo);
-#if defined(WIFI_11N_2040_COEXIST_EXT)  
+#if defined(WIFI_11N_2040_COEXIST_EXT)
     update_40m_staMap(priv, pstat, 0);
     checkBandwidth(priv);
 #endif
@@ -4392,11 +4392,11 @@ unsigned int OnProbeRsp_MP(DRV_PRIV *priv, struct rx_frinfo *pfrinfo)
         precedence = le32_to_cpu(*((UINT32*)(p+MESH_CAP_CH_PRECEDENCE_OFFSET)));
         #endif
 
-        #if defined(DFS)     
-        if(mesh_DFS_check(priv, pfrinfo, precedence))            
+        #if defined(DFS)
+        if(mesh_DFS_check(priv, pfrinfo, precedence))
             return SUCCESS;
         #endif
-        
+
 
         memcpy(&cap, p + MESH_CAP_PEER_CAP_OFFSET, MESH_CAP_PEER_CAP_LEN);
         cap = le16_to_cpu(cap) & MESH_PEER_LINK_CAP_CAPACITY_MASK;
@@ -4481,9 +4481,9 @@ unsigned int OnBeacon_MP(DRV_PRIV *priv, struct rx_frinfo *pfrinfo)
 #endif
 
 #if defined(DFS)
-        if(mesh_DFS_check(priv, pfrinfo, precedence))            
+        if(mesh_DFS_check(priv, pfrinfo, precedence))
             return SUCCESS;
-#endif 
+#endif
 
         memcpy(&cap, p + MESH_CAP_PEER_CAP_OFFSET, MESH_CAP_PEER_CAP_LEN);
         cap = le16_to_cpu(cap) & MESH_PEER_LINK_CAP_CAPACITY_MASK;
@@ -4543,8 +4543,8 @@ unsigned int OnDisassoc_MP(DRV_PRIV *priv, struct rx_frinfo *pfrinfo)
     struct  stat_info   *pstat;
     unsigned char *sa;
     unsigned short reason;
-    
-#ifndef SMP_SYNC    
+
+#ifndef SMP_SYNC
     unsigned long flags;
 #endif
 
@@ -4909,7 +4909,7 @@ void OnProxyUpdate_MP(DRV_PRIV *priv, struct rx_frinfo *pfrinfo)
         }
         RESTORE_INT(flags);
         SMP_UNLOCK_MESH_PATH(flags);
-        
+
         if(pthEntry) {
             Entry.isMultihop = 0x01;
             memcpy(Entry.destproxymac, pfrinfo->da, MACADDRLEN);
@@ -4928,7 +4928,7 @@ void OnProxyUpdate_MP(DRV_PRIV *priv, struct rx_frinfo *pfrinfo)
         }
         RESTORE_INT(flags);
         SMP_UNLOCK_MESH_PATH(flags);
-        
+
         if(pthEntry)
             issue_proxyupdateconfirm_MP(xmit_priv, &Entry.PUSN, GET_MY_HWADDR, Entry.proxymac, nextHopMac);
     }
@@ -4967,12 +4967,12 @@ unsigned int OnPathSelectionManagFrame(DRV_PRIV *priv, struct rx_frinfo *pfrinfo
         unsigned char addr6[MACADDRLEN];
         memcpy(addr5, pframe+WLAN_HDR_A4_MESH_DATA_LEN, MACADDRLEN);
         memcpy(addr6, pframe+WLAN_HDR_A4_MESH_DATA_LEN+MACADDRLEN, MACADDRLEN);
- 
+
         if(memcmp(pfrinfo->sa,addr6,MACADDRLEN)) // addr4 <> addr 6, Add proxy table
         {
             mesh_proxy_update(priv, pfrinfo->sa, addr6);
         }
-        
+
         pFrameBody = pframe + WLAN_HDR_A6_MESH_DATA_LEN;
         RECV_data.Is6AddrFormat = 1;
         memcpy(RECV_data.MACAddr5, addr5, MACADDRLEN);
@@ -5051,7 +5051,7 @@ unsigned int OnPathSelectionManagFrame(DRV_PRIV *priv, struct rx_frinfo *pfrinfo
 }
 
 
-int mesh_close(DRV_PRIV *priv) 
+int mesh_close(DRV_PRIV *priv)
 {
     int i,tbl_sz;
     struct mesh_rreq_retry_entry *retryEntry;
@@ -5080,14 +5080,14 @@ int mesh_close(DRV_PRIV *priv)
                 skb = (struct sk_buff*)deque(priv,&(retryEntry->pktqueue.head),&(retryEntry->pktqueue.tail),(unsigned long)retryEntry->pktqueue.pSkb,NUM_TXPKT_QUEUE);
             }
             priv->mesh_rreq_retry_queue->entry_array[i].dirty = 0;
-        }        
+        }
     }
     priv->rreq_head = NULL;
     priv->rreq_tail = NULL;
 
     RESTORE_INT(flags);
     SMP_UNLOCK_MESH_PREQ(flags);
-    
+
     return 0;
 }
 

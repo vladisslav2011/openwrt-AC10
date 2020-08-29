@@ -426,7 +426,7 @@ void ConstructIE(struct rtl8192cd_priv *priv, unsigned char *pucOut, int *usOutL
 #ifdef RTK_NL80211
 		for (ulIndex=0; ulIndex<priv->wpa_global_info->NumOfUnicastCipherWPA2; ulIndex++)
 		{
-			int i = priv->wpa_global_info->NumOfUnicastCipherWPA2 - ulIndex - 1; 
+			int i = priv->wpa_global_info->NumOfUnicastCipherWPA2 - ulIndex - 1;
 			pDot11RSNPairwiseSuite->dot11RSNIESuite[usSuitCount].OUI[0] = 0x00;
 			pDot11RSNPairwiseSuite->dot11RSNIESuite[usSuitCount].OUI[1] = 0x0F;
 			pDot11RSNPairwiseSuite->dot11RSNIESuite[usSuitCount].OUI[2] = 0xAC;
@@ -1140,18 +1140,18 @@ void wds_psk_set(struct rtl8192cd_priv *priv, int idx, unsigned char *key)
 
 	if (key == NULL) {
 		if (strlen(priv->pmib->dot11WdsInfo.wdsPskPassPhrase) == 64) // hex
-			get_array_val(priv->pmib->dot11WdsInfo.wdsMapingKey[idx], priv->pmib->dot11WdsInfo.wdsPskPassPhrase, 64);	
-		else {		
+			get_array_val(priv->pmib->dot11WdsInfo.wdsMapingKey[idx], priv->pmib->dot11WdsInfo.wdsPskPassPhrase, 64);
+		else {
 			memset(pchar, 0, sizeof(unsigned char)*40);
 				PasswordHash(priv->pmib->dot11WdsInfo.wdsPskPassPhrase,"REALTEK", strlen("REALTEK"), pchar);
-			memcpy(priv->pmib->dot11WdsInfo.wdsMapingKey[idx], pchar, sizeof(unsigned char)*32);			
+			memcpy(priv->pmib->dot11WdsInfo.wdsMapingKey[idx], pchar, sizeof(unsigned char)*32);
 			}
 		}
 	else
 		memcpy(priv->pmib->dot11WdsInfo.wdsMapingKey[idx], key, sizeof(unsigned char)*32);
-	
+
 	priv->pmib->dot11WdsInfo.wdsMappingKeyLen[idx] = 32;
-	priv->pmib->dot11WdsInfo.wdsMappingKeyLen[idx] |= 0x80000000;  //set bit to protect the key	
+	priv->pmib->dot11WdsInfo.wdsMappingKeyLen[idx] |= 0x80000000;  //set bit to protect the key
 #endif
 }
 
@@ -1168,7 +1168,7 @@ void wds_psk_init(struct rtl8192cd_priv *priv)
 			key = NULL;
 		else
 			key = priv->pmib->dot11WdsInfo.wdsMapingKey[0];
-			
+
 		wds_psk_set(priv, i, key);
 	}
 }
@@ -1178,7 +1178,7 @@ void hapd_set_wdskey(struct net_device *dev, char *wdsPskPassPhrase, char *ssid,
 	int idx = 0;
 	unsigned char pchar[40];
 
-	memcpy(priv->pmib->dot11WdsInfo.wdsPskPassPhrase, wdsPskPassPhrase, strlen(wdsPskPassPhrase));	
+	memcpy(priv->pmib->dot11WdsInfo.wdsPskPassPhrase, wdsPskPassPhrase, strlen(wdsPskPassPhrase));
 	priv->pmib->dot11WdsInfo.wdsPskPassPhrase[strlen(wdsPskPassPhrase)] = '\0';
 
 	memset(pchar, 0, sizeof(unsigned char)*40);
@@ -1186,9 +1186,9 @@ void hapd_set_wdskey(struct net_device *dev, char *wdsPskPassPhrase, char *ssid,
 
 	for(idx =0; idx<wds_num; idx++)
 	{
-		memcpy(priv->pmib->dot11WdsInfo.wdsMapingKey[idx], pchar, sizeof(unsigned char)*32);		
+		memcpy(priv->pmib->dot11WdsInfo.wdsMapingKey[idx], pchar, sizeof(unsigned char)*32);
 		priv->pmib->dot11WdsInfo.wdsMappingKeyLen[idx] = 32;
-		priv->pmib->dot11WdsInfo.wdsMappingKeyLen[idx] |= 0x80000000;  //set bit to protect the key	
+		priv->pmib->dot11WdsInfo.wdsMappingKeyLen[idx] |= 0x80000000;  //set bit to protect the key
 	}
 
 }
@@ -1306,7 +1306,7 @@ int psk_indicate_evt(struct rtl8192cd_priv *priv, int id, unsigned char *mac, un
 	case DOT11_EVENT_MIC_FAILURE:
 		// do nothing
 		break;
-		
+
 	}
 
 			return 0;

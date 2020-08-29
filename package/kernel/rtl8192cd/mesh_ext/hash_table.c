@@ -11,7 +11,7 @@ long remove_hash_table (struct hash_table* tbl)
 {
 	unsigned long	i = 0;
 	long 		ret = HASH_TABLE_FAILED;
-	
+
 	for(i = 0; i < (1 << tbl->table_size_power); i++)
 	{
 #ifdef __KERNEL__
@@ -28,7 +28,7 @@ long remove_hash_table (struct hash_table* tbl)
 	free(tbl->entry_array);
 #endif
 	ret = HASH_TABLE_SUCCEEDED;
-	
+
 	return ret;
 }
 
@@ -38,7 +38,7 @@ long init_hash_table (struct hash_table* tbl, unsigned long tbl_sz_pwr, unsigned
 	unsigned long i, tbl_sz;
 
 	tbl->table_size_power = tbl_sz_pwr;
-	tbl_sz = 1 << tbl->table_size_power;	
+	tbl_sz = 1 << tbl->table_size_power;
 	tbl->hash_id_length = hid_len;
 	tbl->data_length = data_len;
 
@@ -51,7 +51,7 @@ long init_hash_table (struct hash_table* tbl, unsigned long tbl_sz_pwr, unsigned
 		return ret;
 	for(i = 0; i < tbl_sz; i++)
 	{
-		
+
 #ifdef __KERNEL__
 		tbl->entry_array[i].hash_id = (void*)kmalloc(tbl->hash_id_length, GFP_ATOMIC);
 		tbl->entry_array[i].data = (void*)kmalloc(tbl->data_length, GFP_ATOMIC);
@@ -62,7 +62,7 @@ long init_hash_table (struct hash_table* tbl, unsigned long tbl_sz_pwr, unsigned
 		if(!tbl->entry_array[i].hash_id || !tbl->entry_array[i].data)
 		{
 			remove_hash_table(tbl);
-			return ret;			
+			return ret;
 		}
 		memset(&tbl->entry_array[i].dirty, 0, sizeof(unsigned char));
 	}
@@ -72,7 +72,7 @@ long init_hash_table (struct hash_table* tbl, unsigned long tbl_sz_pwr, unsigned
 	tbl->delete_entry = delete_func;
 	tbl->traverse_table = traverse_func;
 	ret = HASH_TABLE_SUCCEEDED;
-	
+
 	return ret;
 }
 
@@ -80,7 +80,7 @@ long crc_hashing (struct hash_table* tbl, void* hid)
 {
 	unsigned char mask = 0;
 	unsigned long i, index, tmp;
-	
+
 	if(tbl->table_size_power > 8)
 	{
 #ifdef __KERNEL__
@@ -111,7 +111,7 @@ long crc_hashing (struct hash_table* tbl, void* hid)
 long PU_hashing (struct hash_table* tbl, void* hid)
 {
 	unsigned char index;
-	
+
 	index = (*(unsigned char *)hid) & 0xff;
 
 	return index;
@@ -169,7 +169,7 @@ long insert_default (struct hash_table* tbl, void* hid, void* data)
 		i = available ;
 		memcpy(tbl->entry_array[i].hash_id, hid, tbl->hash_id_length);
 		tbl->entry_array[i].dirty = 0xff;
-INSERT_LABEL2:					
+INSERT_LABEL2:
 		if(data != NULL)
 			memcpy(tbl->entry_array[i].data, data, tbl->data_length);
 		ret = HASH_TABLE_SUCCEEDED;
@@ -195,8 +195,8 @@ long delete_default (struct hash_table* tbl, void* hid)
 
 	for(i = 0; i < index; i++)
 		if(tbl->entry_array[i].dirty != 0 && !memcmp(hid, tbl->entry_array[i].hash_id, tbl->hash_id_length))
-			break;			
-		
+			break;
+
 	if(i != index)
 	{
 DELETE_LABEL:
@@ -215,9 +215,9 @@ void traverse_default (struct hash_table* tbl, void* handler)
 
 	func = handler;
 	tbl_sz = 1 << tbl->table_size_power;
-	
+
 	for(i = 0; i < tbl_sz; i++)
 		if(tbl->entry_array[i].dirty != 0)
-			func(tbl->entry_array[i].data);	
+			func(tbl->entry_array[i].data);
 }
 

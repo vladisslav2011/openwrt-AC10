@@ -1,6 +1,9 @@
 #!/bin/sh
 
-DIR="package/kernel/rtl8192cd"
+DIR="$1"
+if [ "$DIR" = "" ] ; then
+	DIR="package/kernel/rtl8192cd"
+fi
 U_FILE="package/kernel/rtl8192cd/unifdef-file"
 
 _dos2unix(){
@@ -13,4 +16,4 @@ _unifdef(){
 }
 
 _dos2unix
-_unifdef
+#_unifdef

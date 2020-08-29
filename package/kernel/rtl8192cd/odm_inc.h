@@ -124,7 +124,7 @@
 #if (DM_ODM_SUPPORT_TYPE & (ODM_AP))
 #define		RTL8723A_SUPPORT						0
 #ifdef CONFIG_RTL_8723B_SUPPORT
-#define		RTL8723B_SUPPORT						1		
+#define		RTL8723B_SUPPORT						1
 #else
 #define		RTL8723B_SUPPORT						0
 #endif
@@ -167,9 +167,9 @@
 #define USE_WORKITEM 								0
 
 //
-// Customer ID, note that: 
-// This variable is initiailzed through EEPROM or registry, 
-// however, its definition may be different with that in EEPROM for 
+// Customer ID, note that:
+// This variable is initiailzed through EEPROM or registry,
+// however, its definition may be different with that in EEPROM for
 // EEPROM size consideration. So, we have to perform proper translation between them.
 // Besides, CustomerID of registry has precedence of that of EEPROM.
 // defined below. 060703, by rcnjko.
@@ -182,7 +182,7 @@ typedef enum _RT_CUSTOMER_ID
 	RT_CID_8187_HW_LED = 3,
 	RT_CID_8187_NETGEAR = 4,
 	RT_CID_WHQL = 5,
-	RT_CID_819x_CAMEO  = 6, 
+	RT_CID_819x_CAMEO  = 6,
 	RT_CID_819x_RUNTOP = 7,
 	RT_CID_819x_Senao = 8,
 	RT_CID_TOSHIBA = 9,	// Merge by Jacken, 2008/01/31.
@@ -195,10 +195,10 @@ typedef enum _RT_CUSTOMER_ID
 	RT_CID_819x_ALPHA = 16,
 	RT_CID_819x_Sitecom = 17,
 	RT_CID_CCX = 18, // It's set under CCX logo test and isn't demanded for CCX functions, but for test behavior like retry limit and tx report. By Bruce, 2009-02-17.
-	RT_CID_819x_Lenovo = 19,	
+	RT_CID_819x_Lenovo = 19,
 	RT_CID_819x_QMI = 20,
-	RT_CID_819x_Edimax_Belkin = 21,		
-	RT_CID_819x_Sercomm_Belkin = 22,			
+	RT_CID_819x_Edimax_Belkin = 21,
+	RT_CID_819x_Sercomm_Belkin = 22,
 	RT_CID_819x_CAMEO1 = 23,
 	RT_CID_819x_MSI = 24,
 	RT_CID_819x_Acer = 25,
@@ -223,7 +223,7 @@ typedef enum _RF_RADIO_PATH{
 	RF_PATH_B = 1,			//Radio Path B
 	RF_PATH_C = 2,			//Radio Path C
 	RF_PATH_D = 3,			//Radio Path D
-	RF_PATH_MAX				//Max RF number 90 support 
+	RF_PATH_MAX				//Max RF number 90 support
 }RF_RADIO_PATH_E, *PRF_RADIO_PATH_E;
 
 
@@ -257,9 +257,9 @@ typedef struct _RSSI_STA{
 // Each module has independt 32 bit debug flag you cnn define the flag as yout require.
 typedef enum tag_DBGP_Flag_Type_Definition
 {
-	FQoS				= 0,	
+	FQoS				= 0,
 	FTX					= 1,
-	FRX					= 2,	
+	FRX					= 2,
 	FSEC				= 3,
 	FMGNT				= 4,
 	FMLME				= 5,

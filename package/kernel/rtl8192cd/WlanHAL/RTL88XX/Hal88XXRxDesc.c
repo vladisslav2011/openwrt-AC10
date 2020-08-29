@@ -3,14 +3,14 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	Hal88XXRxDesc.c
-	
+
 Abstract:
 	Defined RTL88XX HAL rx desc common function
-	    
+
 Major Change History:
 	When            Who                         What
 	---------- ---------------   -------------------------------
-	2012-03-29  Lun-Wu Yeh            Add PrepareRxDesc88XX().	
+	2012-03-29  Lun-Wu Yeh            Add PrepareRxDesc88XX().
 --*/
 
 #if !defined(__ECOS) && !defined(CPTCFG_CFG80211_MODULE)
@@ -34,7 +34,7 @@ void DumpRxBDesc88XX(
 #ifdef CONFIG_RTL_PROC_NEW
     IN      struct seq_file *s,
 #endif
-    IN      u4Byte          q_num 
+    IN      u4Byte          q_num
 )
 {
 	PHCI_RX_DMA_MANAGER_88XX    prx_dma;
@@ -48,11 +48,11 @@ void DumpRxBDesc88XX(
 
 #if RXBD_READY_CHECK_METHOD
 	PROC_PRINT(" q_num:%d, hw_idx=%d,host_idx= %d,cur_host_idx:%d, rxtag_seq_num:%d\n", q_num,
-		prx_dma->rx_queue[q_num].hw_idx, prx_dma->rx_queue[q_num].host_idx, 
+		prx_dma->rx_queue[q_num].hw_idx, prx_dma->rx_queue[q_num].host_idx,
 		prx_dma->rx_queue[q_num].cur_host_idx, prx_dma->rx_queue[q_num].rxtag_seq_num);
 #else
 	PROC_PRINT(" q_num:%d, hw_idx=%d,host_idx= %d,cur_host_idx:%d\n", q_num,
-		prx_dma->rx_queue[q_num].hw_idx, prx_dma->rx_queue[q_num].host_idx, 
+		prx_dma->rx_queue[q_num].hw_idx, prx_dma->rx_queue[q_num].host_idx,
 		prx_dma->rx_queue[q_num].cur_host_idx);
 #endif
 
@@ -64,34 +64,34 @@ void DumpRxBDesc88XX(
 #ifdef CONFIG_NET_PCI
 	if (HAL_IS_PCIBIOS_TYPE(Adapter)) {
 		PROC_PRINT("pRXBD_head=%08x, %08lx, reg(%x):%08x\n",
-			(u4Byte)prx_dma->rx_queue[q_num].pRXBD_head , 
+			(u4Byte)prx_dma->rx_queue[q_num].pRXBD_head ,
 			prx_dma->rx_queue[q_num].rxbd_dma_addr,
 			REG_RXQ_RXBD_DESA, HAL_RTL_R32(REG_RXQ_RXBD_DESA));
 
 		for (i=0;i<RX_Q_RXBD_NUM_IF(Adapter);i++ ){
-			PROC_PRINT("pRXBD_head[%d], addr:%08x,%08lx: Dword0: 0x%x, Dword1: 0x%x\n", 
-				i, 
+			PROC_PRINT("pRXBD_head[%d], addr:%08x,%08lx: Dword0: 0x%x, Dword1: 0x%x\n",
+				i,
 				(u4Byte)&prx_dma->rx_queue[q_num].pRXBD_head[i],
 				prx_dma->rx_queue[q_num].rxbd_dma_addr + sizeof(RX_BUFFER_DESCRIPTOR)*i,
-				(u4Byte)GET_DESC(prx_dma->rx_queue[q_num].pRXBD_head[i].Dword0), 
-				(u4Byte)GET_DESC(prx_dma->rx_queue[q_num].pRXBD_head[i].Dword1)     ); 
+				(u4Byte)GET_DESC(prx_dma->rx_queue[q_num].pRXBD_head[i].Dword0),
+				(u4Byte)GET_DESC(prx_dma->rx_queue[q_num].pRXBD_head[i].Dword1)     );
 		}
 	} else
 #endif
 	{
 		PROC_PRINT("pRXBD_head=%p, %08lx, reg(%x):%08x\n",
-			prx_dma->rx_queue[q_num].pRXBD_head , 
+			prx_dma->rx_queue[q_num].pRXBD_head ,
 			HAL_VIRT_TO_BUS1(Adapter, (PVOID)prx_dma->rx_queue[q_num].pRXBD_head,sizeof(RX_BUFFER_DESCRIPTOR) * RX_Q_RXBD_NUM_IF(Adapter), PCI_DMA_TODEVICE),
 			REG_RXQ_RXBD_DESA, HAL_RTL_R32(REG_RXQ_RXBD_DESA));
 
 	    for (i=0;i<RX_Q_RXBD_NUM_IF(Adapter);i++ ){
-			PROC_PRINT("pRXBD_head[%d], addr:%08x,%08x: Dword0: 0x%x, Dword1: 0x%x\n", 
-				i, 
+			PROC_PRINT("pRXBD_head[%d], addr:%08x,%08x: Dword0: 0x%x, Dword1: 0x%x\n",
+				i,
 				(u4Byte)&prx_dma->rx_queue[q_num].pRXBD_head[i],
 				(u4Byte)HAL_VIRT_TO_BUS1(Adapter, (PVOID)&prx_dma->rx_queue[q_num].pRXBD_head[i],sizeof(RX_BUFFER_DESCRIPTOR), PCI_DMA_TODEVICE),
-				(u4Byte)GET_DESC(prx_dma->rx_queue[q_num].pRXBD_head[i].Dword0), 
-                    (u4Byte)GET_DESC(prx_dma->rx_queue[q_num].pRXBD_head[i].Dword1)     ); 
-	    }	
+				(u4Byte)GET_DESC(prx_dma->rx_queue[q_num].pRXBD_head[i].Dword0),
+                    (u4Byte)GET_DESC(prx_dma->rx_queue[q_num].pRXBD_head[i].Dword1)     );
+	    }
     }
 }
 
@@ -141,7 +141,7 @@ PrepareRXBD88XX(
     {
         RX_Q_RXBD_NUM
     };
-#endif    
+#endif
     u4Byte RXBD_Reg[HCI_RX_DMA_QUEUE_MAX_NUM] =
     {
         REG_RXQ_RXBD_DESA
@@ -171,7 +171,7 @@ PrepareRXBD88XX(
             prx_dma->rx_queue[q_num].hw_idx         = 0;
             prx_dma->rx_queue[q_num].host_idx       = 0;
             prx_dma->rx_queue[q_num].cur_host_idx   = 0;
-#if RXBD_READY_CHECK_METHOD        
+#if RXBD_READY_CHECK_METHOD
             prx_dma->rx_queue[q_num].rxtag_seq_num  = 0;
 #endif
 #if CFG_HAL_DELAY_REFILL_RX_BUF
@@ -193,7 +193,7 @@ PrepareRXBD88XX(
                 tmp_dma_ring_addr = _GET_HAL_DATA(Adapter)->ring_dma_addr;
             }
             else {
-#ifdef CONCURRENT_MODE				
+#ifdef CONCURRENT_MODE
                 prx_dma->rx_queue[q_num].pRXBD_head = prx_dma->rx_queue[q_num-1].pRXBD_head + \
                                                   sizeof(RX_BUFFER_DESCRIPTOR) * RXBD_NUM[idx][q_num-1];
                 tmp_dma_ring_addr = tmp_dma_ring_addr + sizeof(RX_BUFFER_DESCRIPTOR) * RXBD_NUM[idx][q_num-1];
@@ -206,18 +206,18 @@ PrepareRXBD88XX(
             }
             prx_dma->rx_queue[q_num].rxbd_dma_addr = tmp_dma_ring_addr;
 
-            printk ("QNum: 0x%x, RXBDHead: 0x%p, tmp_dma_ring_addr:0x%08lx\n", 
+            printk ("QNum: 0x%x, RXBDHead: 0x%p, tmp_dma_ring_addr:0x%08lx\n",
                    (u4Byte)q_num, prx_dma->rx_queue[q_num].pRXBD_head, tmp_dma_ring_addr);
 
             HAL_RTL_W32(RXBD_Reg[q_num], tmp_dma_ring_addr);
- 
+
             //Init Read/Write Pointer for RX queue
             HAL_RTL_W32(RXBD_RWPtr_Reg[q_num], 0);
 #ifdef CONCURRENT_MODE
             for(rxbd_idx = 0; rxbd_idx < RXBD_NUM[idx][q_num]; rxbd_idx++)
 #else
             for(rxbd_idx = 0; rxbd_idx < RXBD_NUM[q_num]; rxbd_idx++)
-#endif				
+#endif
             {
                 pbuf = HAL_OS_malloc(Adapter, bufferLen, _SKB_RX_, TRUE);
                 if ( NULL == pbuf ) {
@@ -232,20 +232,20 @@ PrepareRXBD88XX(
                                                  rxbd_idx, \
                                                  (u4Byte)GET_DESC(prx_dma->rx_queue[q_num].pRXBD_head[rxbd_idx].Dword0), \
                                                  (u4Byte)GET_DESC(prx_dma->rx_queue[q_num].pRXBD_head[rxbd_idx].Dword1)  \
-                                                 ));                
+                                                 ));
 #endif
 
                 }
             }
         }
-		
+
 //DumpRxBDesc88XX(Adapter, 0);
         return RT_STATUS_SUCCESS;
-    } 
+    }
 #endif
 
     desc_dma_buf_start = _GET_HAL_DATA(Adapter)->desc_dma_buf;
-	
+
 	PlatformZeroMemory(desc_dma_buf_start, _GET_HAL_DATA(Adapter)->desc_dma_buf_len);
 
 	HAL_CACHE_SYNC_WBACK(Adapter, (unsigned long)((PVOID)(desc_dma_buf_start)-CONFIG_LUNA_SLAVE_PHYMEM_OFFSET), _GET_HAL_DATA(Adapter)->desc_dma_buf_len, HAL_PCI_DMA_TODEVICE);
@@ -255,18 +255,18 @@ PrepareRXBD88XX(
 		(HAL_PAGE_SIZE - (((unsigned long)desc_dma_buf_start) & (HAL_PAGE_SIZE-1))));
 
     //Transfer to Non-cachable address
-#ifdef TRXBD_CACHABLE_REGION    
-  // Do nothing for un-cachable      
+#ifdef TRXBD_CACHABLE_REGION
+  // Do nothing for un-cachable
 #else
     pdesc_dma_buf =  (pu1Byte)HAL_TO_NONCACHE_ADDR((u4Byte)pdesc_dma_buf);
-#endif // #ifdef TRXBD_CACHABLE_REGION 
+#endif // #ifdef TRXBD_CACHABLE_REGION
 
 #if CFG_HAL_TX_AMSDU
     if ( IS_SUPPORT_TX_AMSDU(Adapter) ) {
 
         desc_dma_buf_start_amsdu = _GET_HAL_DATA(Adapter)->desc_dma_buf_amsdu;
-        PlatformZeroMemory(desc_dma_buf_start_amsdu, _GET_HAL_DATA(Adapter)->desc_dma_buf_len_amsdu);    
-#ifdef TRXBD_CACHABLE_REGION		
+        PlatformZeroMemory(desc_dma_buf_start_amsdu, _GET_HAL_DATA(Adapter)->desc_dma_buf_len_amsdu);
+#ifdef TRXBD_CACHABLE_REGION
         _dma_cache_wback((unsigned long)((PVOID)(desc_dma_buf_start_amsdu)-CONFIG_LUNA_SLAVE_PHYMEM_OFFSET), _GET_HAL_DATA(Adapter)->desc_dma_buf_len_amsdu);
 #else
 	HAL_CACHE_SYNC_WBACK(Adapter, (unsigned long)((PVOID)(desc_dma_buf_start_amsdu)-CONFIG_LUNA_SLAVE_PHYMEM_OFFSET), _GET_HAL_DATA(Adapter)->desc_dma_buf_len_amsdu, HAL_PCI_DMA_TODEVICE);
@@ -274,7 +274,7 @@ PrepareRXBD88XX(
         pdesc_dma_buf_amsdu = (pu1Byte)(((unsigned long)desc_dma_buf_start_amsdu) + \
         (HAL_PAGE_SIZE - (((unsigned long)desc_dma_buf_start_amsdu) & (HAL_PAGE_SIZE-1))));
 
-        pdesc_dma_buf_amsdu = (pu1Byte)HAL_TO_NONCACHE_ADDR((u4Byte)pdesc_dma_buf_amsdu); 
+        pdesc_dma_buf_amsdu = (pu1Byte)HAL_TO_NONCACHE_ADDR((u4Byte)pdesc_dma_buf_amsdu);
     }
 #endif
 
@@ -328,7 +328,7 @@ PrepareRXBD88XX(
                         HAL_VIRT_TO_BUS1(Adapter, (PVOID)prx_dma->rx_queue[q_num].pRXBD_head, \
                         sizeof(RX_BUFFER_DESCRIPTOR) * RXBD_NUM[q_num], HAL_PCI_DMA_TODEVICE) + CONFIG_LUNA_SLAVE_PHYMEM_OFFSET_HAL);
 #endif
- #ifdef PCIE_POWER_SAVING_TEST        
+ #ifdef PCIE_POWER_SAVING_TEST
         _GET_HAL_DATA(Adapter)->ring_dma_addr = HAL_RTL_R32(RXBD_Reg[q_num]);//yllin
 #endif
         //Init Read/Write Pointer for RX queue
@@ -337,7 +337,7 @@ PrepareRXBD88XX(
         for(rxbd_idx = 0; rxbd_idx < RXBD_NUM[idx][q_num]; rxbd_idx++)
 #else
         for(rxbd_idx = 0; rxbd_idx < RXBD_NUM[q_num]; rxbd_idx++)
-#endif			
+#endif
         {
             pbuf = HAL_OS_malloc(Adapter, bufferLen, _SKB_RX_, TRUE);
             if ( NULL == pbuf ) {
@@ -348,7 +348,7 @@ PrepareRXBD88XX(
 				prx_dma->rx_queue[q_num].host_idx   = rxbd_idx;
 				HAL_RTL_W16(RXBD_RWPtr_Reg[q_num], (rxbd_idx & 0xFFF));
                 break;
-#endif				
+#endif
             }
             else {
                 UpdateRXBDInfo88XX(Adapter, q_num, rxbd_idx, (pu1Byte)pbuf, Callback, _TRUE);
@@ -372,18 +372,18 @@ UpdateRXBDInfo88XX(
     IN      u4Byte          queueIndex,  //HCI_RX_DMA_QUEUE_88XX
     IN      u2Byte          rxbd_idx,
     IN      pu1Byte         pBuf,
-    IN      PVOID           Callback,    // callback function    
+    IN      PVOID           Callback,    // callback function
     IN      BOOLEAN         bInit
 )
 {
     PHCI_RX_DMA_MANAGER_88XX    prx_dma;
-    INIT_RXBUF_FUNC             InitRXDescFunc = (INIT_RXBUF_FUNC)Callback; 
+    INIT_RXBUF_FUNC             InitRXDescFunc = (INIT_RXBUF_FUNC)Callback;
     u4Byte                      bufAddr;
     u4Byte                      bufLen;
     unsigned long dma_addr;
     PRX_BUFFER_DESCRIPTOR ptr;
 
-    prx_dma = (PHCI_RX_DMA_MANAGER_88XX)(_GET_HAL_DATA(Adapter)->PRxDMA88XX);    
+    prx_dma = (PHCI_RX_DMA_MANAGER_88XX)(_GET_HAL_DATA(Adapter)->PRxDMA88XX);
 
     InitRXDescFunc(Adapter, pBuf, rxbd_idx, &bufAddr, &bufLen);
 
@@ -395,10 +395,10 @@ UpdateRXBDInfo88XX(
     RT_TRACE_F(COMP_RECV, DBG_TRACE, ("rxbd_idx:0x%lx, bufAddr:0x%lx, phy(bufAddr):0x%lx\n",
         rxbd_idx, bufAddr, HAL_VIRT_TO_BUS1(Adapter, (PVOID)bufAddr, bufLen, HAL_PCI_DMA_TODEVICE)));
 
-#endif 
+#endif
 
 #if 0 //Filen_test
-    if ( _TRUE == bInit ) {    
+    if ( _TRUE == bInit ) {
         SET_DESC_FIELD_CLR(prx_dma->rx_queue[queueIndex].pRXBD_head[rxbd_idx].Dword0,
             bufLen,
             RXBD_DW0_RXBUFSIZE_MSK, RXBD_DW0_RXBUFSIZE_SH);
@@ -433,7 +433,7 @@ UpdateRXBDInfo88XX(
          HAL_CACHE_SYNC_WBACK(Adapter,
             prx_dma->rx_queue[queueIndex].rxbd_dma_addr + rxbd_idx * sizeof(RX_BUFFER_DESCRIPTOR),
             sizeof(RX_BUFFER_DESCRIPTOR), HAL_PCI_DMA_TODEVICE);
-     } else   
+     } else
 #endif
 
 #ifdef TRXBD_CACHABLE_REGION
@@ -463,7 +463,7 @@ DumpRxPktContent88XX(
     PHCI_RX_DMA_MANAGER_88XX        prx_dma;
     PHCI_RX_DMA_QUEUE_STRUCT_88XX   cur_q;
     PRX_DESC_88XX                   prx_desc;
-    // TODO: no initial value for prx_desc 
+    // TODO: no initial value for prx_desc
 
     prx_dma         = (PHCI_RX_DMA_MANAGER_88XX)(_GET_HAL_DATA(Adapter)->PRxDMA88XX);
     cur_q           = &(prx_dma->rx_queue[queueIndex]);
@@ -545,15 +545,15 @@ QueryRxDesc88XX_V1 (
 
 		if(GET_DESC_FIELD(RXBDDword0, RXBD_DW0_TOTALRXPKTSIZE_MSK, RXBD_DW0_TOTALRXPKTSIZE_SH) == 0xffff)
 			break;
-		
+
 		if((GET_DESC_FIELD(RXBDDword0, RXBD_DW0_TOTALRXPKTSIZE_MSK, RXBD_DW0_TOTALRXPKTSIZE_SH)&0xff) == (cur_q->rxtag_seq_num &0xff))
 			break;
 #endif
 
         if ( cur_q->rxtag_seq_num !=  GET_DESC_FIELD(RXBDDword0, RXBD_DW0_TOTALRXPKTSIZE_MSK, RXBD_DW0_TOTALRXPKTSIZE_SH)) {
-            RT_TRACE(COMP_RECV, DBG_WARNING, ("Polling failed(cnt: %d), keep trying, DW0(0x%x), RXBDCheckRdySeqNum(0x%x) FS,LS(0x%x,0x%x)\n", 
-                                            PollingCnt, 
-                                            GET_DESC_FIELD(RXBDDword0, RXBD_DW0_TOTALRXPKTSIZE_MSK, RXBD_DW0_TOTALRXPKTSIZE_SH), 
+            RT_TRACE(COMP_RECV, DBG_WARNING, ("Polling failed(cnt: %d), keep trying, DW0(0x%x), RXBDCheckRdySeqNum(0x%x) FS,LS(0x%x,0x%x)\n",
+                                            PollingCnt,
+                                            GET_DESC_FIELD(RXBDDword0, RXBD_DW0_TOTALRXPKTSIZE_MSK, RXBD_DW0_TOTALRXPKTSIZE_SH),
                                             cur_q->rxtag_seq_num,
                                             GET_DESC_FIELD(RXBDDword0, RXBD_DW0_FS_MSK, RXBD_DW0_FS_SH),
                                             GET_DESC_FIELD(RXBDDword0, RXBD_DW0_LS_MSK, RXBD_DW0_LS_SH)
@@ -569,7 +569,7 @@ QueryRxDesc88XX_V1 (
         else {
             break;
         }
-#endif   //RXBD_READY_CHECK_METHOD     
+#endif   //RXBD_READY_CHECK_METHOD
 
         PollingCnt++;
         //HAL_delay_ms(1);
@@ -583,7 +583,7 @@ QueryRxDesc88XX_V1 (
 		Adapter->pshare->RxTagPollingCount++;
 		Adapter->pshare->RxTagMismatchCount++;
 
-#if CFG_HAL_DBG        
+#if CFG_HAL_DBG
         //code below in order to dump packet
         bResult = FAIL;
         prx_desc_status->FS = 1;
@@ -595,7 +595,7 @@ QueryRxDesc88XX_V1 (
 #if RXBD_READY_CHECK_METHOD
 		cur_q->rxtag_seq_num = GET_DESC_FIELD(RXBDDword0, RXBD_DW0_TOTALRXPKTSIZE_MSK, RXBD_DW0_TOTALRXPKTSIZE_SH);
 #endif
-#endif  //#if  CFG_HAL_DBG        
+#endif  //#if  CFG_HAL_DBG
 
     }
     else {
@@ -605,8 +605,8 @@ QueryRxDesc88XX_V1 (
 			cur_q->rxtag_seq_num++;
 			cur_q->rxtag_seq_num &= RXBD_RXTAG_MASK;
 #endif  //#if RXBD_READY_CHECK_METHOD
-   
-    // get rxbd    
+
+    // get rxbd
     prx_desc_status->FS = GET_DESC_FIELD(RXBDDword0, RXBD_DW0_FS_MSK, RXBD_DW0_FS_SH);
     prx_desc_status->LS = GET_DESC_FIELD(RXBDDword0, RXBD_DW0_LS_MSK, RXBD_DW0_LS_SH);
     prx_desc_status->RXBuffSize = GET_DESC_FIELD(RXBDDword0, RXBD_DW0_RXBUFSIZE_MSK, RXBD_DW0_RXBUFSIZE_SH);
@@ -626,15 +626,15 @@ QueryRxDesc88XX_V1 (
         prx_desc_status->DRV_INFO_SIZE  = (GET_RX_DESC_DRV_INFO_SIZE(prx_desc)) << 3; //eric-8822
         prx_desc_status->SHIFT          = GET_RX_DESC_SHIFT(prx_desc);
         prx_desc_status->PHYST          = GET_RX_DESC_PHYST(prx_desc);
-        prx_desc_status->SWDEC          = GET_RX_DESC_SWDEC(prx_desc);   
+        prx_desc_status->SWDEC          = GET_RX_DESC_SWDEC(prx_desc);
         prx_desc_status->PAGGR          = GET_RX_DESC_PAGGR(prx_desc);
         prx_desc_status->C2HPkt         = GET_RX_DESC_C2H(prx_desc);
         prx_desc_status->RX_RATE        = GET_RX_DESC_RX_RATE(prx_desc);
 
 
 #if CFG_HAL_HW_FILL_MACID
-        if (IS_SUPPORT_HW_FILL_MACID(Adapter)) {        
-            prx_desc_status->rxMACID        = GET_RX_DESC_MACID_RPT_BUFF(prx_desc);     
+        if (IS_SUPPORT_HW_FILL_MACID(Adapter)) {
+            prx_desc_status->rxMACID        = GET_RX_DESC_MACID_RPT_BUFF(prx_desc);
         }
 #endif //CFG_HAL_HW_FILL_MACID
 
@@ -644,7 +644,7 @@ QueryRxDesc88XX_V1 (
         RT_TRACE_F(COMP_RECV, DBG_TRACE, ("RXBuffSize: 0x%lx, fs,ls:(0x%lx,0x%lx), PKT_LEN:0x%lx, DRV_INFO:0x%lx, SHIFT:0x%lx\n", \
                             prx_desc_status->RXBuffSize, prx_desc_status->FS, prx_desc_status->LS, \
                             prx_desc_status->PKT_LEN, prx_desc_status->DRV_INFO_SIZE, prx_desc_status->SHIFT));
-#endif        
+#endif
     }
 
 _RXPKT_DUMP:
@@ -652,8 +652,8 @@ _RXPKT_DUMP:
 #if 0 // CFG_HAL_DBG
     //RXBD
     RT_TRACE_F(COMP_RECV, DBG_TRACE, ("RXBD[%ld]:\nDword0=0x%lx, Dword1=0x%lx \n",
-                                        (u4Byte)cur_q->cur_host_idx, 
-                                        (u4Byte)GET_DESC(cur_q->pRXBD_head[cur_q->cur_host_idx].Dword0), 
+                                        (u4Byte)cur_q->cur_host_idx,
+                                        (u4Byte)GET_DESC(cur_q->pRXBD_head[cur_q->cur_host_idx].Dword0),
                                         (u4Byte)GET_DESC(cur_q->pRXBD_head[cur_q->cur_host_idx].Dword1)
 										));
 
@@ -677,14 +677,14 @@ _RXPKT_DUMP:
         } else {
             RT_TRACE_F(COMP_RECV, DBG_TRACE, ("SW CRC32 ok. 0x%lx\n", crc32) );
         }
-#endif        
+#endif
     }
     else if ( prx_desc_status->FS==0x01 && prx_desc_status->LS==0x0 ) {
         //RXDESC
         RT_PRINT_DATA(COMP_RECV, DBG_TRACE, "RXDESC:(FS=1 & LS=0)\n", prx_desc, sizeof(RX_DESC_88XX));
 
         //PHYStatus
-        RT_PRINT_DATA(COMP_RECV, DBG_TRACE, "PHYStatus:\n", ((pu1Byte)prx_desc + SIZE_RXDESC_88XX), prx_desc_status->DRV_INFO_SIZE + prx_desc_status->SHIFT);        
+        RT_PRINT_DATA(COMP_RECV, DBG_TRACE, "PHYStatus:\n", ((pu1Byte)prx_desc + SIZE_RXDESC_88XX), prx_desc_status->DRV_INFO_SIZE + prx_desc_status->SHIFT);
 
         //Partial RXPkt
         pFrame = (pu1Byte)prx_desc + SIZE_RXDESC_88XX + prx_desc_status->DRV_INFO_SIZE + prx_desc_status->SHIFT;
@@ -728,7 +728,7 @@ _RXPKT_DUMP:
         crc32 = 0;
 
         // for special case: CRC in last one and two packets...
-        if (prx_desc_status->pktBufLen[prx_desc_status->pktNum-1] < _CRCLNG_) {            
+        if (prx_desc_status->pktBufLen[prx_desc_status->pktNum-1] < _CRCLNG_) {
             prx_desc_status->pktBufLen[prx_desc_status->pktNum-2] = prx_desc_status->pktBufLen[prx_desc_status->pktNum-2] + prx_desc_status->pktBufLen[prx_desc_status->pktNum-1] - _CRCLNG_;
             prx_desc_status->pktBufLen[prx_desc_status->pktNum-1] = 0;
             bDivisionCRC = _TRUE;
@@ -736,7 +736,7 @@ _RXPKT_DUMP:
         } else {
             prx_desc_status->pktBufLen[prx_desc_status->pktNum-1] -= _CRCLNG_;
         }
-       
+
         SoftwareCRC32_RXBuffGather(&(prx_desc_status->pktBufAddr[0]), &(prx_desc_status->pktBufLen[0]), prx_desc_status->pktNum, &crc32);
 
         if (bDivisionCRC == _TRUE) {
@@ -752,7 +752,7 @@ _RXPKT_DUMP:
             while(cnt < prx_desc_status->remaining_pkt_len) {
                 tempByte = *((pu1Byte)prx_desc_status->pktBufAddr[prx_desc_status->pktNum-1] + cnt);
                 HAL_memcpy((pu1Byte)&rx_crc32+shift, (pu1Byte)&tempByte, sizeof(tempByte));
-                cnt++;              
+                cnt++;
                 shift++;
             }
 
@@ -760,13 +760,13 @@ _RXPKT_DUMP:
                 RT_TRACE_F(COMP_RECV, DBG_WARNING, ("SW CRC32 error in division case. 0x%lx\n", crc32));
             } else {
                 RT_TRACE_F(COMP_RECV, DBG_TRACE, ("SW CRC32 ok in division case. 0x%lx\n", crc32) );
-            }            
+            }
         } else {
             if (HAL_memcmp(pBufAddr + prx_desc_status->remaining_pkt_len - _CRCLNG_, (PVOID)&crc32, _CRCLNG_)) {
                 RT_TRACE_F(COMP_RECV, DBG_WARNING, ("SW CRC32 error. 0x%lx\n", crc32));
             } else {
                 RT_TRACE_F(COMP_RECV, DBG_TRACE, ("SW CRC32 ok. 0x%lx\n", crc32) );
-            }      
+            }
         }
     }
 #endif
@@ -829,9 +829,9 @@ QueryRxDesc88XX (
         RXBDDword0 = nonCacheAddr->Dword0;
 
         if ( cur_q->rxtag_seq_num !=  GET_DESC_FIELD(RXBDDword0, RXBD_DW0_TOTALRXPKTSIZE_MSK, RXBD_DW0_TOTALRXPKTSIZE_SH)) {
-            RT_TRACE(COMP_RECV, DBG_WARNING, ("Polling failed(cnt: %d), keep trying, DW0(0x%x), RXBDCheckRdySeqNum(0x%x) FS,LS(0x%x,0x%x)\n", 
-                                            PollingCnt, 
-                                            GET_DESC_FIELD(RXBDDword0, RXBD_DW0_TOTALRXPKTSIZE_MSK, RXBD_DW0_TOTALRXPKTSIZE_SH), 
+            RT_TRACE(COMP_RECV, DBG_WARNING, ("Polling failed(cnt: %d), keep trying, DW0(0x%x), RXBDCheckRdySeqNum(0x%x) FS,LS(0x%x,0x%x)\n",
+                                            PollingCnt,
+                                            GET_DESC_FIELD(RXBDDword0, RXBD_DW0_TOTALRXPKTSIZE_MSK, RXBD_DW0_TOTALRXPKTSIZE_SH),
                                             cur_q->rxtag_seq_num,
                                             GET_DESC_FIELD(RXBDDword0, RXBD_DW0_FS_MSK, RXBD_DW0_FS_SH),
                                             GET_DESC_FIELD(RXBDDword0, RXBD_DW0_LS_MSK, RXBD_DW0_LS_SH)
@@ -847,7 +847,7 @@ QueryRxDesc88XX (
         else {
             break;
         }
-#endif   //RXBD_READY_CHECK_METHOD     
+#endif   //RXBD_READY_CHECK_METHOD
 
         PollingCnt++;
         //HAL_delay_ms(1);
@@ -861,7 +861,7 @@ QueryRxDesc88XX (
 		Adapter->pshare->RxTagPollingCount++;
 		Adapter->pshare->RxTagMismatchCount++;
 
-#if CFG_HAL_DBG        
+#if CFG_HAL_DBG
         //code below in order to dump packet
         bResult = FAIL;
         prx_desc_status->FS = 1;
@@ -873,7 +873,7 @@ QueryRxDesc88XX (
 #if RXBD_READY_CHECK_METHOD
 		cur_q->rxtag_seq_num = GET_DESC_FIELD(RXBDDword0, RXBD_DW0_TOTALRXPKTSIZE_MSK, RXBD_DW0_TOTALRXPKTSIZE_SH);
 #endif
-#endif  //#if  CFG_HAL_DBG        
+#endif  //#if  CFG_HAL_DBG
 
     }
     else {
@@ -883,8 +883,8 @@ QueryRxDesc88XX (
 			cur_q->rxtag_seq_num++;
 			cur_q->rxtag_seq_num &= RXBD_RXTAG_MASK;
 #endif  //#if RXBD_READY_CHECK_METHOD
-   
-    // get rxbd    
+
+    // get rxbd
     prx_desc_status->FS = GET_DESC_FIELD(RXBDDword0, RXBD_DW0_FS_MSK, RXBD_DW0_FS_SH);
     prx_desc_status->LS = GET_DESC_FIELD(RXBDDword0, RXBD_DW0_LS_MSK, RXBD_DW0_LS_SH);
     prx_desc_status->RXBuffSize = GET_DESC_FIELD(RXBDDword0, RXBD_DW0_RXBUFSIZE_MSK, RXBD_DW0_RXBUFSIZE_SH);
@@ -904,21 +904,21 @@ QueryRxDesc88XX (
         prx_desc_status->DRV_INFO_SIZE  = GET_DESC_FIELD(prx_desc->Dword0, RX_DW0_DRV_INFO_SIZE_MSK, RX_DW0_DRV_INFO_SIZE_SH)<<3;
         prx_desc_status->SHIFT          = GET_DESC_FIELD(prx_desc->Dword0, RX_DW0_SHIFT_MSK, RX_DW0_SHIFT_SH);
         prx_desc_status->PHYST          = GET_DESC_FIELD(prx_desc->Dword0, RX_DW0_PHYST_MSK, RX_DW0_PHYST_SH);
-        prx_desc_status->SWDEC          = GET_DESC_FIELD(prx_desc->Dword0, RX_DW0_SWDEC_MSK, RX_DW0_SWDEC_SH);   
+        prx_desc_status->SWDEC          = GET_DESC_FIELD(prx_desc->Dword0, RX_DW0_SWDEC_MSK, RX_DW0_SWDEC_SH);
         prx_desc_status->PAGGR          = GET_DESC_FIELD(prx_desc->Dword1, RX_DW1_PAGGR_MSK, RX_DW1_PAGGR_SH);
         prx_desc_status->C2HPkt         = GET_DESC_FIELD(prx_desc->Dword2, RX_DW2_C2HPKT_MSK, RX_DW2_C2HPKT_SH);
         prx_desc_status->RX_RATE        = GET_DESC_FIELD(prx_desc->Dword3, RX_DW3_RX_RATE_MSK, RX_DW3_RX_RATE_SH);
 
 #if (IS_RTL8192E_SERIES || IS_RTL8881A_SERIES)
-        if (IS_HARDWARE_TYPE_8192E(Adapter) || IS_HARDWARE_TYPE_8881A(Adapter)) {        
+        if (IS_HARDWARE_TYPE_8192E(Adapter) || IS_HARDWARE_TYPE_8881A(Adapter)) {
             prx_desc_status->OFDM_SGI       = GET_DESC_FIELD(prx_desc->Dword4, RX_DW4_OFDM_SGI_MSK, RX_DW4_OFDM_SGI_SH);
             prx_desc_status->BW             = GET_DESC_FIELD(prx_desc->Dword4, RX_DW4_BW_MSK, RX_DW4_BW_SH);
         }
 #endif //#if (IS_RTL8192E_SERIES || IS_RTL8881A_SERIES)
 
 #if CFG_HAL_HW_FILL_MACID
-        if (IS_SUPPORT_HW_FILL_MACID(Adapter)) {        
-            prx_desc_status->rxMACID        = GET_DESC_FIELD(prx_desc->Dword4, RX_DW4_MACID_MSK, RX_DW4_MACID_SH);     
+        if (IS_SUPPORT_HW_FILL_MACID(Adapter)) {
+            prx_desc_status->rxMACID        = GET_DESC_FIELD(prx_desc->Dword4, RX_DW4_MACID_MSK, RX_DW4_MACID_SH);
         }
 #endif //CFG_HAL_HW_FILL_MACID
 
@@ -928,7 +928,7 @@ QueryRxDesc88XX (
         RT_TRACE_F(COMP_RECV, DBG_TRACE, ("RXBuffSize: 0x%lx, fs,ls:(0x%lx,0x%lx), PKT_LEN:0x%lx, DRV_INFO:0x%lx, SHIFT:0x%lx\n", \
                             prx_desc_status->RXBuffSize, prx_desc_status->FS, prx_desc_status->LS, \
                             prx_desc_status->PKT_LEN, prx_desc_status->DRV_INFO_SIZE, prx_desc_status->SHIFT));
-#endif        
+#endif
     }
 
 _RXPKT_DUMP:
@@ -936,8 +936,8 @@ _RXPKT_DUMP:
 #if 0 // CFG_HAL_DBG
     //RXBD
     RT_TRACE_F(COMP_RECV, DBG_TRACE, ("RXBD[%ld]:\nDword0=0x%lx, Dword1=0x%lx \n",
-                                        (u4Byte)cur_q->cur_host_idx, 
-                                        (u4Byte)GET_DESC(cur_q->pRXBD_head[cur_q->cur_host_idx].Dword0), 
+                                        (u4Byte)cur_q->cur_host_idx,
+                                        (u4Byte)GET_DESC(cur_q->pRXBD_head[cur_q->cur_host_idx].Dword0),
                                         (u4Byte)GET_DESC(cur_q->pRXBD_head[cur_q->cur_host_idx].Dword1)
 										));
 
@@ -961,14 +961,14 @@ _RXPKT_DUMP:
         } else {
             RT_TRACE_F(COMP_RECV, DBG_TRACE, ("SW CRC32 ok. 0x%lx\n", crc32) );
         }
-#endif        
+#endif
     }
     else if ( prx_desc_status->FS==0x01 && prx_desc_status->LS==0x0 ) {
         //RXDESC
         RT_PRINT_DATA(COMP_RECV, DBG_TRACE, "RXDESC:(FS=1 & LS=0)\n", prx_desc, sizeof(RX_DESC_88XX));
 
         //PHYStatus
-        RT_PRINT_DATA(COMP_RECV, DBG_TRACE, "PHYStatus:\n", ((pu1Byte)prx_desc + SIZE_RXDESC_88XX), prx_desc_status->DRV_INFO_SIZE + prx_desc_status->SHIFT);        
+        RT_PRINT_DATA(COMP_RECV, DBG_TRACE, "PHYStatus:\n", ((pu1Byte)prx_desc + SIZE_RXDESC_88XX), prx_desc_status->DRV_INFO_SIZE + prx_desc_status->SHIFT);
 
         //Partial RXPkt
         pFrame = (pu1Byte)prx_desc + SIZE_RXDESC_88XX + prx_desc_status->DRV_INFO_SIZE + prx_desc_status->SHIFT;
@@ -1012,7 +1012,7 @@ _RXPKT_DUMP:
         crc32 = 0;
 
         // for special case: CRC in last one and two packets...
-        if (prx_desc_status->pktBufLen[prx_desc_status->pktNum-1] < _CRCLNG_) {            
+        if (prx_desc_status->pktBufLen[prx_desc_status->pktNum-1] < _CRCLNG_) {
             prx_desc_status->pktBufLen[prx_desc_status->pktNum-2] = prx_desc_status->pktBufLen[prx_desc_status->pktNum-2] + prx_desc_status->pktBufLen[prx_desc_status->pktNum-1] - _CRCLNG_;
             prx_desc_status->pktBufLen[prx_desc_status->pktNum-1] = 0;
             bDivisionCRC = _TRUE;
@@ -1020,7 +1020,7 @@ _RXPKT_DUMP:
         } else {
             prx_desc_status->pktBufLen[prx_desc_status->pktNum-1] -= _CRCLNG_;
         }
-       
+
         SoftwareCRC32_RXBuffGather(&(prx_desc_status->pktBufAddr[0]), &(prx_desc_status->pktBufLen[0]), prx_desc_status->pktNum, &crc32);
 
         if (bDivisionCRC == _TRUE) {
@@ -1036,7 +1036,7 @@ _RXPKT_DUMP:
             while(cnt < prx_desc_status->remaining_pkt_len) {
                 tempByte = *((pu1Byte)prx_desc_status->pktBufAddr[prx_desc_status->pktNum-1] + cnt);
                 HAL_memcpy((pu1Byte)&rx_crc32+shift, (pu1Byte)&tempByte, sizeof(tempByte));
-                cnt++;              
+                cnt++;
                 shift++;
             }
 
@@ -1044,13 +1044,13 @@ _RXPKT_DUMP:
                 RT_TRACE_F(COMP_RECV, DBG_WARNING, ("SW CRC32 error in division case. 0x%lx\n", crc32));
             } else {
                 RT_TRACE_F(COMP_RECV, DBG_TRACE, ("SW CRC32 ok in division case. 0x%lx\n", crc32) );
-            }            
+            }
         } else {
             if (HAL_memcmp(pBufAddr + prx_desc_status->remaining_pkt_len - _CRCLNG_, (PVOID)&crc32, _CRCLNG_)) {
                 RT_TRACE_F(COMP_RECV, DBG_WARNING, ("SW CRC32 error. 0x%lx\n", crc32));
             } else {
                 RT_TRACE_F(COMP_RECV, DBG_TRACE, ("SW CRC32 ok. 0x%lx\n", crc32) );
-            }      
+            }
         }
     }
 #endif
@@ -1066,12 +1066,12 @@ _RXPKT_DUMP:
 #endif //#if IS_EXIST_RTL8822BE || IS_EXIST_RTL8197FEM
 
 HAL_IMEM
-u2Byte	
+u2Byte
 UpdateRXBDHWIdx88XX(
     IN  HAL_PADAPTER    Adapter,
 	IN  u4Byte		    queueIndex  //HCI_RX_DMA_QUEUE_88XX
 )
-{    
+{
     PHCI_RX_DMA_MANAGER_88XX        prx_dma;
     PHCI_RX_DMA_QUEUE_STRUCT_88XX   cur_q;
 
@@ -1079,7 +1079,7 @@ UpdateRXBDHWIdx88XX(
     cur_q   = &(prx_dma->rx_queue[queueIndex]);
 
     cur_q->hw_idx = HAL_RTL_R16(cur_q->reg_rwptr_idx + 2) & 0xFFF;
-    
+
     return cur_q->hw_idx;
 }
 
@@ -1098,7 +1098,7 @@ UpdateRXBDHostIdx88XX (
     cur_q   = &(prx_dma->rx_queue[queueIndex]);
 
     if ( 0 != count ) {
-        cur_q->host_idx = (cur_q->host_idx + count) % cur_q->total_rxbd_num;    
+        cur_q->host_idx = (cur_q->host_idx + count) % cur_q->total_rxbd_num;
         HAL_RTL_W16(cur_q->reg_rwptr_idx, (cur_q->host_idx & 0xFFF));
 
 //        RT_TRACE_F(COMP_RECV, DBG_TRACE, ("host_idx:0x%lx\n", cur_q->host_idx));

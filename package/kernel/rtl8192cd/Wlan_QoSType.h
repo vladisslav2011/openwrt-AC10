@@ -6,14 +6,14 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	Wlan_QoSType.h
-	
+
 Abstract:
 	Defined QoS Self-defined Wlan Marco & Enumeration & Define & ....
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
-	2012-04-09 Filen            Create.	
+	2012-04-09 Filen            Create.
 --*/
 
 #ifdef  CONFIG_WLAN_HAL
@@ -23,7 +23,7 @@ Major Change History:
 #define AC3_VO	3		// ACI: 0x11	// Voice
 #define AC_MAX	4		// Max: define total number; Should not to be used as a real enum.
 
-	
+
 #define AC_PARAM_SIZE	4
 
 

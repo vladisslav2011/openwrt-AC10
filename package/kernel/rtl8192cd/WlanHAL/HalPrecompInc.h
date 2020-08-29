@@ -39,7 +39,7 @@
 //Instance
 #include "HalCommon.h"
 
- 
+
 
 
 #if IS_RTL88XX_GENERATION
@@ -100,7 +100,7 @@
 
 #endif  //IS_RTL88XX_GENERATION
 
-#else  
+#else
 
 //HAL Shared with Driver
 #include "Include/StatusCode.h"

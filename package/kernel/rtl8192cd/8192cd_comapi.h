@@ -13,7 +13,7 @@
 
 #ifndef _8192CD_COMAPI_H_
 #define _8192CD_COMAPI_H_
- 
+
 #include "./8192cd.h"
 
 typedef struct rtl8192cd_priv	RTL_PRIV;

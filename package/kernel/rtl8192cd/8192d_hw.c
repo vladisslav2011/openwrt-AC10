@@ -312,7 +312,7 @@ void Update92DRFbyChannel(struct rtl8192cd_priv *priv, unsigned char channel)
 					PHY_SetRFReg(priv, eRFPath, 0x4b, bMask20Bits, 0x89bec);
 					//PHY_SetRFReg(priv, eRFPath, 0x4c, bMask20Bits, 0x0dded);
 					PHY_SetRFReg(priv, eRFPath, 0x03, bMask20Bits, 0x94a12);
-					delay_us(10);	
+					delay_us(10);
 					PHY_SetRFReg(priv, eRFPath, 0x04, bMask20Bits, 0x94a12);
 					PHY_SetRFReg(priv, eRFPath, 0x0e, bMask20Bits, 0x94a12);
 				}else if (channel>=100 && channel<=140){
@@ -323,7 +323,7 @@ void Update92DRFbyChannel(struct rtl8192cd_priv *priv, unsigned char channel)
 					PHY_SetRFReg(priv, eRFPath, 0x4b, bMask20Bits, 0x896ee);
 					//PHY_SetRFReg(priv, eRFPath, 0x4c, bMask20Bits, 0x0dded);
 					PHY_SetRFReg(priv, eRFPath, 0x03, bMask20Bits, 0x94a52);
-					delay_us(10);	
+					delay_us(10);
 					PHY_SetRFReg(priv, eRFPath, 0x04, bMask20Bits, 0x94a52);
 					PHY_SetRFReg(priv, eRFPath, 0x0e, bMask20Bits, 0x94a52);
 				}else if (channel>=149 && channel<=165){
@@ -334,14 +334,14 @@ void Update92DRFbyChannel(struct rtl8192cd_priv *priv, unsigned char channel)
 					PHY_SetRFReg(priv, eRFPath, 0x4b, bMask20Bits, 0x896ee);
 					//PHY_SetRFReg(priv, eRFPath, 0x4c, bMask20Bits, 0x0dded);
 					PHY_SetRFReg(priv, eRFPath, 0x03, bMask20Bits, 0x94a12);
-					delay_us(10);	
+					delay_us(10);
 					PHY_SetRFReg(priv, eRFPath, 0x04, bMask20Bits, 0x94a12);
 					PHY_SetRFReg(priv, eRFPath, 0x0e, bMask20Bits, 0x94a12);
 				}
 			}else{
 					PHY_SetRFReg(priv, eRFPath, 0x0b, bMask20Bits, 0x1c000);
 					PHY_SetRFReg(priv, eRFPath, 0x03, bMask20Bits, 0x18c63);
-					delay_us(10);	
+					delay_us(10);
 					PHY_SetRFReg(priv, eRFPath, 0x04, bMask20Bits, 0x18c63);
 					PHY_SetRFReg(priv, eRFPath, 0x0e, bMask20Bits, 0x18c67);
 			}

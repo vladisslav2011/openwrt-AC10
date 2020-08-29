@@ -17,7 +17,7 @@
 #include "./8192cd_headers.h"
 #include "./8192cd_debug.h"
 #ifdef RTK_NL80211
-#include "8192cd_cfg80211.h" 
+#include "8192cd_cfg80211.h"
 #endif
 
 #ifdef DFS
@@ -32,11 +32,11 @@ void rtl8192cd_dfs_chk_timer(unsigned long task_priv)
 
 	if (!(priv->drv_state & DRV_STATE_OPEN))
 		return;
-	
+
 	if (timer_pending(&priv->dfs_chk_timer)){
 		del_timer_sync(&priv->dfs_chk_timer);
 	}
-	
+
 	if (GET_CHIP_VER(priv) == VERSION_8192D)
 		PHY_SetBBReg(priv, 0xcdc, BIT(8)|BIT(9), 1);
 	PRINT_INFO("DFS CP END.\n");
@@ -108,11 +108,11 @@ void rtl8192cd_DFS_TXPAUSE_timer(unsigned long task_priv)
 
 	if (!(priv->drv_state & DRV_STATE_OPEN))
 		return;
-	
+
 	if (priv->available_chnl_num != 0) {
-		if (timer_pending(&priv->DFS_TXPAUSE_timer)) 
+		if (timer_pending(&priv->DFS_TXPAUSE_timer))
 			del_timer_sync(&priv->DFS_TXPAUSE_timer);
-		
+
 		printk("rtl8192cd_DFS_TXPAUSE_timer PATH2\n");
 #if defined(UNIVERSAL_REPEATER)
 		if (!under_apmode_repeater(priv))
@@ -148,7 +148,7 @@ void rtl8192cd_DFS_TXPAUSE_timer(unsigned long task_priv)
 		mod_timer(&priv->DFS_TXPAUSE_timer, jiffies + DFS_TXPAUSE_TO);
 	}
 
-		
+
 }
 
 void rtl8192cd_DFS_timer(unsigned long task_priv)
@@ -181,7 +181,7 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
     }
 #endif
 
-#ifdef CONFIG_32K 
+#ifdef CONFIG_32K
             if(priv->offload_32k_flag==1) {
                 //printk("32K DFS_timer return/n");
                 goto exit_timer;
@@ -248,11 +248,11 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
 	}
 
 
-	
+
 	/*
 	 *	DFS debug mode for logo test
 	 */
-	if (!priv->pmib->dot11DFSEntry.disable_DFS && priv->pshare->rf_ft_var.dfsdbgmode 
+	if (!priv->pmib->dot11DFSEntry.disable_DFS && priv->pshare->rf_ft_var.dfsdbgmode
 		&& priv->pmib->dot11DFSEntry.DFS_detected) {
 		if ((jiffies - priv->pshare->rf_ft_var.dfsrctime)>RTL_SECONDS_TO_JIFFIES(10))
 			priv->pshare->rf_ft_var.dfsdbgcnt = 1;
@@ -289,7 +289,7 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
 			PRINT_INFO("Radar is detected as %x %08x (%d)!\n",
 				radar_type, PHY_QueryBBReg(priv, 0xf98, 0xffffffff), (unsigned int)RTL_JIFFIES_TO_MILISECONDS(jiffies));
 		}
-		
+
 		if (timer_pending(&priv->dfs_chk_timer)) {
 			del_timer(&priv->dfs_chk_timer);
 			if (GET_CHIP_VER(priv) == VERSION_8192D)
@@ -303,7 +303,7 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
 					PHY_SetBBReg(priv, 0xc84, BIT(25), 0);
 					PHY_SetBBReg(priv, 0xc84, BIT(25), 1);
 				}
-				
+
 				PRINT_INFO("DFS CP1.\n");
 
 				init_timer(&priv->dfs_chk_timer);
@@ -315,7 +315,7 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
 				goto exit_timer;
 			}
 		}
-		
+
 		priv->pmib->dot11DFSEntry.disable_tx = 1;
 
 		if (timer_pending(&priv->ch_avail_chk_timer)) {
@@ -326,7 +326,7 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
 			RTL_W8(TXPAUSE, 0xf);	/* disable transmitter */
 #if !defined(RTK_NL80211)
 		//For OpwenWRT SDK, do not consider block channel list
-		if(priv->pshare->CurrentChannelBW == HT_CHANNEL_WIDTH_80 && 
+		if(priv->pshare->CurrentChannelBW == HT_CHANNEL_WIDTH_80 &&
 			priv->pmib->dot11RFEntry.band5GSelected == PHY_BAND_5G_3) {
 			int i, channel;
 			channel = priv->pmib->dot11RFEntry.dot11channel;
@@ -347,7 +347,7 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
 		}
 
 		/* add the channel in the blocked-channel list */
-		if(priv->pshare->CurrentChannelBW == HT_CHANNEL_WIDTH_80 && 
+		if(priv->pshare->CurrentChannelBW == HT_CHANNEL_WIDTH_80 &&
 			priv->pmib->dot11RFEntry.band5GSelected == PHY_BAND_5G_3) {
 			int i, channel;
 			channel = priv->pmib->dot11RFEntry.dot11channel;
@@ -361,16 +361,16 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
 
 			for (i=0;i<4;i++) {
 				if (RemoveChannel(priv, priv->available_chnl, &priv->available_chnl_num, channel+i*4))
-					InsertChannel(priv->NOP_chnl, &priv->NOP_chnl_num, channel+i*4);									
+					InsertChannel(priv->NOP_chnl, &priv->NOP_chnl_num, channel+i*4);
 #ifdef UNIVERSAL_REPEATER
 				if (IS_DRV_OPEN(GET_VXD_PRIV(priv)) && (RemoveChannel(priv->pvxd_priv, priv->pvxd_priv->available_chnl, &priv->pvxd_priv->available_chnl_num, channel+i*4)) )
 					InsertChannel(priv->pvxd_priv->NOP_chnl, &priv->pvxd_priv->NOP_chnl_num, channel+i*4);
 #endif
-			}			
+			}
 		}
 		else {
 			int j;
-			InsertChannel(priv->NOP_chnl, &priv->NOP_chnl_num, priv->pmib->dot11RFEntry.dot11channel);			
+			InsertChannel(priv->NOP_chnl, &priv->NOP_chnl_num, priv->pmib->dot11RFEntry.dot11channel);
 			RemoveChannel(priv, priv->available_chnl, &priv->available_chnl_num, priv->pmib->dot11RFEntry.dot11channel);
 #ifdef UNIVERSAL_REPEATER
 				if (IS_DRV_OPEN(GET_VXD_PRIV(priv))){
@@ -391,11 +391,11 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
 		/* select a channel */
 		priv->pshare->dfsSwitchChannel = DFS_SelectChannel(priv);
 		if(priv->pshare->dfsSwitchChannel == 0) {
-			priv->pmib->dot11DFSEntry.DFS_detected = 0;		
+			priv->pmib->dot11DFSEntry.DFS_detected = 0;
 
 			if (priv->pmib->dot11RFEntry.band5GSelected == PHY_BAND_5G_3) {
-				// when band 2 is selected, AP does not come back to band2 
-				// even when NOP (NONE_OCCUPANCY_PERIOD) timer is expired.	
+				// when band 2 is selected, AP does not come back to band2
+				// even when NOP (NONE_OCCUPANCY_PERIOD) timer is expired.
 				RTL_W8(TXPAUSE, 0xff);// after cac, still has to pause if channel is run out
 				mod_timer(&priv->DFS_TXPAUSE_timer, jiffies + DFS_TXPAUSE_TO);
 			}
@@ -406,7 +406,7 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
 #endif
 
 
-        
+
 #ifdef CONFIG_RTK_MESH
         mesh_DFS_switch_channel(priv);
         if(priv->pmib->dot1180211sInfo.mesh_enable)
@@ -422,7 +422,7 @@ void rtl8192cd_DFS_timer(unsigned long task_priv)
 
 
 		if (priv->pmib->dot11StationConfigEntry.dot11DTIMPeriod >= priv->pshare->dfsSwitchChCountDown)
-			priv->pshare->dfsSwitchChCountDown = priv->pmib->dot11StationConfigEntry.dot11DTIMPeriod+1;						
+			priv->pshare->dfsSwitchChCountDown = priv->pmib->dot11StationConfigEntry.dot11DTIMPeriod+1;
 
 #if defined(RTK_NL80211)
 		event_indicate_cfg80211(priv, NULL, CFG80211_RADAR_DETECTED, NULL);
@@ -453,10 +453,10 @@ void rtl8192cd_dfs_cntdwn_timer(unsigned long task_priv)
 		SMP_UNLOCK(flags);
 		return;
 	}
-	
+
 	DEBUG_INFO("rtl8192cd_dfs_cntdwn_timer timeout!\n");
 
-	priv->pshare->dfsSwCh_ongoing = 0;	
+	priv->pshare->dfsSwCh_ongoing = 0;
 	SMP_UNLOCK(flags);
 }
 #endif
@@ -482,7 +482,7 @@ if (GET_CHIP_VER(priv) == VERSION_8192D || GET_CHIP_VER(priv) == VERSION_8881A |
 		}
 		if (priv->pshare->rf_ft_var.dfsdelayiqk)
 			PHY_IQCalibrate(priv);
-		if (GET_CHIP_VER(priv) == VERSION_8881A){		
+		if (GET_CHIP_VER(priv) == VERSION_8881A){
 			PHY_SetBBReg(priv, 0xcb0, 0x000000f0, 5);
 		}
 	}
@@ -501,7 +501,7 @@ if (GET_CHIP_VER(priv) == VERSION_8192D || GET_CHIP_VER(priv) == VERSION_8881A |
 
 	SMP_UNLOCK(flags);
 	// ETSI
-	if(priv->pshare->rf_ft_var.manual_dfs_regdomain == 3){	
+	if(priv->pshare->rf_ft_var.manual_dfs_regdomain == 3){
 		if((IS_METEOROLOGY_CHANNEL(priv->pmib->dot11RFEntry.dot11channel))){
 			if ((GET_CHIP_VER(priv) == VERSION_8814A) || (GET_CHIP_VER(priv) == VERSION_8822B)){
 				PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c17acdf);
@@ -511,7 +511,7 @@ if (GET_CHIP_VER(priv) == VERSION_8192D || GET_CHIP_VER(priv) == VERSION_8881A |
 				PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c17ecdf);
 				PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);
 			}
-			PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0fa21a20);			
+			PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0fa21a20);
 			PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0f77204);
 			priv->ch_120_132_CAC_end = 1;
 		}
@@ -868,10 +868,10 @@ unsigned int DFS_SelectChannel(struct rtl8192cd_priv *priv)
 {
     unsigned int random;
     unsigned int num, random_base, which_channel = -1;
-    int reg = priv->pmib->dot11StationConfigEntry.dot11RegDomain;	
+    int reg = priv->pmib->dot11StationConfigEntry.dot11RegDomain;
 
-    if(priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_80){ 
-        // When user select band 3 with 80M channel bandwidth 
+    if(priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_80){
+        // When user select band 3 with 80M channel bandwidth
         which_channel = find80MChannel(priv->available_chnl,priv->available_chnl_num);
 
         if(which_channel == -1) // select non-DFS band 80M (ch 36 or 149) or down to 40/20M
@@ -910,17 +910,17 @@ unsigned int DFS_SelectChannel(struct rtl8192cd_priv *priv)
     }
 
 
-    if(priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_80 || 
+    if(priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_80 ||
         priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_20_40) {
         if(which_channel == -1){ // down to 40M
-            priv->pmib->dot11nConfigEntry.dot11nUse40M = HT_CHANNEL_WIDTH_20_40;    
+            priv->pmib->dot11nConfigEntry.dot11nUse40M = HT_CHANNEL_WIDTH_20_40;
             which_channel = find40MChannel(priv->available_chnl,priv->available_chnl_num);
         }
     }
 
 
     if(which_channel == -1){ // down to 20M
-        priv->pmib->dot11nConfigEntry.dot11nUse40M = HT_CHANNEL_WIDTH_20;        
+        priv->pmib->dot11nConfigEntry.dot11nUse40M = HT_CHANNEL_WIDTH_20;
 #ifdef __ECOS
         unsigned int random_buf[4];
         get_random_bytes(random_buf, 4);
@@ -1027,9 +1027,9 @@ void DFS_SwChnl_clnt(struct rtl8192cd_priv *priv)
 
 void DFS_SwitchChannel(struct rtl8192cd_priv *priv)
 {
-	int ch = priv->pshare->dfsSwitchChannel;		
-	
-	if (!(priv->drv_state & DRV_STATE_OPEN)) 
+	int ch = priv->pshare->dfsSwitchChannel;
+
+	if (!(priv->drv_state & DRV_STATE_OPEN))
 		return;
 	priv->pmib->dot11RFEntry.dot11channel = ch;
 	priv->pshare->dfsSwitchChannel = 0;
@@ -1037,7 +1037,7 @@ void DFS_SwitchChannel(struct rtl8192cd_priv *priv)
 
 	DEBUG_INFO("2. Swiching channel to %d!\n", priv->pmib->dot11RFEntry.dot11channel);
 	priv->pshare->CurrentChannelBW = priv->pshare->is_40m_bw = priv->pmib->dot11nConfigEntry.dot11nUse40M;
-	
+
 	if( (ch>144) ? ((ch-1)%8) : (ch%8)) {
 		GET_MIB(priv)->dot11nConfigEntry.dot11n2ndChOffset = HT_2NDCH_OFFSET_ABOVE;
 		priv->pshare->offset_2nd_chan	= HT_2NDCH_OFFSET_ABOVE;
@@ -1065,7 +1065,7 @@ void rtl8192cd_dfs_det_chk_timer(unsigned long task_priv)
 	unsigned long throughput = 0;
 	int j;
 
-	if (!(priv->drv_state & DRV_STATE_OPEN)) 
+	if (!(priv->drv_state & DRV_STATE_OPEN))
 		return;
 	priv->ini_gain_cur = RTL_R8(0xc50);
 
@@ -1106,7 +1106,7 @@ void rtl8192cd_dfs_det_chk_timer(unsigned long task_priv)
 				if(priv->pshare->rf_ft_var.dfs_radar_diff_on){
 					rtl8192cd_radar_type_differentiation(priv);
 				}
-			}            
+			}
             #endif
 			rtl8192cd_dfs_det_chk(priv);
 			rtl8192cd_dfs_dynamic_setting(priv);
@@ -1150,15 +1150,15 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 		}else{
 			// ETSI
 			priv->pshare->rf_ft_var.manual_dfs_regdomain = 3;
-		}		
+		}
 	}
 	// by manual_dfs_regdomain mib value
-	else{		
+	else{
 	}
 	if (GET_CHIP_VER(priv) == VERSION_8822B)
 		priv->pshare->rf_ft_var.dfs_dpt_st_l2h_min = 0x26;
-	
-	if (!(priv->drv_state & DRV_STATE_OPEN)) 
+
+	if (!(priv->drv_state & DRV_STATE_OPEN))
 		return;
 	if (GET_CHIP_VER(priv) == VERSION_8192D) {
 		PHY_SetBBReg(priv, 0xc38, BIT(23) | BIT(22), 2);
@@ -1167,7 +1167,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 	else if ((GET_CHIP_VER(priv) == VERSION_8812E) || (GET_CHIP_VER(priv) == VERSION_8881A) || (GET_CHIP_VER(priv) == VERSION_8814A) || (GET_CHIP_VER(priv) == VERSION_8822B)) {
 		PHY_SetBBReg(priv, 0x814, 0x3fffffff, 0x04cc4d10);
 		PHY_SetBBReg(priv, 0x834, bMaskByte0, 0x06);
-		
+
 		// 8822B only, when BW = 20M, DFIR ouput is 40Mhz, but DFS input is 80MMHz, so it need to upgrade to 80MHz
 		if(GET_CHIP_VER(priv) == VERSION_8822B){
 			if(priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_20)
@@ -1175,7 +1175,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 			else
 				PHY_SetBBReg(priv, 0x1984, BIT(26), 0);
 		}
-		
+
 		// FCC
 		if (priv->pshare->rf_ft_var.manual_dfs_regdomain == 1) {
 			if(priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_20){
@@ -1192,7 +1192,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 				else{
 					PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c16acdf);
 					PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);
-				}				
+				}
 				PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0d67231);
 			}
 			else{
@@ -1203,7 +1203,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 				else{
 					PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c17acdf);
 					PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);
-				}				
+				}
 				PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0d6d231);
 			}
 		}
@@ -1218,7 +1218,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 					PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c16ecdf);
 					PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);
 				}
-				PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0fa21a20);				
+				PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0fa21a20);
 				PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0f57204);
 			}
 			else{
@@ -1232,7 +1232,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 							PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c16ecdf);
 							PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);
 						}
-						PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0fa21a20);						
+						PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0fa21a20);
 						PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0f77204);
 					}
 					else{
@@ -1244,7 +1244,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 							PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c16ecdf);
 							PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);
 						}
-						PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0fa21a20);						
+						PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0fa21a20);
 						PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0f77204);
 					}
 					priv->ch_120_132_CAC_end = 0;
@@ -1252,26 +1252,26 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 				else{
 					if ((GET_CHIP_VER(priv) == VERSION_8814A) || (GET_CHIP_VER(priv) == VERSION_8822B)){
 						PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c17acdf);
-						PHY_SetBBReg(priv, 0x924, 0xfffffff, 0x095a8480);						
+						PHY_SetBBReg(priv, 0x924, 0xfffffff, 0x095a8480);
 					}
 					else{
 						PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c17ecdf);
-						PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);						
+						PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);
 					}
 					PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0f77204);
-					PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0fa21a20);					
+					PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0fa21a20);
 				}
 			}
 		}
                 // MKK
-		else if(priv->pshare->rf_ft_var.manual_dfs_regdomain == 2){		
+		else if(priv->pshare->rf_ft_var.manual_dfs_regdomain == 2){
 			if(priv->pshare->rf_ft_var.dfs_det_off == 1){
 				if ((GET_CHIP_VER(priv) == VERSION_8814A) || (GET_CHIP_VER(priv) == VERSION_8822B)){
 					PHY_SetBBReg(priv, 0x924, 0xfffffff, 0x095aa480);
 				}
 				else{
 					PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x0152a480);
-				}				
+				}
 				PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0d67234);
 				if((priv->pmib->dot11RFEntry.dot11channel >= 52) &&
 					(priv->pmib->dot11RFEntry.dot11channel <= 64)){
@@ -1289,7 +1289,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 						PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c166cdf);
 					}
 					else{
-						PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c16acdf);					
+						PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c16acdf);
 					}
 				}
 			}
@@ -1297,7 +1297,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 				if((priv->pmib->dot11RFEntry.dot11channel >= 52) &&
 					(priv->pmib->dot11RFEntry.dot11channel <= 64)){
 					PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0fe7234);
-					PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0f141a20);					
+					PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x0f141a20);
 					PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c17ecdf);
 					if ((GET_CHIP_VER(priv) == VERSION_8814A) || (GET_CHIP_VER(priv) == VERSION_8822B)){
 						PHY_SetBBReg(priv, 0x924, 0xfffffff, 0x095a8480);
@@ -1307,12 +1307,12 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 					}
 				}
 				else{
-					PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0a67234);					
-					if ((GET_CHIP_VER(priv) == VERSION_8814A) || (GET_CHIP_VER(priv) == VERSION_8822B)){						
+					PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0a67234);
+					if ((GET_CHIP_VER(priv) == VERSION_8814A) || (GET_CHIP_VER(priv) == VERSION_8822B)){
 						PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c176cdf);
 						PHY_SetBBReg(priv, 0x924, 0xfffffff, 0x095a8480);
 					}
-					else{						
+					else{
 						PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c17acdf);
 						PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);
 					}
@@ -1321,7 +1321,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 					}
 					else{
 						PHY_SetBBReg(priv, 0x91c, bMaskDWord, 0x62721a20);
-					}							
+					}
 				}
 			}
 		}
@@ -1340,7 +1340,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 				else{
 					PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c16acdf);
 					PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);
-				}				
+				}
 				PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0d67231);
 			}
 			else{
@@ -1351,7 +1351,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 				else{
 					PHY_SetBBReg(priv, 0x918, bMaskDWord, 0x1c17acdf);
 					PHY_SetBBReg(priv, 0x924, bMaskDWord, 0x01528480);
-				}				
+				}
 				PHY_SetBBReg(priv, 0x920, bMaskDWord, 0xe0d6d231);
 			}
 		}
@@ -1365,7 +1365,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 		priv->nb2wb_th = PHY_QueryBBReg(priv, 0x920, 0x0000e000);
 		priv->three_peak_opt = PHY_QueryBBReg(priv, 0x924, 0x00000180);
 		priv->three_peak_th2 = PHY_QueryBBReg(priv, 0x924, 0x00007000);
-		
+
 		// RXHP low corner will extend the pulse width, so we need to increase the uppper bound
 		if(GET_CHIP_VER(priv) == VERSION_8822B){
 			if (PHY_QueryBBReg(priv, 0x8d8, BIT28|BIT27|BIT26) == 0){
@@ -1375,14 +1375,14 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 			PHY_SetBBReg(priv, 0x19e4, 0x003C0000, 13);      // if peak index -1~+1, use original NB method
 			PHY_SetBBReg(priv, 0x924, 0x70000, 1);
 		}
-		
+
 		if (GET_CHIP_VER(priv) == VERSION_8881A)
 			PHY_SetBBReg(priv, 0xb00, 0xc0000000, 3);
 
 		if ((GET_CHIP_VER(priv) == VERSION_8814A) || (GET_CHIP_VER(priv) == VERSION_8822B)){        // for 8814 new dfs mechanism setting
 			PHY_SetBBReg(priv, 0x19e4, 0x1fff, 0x0c00);       // turn off dfs  scaling factor
 			PHY_SetBBReg(priv, 0x19e4, 0x30000, 1);     //NonDC peak_th = 2times DC peak_th
-			PHY_SetBBReg(priv, 0x9f8, 0xc0000000, 3);  // power for debug and auto test flow latch after ST 
+			PHY_SetBBReg(priv, 0x9f8, 0xc0000000, 3);  // power for debug and auto test flow latch after ST
 			// low pulse width radar pattern will cause wrong drop
 			PHY_SetBBReg(priv, 0x9f4, 0x80000000, 0);  // disable peak index should the same during the same short pulse (new mechanism)
 			PHY_SetBBReg(priv, 0x924, 0x20000000, 0);  // disable peak index should the same during the same short pulse (old mechanism)
@@ -1392,15 +1392,15 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 				if((priv->pmib->dot11RFEntry.dot11channel >= 52) && (priv->pmib->dot11RFEntry.dot11channel <= 64)){
 					// pulse width hist th setting
 					PHY_SetBBReg(priv, 0x19e4, 0xff000000, 2);  // th1=2*04us
-					PHY_SetBBReg(priv, 0x19e8, bMaskDWord, 0xff080604); // set th2 = 4*0.4us, th3 = 6*0.4us, th4 = 8*0.4, th5 to max		
+					PHY_SetBBReg(priv, 0x19e8, bMaskDWord, 0xff080604); // set th2 = 4*0.4us, th3 = 6*0.4us, th4 = 8*0.4, th5 to max
 					// pulse repetition interval hist th setting
 					PHY_SetBBReg(priv, 0x19b8, 0x00007f80, 86);  // th1=86*32us
-					PHY_SetBBReg(priv, 0x19ec, bMaskDWord, 0xffffffff); // set th2, th3, th4, th5 to max	
+					PHY_SetBBReg(priv, 0x19ec, bMaskDWord, 0xffffffff); // set th2, th3, th4, th5 to max
 				}
 				else{
 					// pulse width hist th setting
 					PHY_SetBBReg(priv, 0x19e4, 0xff000000, 2);  // th1=2*04us
-					PHY_SetBBReg(priv, 0x19e8, bMaskDWord, 0x1a0e0604); // set th2 = 4*0.4us, th3 = 6*0.4us, th4 = 14*0.4us, th5 = 26*0.4us					
+					PHY_SetBBReg(priv, 0x19e8, bMaskDWord, 0x1a0e0604); // set th2 = 4*0.4us, th3 = 6*0.4us, th4 = 14*0.4us, th5 = 26*0.4us
 					// pulse repetition interval hist th setting
 					PHY_SetBBReg(priv, 0x19b8, 0x00007f80, 27);  // th1=27*32us
 					PHY_SetBBReg(priv, 0x19ec, bMaskDWord, 0xffffffff); // set th2, th3, th4, th5 to max
@@ -1413,7 +1413,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 				PHY_SetBBReg(priv, 0x19e8, bMaskDWord, 0xffff2c19); // // set th2 = 25*0.4us, th3 = 44*0.4us, th4, th5 = max
 				// pulse repetition interval hist th setting
 				//PHY_SetBBReg(priv, 0x19b8, 0x00007f80, 86);  // th1=86*32us
-				//PHY_SetBBReg(priv, 0x19ec, bMaskDWord, 0xffffffff); // set th2, th3, th4, th5 to max	
+				//PHY_SetBBReg(priv, 0x19ec, bMaskDWord, 0xffffffff); // set th2, th3, th4, th5 to max
 			}
 			// FCC
 			else if(priv->pshare->rf_ft_var.manual_dfs_regdomain == 1){
@@ -1422,10 +1422,10 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 				PHY_SetBBReg(priv, 0x19e8, bMaskDWord, 0x331a0e03); // // set th2 = 3*0.4us, th3 = 14*0.4us, th4 = 26*0.4us, th5 = 51*0.4us
 				// pulse repetition interval hist th setting
 				//PHY_SetBBReg(priv, 0x19b8, 0x00007f80, 86);  // th1=86*32us
-				//PHY_SetBBReg(priv, 0x19ec, bMaskDWord, 0xffffffff); // set th2, th3, th4, th5 to max	
+				//PHY_SetBBReg(priv, 0x19ec, bMaskDWord, 0xffffffff); // set th2, th3, th4, th5 to max
 			}
 			else{
-			}			
+			}
 		}
 
 		RTL_W8(TXPAUSE, 0xff);
@@ -1455,7 +1455,7 @@ void DFS_SetReg(struct rtl8192cd_priv *priv)
 			PHY_SetBBReg(priv, 0xc7c, BIT(28), 1); // ynlin dbg
 		}
 	}
-	
+
 	// DFS reset after initialization
 	RTL_W32(0x924, RTL_R32(0x924) & ~BIT(15));
 	RTL_W32(0x924, RTL_R32(0x924) | BIT(15));
@@ -1466,4 +1466,4 @@ unsigned char *get_DFS_version(void)
 	return DFS_VERSION;
 }
 #endif
- 
+

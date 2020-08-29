@@ -116,12 +116,12 @@ static int __issue_measurement_report(struct rtl8192cd_priv *priv, struct stat_i
     txinsn.lowest_tx_rate = txinsn.tx_rate;
     #endif
     txinsn.fixed_rate = 1;
-#ifdef CONFIG_IEEE80211W		
+#ifdef CONFIG_IEEE80211W
 	if(pstat)
 		txinsn.isPMF = pstat->isPMF;
 	else
-		txinsn.isPMF = 0;	
-#endif		
+		txinsn.isPMF = 0;
+#endif
     pbuf = txinsn.pframe = get_mgtbuf_from_poll(priv);
     if (pbuf == NULL)
         goto issue_measure_report_fail;
@@ -175,8 +175,8 @@ static int __issue_measurement_report(struct rtl8192cd_priv *priv, struct stat_i
     SetFrameSubType((txinsn.phdr), WIFI_WMM_ACTION);
 #ifdef CONFIG_IEEE80211W
 	if (txinsn.isPMF)
-		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy 
-#endif	
+		*(unsigned char*)(txinsn.phdr+1) |= BIT(6); // enable privacy
+#endif
     memcpy((void *)GetAddr1Ptr((txinsn.phdr)), pstat->hwaddr, MACADDRLEN);
     memcpy((void *)GetAddr2Ptr((txinsn.phdr)), GET_MY_HWADDR, MACADDRLEN);
     memcpy((void *)GetAddr3Ptr((txinsn.phdr)), BSSID, MACADDRLEN);
@@ -454,11 +454,11 @@ void OnRadioMeasurementReport(struct rtl8192cd_priv *priv, struct stat_info *pst
 #ifdef CLIENT_MODE
 unsigned char * construct_WFA_TPC_report_ie(struct rtl8192cd_priv *priv, unsigned char	*pbuf, unsigned int *frlen)
 {
-    unsigned char temp[7];    
-    memcpy(temp, wfa_oui, 3); /*oui*/    
-    temp[3] = 0x08; /*oui type */    
-    temp[4] = 0x00; /*oui subtype */    
-    temp[5] = priv->pmib->dot11hTPCEntry.tpc_tx_power; /*transmit power*/    
+    unsigned char temp[7];
+    memcpy(temp, wfa_oui, 3); /*oui*/
+    temp[3] = 0x08; /*oui type */
+    temp[4] = 0x00; /*oui subtype */
+    temp[5] = priv->pmib->dot11hTPCEntry.tpc_tx_power; /*transmit power*/
     temp[6] = 0;    /*link margin, should be 0*/
     pbuf = set_ie(pbuf, _VENDOR_SPEC_IE_, 7, temp, frlen);
     return pbuf;

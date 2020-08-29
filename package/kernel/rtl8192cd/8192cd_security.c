@@ -41,7 +41,7 @@
 #endif
 
 #ifdef RTK_NL80211
-#include "8192cd_cfg80211.h" 
+#include "8192cd_cfg80211.h"
 #endif
 
 
@@ -49,7 +49,7 @@
 #define E_MSG_DOT11_QFULL       "Event Queue Full"
 #define E_MSG_DOT11_QEMPTY      "Event Queue Empty"
 
-#if defined(SUPPORT_UCFGING_LED) 
+#if defined(SUPPORT_UCFGING_LED)
 extern unsigned int LED_Configuring;
 extern struct timer_list	LED_TimerCFGING;
 #endif
@@ -77,17 +77,17 @@ int DOT11_EnQueue(unsigned long task_priv, DOT11_QUEUE *q, unsigned char *item, 
 #ifndef SMP_SYNC
 	unsigned long flags;
 #endif
-	
+
 	if (itemsize > MAXDATALEN)
 		return E_DOT11_2LARGE;
 
 	SAVE_INT_AND_CLI(flags);
-	
+
 	if (DOT11_IsFullQueue(q)) {
 		RESTORE_INT(flags);
 		return E_DOT11_QFULL;
 	}
-	
+
 	q->ItemArray[q->Tail].ItemSize = itemsize;
 	memset(q->ItemArray[q->Tail].Item, 0, sizeof(q->ItemArray[q->Tail].Item));
 	memcpy(q->ItemArray[q->Tail].Item, item, itemsize);
@@ -112,12 +112,12 @@ int DOT11_DeQueue(unsigned long task_priv, DOT11_QUEUE *q, unsigned char *item, 
 #endif
 
 	SAVE_INT_AND_CLI(flags);
-	
+
 	if (DOT11_IsEmptyQueue(q)) {
 		RESTORE_INT(flags);
 		return E_DOT11_QEMPTY;
 	}
-	
+
 	memcpy(item, q->ItemArray[q->Head].Item, q->ItemArray[q->Head].ItemSize);
 	*itemsize = q->ItemArray[q->Head].ItemSize;
 	q->NumItem--;
@@ -214,7 +214,7 @@ static int DOT11_Process_Set_RSNIE(struct net_device *dev, struct iw_point *data
 				HS2DEBUG("found OSEN IE in Assoc Req, set dgaf_disable = 1\n");
                 priv->dgaf_disable = 1;	// under OSEN mode , all broadcast frame will transfor to unicast
         }
-		#endif        
+		#endif
 		// see whether if driver is open. If not, do not enable tx/rx, david
 		if (!netif_running(priv->dev)) {
 #if defined(__OSK__) && defined(UNIVERSAL_REPEATER)
@@ -242,7 +242,7 @@ static int DOT11_Process_Set_RSNIE(struct net_device *dev, struct iw_point *data
 					}
 				}
 			}
-//for openwrt 8021x donot trigger site survey when rsnie init in init sw			
+//for openwrt 8021x donot trigger site survey when rsnie init in init sw
 #if defined(CLIENT_MODE) && !defined(RTK_NL80211) && !defined(WIFI_WPAS_CLI)
 			if (OPMODE & (WIFI_STATION_STATE | WIFI_ADHOC_STATE))
 				start_clnt_lookup(priv, RESCAN);
@@ -366,7 +366,7 @@ int __DOT11_Process_Disconnect_Req(struct net_device *dev, struct iw_point *data
 		return 0;
 	}
 #endif
-	
+
 	DEBUG_INFO("802.1x issue disassoc sta:%02X%02X%02X%02X%02X%02X reason:%d\n",
 			hwaddr[0],hwaddr[1],hwaddr[2],hwaddr[3],hwaddr[4],hwaddr[5], Disconnect_Req->Reason);
 
@@ -376,16 +376,16 @@ int __DOT11_Process_Disconnect_Req(struct net_device *dev, struct iw_point *data
 		if((OPMODE&(  WIFI_AUTH_SUCCESS | WIFI_ASOC_STATE))
 				==(  WIFI_AUTH_SUCCESS | WIFI_ASOC_STATE))
 		{
-			issue_deauth(priv, BSSID, _RSON_DEAUTH_STA_LEAVING_);					
+			issue_deauth(priv, BSSID, _RSON_DEAUTH_STA_LEAVING_);
 			OPMODE_VAL(OPMODE & ~(WIFI_AUTH_SUCCESS | WIFI_ASOC_STATE));
 #ifndef WIFI_WPAS_CLI
 #ifdef SMART_REPEATER_MODE
-			if(GET_MIB(priv)->ap_profile.enable_profile && GET_MIB(priv)->ap_profile.profile_num > 0)			 
+			if(GET_MIB(priv)->ap_profile.enable_profile && GET_MIB(priv)->ap_profile.profile_num > 0)
 			{
 				if((priv->site_survey->count_target > 0) && ((priv->join_index+1) > priv->site_survey->count_target)){
-					start_clnt_lookup(priv, RESCAN);		
+					start_clnt_lookup(priv, RESCAN);
 				}else{
-					start_clnt_lookup(priv, DONTRESCAN);		
+					start_clnt_lookup(priv, DONTRESCAN);
 				}
 			} else
 #endif
@@ -396,7 +396,7 @@ int __DOT11_Process_Disconnect_Req(struct net_device *dev, struct iw_point *data
 			//SME_DEBUG("!!issue disconnect at wlan!!\n");
 		}else{
 			return (-1);
-		} 
+		}
 
 	}else
 #endif
@@ -581,7 +581,7 @@ int DOT11_Process_Set_Key(struct net_device *dev, struct iw_point *data,
 				(priv->pmib->dot11WdsInfo.wdsEnabled && priv->pmib->dot11WdsInfo.wdsNum)) &&
 #else
 			if (priv->pmib->dot11WdsInfo.wdsEnabled && priv->pmib->dot11WdsInfo.wdsNum &&
-#endif		
+#endif
 				((priv->pmib->dot11WdsInfo.wdsPrivacy == _TKIP_PRIVACY_) ||
 				 (priv->pmib->dot11WdsInfo.wdsPrivacy == _CCMP_PRIVACY_)) &&
 				(Set_Key.KeyType == DOT11_KeyType_Group) &&
@@ -589,22 +589,22 @@ int DOT11_Process_Set_Key(struct net_device *dev, struct iw_point *data,
 			int i;
 
 			for (i=0; i<32; i++)
-			sprintf((char *)&priv->pmib->dot11WdsInfo.wdsPskPassPhrase[i*2], "%02x", key_combo[i]);			
+			sprintf((char *)&priv->pmib->dot11WdsInfo.wdsPskPassPhrase[i*2], "%02x", key_combo[i]);
 			priv->pmib->dot11WdsInfo.wdsPskPassPhrase[i*2] = '\0';
 
 			for (i=0; i<NUM_WDS; i++) {
 #ifdef LAZY_WDS
 			if (priv->pmib->dot11WdsInfo.wdsEnabled == WDS_LAZY_ENABLE) {
 			if (!memcmp(priv->pmib->dot11WdsInfo.entry[i].macAddr,
-					NULL_MAC_ADDR, 6)) 
-			continue;			
+					NULL_MAC_ADDR, 6))
+			continue;
 			}
 			else
-#endif				
+#endif
 			{
 				if (i+1 > pmib->dot11WdsInfo.wdsNum)
 					break;
-			}	
+			}
 			memcpy(Set_Key.MACAddr, priv->pmib->dot11WdsInfo.entry[i].macAddr, 6);
 			Set_Key.KeyType = DOT11_KeyType_Pairwise;
 			Set_Key.EncType = priv->pmib->dot11WdsInfo.wdsPrivacy;
@@ -650,11 +650,11 @@ int DOT11_Process_Set_Key(struct net_device *dev, struct iw_point *data,
 		}
 #endif
 #endif
-		if(Set_Key.KeyIndex == GKEY_ID_SECOND) 
+		if(Set_Key.KeyIndex == GKEY_ID_SECOND)
 			pEncryptKey = &pmib->dot11GroupKeysTable.dot11EncryptKey2;
 		else
 			pEncryptKey = &pmib->dot11GroupKeysTable.dot11EncryptKey;
-			
+
 		pmib->dot11GroupKeysTable.dot11Privacy = Set_Key.EncType;
 		pmib->dot11GroupKeysTable.keyid = (UINT)Set_Key.KeyIndex;
 
@@ -736,7 +736,7 @@ int DOT11_Process_Set_Key(struct net_device *dev, struct iw_point *data,
 				set_aes_key(pEncryptKey, key_combo);
 
 				pEncryptKey->dot11RXPN48.val48 = 0;
-				
+
 				DEBUG_INFO("going to set CCMP-AES group key!\n");
 
 					if (!SWCRYPTO) {
@@ -765,15 +765,15 @@ int DOT11_Process_Set_Key(struct net_device *dev, struct iw_point *data,
 		}
 	}
 #ifdef CONFIG_IEEE80211W
-		else if(Set_Key.KeyType == DOT11_KeyType_IGTK)		
-		{	
+		else if(Set_Key.KeyType == DOT11_KeyType_IGTK)
+		{
 			int set_gkey_to_cam = 0;
-			
+
 #ifdef CONFIG_RTL_88E_SUPPORT
 			if (GET_CHIP_VER(priv) == VERSION_8188E)
 				set_gkey_to_cam = 1;
 #endif //CONFIG_RTL_88E_SUPPORT
-	
+
 #ifdef MBSSID
 			if (GET_ROOT(priv)->pmib->miscEntry.vap_enable)
 			{
@@ -781,15 +781,15 @@ int DOT11_Process_Set_Key(struct net_device *dev, struct iw_point *data,
 				set_gkey_to_cam = 0;
 			}
 #endif
-	
+
 			pmib->dot11IGTKTable.dot11Privacy = Set_Key.EncType;
 			pEncryptKey = &pmib->dot11IGTKTable.dot11EncryptKey;
 			pmib->dot11IGTKTable.keyid = (UINT)Set_Key.KeyIndex;
-	
+
 			set_ttkeylen(pEncryptKey, 16);
 			set_tmickeylen(pEncryptKey, 16);
 			set_aes_key(pEncryptKey, key_combo);
-			
+
 		}
 #endif // CONFIG_IEEE80211W
 	else if(Set_Key.KeyType == DOT11_KeyType_Pairwise)
@@ -848,16 +848,16 @@ int DOT11_Process_Set_Key(struct net_device *dev, struct iw_point *data,
 #endif // WDS
 
 #ifdef MULTI_MAC_CLONE
-		if ((OPMODE & WIFI_STATION_STATE) && priv->pmib->ethBrExtInfo.macclone_enable) {			
-			ACTIVE_ID = mclone_find_address(priv, Set_Key.MACAddr, NULL, MAC_CLONE_NOCARE_FIND);	
+		if ((OPMODE & WIFI_STATION_STATE) && priv->pmib->ethBrExtInfo.macclone_enable) {
+			ACTIVE_ID = mclone_find_address(priv, Set_Key.MACAddr, NULL, MAC_CLONE_NOCARE_FIND);
 			if (ACTIVE_ID < 0) {
 				DEBUG_ERR("Invalid mac address!\n");
 				return 0;
-			}				
-			pstat = get_stainfo(priv, priv->pmib->dot11Bss.bssid);			
+			}
+			pstat = get_stainfo(priv, priv->pmib->dot11Bss.bssid);
 		}
 		else
-#endif		
+#endif
 		pstat = get_stainfo(priv, Set_Key.MACAddr);
 		if (pstat == NULL) {
 			DEBUG_ERR("Set key failed, invalid mac address: %02x%02x%02x%02x%02x%02x\n",
@@ -1054,7 +1054,7 @@ static int DOT11_Process_Set_Port(struct net_device *dev, struct iw_point *data)
 		/*it will trigger application to start DHCPC !!*/
 		if (priv->p2p_event_indicate_cb_func)
 			priv->p2p_event_indicate_cb_func("wlan0", WIFI_P2P_EVENT_START_DHCPC);
-#endif        
+#endif
 		priv->p2pPtr->clientmode_try_connect = 0;
 		priv->p2pPtr->clientmode_connected = 0;
 		P2P_DEBUG("Set_Port Sta[%02X%02X%02X%02X%02X%02X],Status=%X\n\n\n",
@@ -1105,13 +1105,13 @@ static int DOT11_Porcess_EAPOL_MICReport(struct net_device *dev, struct iw_point
 	printk("mac: %02x%02x%02x%02x%02x%02x\n", MIC_Failure->MACAddr[0], MIC_Failure->MACAddr[1],
 			MIC_Failure->MACAddr[2], MIC_Failure->MACAddr[3], MIC_Failure->MACAddr[4], MIC_Failure->MACAddr[5]);
 	mic_error_report(1);
-#else	
+#else
 	//DOT11_MIC_FAILURE *MIC_Failure = (DOT11_MIC_FAILURE *)data->pointer;
 
 	DEBUG_INFO("MIC fail report from 802.1x daemon\n");
 	//DEBUG_INFO("mac: %02x%02x%02x%02x%02x%02x\n", MIC_Failure->MACAddr[0], MIC_Failure->MACAddr[1],
 	//MIC_Failure->MACAddr[2], MIC_Failure->MACAddr[3], MIC_Failure->MACAddr[4], MIC_Failure->MACAddr[5]);
-#endif	
+#endif
 #ifdef RTL_WPA2
 	PRINT_INFO("%s: DOT11_Indicate_MIC_Failure \n", (char *)__FUNCTION__);
 #endif
@@ -1200,7 +1200,7 @@ int __DOT11_Indicate_MIC_Failure(struct net_device *dev, struct stat_info *pstat
 #ifdef _SINUX_
 					printk("Second time to detect MIC error in a time period so disassociate the all client\n");
 					mic_error_report(2);
-#endif					
+#endif
 #ifndef WITHOUT_ENQUEUE
 					memcpy((void *)Disassociation_Ind.MACAddr, (void *)pstat_del->hwaddr, MACADDRLEN);
 					Disassociation_Ind.EventId = DOT11_EVENT_DISASSOCIATION_IND;
@@ -1252,7 +1252,7 @@ int __DOT11_Indicate_MIC_Failure(struct net_device *dev, struct stat_info *pstat
 		DEBUG_INFO("-------------------------------------------------------\n");
 		DEBUG_INFO("Second time of MIC failure in a time period            \n");
 		DEBUG_INFO("-------------------------------------------------------\n");
-#endif		
+#endif
 	}
 	else
 	{
@@ -1354,9 +1354,9 @@ void __DOT11_Indicate_MIC_Failure_Clnt(struct rtl8192cd_priv *priv, unsigned cha
 		Disassociation_Ind.rx_bytes   = pstat_del->rx_bytes;
 		DOT11_EnQueue((unsigned long)priv, priv->pevent_queue, (UINT8 *)&Disassociation_Ind,
 				sizeof(DOT11_DISASSOCIATION_IND));
-				
+
 		/*
-		 * To make sure the MIC Failure Report is sent before disassoc 
+		 * To make sure the MIC Failure Report is sent before disassoc
 		 */
 		delay_ms(20);
 		issue_disassoc(priv, pstat_del->hwaddr, _RSON_MIC_FAILURE_);
@@ -1408,7 +1408,7 @@ void DOT11_Process_Acc_SetExpiredTime(struct net_device *dev, struct iw_point *d
 	if( Set_ExpireTime != NULL ){
 		Set_ExpireTime->EventId = DOT11_EVENT_ACC_SET_EXPIREDTIME;
 		Set_ExpireTime->IsMoreEvent = 0;
-		
+
 		if( (pstat = get_stainfo(priv, Set_ExpireTime->MACAddr)) ){
 			pstat->def_expired_time = Set_ExpireTime->ExpireTime;
 			DEBUG_INFO("%s: Set %02x:%02x:%02x:%02x:%02x:%02x def_expired_time = %ld!\n", (char *)__FUNCTION__,
@@ -1436,7 +1436,7 @@ void DOT11_Process_Acc_QueryStats(struct net_device *dev, struct iw_point *data)
 	if( pStats != NULL ){
 		pStats->EventId = DOT11_EVENT_ACC_QUERY_STATS;
 		pStats->IsMoreEvent = 0;
-		
+
 		if( (pstat = get_stainfo(priv, pStats->MACAddr)) ){
 			pStats->tx_packets = pstat->tx_pkts;
 			pStats->rx_packets = pstat->rx_pkts;
@@ -1476,14 +1476,14 @@ void DOT11_Process_Acc_QueryStats_All(struct net_device *dev, struct iw_point *d
 
 	if( pStats != NULL ){
 		phead = &priv->asoc_list;
-		
+
 		SMP_LOCK_ASOC_LIST(flags);
-		
+
 		plist = phead->next;
 		while (plist != phead) {
 			pstat = list_entry(plist, struct stat_info, asoc_list);
 			plist = plist->next;
-			
+
 			pStats[cnt].EventId = DOT11_EVENT_ACC_QUERY_STATS_ALL;
 			pStats[cnt].IsMoreEvent = 0;
 			memcpy( pStats[cnt].MACAddr, pstat->hwaddr, MACADDRLEN );
@@ -1622,12 +1622,12 @@ static int dispatch_wscsoap(struct rtl8192cd_priv *priv ,pDOT11_WSC_SOAP soap)
 	} else if ( strcmp(soap->action,"WFAPutWLANResponse") ) {
 		packet->EventID = WSC_PUTWLANRESPONSE;
 	}
-#ifdef SUPPORT_UPNP    	
+#ifdef SUPPORT_UPNP
 	if (PWSCUpnpCallbackEventHandler(packet) != WSC_UPNP_SUCCESS) {
 		DEBUG_ERR("WSCCallBack Fail!\n");
 		goto error_handle;
 	}
-#endif	
+#endif
 	return 0;
 
 error_handle:
@@ -1644,7 +1644,7 @@ static int DOT11_USER_set_ie(struct net_device *dev, struct iw_point *data)
 	struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
 	DOT11_SET_USERIE *Set_USERIE = (DOT11_SET_USERIE *)data->pointer;
 	unsigned int i;
-	
+
 	if (Set_USERIE->Flag == SET_IE_FLAG_INSERT) {
 		DEBUG_INFO("USER: add beacon IE\n");
 		for (i=0; i<MAX_USER_IE; i++) {
@@ -1687,21 +1687,21 @@ static int DOT11_PMF_set_ie(struct net_device *dev, struct iw_point *data)
     struct rtl8192cd_priv *priv = (struct rtl8192cd_priv *)(dev->priv);
 #endif
 
-	struct stat_info *pstat; 
-	DOT11_SET_11W_Flags flags;				
+	struct stat_info *pstat;
+	DOT11_SET_11W_Flags flags;
 	if (!memcpy((void *)(&flags),(void *)(data->pointer), data->length))
 	{
 		PMFDEBUG("memcpy fail!, data=%x, length=%d\n", data->pointer, data->length);
 		return -1;
 	}
 
-	pstat= get_stainfo(priv,flags.macAddr); 			
+	pstat= get_stainfo(priv,flags.macAddr);
 
 	if(!pstat){
 		//PMFDEBUG("psta is NULL\n");
 	}else{
 		pstat->isPMF = flags.isPMF;
-    	PMFDEBUG("set sta[%02x%02x%02x:%02x%02x%02x]'s PMF=[%d]\n",pstat->hwaddr[0],pstat->hwaddr[1],pstat->hwaddr[2],pstat->hwaddr[3],pstat->hwaddr[4],pstat->hwaddr[5], flags.isPMF);		        
+    	PMFDEBUG("set sta[%02x%02x%02x:%02x%02x%02x]'s PMF=[%d]\n",pstat->hwaddr[0],pstat->hwaddr[1],pstat->hwaddr[2],pstat->hwaddr[3],pstat->hwaddr[4],pstat->hwaddr[5], flags.isPMF);
     }
 
 	return 0;
@@ -1732,7 +1732,7 @@ static int DOT11_HS2_set_ie(struct net_device *dev, struct iw_point *data)
 			priv->pmib->hs2Entry.nQoSMap = 0;
 			panic_printk("WLAN Driver cannot set more than two QoSMAP ie\n");
 		}
-		
+
         priv->pmib->hs2Entry.QoSMap_ielen[priv->pmib->hs2Entry.nQoSMap] = Set_RSNIE->RSNIELen;
 	    memcpy((void *)priv->pmib->hs2Entry.QoSMap_ie[priv->pmib->hs2Entry.nQoSMap], Set_RSNIE->RSNIE, Set_RSNIE->RSNIELen);
 		if(priv->pmib->hs2Entry.nQoSMap == 0) {
@@ -1741,7 +1741,7 @@ static int DOT11_HS2_set_ie(struct net_device *dev, struct iw_point *data)
 		}
 		HS2_DEBUG_TRACE(1, "QoSMap_ielen[%d]=%d\n",priv->pmib->hs2Entry.nQoSMap,priv->pmib->hs2Entry.QoSMap_ielen[priv->pmib->hs2Entry.nQoSMap]);
 		priv->pmib->hs2Entry.nQoSMap++;
-		
+
     }
     else if (Set_RSNIE->Flag == SET_IE_FLAG_ADVT_PROTO)
     {
@@ -1800,12 +1800,12 @@ static int DOT11_HS2_set_ie(struct net_device *dev, struct iw_point *data)
     {
         priv->proxy_arp = *Set_RSNIE->RSNIE;
         HS2_DEBUG_INFO("\n proxy arp in driver[%d]\n", priv->proxy_arp);
-    } 
+    }
     else if (Set_RSNIE->Flag == SET_IE_FLAG_ICMPv4ECHO)
     {
         priv->pmib->hs2Entry.ICMPv4ECHO = *Set_RSNIE->RSNIE;
         HS2_DEBUG_INFO("ICMPv4ECHO in driver=[%d]\n", priv->pmib->hs2Entry.ICMPv4ECHO);
-    }	
+    }
 	else if (Set_RSNIE->Flag == SET_IE_FLAG_MBSSID)
 	{
 		HS2_DEBUG_INFO("HS2: set Multiple BSSID IE\n");
@@ -1915,14 +1915,14 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				data->length = sizeof(DOT11_NO_EVENT);
 			}
 			else
-			{				
-				QueueData[1] = (priv->pevent_queue->NumItem != 0)? 1 : 0;				
-				memcpy((void *)data->pointer, (void *)QueueData, QueueDataLen);				
-				data->length = QueueDataLen;					
+			{
+				QueueData[1] = (priv->pevent_queue->NumItem != 0)? 1 : 0;
+				memcpy((void *)data->pointer, (void *)QueueData, QueueDataLen);
+				data->length = QueueDataLen;
 				//DEBUG_INFO("%d de-queue ; pMsg=%s\n", __LINE__ , (char *)data->pointer);
 			}
 			break;
-#endif			
+#endif
 #endif
 
 		case DOT11_EVENT_ASSOCIATION_RSP:
@@ -1995,7 +1995,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 			break;
 
 		case DOT11_EVENT_ACC_QUERY_STATS:
-#ifdef RADIUS_ACCOUNTING			
+#ifdef RADIUS_ACCOUNTING
 			DOT11_Process_Acc_QueryStats(dev, data);
 #endif
 			DEBUG_INFO("trying to Set ACC Expiredtime\n");
@@ -2132,7 +2132,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 							in sercomm case , will not via here,sercomm will direct call wps_start()
 						      */
 						     printk("[wlan ioctl]:receive \"DOT11_EVENT_WSC_PUTCONF\" from  wscd \n");
-						     //receive_config_setting(priv , wps_config);							
+						     //receive_config_setting(priv , wps_config);
 						     read_config_file(tmp, DEFAULT_CONFIG_FILENAME);
 					     }
 					     break;
@@ -2145,7 +2145,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 							printk("[%s] switch proxy off\n",__FUNCTION__);
 							priv->pshare->WSC_CONT_S.TotalSubscriptions = 0;
 						}
-						break;			
+						break;
 #endif
 #endif
 
@@ -2159,7 +2159,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 		case DOT11_EVENT_WSC_GET_MIB:
 						getset_mib_t = (DOT11_GETSET_MIB*)data->pointer;
 						get_mib(dev->priv, getset_mib_t->cmd);
-						break;			
+						break;
 #endif
 #endif	//WIFI_SIMPLE_CONFIG
 
@@ -2231,7 +2231,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				}
 				data->length = sizeof(unsigned long);
 			}
-			break;      
+			break;
         case DOT11_EVENT_HS2_GAS_RSP:
 
 
@@ -2239,42 +2239,42 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 			break;
         case DOT11_EVENT_HS2_TSM_REQ:
 			{
-			DOT11_BSS_SessInfo_URL sesionInfoURL; 
+			DOT11_BSS_SessInfo_URL sesionInfoURL;
 			DOT11_HS2_TSM_REQ tsmreq;
-					
+
 			if (copy_from_user((void *)(&sesionInfoURL),(void *)(data->pointer), data->length))
 			{
 				DEBUG_ERR("copy_from_user fail!\n");
 				return -1;
 			}
-			
+
 			HS2_DEBUG_INFO("send bss tx mgmt req to STA:");
 			MAC_PRINT(sesionInfoURL.macAddr);
-			
+
 			memcpy(tsmreq.MACAddr, sesionInfoURL.macAddr, 6);
 			memcpy(priv->pmib->hs2Entry.sta_mac, sesionInfoURL.macAddr, 6); // used in dissassoc timer
 
             //tsmreq.Req_mode = 16; // ESS Disassoc Imminent
-			/*HS2 R2 logo test ; ESS Disassoc Imminent  , test plan 4.12*/ 
+			/*HS2 R2 logo test ; ESS Disassoc Imminent  , test plan 4.12*/
             tsmreq.Req_mode = 0x14; //
 
 			tsmreq.term_len = 0;
 
 			tsmreq.Dialog_token = 5;
 			tsmreq.Disassoc_timer = sesionInfoURL.SWT;
-			tsmreq.Validity_intval = 0;	
+			tsmreq.Validity_intval = 0;
 			tsmreq.url_len = strlen(sesionInfoURL.URL);
 			memcpy(tsmreq.Session_url, sesionInfoURL.URL, tsmreq.url_len);
-			tsmreq.list_len = 0;	
+			tsmreq.list_len = 0;
 
 
 
             issue_BSS_TSM_req(priv, &tsmreq);
 
 			HS2_DEBUG_INFO("issue_BSS_TSM_req and set timer to disassoc[%d]ms\n",(tsmreq.Disassoc_timer * 60 * 1000));
-						
+
            	if (timer_pending(&priv->disassoc_timer))
-        		del_timer_sync(&priv->disassoc_timer);            
+        		del_timer_sync(&priv->disassoc_timer);
 			mod_timer(&priv->disassoc_timer, jiffies + RTL_MILISECONDS_TO_JIFFIES(tsmreq.Disassoc_timer * 60 * 1000));
 			}
 			break;
@@ -2282,7 +2282,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 			{
 				struct wifi_mib *pmib;
 				pmib = GET_MIB(priv);
-				if (pmib->dot11RsnIE.rsnielen) {                                
+				if (pmib->dot11RsnIE.rsnielen) {
 					if (copy_to_user((void *)(data->pointer), pmib->dot11RsnIE.rsnie, pmib->dot11RsnIE.rsnielen))
 					{
 						HS2_DEBUG_ERR("copy_to_user fail!\n");
@@ -2309,7 +2309,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				struct wifi_mib *pmib;
 				int i;
 				DOT11_WNM_NOTIFY WNM_Notify;
-					
+
 				pmib = GET_MIB(priv);
 				if (copy_from_user((void *)(&WNM_Notify),(void *)(data->pointer), data->length))
 				{
@@ -2321,9 +2321,9 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				pmib->hs2Entry.serverMethod = WNM_Notify.serverMethod;
 				memcpy(pmib->hs2Entry.sta_mac,WNM_Notify.macAddr,6);
 				HS2_DEBUG_INFO("WNM Dest=");
-				MAC_PRINT(pmib->hs2Entry.sta_mac);				
+				MAC_PRINT(pmib->hs2Entry.sta_mac);
 				HS2_DEBUG_INFO("Server URL = %s\n",pmib->hs2Entry.remedSvrURL);
-				issue_WNM_Notify(priv);				
+				issue_WNM_Notify(priv);
 			}
 			break;
 		case DOT11_EVENT_WNM_DEAUTH_REQ: // HS2.0 (case 4.13)
@@ -2331,7 +2331,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				struct wifi_mib *pmib;
 				int i;
 				DOT11_WNM_DEAUTH_REQ WNM_Deauth;
-					
+
 				pmib = GET_MIB(priv);
 				if (copy_from_user((void *)(&WNM_Deauth),(void *)(data->pointer), data->length))
 				{
@@ -2341,7 +2341,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				HS2_DEBUG_INFO("WNM Deauth da=");
 				MAC_PRINT(WNM_Deauth.macAddr);
 				HS2_DEBUG_INFO("reason=%d, reAuthDelay=%d, WNM URL=%s\n",WNM_Deauth.reason, WNM_Deauth.reAuthDelay,WNM_Deauth.URL);
-				
+
 				issue_WNM_Deauth_Req(priv,WNM_Deauth.macAddr,WNM_Deauth.reason,WNM_Deauth.reAuthDelay,WNM_Deauth.URL);
 			}
 			break;
@@ -2350,7 +2350,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				struct wifi_mib *pmib;
 				int i;
 				DOT11_QoSMAPConf QoSMAPConf;
-					
+
 				pmib = GET_MIB(priv);
 				if (copy_from_user((void *)(&QoSMAPConf),(void *)(data->pointer), data->length))
 				{
@@ -2363,7 +2363,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 					return -1;
 				}
 				HS2_DEBUG_INFO("QoSMAPConf da=");
-				MAC_PRINT(QoSMAPConf.macAddr);				
+				MAC_PRINT(QoSMAPConf.macAddr);
 				HS2_DEBUG_INFO("QoSMAP index=%d\n",QoSMAPConf.indexQoSMAP);
 
 				memcpy(priv->pmib->hs2Entry.sta_mac,QoSMAPConf.macAddr,6);
@@ -2374,11 +2374,11 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 			break;
 #endif // HS2_SUPPORT
 #ifdef CONFIG_IEEE80211W
-		/*HS2 R2 logo test*/ 
+		/*HS2 R2 logo test*/
         case DOT11_EVENT_INIT_PMF:
         {
 				int i;
-				DOT11_INIT_11W_Flags flags;				
+				DOT11_INIT_11W_Flags flags;
 				if (copy_from_user((void *)(&flags),(void *)(data->pointer), data->length))
 				{
 					PMFDEBUG("copy_from_user fail!\n");
@@ -2386,7 +2386,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				}
 
                 PMFDEBUG("init pmf:11W[%d],SHA256[%d]\n",flags.dot11IEEE80211W, flags.dot11EnableSHA256);
-			
+
 				priv->pmib->dot1180211AuthEntry.dot11IEEE80211W = flags.dot11IEEE80211W;
                 priv->pmib->dot1180211AuthEntry.dot11EnableSHA256 = flags.dot11EnableSHA256;
 
@@ -2403,7 +2403,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				struct wifi_mib *pmib;
 				int i;
 				unsigned char *tt;
-				pmib = GET_MIB(priv);			
+				pmib = GET_MIB(priv);
 
                 #ifdef PMF_DEBUGMSG
 				PMFDEBUG("get IGTK_PN:");
@@ -2419,7 +2419,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 													,pmib->dot11IGTKTable.dot11EncryptKey.dot11TXPN48._byte_.TSC3
 													,pmib->dot11IGTKTable.dot11EncryptKey.dot11TXPN48._byte_.TSC4
 													,pmib->dot11IGTKTable.dot11EncryptKey.dot11TXPN48._byte_.TSC5);
-                #endif             
+                #endif
                 #endif
 
 				if (copy_to_user((void *)(data->pointer), (void *) (&pmib->dot11IGTKTable.dot11EncryptKey.dot11TXPN48.val48), sizeof(pmib->dot11IGTKTable.dot11EncryptKey.dot11TXPN48.val48)))
@@ -2428,7 +2428,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 					return -1;
 				}
 				data->length = sizeof(pmib->dot11IGTKTable.dot11EncryptKey.dot11TXPN48.val48);
-			
+
 			}
 			break;
 		case DOT11_EVENT_SA_QUERY_RSP:
@@ -2478,7 +2478,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				DOT11_FT_GET_KEY_PROTO proto;
 				struct r1_key_holder *r1_key, out;
 				struct r0_key_holder *r0_key;
-				
+
 				if (copy_from_user((void *)(&proto),(void *)(data->pointer), sizeof(DOT11_FT_GET_KEY_PROTO)))
 				{
 					DEBUG_ERR("copy_from_user fail!\n");
@@ -2552,7 +2552,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 								DEBUG_ERR("PMK-R1-Name mismatch\n");
 								return -1;
 							}
-							
+
 							if (derive_r1_key(priv, keyind.s1kh_id, keyind.r1kh_id, &out)) {
 								DEBUG_ERR("Can't derive PMK-R1 key\n");
 								return -1;
@@ -2589,7 +2589,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 			{
 				DOT11_FT_SET_KEY_PROTO proto;
 				int bset = 0;
-				
+
 				if (copy_from_user((void *)(&proto),(void *)(data->pointer), sizeof(DOT11_FT_SET_KEY_PROTO)))
 				{
 					DEBUG_ERR("copy_from_user fail!\n");
@@ -2615,8 +2615,8 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 						// initial mobility domain association. The R0KH associated with the STA should be removed
 						// from current AP.
 						remove_r0kh(priv, pkey->s1kh_id);
-						
-						bset = store_r1kh(priv, pkey->s1kh_id, pkey->r1kh_id, NULL, 0, 
+
+						bset = store_r1kh(priv, pkey->s1kh_id, pkey->r1kh_id, NULL, 0,
 							pkey->pmk_r1, pkey->pmk_r1_name, pkey->pmk_r0_name, pkey->pairwise);
 						if (bset) {
 							DEBUG_ERR("fail to store r1kh\n");
@@ -2642,7 +2642,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 						struct ft_action_param param;
 						struct r1_key_holder *r1kh;
 
-						bset = store_r1kh(priv, pkey->s1kh_id, pkey->r1kh_id, NULL, 0, 
+						bset = store_r1kh(priv, pkey->s1kh_id, pkey->r1kh_id, NULL, 0,
 							pkey->pmk_r1, pkey->pmk_r1_name, NULL, pkey->pairwise);
 						if (bset) {
 							DEBUG_ERR("fail to store r1kh\n");
@@ -2650,15 +2650,15 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 						}
 
 						pstat = get_stainfo(priv, pkey->s1kh_id);
-						if (pstat && 
-								(pstat->ft_state == state_ft_auth) && 
+						if (pstat &&
+								(pstat->ft_state == state_ft_auth) &&
 								(pstat->wpa_sta_info->r1kh == NULL)) {
 							r1kh = pstat->wpa_sta_info->r1kh = search_r1kh(priv, pkey->s1kh_id, pkey->r1kh_id);
 							if (r1kh) {
 								memcpy(r1kh->r0kh_id, pstat->wpa_sta_info->cache_r0kh_id, pstat->wpa_sta_info->cache_r0kh_id_len);
 								r1kh->r0kh_id_len = pstat->wpa_sta_info->cache_r0kh_id_len;
 								derive_ft_keys(priv, pstat);
-								
+
 								if (pstat->wpa_sta_info->over_ds) {
 									pos = resp;
 									*pos++ = _FAST_BSS_TRANSITION_CATEGORY_ID_;
@@ -2669,7 +2669,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 									pos += MACADDRLEN;
 									*((unsigned short *)pos) = cpu_to_le16(_STATS_SUCCESSFUL_);
 									pos += 2;
-									
+
 									if (pstat->wpa_sta_info->isFT) {
 										pos = set_ft_rsnie_with_pmkid(priv, pos, &ielen, pstat, 2);
 									}
@@ -2681,8 +2681,8 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 									memcpy(param.target_addr, pstat->wpa_sta_info->current_ap, MACADDRLEN);
 									param.length = pos - resp;
 									param.pdata = resp;
-									
-									FT_IndicateEvent(priv, pstat, DOT11_EVENT_FT_ACTION_IND, &param);								
+
+									FT_IndicateEvent(priv, pstat, DOT11_EVENT_FT_ACTION_IND, &param);
 								}
 								else {
 									issue_auth(priv, pstat, (unsigned short)(_STATS_SUCCESSFUL_));
@@ -2709,7 +2709,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				struct ft_action_param param;
 				unsigned char category, action_code;
 				unsigned long flags;
-				
+
 				if (copy_from_user((void *)(&action),(void *)(data->pointer), data->length))
 				{
 					DEBUG_ERR("copy_from_user fail!\n");
@@ -2727,9 +2727,9 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 					DEBUG_ERR("Not supported FT Action category id : %d\n", pframe[0]);
 					return -1;
 				}
-				
+
 				SAVE_INT_AND_CLI(flags);
-				
+
 				if (action_code == _FT_REQUEST_ACTION_ID_) {
 					pstat = get_stainfo(priv, sta_addr);
 					if (pstat == NULL) {
@@ -2746,7 +2746,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 							RESTORE_INT(flags);
 							return 0;
 					}
-					
+
 					pstat->state = WIFI_AUTH_SUCCESS;
 					pstat->auth_seq = 0;
 					if (priv->pmib->dot11FTEntry.dot11FTReassociationDeadline)
@@ -2775,7 +2775,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 						RESTORE_INT(flags);
 						return 0;
 					}
-					
+
 					pos = resp;
 					*pos++ = _FAST_BSS_TRANSITION_CATEGORY_ID_;
 					*pos++ = _FT_RESPONSE_ACTION_ID_;
@@ -2785,19 +2785,19 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 					pos += MACADDRLEN;
 					*((unsigned short *)pos) = cpu_to_le16(_STATS_SUCCESSFUL_);
 					pos += 2;
-					
+
 					if (pstat->wpa_sta_info->isFT) {
 						pos = set_ft_rsnie_with_pmkid(priv, pos, &ielen, pstat, 2);
 					}
 					pos = construct_mobility_domain_ie(priv, pos, &ielen);
 					if (pstat->wpa_sta_info->isFT)
 						pos = construct_fast_bss_transition_ie(priv, pos, &ielen, pstat);
-					
+
 					param.action_code = ACTION_CODE_RESPONSE;
 					memcpy(param.target_addr, action.MACAddr, MACADDRLEN);
 					param.length = pos - resp;
 					param.pdata = resp;
-					
+
 					FT_IndicateEvent(priv, pstat, DOT11_EVENT_FT_ACTION_IND, &param);
 				}
 				else if (action_code == _FT_RESPONSE_ACTION_ID_) {
@@ -2835,7 +2835,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 
 				addr = ft_assoc.MACAddr;
 						memset(tmpBuf, 0, sizeof(tmpBuf));
-						sprintf(tmpBuf, "%02x%02x%02x%02x%02x%02xno", 
+						sprintf(tmpBuf, "%02x%02x%02x%02x%02x%02xno",
 							addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
 						del_sta(priv, tmpBuf);
 			}
@@ -2845,7 +2845,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 			{
 				DOT11_FT_KEY_EXPIRE_IND key_expire;
 				unsigned char tmpBuf[20], *addr;
-				
+
 				if (copy_from_user((void *)(&key_expire),(void *)(data->pointer), data->length))
 				{
 					DEBUG_ERR("copy_from_user fail!\n");
@@ -2854,9 +2854,9 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 
 				addr = key_expire.MACAddr;
 				memset(tmpBuf, 0, sizeof(tmpBuf));
-				sprintf(tmpBuf, "%02x%02x%02x%02x%02x%02xyes", 
+				sprintf(tmpBuf, "%02x%02x%02x%02x%02x%02xyes",
 					addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
-				del_sta(priv, tmpBuf);		
+				del_sta(priv, tmpBuf);
 
 				remove_r0kh(priv, addr);
 				remove_r1kh(priv, addr, BSSID);
@@ -2867,7 +2867,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 			{
 				DOT11_QUERY_FT_INFORMATION query_info, out;
 				struct stat_info *pstat;
-				
+
 				if (copy_from_user((void *)(&query_info),(void *)(data->pointer), data->length))
 				{
 					DEBUG_ERR("copy_from_user fail!\n");
@@ -2879,9 +2879,9 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 					DEBUG_ERR("get_stainfo return NULL\n");
 					return -1;
 				}
-				
+
 				memset(&out, 0, sizeof(DOT11_QUERY_FT_INFORMATION));
-				
+
 				out.EventId = DOT11_EVENT_FT_QUERY_INFO;
 				out.IsMoreEvent = 0;
 				memcpy(out.sta_addr, query_info.sta_addr, MACADDRLEN);
@@ -2907,13 +2907,13 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 			{
 				DOT11_SET_FT_INFORMATION set_info;
 				struct stat_info *pstat;
-				
+
 				if (copy_from_user((void *)(&set_info),(void *)(data->pointer), data->length))
 				{
 					DEBUG_ERR("copy_from_user fail!\n");
 					return -1;
 				}
-				
+
 				pstat = get_stainfo(priv, set_info.sta_addr);
 				if (!pstat) {
 					DEBUG_ERR("get_stainfo return NULL\n");
@@ -2930,7 +2930,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				}
 			}
 			break;
-			
+
 		case DOT11_EVENT_FT_AUTH_INSERT_R0:
 			{
 				DOT11_AUTH_FT_INSERT_R0_KEY insert_r0;
@@ -2941,17 +2941,17 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 					DEBUG_ERR("copy_from_user fail!\n");
 					return -1;
 				}
-				
+
 				pstat = get_stainfo(priv, insert_r0.sta_addr);
 				if (!pstat) {
 					DEBUG_ERR("Insert R0 key failed, no pstat\n");
 					return -1;
 				}
-				
+
 				if (store_r0kh(priv, insert_r0.sta_addr, insert_r0.pmk_r0, insert_r0.pmk_r0_name)) {
 					DEBUG_ERR("store_r0kh failed\n");
 					return -1;
-				}				
+				}
 			}
 			break;
 
@@ -2965,14 +2965,14 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 					DEBUG_ERR("copy_from_user fail!\n");
 					return -1;
 				}
-				
+
 				pstat = get_stainfo(priv, insert_r1.sta_addr);
 				if (!pstat) {
 					DEBUG_ERR("Insert R1 key failed, no pstat\n");
 					return -1;
 				}
-				
-				if (store_r1kh(priv, insert_r1.sta_addr, insert_r1.bssid, 
+
+				if (store_r1kh(priv, insert_r1.sta_addr, insert_r1.bssid,
 					insert_r1.r0kh_id, insert_r1.r0kh_id_len, insert_r1.pmk_r1,
 					insert_r1.pmk_r1_name, insert_r1.pmk_r0_name, insert_r1.pairwise)) {
 					DEBUG_ERR("store_r1kh failed\n");
@@ -2985,18 +2985,18 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 			{
 				DOT11_AUTH_FT_TRIGGER_EVENT in_evt;
 				struct stat_info *pstat;
-		
+
 				if (copy_from_user((void *)(&in_evt),(void *)(data->pointer), data->length))
 				{
 					DEBUG_ERR("copy_from_user fail!\n");
 					return -1;
-				}				
+				}
 
 				pstat = get_stainfo(priv, in_evt.sta_addr);
 				if (!pstat) {
 					DEBUG_ERR("trigger event error, no pstat\n");
 					return -1;
-				}	
+				}
 
 				if (in_evt.trigger_eventid == DOT11_EVENT_FT_IMD_ASSOC_IND) {
 					FT_IndicateEvent(priv, pstat, DOT11_EVENT_FT_IMD_ASSOC_IND, NULL);
@@ -3004,7 +3004,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 					// Set key expire timer
 					if (priv->pmib->dot11FTEntry.dot11FTR0KeyLifetime) {
 						set_r0key_expire_time(priv, pstat->hwaddr, priv->pmib->dot11FTEntry.dot11FTR0KeyLifetime * 60);
-					}	
+					}
 				}
 				else {
 					DEBUG_ERR("Not supported event type : %d\n", in_evt.trigger_eventid);
@@ -3026,22 +3026,22 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				{
 #ifdef UNIVERSAL_REPEATER
 					if (IS_DRV_OPEN(GET_VXD_PRIV(priv)))	{
-						ret = DOT11_DeQueue((unsigned long)priv, GET_VXD_PRIV(priv)->rssimEvent_queue, QueueData, &QueueDataLen);						
+						ret = DOT11_DeQueue((unsigned long)priv, GET_VXD_PRIV(priv)->rssimEvent_queue, QueueData, &QueueDataLen);
 					}
 #endif
 #ifdef MBSSID
 					if (priv->pmib->miscEntry.vap_enable) 		{
 						for (i=0; i<RTL8192CD_NUM_VWLAN && (ret != 0); i++) {
 							if (IS_DRV_OPEN(priv->pvap_priv[i])) {
-								ret = DOT11_DeQueue((unsigned long)priv, priv->pvap_priv[i]->rssimEvent_queue, QueueData, &QueueDataLen);	
+								ret = DOT11_DeQueue((unsigned long)priv, priv->pvap_priv[i]->rssimEvent_queue, QueueData, &QueueDataLen);
 							}
 						}
 					}
-#endif								
-				}			
+#endif
+				}
 				if(ret != 0) {
-					QueueDataLen = sizeof(rssim_msg);				
-					memset(QueueData, 0, QueueDataLen);				
+					QueueDataLen = sizeof(rssim_msg);
+					memset(QueueData, 0, QueueDataLen);
 				} else {
 					if(!DOT11_IsEmptyQueue(priv->rssimEvent_queue))
 						more_data++;
@@ -3060,13 +3060,13 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 								}
 							}
 						}
-#endif								
+#endif
 				}
 				if (copy_to_user((void *)data->pointer, (void *)QueueData, QueueDataLen)) {
-					DEBUG_ERR("copy_to_user fail!\n");	
+					DEBUG_ERR("copy_to_user fail!\n");
 					return -1;
 				}
-				data->length = QueueDataLen;			
+				data->length = QueueDataLen;
 				if(more_data)
 					rssi_event_indicate(priv);
 			}
@@ -3081,7 +3081,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 				if (copy_from_user((void *)&event, (void *)(data->pointer), data->length)) {
 					DEBUG_ERR("copy_from_user error!\n");
 					return -1;
-				}				
+				}
 				if(pstat = get_stainfo(priv, event.hwaddr)) {
 					pstat->rssim_type = event.type;
 					break;
@@ -3105,7 +3105,7 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 						}
 					}
 				}
-#endif		
+#endif
 			}
 			break;
 #endif
@@ -3119,22 +3119,22 @@ int rtl8192cd_ioctl_priv_daemonreq(struct net_device *dev, struct iw_point *data
 			}
 			break;
 #endif
-#if defined(SUPPORT_UCFGING_LED) 
+#if defined(SUPPORT_UCFGING_LED)
 		case DOT11_EVENT_UCFGING_LED:
 			{
 				DOT11_SET_UCFGING_LED *SetData = (DOT11_SET_UCFGING_LED *)data->pointer;
 				if(LED_Configuring != SetData->State){
 					LED_Configuring = SetData->State;
 				//panic_printk("LED_Configuring=%d\n", LED_Configuring);
-				
+
 					if(LED_Configuring == 1){
 						if (timer_pending(&priv->pshare->LED_Timer))
 							del_timer_sync(&priv->pshare->LED_Timer);
-						//init another timer for specific function	
+						//init another timer for specific function
 							StartCFGINGTimer();
-						
+
 					}else{
-						//del another timer that specific function used	
+						//del another timer that specific function used
 						if (timer_pending(&LED_TimerCFGING))
 							del_timer_sync(&LED_TimerCFGING);
 						enable_sw_LED(priv, 1);

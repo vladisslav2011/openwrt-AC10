@@ -40,7 +40,7 @@ __PACK struct mesh_rreq_retry_entry {
     unsigned char		Retries; // add by chuangch, the num of rreq retries
     struct pkt_queue    pktqueue;
     struct mesh_rreq_retry_entry *rreq_next;
-    struct mesh_rreq_retry_entry *rreq_prev;    
+    struct mesh_rreq_retry_entry *rreq_prev;
 }__WLAN_ATTRIB_PACK__;
 
 
@@ -68,7 +68,7 @@ __PACK struct proxyupdate_table_entry	 {
     unsigned char	destproxymac[MACADDRLEN];
     unsigned char 	proxymac[MACADDRLEN];
     unsigned char   proxiedmac[MACADDRLEN];
-    DRV_PRIV *priv;    
+    DRV_PRIV *priv;
     unsigned long update_time;
 };
 
@@ -80,7 +80,7 @@ __PACK struct mesh_ip_mcast_info {
     /*src record*/
     unsigned char srcCount;
     unsigned char srcValid[MAX_IP_SRC_ENTRY];
-    unsigned char srcMac[MAX_IP_SRC_ENTRY][MACADDRLEN];	
+    unsigned char srcMac[MAX_IP_SRC_ENTRY][MACADDRLEN];
 };
 #endif
 

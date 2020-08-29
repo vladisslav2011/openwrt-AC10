@@ -1,7 +1,7 @@
 /*!	\file	mesh.h
 	\brief	None
 
-	\date 2006/12/22 
+	\date 2006/12/22
 	\author	stanley, popen and owen
 */
 #ifndef _8190S_MESH_PUB_HDR_H_
@@ -45,10 +45,10 @@ typedef struct rtl8190_priv DRV_PRIV;
  *	@brief	define
  *
  */
-//#define _MESH_DEBUG_ 
+//#define _MESH_DEBUG_
 #undef _MESH_DEBUG_
 
-//#define _MESH_PROC_DEBUG_ 
+//#define _MESH_PROC_DEBUG_
 #undef _MESH_PROC_DEBUG_
 
 //#define MESH_LOG
@@ -68,10 +68,10 @@ typedef struct rtl8190_priv DRV_PRIV;
 #define mesh_proxy_debug scrlog_printk
 #define mesh_route_debug scrlog_printk
 #else
-#define mesh_tx_debug(msg, args...) 
-#define mesh_txsc_debug(msg, args...) 
-#define mesh_sme_debug(msg, args...)  
-#define mesh_proxy_debug(msg, args...) 
+#define mesh_tx_debug(msg, args...)
+#define mesh_txsc_debug(msg, args...)
+#define mesh_sme_debug(msg, args...)
+#define mesh_proxy_debug(msg, args...)
 #define mesh_route_debug(msg, args...)
 #endif
 
@@ -92,7 +92,7 @@ typedef struct rtl8190_priv DRV_PRIV;
 
 
 /**
- *	@brief	Time to  jiffies 
+ *	@brief	Time to  jiffies
  *
  *	@param	time: (unit=1ms)
  *
@@ -124,7 +124,7 @@ typedef struct rtl8190_priv DRV_PRIV;
 #define MESH_PEER_LINK_CLOSE_TO		RTL_MILISECONDS_TO_JIFFIES(1000)	// peer link close wait time
 #define MESH_PEER_LINK_LISTEN_TO	RTL_MILISECONDS_TO_JIFFIES(5000)	// MP connection time
 
-// Retry 
+// Retry
 #define MESH_AUTH_RETRY_LIMIT		6		// Retry AUTH count
 #define MESH_PEER_LINK_RETRY_LIMIT	6		// Retry PeerLink count
 
@@ -238,12 +238,12 @@ enum MESH_PEER_LINK_CLOSE_REASON {
  *
  */
 struct MESH_Neighbor_Entry {
-    // when state = MP_UNUSED, the entry is invalid	
+    // when state = MP_UNUSED, the entry is invalid
     enum dot11_MP_NEIGHBOR_STATE	State; // type of dot11_MP_NEIGHBOR_STATE
 
     // The following entries represents the "MP Meighbor Table Entry" in page 61, D0.02
     // UINT8	NeighborMACADDR[MACADDRLEN]; 	// in fact, this info can be obtained by this.pstate->hwaddr
-    // UINT8	PrimaryMACADDR[MACADDRLEN];		// (popen) No need,Because interface have  priv 	
+    // UINT8	PrimaryMACADDR[MACADDRLEN];		// (popen) No need,Because interface have  priv
     unsigned long	LocalLinkID;		// peer link local link id (Identify connect by myself)
     unsigned long	PeerLinkID;			// peer link Peer link id (Identify connect by peer MP)  (PS:Some process allow NULL,  Check NULL before, If no, compare  match or not.)
     UINT8			Co;					// operating channel
@@ -287,7 +287,7 @@ struct MESH_Neighbor_Entry {
         UINT16  lenTx0, cntTx0, cntTx1; // Tx0: parameters for issue_xxx, cntTx1: # of pkt already sent
     } spec11kv;
     #endif
-	
+
 	//Use  Local Link Announcement Packet error rate calculate(Not use temporary)
 	// unsigned int		tx_pkts_pre;
 	// unsigned int		tx_fail_pre;
@@ -323,7 +323,7 @@ __PACK struct	PathSelectMetricID_t {
 
 
 /**
- *	@brief	MESH profile 
+ *	@brief	MESH profile
  */
 struct MESH_Profile { // mesh_profile Configure by WEB in the future, Maybe delete, Preservation before delete
 	UINT8				used;  								// unused: 0, used: 1

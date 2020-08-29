@@ -266,6 +266,7 @@ void spi_flash_wait_busy(struct sheipa_spi *dev)
 			if ((!DW_BIT_GET_UNSHIFTED(spi_flash_map->sr, bfoSPI_FLASH_SR_BUSY)))
 				 break;
 		}
+		schedule();
 	}
 }
 
@@ -1239,13 +1240,13 @@ static int dw_spi_transfer(struct spi_master *master, struct spi_message *msg)
 {
 	struct spi_transfer *t;
 	struct spi_device *spi;
-	unsigned long flags;
+	//unsigned long flags;
 	struct sheipa_spi *dws = spi_master_get_devdata(master);
 	msg->actual_length = 0;
 	spi = msg->spi;
 
-	spin_lock_irqsave(&master->bus_lock_spinlock, flags);
-
+	//spin_lock_irqsave(&master->bus_lock_spinlock, flags);
+	mutex_lock(&dws->lock);
 	list_for_each_entry(t, &msg->transfers, transfer_list) {
 
 		if (t->tx_buf) {
@@ -1261,7 +1262,8 @@ static int dw_spi_transfer(struct spi_master *master, struct spi_message *msg)
 		msg->actual_length += t->len;
 	}
 
-	spin_unlock_irqrestore(&master->bus_lock_spinlock, flags);
+	//spin_unlock_irqrestore(&master->bus_lock_spinlock, flags);
+	mutex_unlock(&dws->lock);
 	msg->status = 0;
 	spi_finalize_current_message(master);
 	return 0;
@@ -1271,7 +1273,7 @@ static int dw_spi_setup(struct spi_device *spi)
 {
 	struct sheipa_spi *dws = spi_master_get_devdata(spi->master);
 	struct spi_flash_param ps_para= CC_DEFINE_SPI_FLASH_PARAMS(ps_);
-
+	mutex_init(&dws->lock);
 	/* iniitialize Flash_Device_information */
 	dws->comp_param = &ps_para;
 	/* user mode init setting */

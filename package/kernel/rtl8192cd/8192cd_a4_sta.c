@@ -125,7 +125,7 @@ void a4_sta_del(struct rtl8192cd_priv *priv,  unsigned char *mac)
         {
             #if defined(BR_SHORTCUT) && defined(RTL_CACHED_BR_STA)
             release_brsc_cache(db->mac);
-            #endif           
+            #endif
             mac_hash_unlink(db);
             free_entry(priv, db);
 #ifdef A4_STA_DEBUG
@@ -228,7 +228,7 @@ void a4_sta_cleanup(struct rtl8192cd_priv *priv, struct stat_info * pstat)
             if(f->stat == pstat) {
                 #if defined(BR_SHORTCUT) && defined(RTL_CACHED_BR_STA)
                 release_brsc_cache(f->mac);
-                #endif                
+                #endif
                 mac_hash_unlink(f);
                 free_entry(priv, f);
             }
@@ -276,7 +276,7 @@ void a4_sta_expire(struct rtl8192cd_priv *priv)
 
                     #if defined(BR_SHORTCUT) && defined(RTL_CACHED_BR_STA)
                     release_brsc_cache(f->mac);
-                    #endif    
+                    #endif
                     mac_hash_unlink(f);
                     free_entry(priv, f);
                 }
@@ -310,7 +310,7 @@ void a4_sta_add(struct rtl8192cd_priv *priv, struct stat_info *pstat, unsigned c
 
     if(memcmp(pstat->hwaddr, mac, MACADDRLEN)) {
         sprintf((char *)tmpbuf, "%02x%02x%02x%02x%02x%02xno", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-        del_sta(priv, tmpbuf); 
+        del_sta(priv, tmpbuf);
     }
 
     db = alloc_entry(priv);
@@ -466,7 +466,7 @@ void a4_tx_unknown_unicast(struct rtl8192cd_priv *priv, struct sk_buff *skb)
                 newskb->cb[2] = (char)0xff;         // not do aggregation
                 #if defined(CONFIG_RTK_MESH)
                 __rtl8192cd_start_xmit_out(newskb, pstat, NULL);
-                #else                
+                #else
                 __rtl8192cd_start_xmit_out(newskb, pstat);
                 #endif
             }
@@ -511,7 +511,7 @@ unsigned char a4_tx_mcast_to_unicast(struct rtl8192cd_priv *priv, struct sk_buff
 
                     #if defined(CONFIG_RTK_MESH)
                     __rtl8192cd_start_xmit_out(newskb, pstat, NULL);
-                    #else                      
+                    #else
                     __rtl8192cd_start_xmit_out(newskb, pstat);
                     #endif
                 }
@@ -641,17 +641,17 @@ unsigned char a4_rx_check_reuse(struct rtl8192cd_priv *priv, struct rx_frinfo *p
         if(pstat->state & WIFI_A4_STA)   /*A4 AP*/
         {
             /* when a4_enable = 1,  also recieve 3-address from an A4 AP*/
-            if(pfrinfo->to_fr_ds == 1 && priv->pshare->rf_ft_var.a4_enable == 1) {                                    
+            if(pfrinfo->to_fr_ds == 1 && priv->pshare->rf_ft_var.a4_enable == 1) {
 
-                if(IS_MCAST(pfrinfo->da)) {                   
+                if(IS_MCAST(pfrinfo->da)) {
                     /*filter*/
                     reuse = 0;
                     fdb = fdb_find_for_driver(GET_BR_PORT(priv->dev)->br, pfrinfo->sa);
-                    if(fdb) {                       
+                    if(fdb) {
                         /*if sa is recorded in other interface, it may be a loop packet, drop it*/
                         if(strcmp(fdb->dst->dev->name, priv->dev->name))
-                            reuse = 1;                            
-                    }       
+                            reuse = 1;
+                    }
                 }
                 else if(isEqualMACAddr(pfrinfo->da, myhwaddr)){ /*unicast*/
                     reuse = 0;

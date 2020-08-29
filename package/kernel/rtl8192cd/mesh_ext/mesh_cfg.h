@@ -1,7 +1,7 @@
 #ifndef _MESH_CFG_H_
 #define _MESH_CFG_H_
 
-#ifdef CONFIG_RTK_MESH 
+#ifdef CONFIG_RTK_MESH
 
 #define PU_STANDARD // use proxy update protocol
 
@@ -22,7 +22,7 @@
 
 
 #define SIMPLE_CH_UNI_PROTOCOL
- 
+
 #ifdef SIMPLE_CH_UNI_PROTOCOL
 #define _11S_SS_COUNT1 3
 #define _11S_SS_COUNT2 10

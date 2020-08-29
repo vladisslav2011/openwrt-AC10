@@ -116,7 +116,7 @@
 				}
 			}
 		#endif
-		
+
 	}
 #endif
 
@@ -261,11 +261,11 @@ void HostPCIe_SetPhyMdioWrite(unsigned int portnum, unsigned int regaddr, unsign
 {
         unsigned int mdioaddr;
         volatile int i;
- 
+
         if(portnum==0)          mdioaddr=PCIE0_MDIO;
         else if(portnum==1)     mdioaddr=PCIE1_MDIO;
         else return;
- 
+
         REG32(mdioaddr)= ( (regaddr&0x1f)<<PCIE_MDIO_REG_OFFSET) | ((val&0xffff)<<PCIE_MDIO_DATA_OFFSET)  | (1<<PCIE_MDIO_RDWR_OFFSET) ;
         //delay
         for(i=0;i<5555;i++)  ;
@@ -415,13 +415,13 @@ static void PCIE_Device_PERST(int portnum)
 	{
 	_DEBUG_INFO("DeviceRESET\r\n");
 	#if 1
-		REG32(CLK_MANAGE) &= ~(1<<26);    //perst=0 off.    
+		REG32(CLK_MANAGE) &= ~(1<<26);    //perst=0 off.
 		delay_ms(500);   //PCIE standadrd: poweron: 100us, after poweron: 100ms
-		delay_ms(500);  		
+		delay_ms(500);
 		REG32(CLK_MANAGE) |=  (1<<26);   //PERST=1
 		#endif
-		
-			
+
+
 	}
 	else if (portnum==1)
 	{
@@ -429,7 +429,7 @@ static void PCIE_Device_PERST(int portnum)
 	*	The pcei1 slot reset register depends on the hw
 	*/
 
-#if defined(CONFIG_RTL_DUAL_PCIESLOT_BIWLAN) || (RTL_USED_PCIE_SLOT==1) || defined(CONFIG_RTL_DUAL_PCIESLOT_BIWLAN_D) 
+#if defined(CONFIG_RTL_DUAL_PCIESLOT_BIWLAN) || (RTL_USED_PCIE_SLOT==1) || defined(CONFIG_RTL_DUAL_PCIESLOT_BIWLAN_D)
 #if defined(CONFIG_RTL_8197B)
                 GPIO6_PCIE_Device_PERST();
 #else
@@ -459,7 +459,7 @@ static void PCIE_Device_PERST(int portnum)
 #if defined(CONFIG_RTL_819XD) || defined(CONFIG_RTL_8196E)
 
 		REG32(0xb8000040) = (REG32(0xb8000040) & ~(7)) |(6);
-							
+
                 REG32(0xb8003500)=REG32(0xb8003500)&(~(1<<2));
 
                  REG32(0xb8003508)= REG32(0xb8003508)|(1<<2);
@@ -475,35 +475,35 @@ static void PCIE_Device_PERST(int portnum)
 
 
 
-		
+
 #if defined(QA_BOARD)
 		REG32(0xb8000040)=REG32(0xb8000040)|0x30000000;
 
 		REG32(0xb8003500)=REG32(0xb8003500)&(~0x200000);
- 
+
 		 REG32(0xb8003508)= REG32(0xb8003508)|0x200000;
 
 
 
 
-		REG32(0xb800350C) &= ~(0x200000);    //perst=0 off.  
+		REG32(0xb800350C) &= ~(0x200000);    //perst=0 off.
 		delay_ms(300);   //PCIE standadrd: poweron: 100us, after poweron: 100ms
-		delay_ms(300); 
+		delay_ms(300);
 
 		REG32(0xb800350C) |=  (0x200000);   //PERST=1
 #endif
 #else
-		REG32(PEFGHDAT_REG) &= ~(0x1000);    //perst=0 off.  
+		REG32(PEFGHDAT_REG) &= ~(0x1000);    //perst=0 off.
 		delay_ms(300);   //PCIE standadrd: poweron: 100us, after poweron: 100ms
-		delay_ms(300); 
+		delay_ms(300);
 		REG32(PEFGHDAT_REG) |=  (0x1000);   //PERST=1
 #endif
 #endif
 #endif
 #elif defined(CONFIG_RTL_92D_SUPPORT)
-		REG32(CLK_MANAGE) &= ~(1<<26);    //perst=0 off.    
+		REG32(CLK_MANAGE) &= ~(1<<26);    //perst=0 off.
 		delay_ms(500);   //PCIE standadrd: poweron: 100us, after poweron: 100ms
-		delay_ms(500);  		
+		delay_ms(500);
 		REG32(CLK_MANAGE) |=  (1<<26);   //PERST=1
 #endif
 	}
@@ -515,17 +515,17 @@ static void PCIE_Device_PERST(int portnum)
 void PCIE_MDIO_Reset(unsigned int portnum)
 {
         #define SYS_PCIE_PHY0   (0xb8000000 +0x50)
-        #define SYS_PCIE_PHY1   (0xb8000000 +0x54)      
- 
+        #define SYS_PCIE_PHY1   (0xb8000000 +0x54)
+
         unsigned int sys_pcie_phy;
- 
+
         if(portnum==0)  sys_pcie_phy=SYS_PCIE_PHY0;
         else if(portnum==1)     sys_pcie_phy=SYS_PCIE_PHY1;
         else return;
- 
+
        // 3.MDIO Reset
-           REG32(sys_pcie_phy) = (1<<3) |(0<<1) | (0<<0);     //mdio reset=0,               
-           REG32(sys_pcie_phy) = (1<<3) |(0<<1) | (1<<0);     //mdio reset=1,   
+           REG32(sys_pcie_phy) = (1<<3) |(0<<1) | (0<<0);     //mdio reset=0,
+           REG32(sys_pcie_phy) = (1<<3) |(0<<1) | (1<<0);     //mdio reset=1,
            REG32(sys_pcie_phy) = (1<<3) |(1<<1) | (1<<0);     //bit1 load_done=1
 }
 #endif
@@ -534,13 +534,13 @@ void PCIE_PHY_Reset(unsigned int portnum)
 {
          #define PCIE_PHY0      0xb8b01008
          #define PCIE_PHY1      0xb8b21008
- 
+
         unsigned int pcie_phy;
- 
+
         if(portnum==0)  pcie_phy=BSP_PCIE0_H_PWRCR;
         else if(portnum==1)     pcie_phy=BSP_PCIE1_H_PWRCR;
         else return;
- 
+
         //4. PCIE PHY Reset
 	REG32(pcie_phy) = 0x01; //bit7:PHY reset=0   bit0: Enable LTSSM=1
 	REG32(pcie_phy) = 0x81;   //bit7: PHY reset=1   bit0: Enable LTSSM=1
@@ -552,12 +552,12 @@ int PCIE_Check_Link(unsigned int portnum)
         unsigned int dbgaddr;
         unsigned int cfgaddr=0;
         int i=10;
- 
+
         if(portnum==0)  dbgaddr=0xb8b00728;
         else if(portnum==1)     dbgaddr=0xb8b20728;
         else return 1;
 
- 	
+
   //wait for LinkUP
 
         while(--i)
@@ -565,7 +565,7 @@ int PCIE_Check_Link(unsigned int portnum)
               if( (REG32(dbgaddr)&0x1f)==0x11)
                         break;
 
-                delay_ms(100); 
+                delay_ms(100);
         }
 
         if(i==0)
@@ -577,7 +577,7 @@ int PCIE_Check_Link(unsigned int portnum)
         {
                 if(portnum==0) cfgaddr=0xb8b10000;
                 else if(portnum==1) cfgaddr=0xb8b30000;
- 
+
                 if(at2_mode==0)
 					printk("Find Port=%x Device:Vender ID=%x\n", portnum, REG32(cfgaddr) );
         }
@@ -592,66 +592,66 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 {
 	static int pcie_reset_done[RTL_MAX_PCIE_SLOT_NUM] = {0};
 	int status=FAIL;
-	
-	if (pcie_reset_done[portnum]) 
+
+	if (pcie_reset_done[portnum])
 	{
 		_DEBUG_INFO("PCIE reset Already (%d) \n", pcie_reset_done[portnum]);
-		return SUCCESS;	
+		return SUCCESS;
 	}
 
 	_DEBUG_INFO("PCIE  %d reset (%d) \n", portnum,pcie_reset_done[portnum]);
 
 	 if(portnum==0)
- 		 REG32(IP_Enable_Control_Register) |= (1<<7) ; //Enable PCIE Port0 IP clock 
-	 else if(portnum==1)     REG32(IP_Enable_Control_Register) |=  (1<<6);        //Enable PCIE Port1 IP clock 
- 	 else return; 
+ 		 REG32(IP_Enable_Control_Register) |= (1<<7) ; //Enable PCIE Port0 IP clock
+	 else if(portnum==1)     REG32(IP_Enable_Control_Register) |=  (1<<6);        //Enable PCIE Port1 IP clock
+ 	 else return;
 
-      delay_ms(500);	
+      delay_ms(500);
 
 	 if(mdio_reset)
  	{
- 		
-  		 _DEBUG_INFO("Do MDIO_RESET\n");  
- 
+
+  		 _DEBUG_INFO("Do MDIO_RESET\n");
+
  		if(portnum==0)      REG32(PCIE_Control_Register) |=  (1<<24);        //Reset EPHY0
- 		else if(portnum==1)     REG32(PCIE_Control_Register) |=  (1<<21);        //Reset EPHY1 
- 		else return; 
-  
- 	}  
- 
+ 		else if(portnum==1)     REG32(PCIE_Control_Register) |=  (1<<21);        //Reset EPHY1
+ 		else return;
+
+ 	}
+
     delay_ms(500);
   //add compatible, slove sata pcie card.
 
 	if((mdio_reset)&&(portnum==0))
     {
- 
+
   		_DEBUG_INFO("\nSet PCIE P0 EPHY\n");
   		HostPCIe_SetPhyMdioWrite(portnum, 6, 0xf848);  //25MHZ
   		HostPCIe_SetPhyMdioWrite(portnum, 0x0b, 0x0711);   //for sloving low performance
-  		HostPCIe_SetPhyMdioWrite(portnum, 0xf, 0x0a00);  
-  		HostPCIe_SetPhyMdioWrite(portnum, 0xd, 0x1766);   
-  		HostPCIe_SetPhyMdioWrite(portnum, 0x1d, 0xa0eb); 
+  		HostPCIe_SetPhyMdioWrite(portnum, 0xf, 0x0a00);
+  		HostPCIe_SetPhyMdioWrite(portnum, 0xd, 0x1766);
+  		HostPCIe_SetPhyMdioWrite(portnum, 0x1d, 0xa0eb);
     }
- 
+
     if((mdio_reset)&&(portnum==1))
     {
    		 _DEBUG_INFO("\nSet PCIE P1 EPHY\n");
   		HostPCIe_SetPhyMdioWrite(portnum, 4, 0xf56b);  //25MHZ
   		HostPCIe_SetPhyMdioWrite(portnum, 0x6, 0x5881);   //for sloving low performance
- 		 HostPCIe_SetPhyMdioWrite(portnum, 0x8, 0x6c1c);  
-  		HostPCIe_SetPhyMdioWrite(portnum, 0x9, 0x0fbf);   
-  		HostPCIe_SetPhyMdioWrite(portnum, 0xb, 0x7bb0); 
+ 		 HostPCIe_SetPhyMdioWrite(portnum, 0x8, 0x6c1c);
+  		HostPCIe_SetPhyMdioWrite(portnum, 0x9, 0x0fbf);
+  		HostPCIe_SetPhyMdioWrite(portnum, 0xb, 0x7bb0);
     }
 
 	// Step 4. PCIE Device Reset
 	PCIE_Device_PERST(portnum);
 
 	PCIE_PHY_Reset(portnum);
-	
-     delay_ms(500);	
-  
+
+     delay_ms(500);
+
 	 _DEBUG_INFO("\nPCIE_Check_Link\n");
-    status=PCIE_Check_Link(portnum); 
+    status=PCIE_Check_Link(portnum);
 
    if(status==FAIL)
 		return FAIL;
@@ -659,11 +659,11 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 #ifdef __OSK__
 	//io and mem limit, setting to no litmit
     REG32(0xb8b0001c) = (2<<4) | (0<<12);   //  [7:4]=base  [15:12]=limit
-    REG32(0xb8b00020) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit 
-    REG32(0xb8b00024) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit 
+    REG32(0xb8b00020) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit
+    REG32(0xb8b00024) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit
     //printk("reset PCIE 2: b8b0001c:0x%08x, b8b00020:0x%08x, b8b00024:0x%08x\n", REG32(0xb8b0001c), REG32(0xb8b00020), REG32(0xb8b00024));
 #endif
-		
+
   //set BAR
 
    if (portnum==0)
@@ -696,11 +696,11 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 	}
 	else
 		return FAIL;
-	
+
 	delay_ms(500);
 
 	return SUCCESS;
-		
+
 }
 #else
 int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset, unsigned long conf_addr)
@@ -708,7 +708,7 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 	static int pcie_reset_done[RTL_MAX_PCIE_SLOT_NUM] = {0};
 	int status=FAIL;
 	int retry=2;
-	
+
 
 	#if defined(CONFIG_RTL_DUAL_PCIESLOT_BIWLAN) || (RTL_USED_PCIE_SLOT==1) || defined(CONFIG_RTL_DUAL_PCIESLOT_BIWLAN_D)
 	if (portnum==0)
@@ -734,7 +734,7 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 		REG32(0xb8000040)|=0x300;
 		REG32(PEFGHCNR_REG) &= ~(0x1000);	/*port F bit 4 */
 		REG32(PEFGHDIR_REG) |= (0x1000);	/*port F bit 4 */
-		REG32(PEFGHDAT_REG) |=  (0x1000);   //PERST=1		  
+		REG32(PEFGHDAT_REG) |=  (0x1000);   //PERST=1
 #endif
 	}
 	#endif
@@ -745,12 +745,12 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 	REG32(0xb8000010)= REG32(0xb8000010) |(1<<12|1<<13|1<<14|1<<16|1<<19|1<<20);//(1<<14);
 	#endif
 
-	if (pcie_reset_done[portnum]) 
+	if (pcie_reset_done[portnum])
 		goto SET_BAR;
 TRY_AGAIN:
 	_DEBUG_INFO("PCIE reset (%d) \n", pcie_reset_done[portnum]);
 	if(portnum==0)		    REG32(CLK_MANAGE) |=  (1<<14);        //enable active_pcie0
-	else if(portnum==1)	    REG32(CLK_MANAGE) |=  (1<<16);        //enable active_pcie1	
+	else if(portnum==1)	    REG32(CLK_MANAGE) |=  (1<<16);        //enable active_pcie1
 	else return 0;
 
 	delay_ms(500);
@@ -760,8 +760,8 @@ TRY_AGAIN:
 	{
 		#define PAD_CONTROL 0xb8000048
 		REG32(PAD_CONTROL)|=(1<<27);
-	}	
-	#endif 
+	}
+	#endif
 	delay_ms(500);
 
 
@@ -772,21 +772,21 @@ TRY_AGAIN:
 
 		// 3.MDIO Reset
 		PCIE_MDIO_Reset(portnum);
-	}  
+	}
 
-	/*	
-	PCIE_PHY_Reset(portnum);	
-	*/	
+	/*
+	PCIE_PHY_Reset(portnum);
+	*/
 	delay_ms(500);
 	delay_ms(500);
 
 	//----------------------------------------
 	if(mdio_reset)
 	{
-		//fix 8198 test chip pcie tx problem.	
+		//fix 8198 test chip pcie tx problem.
 		#if defined(CONFIG_RTL8198_REVISION_B) || defined(CONFIG_RTL_819XD) || defined(CONFIG_RTL_8196E) ||  defined(CONFIG_RTL_8198C)
 		#if defined(CONFIG_RTL_8198C)
-		
+
 		REG32(0xb8000104)=(REG32(0xb8000104)&(~(0x3<<20)))|(1<<20);  //PCIe MUX switch to PCIe reset
 #if 0
 		#ifdef  CONFIG_PHY_EAT_40MHZ
@@ -804,7 +804,7 @@ TRY_AGAIN:
 
         HostPCIe_SetPhyMdioWrite(portnum, 0x3, 0x3001);
         HostPCIe_SetPhyMdioWrite(portnum, 0x6, 0xe0b8); //Hannah
-        
+
         HostPCIe_SetPhyMdioWrite(portnum, 0xF, 0x400F);
         HostPCIe_SetPhyMdioWrite(portnum, 0x19, 0xFC70);
 		printk("\r\n25MHz PCIe Parameters\r\n");
@@ -833,7 +833,7 @@ TRY_AGAIN:
 			HostPCIe_SetPhyMdioWrite(portnum, 0x19, 0xFC70);
 			_DEBUG_TRACE("\r\n25MHz PCIe Parameters\r\n");
 
-			
+
 		}
 		#if defined(CONFIG_RTL_8198C) & defined(CONFIG_WLAN_HAL_8814AE)
 		if(portnum ==1)
@@ -842,7 +842,7 @@ TRY_AGAIN:
 		}
 		#endif
 	}
-#endif		
+#endif
 
 
 
@@ -875,15 +875,15 @@ TRY_AGAIN:
 				HostPCIe_SetPhyMdioWrite(portnum, 0xc, 0x0171);
 				HostPCIe_SetPhyMdioWrite(portnum, 0x4, 0xf544);
 			}
-   
+
             HostPCIe_SetPhyMdioWrite(portnum, 0x6, 0x7081);
             HostPCIe_SetPhyMdioWrite(portnum, 0x8, 0x901c);
             HostPCIe_SetPhyMdioWrite(portnum, 0x9, 0x0ebc);
 #else
 		#if defined(CONFIG_RTL_8196E)
 		if ((REG32(BSP_REVR) & 0xFFFFF000) == BSP_RTL8196E)
-		#else		
-		if ((REG32(BSP_REVR) >= BSP_RTL8198_REVISION_B) || ((REG32(BSP_REVR) & 0xFFFFF000) == BSP_RTL8197D)) 
+		#else
+		if ((REG32(BSP_REVR) >= BSP_RTL8198_REVISION_B) || ((REG32(BSP_REVR) & 0xFFFFF000) == BSP_RTL8197D))
 		#endif
 		{
 #if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))
@@ -896,49 +896,49 @@ TRY_AGAIN:
 			#ifdef CONFIG_WLAN_HAL_8192EE
 			HostPCIe_SetPhyMdioWrite(portnum, 4, 0x5000);	// disable spread spectrum in 92E
 			#else
-#if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))			
+#if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))
 			#ifdef  CONFIG_PHY_EAT_40MHZ
 			HostPCIe_SetPhyMdioWrite(portnum, 4, 0x7C00);
-			#else			
+			#else
 			HostPCIe_SetPhyMdioWrite(portnum, 4, 0x7000);
-			#endif				
-#endif			
+			#endif
+#endif
 			#endif
 			#if defined(CONFIG_AUTO_PCIE_PHY_SCAN) && (defined(CONFIG_RTL_8196E) || defined(CONFIG_RTL_819XD))
-			
+
 				if ((REG32(0xb8000008)&0x2000000)==0x2000000)  //40MHz
 				{
 					printk("98 - 40MHz Clock Source\n");
-#if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))					
+#if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))
 					HostPCIe_SetPhyMdioWrite(portnum, 4, 0x7C00);
 					HostPCIe_SetPhyMdioWrite(portnum, 5, 0x09DB);   //40M  //1119 bokai
 					HostPCIe_SetPhyMdioWrite(portnum, 6, 0x4048);   //40M
 #else
 					HostPCIe_SetPhyMdioWrite(portnum, 5, 0x0BCB);   //40M
 					HostPCIe_SetPhyMdioWrite(portnum, 6, 0x2148);   //40M
-#endif					
+#endif
 					HostPCIe_SetPhyMdioWrite(portnum, 7, 0x41ff);
-					HostPCIe_SetPhyMdioWrite(portnum, 8, 0x13F6); 
+					HostPCIe_SetPhyMdioWrite(portnum, 8, 0x13F6);
 				}
 				else //25MHz
 				{
 					printk("98 - 25MHz Clock Source\n");
-#if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))					
+#if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))
 					HostPCIe_SetPhyMdioWrite(portnum, 4, 0x7000);
-					HostPCIe_SetPhyMdioWrite(portnum, 5, 0x0B13); 
+					HostPCIe_SetPhyMdioWrite(portnum, 5, 0x0B13);
 					HostPCIe_SetPhyMdioWrite(portnum, 6, 0xf048);  //25M
 #else
 					HostPCIe_SetPhyMdioWrite(portnum, 6, 0xf848);  //25M
-#endif					
+#endif
 					HostPCIe_SetPhyMdioWrite(portnum, 7, 0xa7ff);  //-0.5%
-					HostPCIe_SetPhyMdioWrite(portnum, 8, 0x0c56);  
-				
+					HostPCIe_SetPhyMdioWrite(portnum, 8, 0x0c56);
+
 			}
 			#else
 
 			#ifdef  CONFIG_PHY_EAT_40MHZ
 			printk("40MHz Clock Source\n");
-#if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))								
+#if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))
 			HostPCIe_SetPhyMdioWrite(portnum, 5, 0x09DB);   //40M  //1119 bokai
 			HostPCIe_SetPhyMdioWrite(portnum, 6, 0xf048);   //40M
 #else
@@ -949,25 +949,25 @@ TRY_AGAIN:
 			//HostPCIe_SetPhyMdioWrite(portnum, 6, 0xF148);  //40M
 			#else
 			printk("25MHz Clock Source\n");
-#if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))								
-			HostPCIe_SetPhyMdioWrite(portnum, 5, 0x0B13); 
+#if defined(CONFIG_RTL_88E_SUPPORT) || (defined(SLOT_0_92C) && defined(CONFIG_SLOT_0_EXT_PA)) || (defined(SLOT_1_92C) && defined(CONFIG_SLOT_1_EXT_PA))
+			HostPCIe_SetPhyMdioWrite(portnum, 5, 0x0B13);
 			HostPCIe_SetPhyMdioWrite(portnum, 6, 0xf048);  //25M
 #else
 			HostPCIe_SetPhyMdioWrite(portnum, 6, 0xf848);  //25M
 #endif
 			#endif
 			#endif
-			
-			
-				
+
+
+
 #if defined(CONFIG_RTL_819XD) || defined(CONFIG_RTL_8196E)
 	#else
 			HostPCIe_SetPhyMdioWrite(portnum, 8, 0x18d7);  //peisi tune
 #endif
 			//saving more power, 8196c pe-si tune
-			HostPCIe_SetPhyMdioWrite(portnum, 0x09, 0x539c); 	
-			HostPCIe_SetPhyMdioWrite(portnum, 0x0a, 0x20eb); 	
-			HostPCIe_SetPhyMdioWrite(portnum, 0x0d, 0x1766); 			
+			HostPCIe_SetPhyMdioWrite(portnum, 0x09, 0x539c);
+			HostPCIe_SetPhyMdioWrite(portnum, 0x0a, 0x20eb);
+			HostPCIe_SetPhyMdioWrite(portnum, 0x0d, 0x1766);
 #if defined(CONFIG_RTL_819XD) || defined(CONFIG_RTL_8196E)
 
 			#ifdef CONFIG_RTL_8881A
@@ -987,9 +987,9 @@ TRY_AGAIN:
 			HostPCIe_SetPhyMdioWrite(portnum, 0x19, 0xFCE0);
 
 			HostPCIe_SetPhyMdioWrite(portnum, 0x1a, 0x7e40);   //formal chip, reg 0x1a.4=0
-			HostPCIe_SetPhyMdioWrite(portnum, 0x1b, 0xFC01);   //formal chip	 reg 0x1b.0=1		
+			HostPCIe_SetPhyMdioWrite(portnum, 0x1b, 0xFC01);   //formal chip	 reg 0x1b.0=1
 
-			HostPCIe_SetPhyMdioWrite(portnum, 0x1e, 0xC280);	
+			HostPCIe_SetPhyMdioWrite(portnum, 0x1e, 0xC280);
 		}
 		else
 		#endif
@@ -1002,14 +1002,14 @@ TRY_AGAIN:
 			HostPCIe_SetPhyMdioWrite(portnum, 6, 0x408); 	//avoid noise infuse	 //15-12=0, 7-5=0,    0448
 
 			HostPCIe_SetPhyMdioWrite(portnum, 7, 0x31ff);
-			HostPCIe_SetPhyMdioWrite(portnum, 8, 0x18d5);  //new		
-			HostPCIe_SetPhyMdioWrite(portnum, 9, 0x531c); 		
-		
-			HostPCIe_SetPhyMdioWrite(portnum, 0xd, 0x1766); 
-			HostPCIe_SetPhyMdioWrite(portnum, 0xf, 0x0010);//ori				
+			HostPCIe_SetPhyMdioWrite(portnum, 8, 0x18d5);  //new
+			HostPCIe_SetPhyMdioWrite(portnum, 9, 0x531c);
 
-			HostPCIe_SetPhyMdioWrite(portnum, 0x19, 0xFCE0); 
-			HostPCIe_SetPhyMdioWrite(portnum, 0x1e, 0xC280);	
+			HostPCIe_SetPhyMdioWrite(portnum, 0xd, 0x1766);
+			HostPCIe_SetPhyMdioWrite(portnum, 0xf, 0x0010);//ori
+
+			HostPCIe_SetPhyMdioWrite(portnum, 0x19, 0xFCE0);
+			HostPCIe_SetPhyMdioWrite(portnum, 0x1e, 0xC280);
 		#endif
 		}
 	#endif
@@ -1029,15 +1029,15 @@ TRY_AGAIN:
 
 	delay_ms(500);
 	delay_ms(500);
-	status=PCIE_Check_Link(portnum); 
+	status=PCIE_Check_Link(portnum);
 	if(status==FAIL)
 	{
 		retry--;
 		if(retry==0)
 		return FAIL;
-		else 
+		else
 		goto TRY_AGAIN;
-	}	
+	}
 
 SET_BAR:
 	if (portnum==0)
@@ -1057,10 +1057,10 @@ SET_BAR:
 #endif
 			pcie_reset_done[portnum] = 1;
 		}
-#ifdef CONFIG_RTL_92D_DMDP		
+#ifdef CONFIG_RTL_92D_DMDP
 		else {
 			Sw_PCIE_Func(1);
-			//choose the PCIE port number 
+			//choose the PCIE port number
 			WRITE_MEM32(PCIE0_H_CFG + 0x04, 0x00100007);
 			WRITE_MEM8(PCIE0_H_CFG + 0x78, (READ_MEM8(conf_addr + 0x78) & (~0xE0)) | MAX_PAYLOAD_SIZE_128B);  // Set MAX_PAYLOAD_SIZE to 128B
 			Sw_PCIE_Func(0);
@@ -1077,13 +1077,13 @@ SET_BAR:
             WRITE_MEM8(BSP_PCIE1_H_CFG + 0x78, (READ_MEM8(conf_addr + 0x78) & (~0xE0)) | MAX_PAYLOAD_SIZE_256B);  // Set MAX_PAYLOAD_SIZE to 256B
 #else
             WRITE_MEM8(BSP_PCIE1_H_CFG + 0x78, (READ_MEM8(conf_addr + 0x78) & (~0xE0)) | MAX_PAYLOAD_SIZE_128B);  // Set MAX_PAYLOAD_SIZE to 128B
-#endif       
+#endif
 			pcie_reset_done[portnum] = 1;
 		}
 		#ifdef CONFIG_RTL_92D_DMDP
 		else {
 			Sw_PCIE_Func(1);
-			//choose the PCIE port number 
+			//choose the PCIE port number
 			WRITE_MEM32(BSP_PCIE1_H_CFG + 0x04, 0x00100007);
 			WRITE_MEM8(BSP_PCIE1_H_CFG + 0x78, (READ_MEM8(conf_addr + 0x78) & (~0xE0)) | MAX_PAYLOAD_SIZE_128B);  // Set MAX_PAYLOAD_SIZE to 128B
 			Sw_PCIE_Func(0);
@@ -1096,7 +1096,7 @@ SET_BAR:
 	}
 	else
 		return FAIL;
-	
+
 	delay_ms(500);
 	return SUCCESS;
 
@@ -1129,7 +1129,7 @@ unsigned char clk_src_40M = 0;
 
 struct pcie_para{
 	unsigned char port;
-	unsigned char reg;	
+	unsigned char reg;
 	unsigned short value;
 };
 
@@ -1152,42 +1152,42 @@ enum clk_source{
 };
 
 struct pcie_para ePHY[][29] = {
-     { {0, 1, 0x0003},   	{0, 2, 0x2d18}, 	{0, 3, 0x6d09},  	{0, 4, 0x5000},   
-	{0, 0, 0x1046},	{0, 6, 0x0068}, 	{0, 5, 0x0bcb}, 	{0, 7, 0x30ff},   
-	{0, 8, 0x18d7},	{0, 9, 0x530c}, 	{0, 0xa, 0x00e8},	{0, 0xb, 0x0511}, 
-	{0, 0xc, 0x0828}, 	{0, 0xd, 0x17a6},	{0, 0xe, 0x98c5},	{0, 0xf, 0x0f0f}, 
+     { {0, 1, 0x0003},   	{0, 2, 0x2d18}, 	{0, 3, 0x6d09},  	{0, 4, 0x5000},
+	{0, 0, 0x1046},	{0, 6, 0x0068}, 	{0, 5, 0x0bcb}, 	{0, 7, 0x30ff},
+	{0, 8, 0x18d7},	{0, 9, 0x530c}, 	{0, 0xa, 0x00e8},	{0, 0xb, 0x0511},
+	{0, 0xc, 0x0828}, 	{0, 0xd, 0x17a6},	{0, 0xe, 0x98c5},	{0, 0xf, 0x0f0f},
 	{0, 0x10, 0x000c},	{0, 0x11, 0x3c00},	{0, 0x12, 0xfc00},	{0, 0x13, 0x0c81},
 	{0, 0x14, 0xde01},	{0, 0x19, 0xfc20},	{0, 0x1a, 0xfc00},	{0, 0x1b, 0xfc00},
 	{0, 0x1c, 0xfc00},	{0, 0x1d, 0xa0eb},	{0, 0x1e, 0xc280},	{0, 0x1f, 0x05e0},
 	{0xff,0xff,0xffff}},  //6166 35.328M clk
-     {	{0, 1, 0x0003},	{0, 2, 0x2d18},	{0, 3, 0x6d09},	{0, 4, 0x5000},   
-	{0, 0, 0x1047},	{0, 6, 0xf848},	{0, 5, 0x08ab},	{0, 7, 0x30ff},   
-	{0, 8, 0x18d7},   	{0, 9, 0x530c},	{0, 0xa, 0x00e8},	{0, 0xb, 0x0511}, 
-	{0, 0xc, 0x0828}, 	{0, 0xd, 0x17a6}, 	{0, 0xe, 0x98c5}, 	{0, 0xf, 0x0f0f}, 
+     {	{0, 1, 0x0003},	{0, 2, 0x2d18},	{0, 3, 0x6d09},	{0, 4, 0x5000},
+	{0, 0, 0x1047},	{0, 6, 0xf848},	{0, 5, 0x08ab},	{0, 7, 0x30ff},
+	{0, 8, 0x18d7},   	{0, 9, 0x530c},	{0, 0xa, 0x00e8},	{0, 0xb, 0x0511},
+	{0, 0xc, 0x0828}, 	{0, 0xd, 0x17a6}, 	{0, 0xe, 0x98c5}, 	{0, 0xf, 0x0f0f},
 	{0, 0x10, 0x000c},	{0, 0x11, 0x3c00},	{0, 0x12, 0xfc00},	{0, 0x13, 0x0c81},
 	{0, 0x14, 0xde01},	{0, 0x19, 0xfc20},	{0, 0x1a, 0xfc00},	{0, 0x1b, 0xfc00},
 	{0, 0x1c, 0xfc00},	{0, 0x1d, 0xa0eb},	{0, 0x1e, 0xc280},	{0, 0x1f, 0x05e0},
 	{0xff,0xff,0xffff}}, //6166 25M clk
-     {	{0, 1, 0x0003}, 	{0, 2, 0x2d18},	{0, 3, 0x4d09},	{0, 4, 0x5c3f},   
-	{0, 0, 0x1046},   	{0, 6, 0x9048},	{0, 5, 0x2213},	{0, 7, 0x31ff},   
-	{0, 8, 0x18d7},   	{0, 9, 0x539c},  	{0, 0xa, 0x00e8}, 	{0, 0xb, 0x0711}, 
-	{0, 0xc, 0x0828}, 	{0, 0xd, 0x17a6},	{0, 0xe, 0x98c5},	{0, 0xf, 0x0f0f}, 
+     {	{0, 1, 0x0003}, 	{0, 2, 0x2d18},	{0, 3, 0x4d09},	{0, 4, 0x5c3f},
+	{0, 0, 0x1046},   	{0, 6, 0x9048},	{0, 5, 0x2213},	{0, 7, 0x31ff},
+	{0, 8, 0x18d7},   	{0, 9, 0x539c},  	{0, 0xa, 0x00e8}, 	{0, 0xb, 0x0711},
+	{0, 0xc, 0x0828}, 	{0, 0xd, 0x17a6},	{0, 0xe, 0x98c5},	{0, 0xf, 0x0f0f},
 	{0, 0x10, 0x000c},	{0, 0x11, 0x3c00},	{0, 0x12, 0xfc00},	{0, 0x13, 0x0c81},
 	{0, 0x14, 0xde01},	{0, 0x19, 0xfce0},	{0, 0x1a, 0x7c00},	{0, 0x1b, 0xfc00},
 	{0, 0x1c, 0xfc00},	{0, 0x1d, 0xa0eb},	{0, 0x1e, 0xc280},	{0, 0x1f, 0x0600},
 	{0xff,0xff,0xffff}}, //8676 35.328M clk
-     {	{0, 1, 0x0003}, 	{0, 2, 0x2d18},	{0, 3, 0x4d09},	{0, 4, 0x5000},   
-	{0, 0, 0x1047},   	{0, 6, 0x9148},	{0, 5, 0x23cb},	{0, 7, 0x31ff},   
-	{0, 8, 0x18d7},   	{0, 9, 0x539c},  	{0, 0xa, 0x00e8}, 	{0, 0xb, 0x0711}, 
-	{0, 0xc, 0x0828}, 	{0, 0xd, 0x17a6},	{0, 0xe, 0x98c5},	{0, 0xf, 0x0f0f}, 
+     {	{0, 1, 0x0003}, 	{0, 2, 0x2d18},	{0, 3, 0x4d09},	{0, 4, 0x5000},
+	{0, 0, 0x1047},   	{0, 6, 0x9148},	{0, 5, 0x23cb},	{0, 7, 0x31ff},
+	{0, 8, 0x18d7},   	{0, 9, 0x539c},  	{0, 0xa, 0x00e8}, 	{0, 0xb, 0x0711},
+	{0, 0xc, 0x0828}, 	{0, 0xd, 0x17a6},	{0, 0xe, 0x98c5},	{0, 0xf, 0x0f0f},
 	{0, 0x10, 0x000c},	{0, 0x11, 0x3c00},	{0, 0x12, 0xfc00},	{0, 0x13, 0x0c81},
 	{0, 0x14, 0xde01},	{0, 0x19, 0xfce0},	{0, 0x1a, 0x7c00},	{0, 0x1b, 0xfc00},
 	{0, 0x1c, 0xfc00},	{0, 0x1d, 0xa0eb},	{0, 0x1e, 0xc280},	{0, 0x1f, 0x0600},
 	{0xff,0xff,0xffff}}, //8676 40M clk
-     {	{0, 0, 0x1086},	{0, 4, 0x5800},	{0, 5, 0x05d3},	{0, 6, 0xf048},   
+     {	{0, 0, 0x1086},	{0, 4, 0x5800},	{0, 5, 0x05d3},	{0, 6, 0xf048},
 	{0, 0xb, 0x0711},	{0, 0xd, 0x1766},	{0, 0xf, 0x0a00},	{0, 0x1d, 0xa0eb},
 	{0xff,0xff,0xffff}},//8686 40M clk
-     {	{0, 6, 0xf848},	{0, 0xb, 0x0711},	{0, 0xd, 0x1766},	{0, 0xf, 0x0a00}, 
+     {	{0, 6, 0xf848},	{0, 0xb, 0x0711},	{0, 0xd, 0x1766},	{0, 0xf, 0x0a00},
 	{0, 0x01d, 0xa0eb},
 	{1, 6, 0xf848}, {1, 0xb, 0x0711},       {1, 0xd, 0x1766},       {1, 0xf, 0x0a00},
         {1, 0x01d, 0xa0eb},
@@ -1212,21 +1212,21 @@ struct pcie_para ePHY[][29] = {
 	{0, 8, 0x901c},	{0, 9, 0x0c9c},	{0, 0xa, 0x4037},	{0, 0xb, 0x03b0},
 	{0, 0xc, 0x0261},
 	{0xff,0xff,0xffff}}, //0562 40M clk
-     {	{0, 0, 0x404c},	{0, 1, 0x16a3},	{0, 2, 0x6340},	{0, 3, 0x370d},	
+     {	{0, 0, 0x404c},	{0, 1, 0x16a3},	{0, 2, 0x6340},	{0, 3, 0x370d},
 	{0, 4, 0x856a},	{0, 5, 0x8109},	{0, 6, 0x6081},	{0, 7, 0x5400},
-	{0, 8, 0x9000},	{0, 9, 0x0ccc},	{0, 0xa, 0x4437},	{0, 0xb, 0x0230}, 	
-	{0, 0xc, 0x0021},	{0, 0xd, 0x0000},	{0, 0xe, 0x0000},	{0, 0x1f, 0x0000}, 
+	{0, 8, 0x9000},	{0, 9, 0x0ccc},	{0, 0xa, 0x4437},	{0, 0xb, 0x0230},
+	{0, 0xc, 0x0021},	{0, 0xd, 0x0000},	{0, 0xe, 0x0000},	{0, 0x1f, 0x0000},
 	{0xff,0xff,0xffff}}, //8685 25M clk
-     {	{1, 0, 0x404c},	{1, 1, 0x16a3},	{1, 2, 0x6340},	{1, 3, 0x370d},	
+     {	{1, 0, 0x404c},	{1, 1, 0x16a3},	{1, 2, 0x6340},	{1, 3, 0x370d},
 	{1, 4, 0x856a},	{1, 5, 0x8109},	{1, 6, 0x6081},	{1, 7, 0x5400},
-	{1, 8, 0x9000},	{1, 9, 0x0ccc},	{1, 0xa, 0x4437},	{1, 0xb, 0x0230}, 	
-	{1, 0xc, 0x0021},	{1, 0xd, 0x0000},	{1, 0xe, 0x0000},	{1, 0x1f, 0x0000}, 
+	{1, 8, 0x9000},	{1, 9, 0x0ccc},	{1, 0xa, 0x4437},	{1, 0xb, 0x0230},
+	{1, 0xc, 0x0021},	{1, 0xd, 0x0000},	{1, 0xe, 0x0000},	{1, 0x1f, 0x0000},
 	{0xff,0xff,0xffff}}, //8685 25M clk
-      {{0, 0, 0x404c},	{0, 1, 0x16a3},	{0, 2, 0x6340},	{0, 3, 0x370d},	
+      {{0, 0, 0x404c},	{0, 1, 0x16a3},	{0, 2, 0x6340},	{0, 3, 0x370d},
         {0, 4, 0x4644}, {0, 5, 0x8109}, {0, 6, 0x2081}, {0, 7, 0x5400},
-	{0, 8, 0x9000},	{0, 9, 0x0ccc},	{0, 0xa, 0x4437},	{0, 0xb, 0x0230}, 	
-	{0, 0xc, 0x0021},	{0, 0xd, 0x0000},	{0, 0xe, 0x0000},	{0, 0x1f, 0x0000}, 
-	{0xff,0xff,0xffff}}, //8685S 25M clk	
+	{0, 8, 0x9000},	{0, 9, 0x0ccc},	{0, 0xa, 0x4437},	{0, 0xb, 0x0230},
+	{0, 0xc, 0x0021},	{0, 0xd, 0x0000},	{0, 0xe, 0x0000},	{0, 0x1f, 0x0000},
+	{0xff,0xff,0xffff}}, //8685S 25M clk
      {  {0, 6, 0xf848}, {0, 0xb, 0x0711},       {0, 0xd, 0x1766},       {0, 0xf, 0x0a00},
         {0, 0x01d, 0xa0eb}, {0, 0x19, 0xfc10},
         {0xff,0xff,0xffff}},//9602C
@@ -1261,7 +1261,7 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 		return FAIL;
 	}
 
-	if (pcie_reset_done[portnum]) 
+	if (pcie_reset_done[portnum])
 		goto SET_BAR;
 
 #ifndef __OSK__
@@ -1296,13 +1296,13 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 #ifdef CONFIG_JTAG_USABLE
 	PCIE_gpio_RST = GPIO_C_1; //tony 20130109: this pin shared with uart0 from spec,but actually uart1 for test chip.
 #else
-	PCIE_gpio_RST = GPIO_B_3; 
+	PCIE_gpio_RST = GPIO_B_3;
 #endif
 #else
 	PCIE_gpio_RST = GPIO_H_2; //borad7
 	//PCIE_gpio_RST = GPIO_A_5; //borad8
 	REG32(MISC_PINMUX) &= ~4;
-#endif	
+#endif
 #endif
 #endif
 
@@ -1348,14 +1348,14 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 #if defined(CONFIG_USE_PCIE_SLOT_0) && defined(CONFIG_USE_PCIE_SLOT_1)
 	}
 #endif
-#endif	
+#endif
 	// 2. PCIE MAC reset
 	REG32(MISC_IP_SEL) &= ~ENABLE_PCIE;
 	REG32(MISC_IP_SEL) |= ENABLE_PCIE;
 	#ifdef CONFIG_RTL8685S
 	delay_ms(100);
 	#endif
-	
+
 #if !defined(CONFIG_ARCH_LUNA_SLAVE) || !defined(CONFIG_MASTER_WLAN0_ENABLE)
 #if defined(CONFIG_USE_PCIE_SLOT_0) && defined(CONFIG_USE_PCIE_SLOT_1)
 	if(pcie_reset_done[0]==0 && pcie_reset_done[1]==0){
@@ -1366,16 +1366,16 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 		// 5.MDIO Reset
 		#ifndef CONFIG_RTL8676S
 		REG32(PCI_MISC) = BSP_PCI_MDIO_RESET_RELEASE;
-		#else	
+		#else
 		REG32(PCI_MISC) &= ~(1<<20);
 		delay_ms(2);
-		REG32(PCI_MISC) |= (1<<20);	
+		REG32(PCI_MISC) |= (1<<20);
 		#endif
 	}
 #if defined(CONFIG_USE_PCIE_SLOT_0) && defined(CONFIG_USE_PCIE_SLOT_1)
 	}
 #endif
-#endif	
+#endif
 	// 6. PCIE PHY Reset
 	REG32(PCIE_H_PWRCR) = 0x1; //bit7 PHY reset=0   bit0 Enable LTSSM=1
 	REG32(PCIE_H_PWRCR) = 0x81;   //bit7 PHY reset=1   bit0 Enable LTSSM=1
@@ -1415,7 +1415,7 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 			}
 			else{
 				printk("8685 pcie port 1\n");
-				idx = CLK25_8685_P1;				
+				idx = CLK25_8685_P1;
 			}
 		}
 #ifdef CONFIG_RTL8685S
@@ -1464,7 +1464,7 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 		printk("Reset PCIE Host PHY and try again...\n");
 	    // 4. PCIE PHY Reset
 	    REG32(PCIE_H_PWRCR) = 0x1; //bit7 PHY reset=0   bit0 Enable LTSSM=1
-	    REG32(PCIE_H_PWRCR) = 0x81;   //bit7 PHY reset=1   bit0 Enable LTSSM=1	
+	    REG32(PCIE_H_PWRCR) = 0x81;   //bit7 PHY reset=1   bit0 Enable LTSSM=1
 	    delay_ms(100);
 	    // wait for LinkUP
 	    i = 100;
@@ -1474,7 +1474,7 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 			    break;
 		    delay_ms(100);
 	    }
-		
+
 		if (i == 0){
 			printk("%s[%d]: Error!! Port %d WLan device PCIE Link failed, State=0x%x\n", __FUNCTION__, __LINE__, portnum, REG32(PCIE_H_CFG + 0x0728));
 			//check pcie link fail~
@@ -1500,8 +1500,8 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 #ifdef __OSK__
 	//io and mem limit, setting to no litmit
     REG32(0xb8b0001c) = (2<<4) | (0<<12);   //  [7:4]=base  [15:12]=limit
-    REG32(0xb8b00020) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit 
-    REG32(0xb8b00024) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit 
+    REG32(0xb8b00020) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit
+    REG32(0xb8b00024) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit
     //printk("reset PCIE 2: b8b0001c:0x%08x, b8b00020:0x%08x, b8b00024:0x%08x\n", REG32(0xb8b0001c), REG32(0xb8b00020), REG32(0xb8b00024));
 #endif
 
@@ -1515,7 +1515,7 @@ SET_BAR:
 	}
 #ifdef CONFIG_RTL_92D_DMDP
 	else {
-		Sw_PCIE_Func(1);	//choose the PCIE port number 
+		Sw_PCIE_Func(1);	//choose the PCIE port number
 		WRITE_MEM32(PCIE_H_CFG + 0x04, 0x00100007);
 		WRITE_MEM8(PCIE_H_CFG + 0x78, (READ_MEM8(conf_addr + 0x78) & (~0xE0)) | MAX_PAYLOAD_SIZE_128B);
 		Sw_PCIE_Func(0);
@@ -1529,7 +1529,7 @@ SET_BAR:
 
 int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,unsigned long conf_addr)
 {
-	
+
 	int i=100;
 #define SYS_PCIE_PHY0   (0xb8000000 +0x50)
 	//PCIE Register
@@ -1540,7 +1540,7 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 	// #define PCIE_PHY1  0xb8b21008
 	int port =0;
 
-	if (pcie_reset_done[portnum]) 
+	if (pcie_reset_done[portnum])
 		goto SET_BAR;
 
 	//2.Active LX & PCIE Clock
@@ -1671,15 +1671,15 @@ int PCIE_reset_procedure(int portnum, int Use_External_PCIE_CLK, int mdio_reset,
 		return FAIL;
 	}
 #endif
-	
+
 #ifdef __OSK__
 	//io and mem limit, setting to no litmit
     REG32(0xb8b0001c) = (2<<4) | (0<<12);   //  [7:4]=base  [15:12]=limit
-    REG32(0xb8b00020) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit 
-    REG32(0xb8b00024) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit 
+    REG32(0xb8b00020) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit
+    REG32(0xb8b00024) = (2<<4) | (0<<20);   //  [15:4]=base  [31:20]=limit
     //printk("reset PCIE 2: b8b0001c:0x%08x, b8b00020:0x%08x, b8b00024:0x%08x\n", REG32(0xb8b0001c), REG32(0xb8b00020), REG32(0xb8b00024));
 #endif
-	
+
 SET_BAR:
 	if (port==0)
 	{
@@ -1687,17 +1687,17 @@ SET_BAR:
 		if (pcie_reset_done[portnum] == 0) {
 #if defined(__LINUX_2_6__) && defined(USE_RLX_BSP)
 			WRITE_MEM32(BSP_PCIE0_H_CFG + 0x04, 0x00100007);
-			WRITE_MEM8(BSP_PCIE0_H_CFG + 0x78, (READ_MEM8(conf_addr + 0x78) & (~0xE0)) | MAX_PAYLOAD_SIZE_128B);  // Set MAX_PAYLOAD_SIZE to 128B			
+			WRITE_MEM8(BSP_PCIE0_H_CFG + 0x78, (READ_MEM8(conf_addr + 0x78) & (~0xE0)) | MAX_PAYLOAD_SIZE_128B);  // Set MAX_PAYLOAD_SIZE to 128B
 #else
 			WRITE_MEM32(PCIE0_H_CFG + 0x04, 0x00100007);
 			WRITE_MEM8(PCIE0_H_CFG + 0x78, (READ_MEM8(conf_addr + 0x78) & (~0xE0)) | MAX_PAYLOAD_SIZE_128B);  // Set MAX_PAYLOAD_SIZE to 128B
 #endif
 			pcie_reset_done[portnum] = 1;
 		}
-#ifdef CONFIG_RTL_92D_DMDP		
+#ifdef CONFIG_RTL_92D_DMDP
 		else {
 			Sw_PCIE_Func(1);
-			//choose the PCIE port number 
+			//choose the PCIE port number
 #if defined(__LINUX_2_6__) && defined(USE_RLX_BSP)
 			WRITE_MEM32(BSP_PCIE0_H_CFG + 0x04, 0x00100007);
 			WRITE_MEM8(BSP_PCIE0_H_CFG + 0x78, (READ_MEM8(conf_addr + 0x78) & (~0xE0)) | MAX_PAYLOAD_SIZE_128B);  // Set MAX_PAYLOAD_SIZE to 128B
@@ -1726,7 +1726,7 @@ SET_BAR:
 		else {
 			Sw_PCIE_Func(1);
 #if defined(__LINUX_2_6__) && defined(USE_RLX_BSP)
-			//choose the PCIE port number 
+			//choose the PCIE port number
 			WRITE_MEM32(BSP_PCIE1_H_CFG + 0x04, 0x00100007);
 			WRITE_MEM8(BSP_PCIE1_H_CFG + 0x78, (READ_MEM8(conf_addr + 0x78) & (~0xE0)) | MAX_PAYLOAD_SIZE_128B);  // Set MAX_PAYLOAD_SIZE to 128B
 #else
@@ -1742,14 +1742,14 @@ SET_BAR:
 	return SUCCESS;
 }
 
-#endif	
+#endif
 
 
 void HostPCIe_Close(void)
 {
 	REG32(0xb8b10044) &= (~(3));
 	REG32(0xb8b10044) |= (3);
-	HostPCIe_SetPhyMdioWrite(0, 0xf, 0x0708);	
+	HostPCIe_SetPhyMdioWrite(0, 0xf, 0x0708);
 	 //.DeActive LX & PCIE Clock
 #ifdef CONFIG_RTL8672
 	REG32(MISC_IP_SEL) &= ~EN_PCIE;        //enable active_pcie0
@@ -1881,7 +1881,7 @@ static void PCIE_PHY_MDIO_Write(unsigned int portnum, unsigned int regaddr, unsi
 
 	mdioaddr = PCIE_RC_EXTENDED_REG_MDIO;
 
-	REG32(mdioaddr) = ( (regaddr&0x1f)<<PCIE_MDIO_REG_OFFSET) | ((val&0xffff)<<PCIE_MDIO_DATA_OFFSET)  | (1<<PCIE_MDIO_RDWR_OFFSET) ; 
+	REG32(mdioaddr) = ( (regaddr&0x1f)<<PCIE_MDIO_REG_OFFSET) | ((val&0xffff)<<PCIE_MDIO_DATA_OFFSET)  | (1<<PCIE_MDIO_RDWR_OFFSET) ;
 	//delay
 	for(count = 0; count < 5555; count++)
 	{
@@ -1895,7 +1895,7 @@ static void PCIeMDIOPHYParameterSetRLE0600(unsigned int portnum)
 	temp =REG32(0xb8000008);
 	if((temp&(1<<24))==(1<<24))
 	{
-	printk("40MHz\r\n");		
+	printk("40MHz\r\n");
 		 PCIE_PHY_MDIO_Write(portnum, 0x0f, 0x12f6);
 		 PCIE_PHY_MDIO_Write(portnum, 0x00, 0x0071);
 		 PCIE_PHY_MDIO_Write(portnum, 0x06, 0x1ac1);

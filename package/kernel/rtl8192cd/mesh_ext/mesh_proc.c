@@ -58,7 +58,7 @@ static int dump_mesh_one_mpinfo(int num, struct stat_info *pstat, char *buf, cha
 	tmp = (signed long)(pstat->mesh_neighbor_TBL.BSexpire_LLSAperiod - jiffies);
 	if (0 > tmp)
 		tmp = 0;
-	
+
 	if (priv->pmib->dot11BssType.net_work_type & WIRELESS_11A)
 		network = WIRELESS_11A;
 	else if (priv->pmib->dot11BssType.net_work_type & WIRELESS_11G) {
@@ -76,7 +76,7 @@ static int dump_mesh_one_mpinfo(int num, struct stat_info *pstat, char *buf, cha
 	}
 	else // 11B only
 		network = WIRELESS_11B;
-    
+
 	if (priv->pmib->dot11BssType.net_work_type & WIRELESS_11N) {
 		if (pstat->ht_cap_len)
 			network |= WIRELESS_11N;
@@ -84,14 +84,14 @@ static int dump_mesh_one_mpinfo(int num, struct stat_info *pstat, char *buf, cha
 
     #ifdef RTK_AC_SUPPORT
     if (priv->pmib->dot11BssType.net_work_type & WIRELESS_11AC)
-    {        	
+    {
         if(pstat->vht_cap_len) {
             network |= WIRELESS_11AC;
         }
     }
     #endif
 
-    
+
 	PRINT_ONE(num,  " %d: Mesh MP_info...", 1);
 	PRINT_SINGL_ARG("    state: ", pstat->mesh_neighbor_TBL.State, "%x");
 	PRINT_ARRAY_ARG("    hwaddr: ",	pstat->hwaddr, "%02x", MACADDRLEN);
@@ -120,17 +120,17 @@ static int dump_mesh_one_mpinfo(int num, struct stat_info *pstat, char *buf, cha
     else if(network == WIRELESS_11AC) {
         PRINT_ONE("    mode: AC","%s",1);
     }
-    else if(network == (WIRELESS_11A|WIRELESS_11N)) {        
+    else if(network == (WIRELESS_11A|WIRELESS_11N)) {
         PRINT_ONE("    mode: A+N","%s",1);
     }
     else if(network == (WIRELESS_11AC|WIRELESS_11N)) {
         PRINT_ONE("    mode: N+AC","%s",1);
     }
     else if(network == (WIRELESS_11A|WIRELESS_11AC|WIRELESS_11N)) {
-        PRINT_ONE("    mode: A+N+AC","%s",1);   
-    } 
+        PRINT_ONE("    mode: A+N+AC","%s",1);
+    }
     else {
-        PRINT_ONE("    mode: --","%s",1); 
+        PRINT_ONE("    mode: --","%s",1);
     }
 
 
@@ -150,7 +150,7 @@ static int dump_mesh_one_mpinfo(int num, struct stat_info *pstat, char *buf, cha
 		PRINT_SINGL_ARG("    R: ", rate, "%d");
 	}
 	else
-#endif    
+#endif
 	if( is_MCS_rate(pstat->current_tx_rate) )
 	{
 		PRINT_SINGL_ARG("    R: ", MCS_DATA_RATEStr[(pstat->ht_current_tx_info&BIT(0))?1:0][(pstat->ht_current_tx_info&BIT(1))?1:0][(pstat->current_tx_rate - HT_RATE_ID)], "%s");
@@ -159,7 +159,7 @@ static int dump_mesh_one_mpinfo(int num, struct stat_info *pstat, char *buf, cha
 	{
 		PRINT_SINGL_ARG("    R: ", pstat->current_tx_rate/2, "%u");
 	}
-    
+
 	PRINT_SINGL_ARG("    Ept: ", pstat->mesh_neighbor_TBL.ept, "%u");
 	PRINT_SINGL_ARG("    rssi: ", pstat->mesh_neighbor_TBL.Q, "%u");
 #if defined(RTK_MESH_MANUALMETRIC)
@@ -204,7 +204,7 @@ int mesh_auth_mpinfo(char *buf, char **start, off_t offset, int length, int *eof
 
     int len = 0;
 
-#if !defined(CONFIG_RTL_PROC_NEW)    
+#if !defined(CONFIG_RTL_PROC_NEW)
     off_t begin = 0;
     off_t pos = 0;
     int size;
@@ -214,14 +214,14 @@ int mesh_auth_mpinfo(char *buf, char **start, off_t offset, int length, int *eof
     struct stat_info *pstat;
 
 	if (netif_running(GET_ROOT(priv)->dev)&& netif_running(GET_ROOT(priv)->mesh_dev) && 1 == GET_MIB(priv)->dot1180211sInfo.mesh_enable) {
-        
+
         #ifdef CONFIG_RTL_PROC_NEW
-        PRINT_ONE("-- Mesh MP Auth Peer info table -- ", "%s", 1);	        
+        PRINT_ONE("-- Mesh MP Auth Peer info table -- ", "%s", 1);
         #else
         size = sprintf(buf, "-- Mesh MP Auth Peer info table -- \n");
         CHECK_LEN;
         #endif
-        
+
         phead = &priv->mesh_auth_hdr;
         if (!netif_running(priv->mesh_dev) || list_empty(phead))
             goto _ret;
@@ -231,13 +231,13 @@ int mesh_auth_mpinfo(char *buf, char **start, off_t offset, int length, int *eof
             pstat = list_entry(plist, struct stat_info, mesh_mp_ptr);
 
             #ifdef CONFIG_RTL_PROC_NEW
-            dump_mesh_one_mpinfo(num++, pstat, s, data);        
+            dump_mesh_one_mpinfo(num++, pstat, s, data);
             #else
             size = dump_mesh_one_mpinfo(num++, pstat, buf+len, start, offset, length,
             eof, data);
             CHECK_LEN;
             #endif
-            
+
             plist = plist->next;
         }
     }
@@ -246,12 +246,12 @@ int mesh_auth_mpinfo(char *buf, char **start, off_t offset, int length, int *eof
         PRINT_ONE("  Mesh mode DISABLE !!", "%s", 1);
         #else
 		size = sprintf(buf, "  Mesh mode DISABLE !!\n");
-		CHECK_LEN;        
+		CHECK_LEN;
         #endif
-    }	
+    }
 
-_ret:    
-#if !defined(CONFIG_RTL_PROC_NEW)    
+_ret:
+#if !defined(CONFIG_RTL_PROC_NEW)
     *eof = 1;
     *start = buf + (offset - begin);	/* Start of wanted data */
     len -= (offset - begin);	/* Start slop */
@@ -260,12 +260,12 @@ _ret:
 #endif
 
     return len;
-}	
+}
 #endif
 
 /*
  *	@brief	Printout mesh MP neighbor table unEstablish list
- *		PS:Modify from rtl8190_proc_stainfo 
+ *		PS:Modify from rtl8190_proc_stainfo
  *
  *	@param	Unknow
  *
@@ -286,7 +286,7 @@ int mesh_unEstablish_mpinfo(char *buf, char **start, off_t offset, int length, i
     off_t begin = 0;
     off_t pos = 0;
     int size;
-#endif   
+#endif
 
     int num=1;
     struct list_head *phead, *plist;
@@ -294,7 +294,7 @@ int mesh_unEstablish_mpinfo(char *buf, char **start, off_t offset, int length, i
 
     if (netif_running(GET_ROOT(priv)->dev)&& netif_running(GET_ROOT(priv)->mesh_dev) && 1 == GET_MIB(priv)->dot1180211sInfo.mesh_enable) {
         #ifdef CONFIG_RTL_PROC_NEW
-        PRINT_ONE("-- Mesh MP unEstablish Peer info table -- ", "%s", 1);	
+        PRINT_ONE("-- Mesh MP unEstablish Peer info table -- ", "%s", 1);
         #else
         size = sprintf(buf, "-- Mesh MP unEstablish Peer info table -- \n");
         CHECK_LEN;
@@ -308,9 +308,9 @@ int mesh_unEstablish_mpinfo(char *buf, char **start, off_t offset, int length, i
         plist = phead->next;
         while (plist != phead) {
             pstat = list_entry(plist, struct stat_info, mesh_mp_ptr);
-            
+
             #ifdef CONFIG_RTL_PROC_NEW
-            dump_mesh_one_mpinfo(num++, pstat, s, data);            
+            dump_mesh_one_mpinfo(num++, pstat, s, data);
             #else
             size = dump_mesh_one_mpinfo(num++, pstat, buf+len, start, offset, length,
             eof, data);
@@ -328,7 +328,7 @@ int mesh_unEstablish_mpinfo(char *buf, char **start, off_t offset, int length, i
         size = sprintf(buf, "  Mesh mode DISABLE !!\n");
         CHECK_LEN;
         #endif
-    }	
+    }
 
 _ret:
 
@@ -341,7 +341,7 @@ _ret:
 #endif
 
     return len;
-}	
+}
 
 
 
@@ -418,7 +418,7 @@ int dump_mesh_one_mpflow_sta(struct stat_info *pstat, char *buf, char **start, o
 		phead = &priv->mesh_mp_hdr;
 
 		plist = phead->next;
-		while (plist != phead) 
+		while (plist != phead)
 		{
 			pstat1 = list_entry(plist, struct stat_info, mesh_mp_ptr);
 			if(pstat->hwaddr == pstat1->hwaddr )
@@ -469,7 +469,7 @@ int mesh_assoc_mpinfo(char *buf, char **start, off_t offset, int length, int *eo
     off_t begin = 0;
     off_t pos = 0;
     int size;
-#endif    
+#endif
 
     int  num=1;
     struct list_head *phead, *plist;
@@ -493,14 +493,14 @@ int mesh_assoc_mpinfo(char *buf, char **start, off_t offset, int length, int *eo
             pstat = list_entry(plist, struct stat_info, mesh_mp_ptr);
 
             #ifdef CONFIG_RTL_PROC_NEW
-            dump_mesh_one_mpinfo(num++, pstat, s, data); 
+            dump_mesh_one_mpinfo(num++, pstat, s, data);
             dump_mesh_one_mpflow_neighbor(num, pstat, s, data);
             #else
             size = dump_mesh_one_mpinfo(num++, pstat, buf+len, start, offset, length,
             eof, data);
             CHECK_LEN;
 
-            // 3 line for Throughput statistics (sounder)	
+            // 3 line for Throughput statistics (sounder)
             size = dump_mesh_one_mpflow_neighbor(num, pstat, buf+len, start, offset, length,
             eof, data);
             CHECK_LEN;
@@ -510,7 +510,7 @@ int mesh_assoc_mpinfo(char *buf, char **start, off_t offset, int length, int *eo
         }
     }
     else {
-    
+
         #ifdef CONFIG_RTL_PROC_NEW
         PRINT_ONE("  Mesh mode DISABLE !!", "%s", 1);
         #else
@@ -521,21 +521,21 @@ int mesh_assoc_mpinfo(char *buf, char **start, off_t offset, int length, int *eo
 
 _ret:
 
-#if !defined(CONFIG_RTL_PROC_NEW)   
+#if !defined(CONFIG_RTL_PROC_NEW)
 	*eof = 1;
 	*start = buf + (offset - begin);	/* Start of wanted data */
 	len -= (offset - begin);	/* Start slop */
 	if (len > length)
 		len = length;	/* Ending slop */
 #endif
-    
+
 	return len;
 
 }
 
 /*
  *	@brief	Control flow Throughput statistics (sounder)
- *		
+ *
  *	@param	unknow
  *
  *	@retval	int: count:unknow
@@ -550,8 +550,8 @@ int mesh_proc_flow_stats_write(struct file *file, const char *buffer, unsigned l
     struct stat_info *pstat;
 
     //if( priv->mesh_log )
-    if(*buffer == '0') 
-    {		
+    if(*buffer == '0')
+    {
         // turn off log function
         priv->mesh_log = 0;
         priv->log_time = 0;
@@ -565,13 +565,13 @@ int mesh_proc_flow_stats_write(struct file *file, const char *buffer, unsigned l
 
         plist = phead->next;
 
-        while (plist != phead) 
+        while (plist != phead)
         {
             pstat = list_entry(plist, struct stat_info, asoc_list);
 
             pstat->rx_pkts  = 0;
             pstat->rx_bytes = 0;
-            pstat->tx_pkts  = 0; 
+            pstat->tx_pkts  = 0;
             pstat->tx_bytes = 0;
 
             plist = plist->next;
@@ -585,7 +585,7 @@ _ret:
 
 /*
  *	@brief	Printout flow Throughput statistics (sounder)
- *		
+ *
  *	@param	unknow
  *
  *	@retval	int: pos:unknow
@@ -593,7 +593,7 @@ _ret:
 
 #ifdef CONFIG_RTL_PROC_NEW
 int mesh_proc_flow_stats_read(struct seq_file *s, void *data)
-#else 
+#else
 int mesh_proc_flow_stats_read(char *buf, char **start, off_t offset, int length, int *eof, void *data)
 #endif
 {
@@ -617,14 +617,14 @@ int mesh_proc_flow_stats_read(char *buf, char **start, off_t offset, int length,
 
 /*
  *	@brief	Print all about of mesh statistics and parameter.
- *		
+ *
  *	@param	Unknow
  *
  *	@retval	int: pos:Unknow
  */
 #ifdef CONFIG_RTL_PROC_NEW
 int mesh_stats(struct seq_file *s, void *data)
-#else 
+#else
 int mesh_stats(char *buf, char **start, off_t offset, int length, int *eof, void *data)
 #endif
 {
@@ -632,14 +632,14 @@ int mesh_stats(char *buf, char **start, off_t offset, int length, int *eof, void
 	struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
 
 	int pos = 0;
-	
+
 	if (1 == GET_MIB(priv)->dot1180211sInfo.mesh_enable) {
 		PRINT_ONE("  Systems Statistics...", "%s", 1);
 		PRINT_SINGL_ARG("    OPMODE:       ", OPMODE, "%X");
 		PRINT_SINGL_ARG("    jiffies:      ", jiffies, "%lu");		// %lu=unsigned long
-		
+
 		PRINT_ONE("  Mesh Networks Statistics...", "%s", 1);
-		
+
 		PRINT_SINGL_ARG("    tx_packets:   ", priv->mesh_stats.tx_packets, "%lu");
 		PRINT_SINGL_ARG("    tx_bytes:     ", priv->mesh_stats.tx_bytes, "%lu");
 		PRINT_SINGL_ARG("    tx_errors:    ", priv->mesh_stats.tx_errors, "%lu");
@@ -648,9 +648,9 @@ int mesh_stats(char *buf, char **start, off_t offset, int length, int *eof, void
 		PRINT_SINGL_ARG("    rx_errors:    ", priv->mesh_stats.rx_errors, "%lu");
 		PRINT_SINGL_ARG("    rx_crc_errors: ", priv->mesh_stats.rx_crc_errors, "%lu");
 
-		PRINT_ONE("  WLAN Mesh Capability...", "%s", 1);	
+		PRINT_ONE("  WLAN Mesh Capability...", "%s", 1);
 		PRINT_SINGL_ARG("    Version:          ", priv->mesh_Version, "%u");
-        PRINT_SINGL_ARG("    PathSelectProtocolID:          ", priv->mesh_profile[0].PathSelectProtocolID.value, "%u");        
+        PRINT_SINGL_ARG("    PathSelectProtocolID:          ", priv->mesh_profile[0].PathSelectProtocolID.value, "%u");
 		PRINT_ONE("    Peer_CAP:", "%s", 1);
 		PRINT_SINGL_ARG("      Capacity:       ", MESH_PEER_LINK_CAP_NUM(priv), "%hd");
 		PRINT_SINGL_ARG("      Flags:          ", (priv->mesh_PeerCAP_flags & MESH_PEER_LINK_CAP_FLAGS_MASK), "%hX");
@@ -729,23 +729,23 @@ int mesh_pathsel_routetable_info(char *buf, char **start, off_t offset, int leng
 
         PRINT_ONE("", "%s", 1);
 
-        
+
         #if !defined(CONFIG_RTL_PROC_NEW)
         size = pos;
-        CHECK_LEN; 
+        CHECK_LEN;
         pos = len;
-        #endif        
-               
+        #endif
+
         SAVE_INT_AND_CLI(flags);
-        SMP_LOCK_MESH_PATH(flags);        
-        mpptable = (struct pann_mpp_tb_entry *) &(priv->pann_mpp_tb->pann_mpp_pool);        
+        SMP_LOCK_MESH_PATH(flags);
+        mpptable = (struct pann_mpp_tb_entry *) &(priv->pann_mpp_tb->pann_mpp_pool);
 
         tbl_sz = (1 << priv->pathsel_table->table_size_power);
         for(i=0;i<tbl_sz;i++)
-        {        
-            isPortal=0;                        
+        {
+            isPortal=0;
             if(priv->pathsel_table->entry_array[i].dirty != 0)
-            {			
+            {
                 ptable = (struct path_sel_entry*)priv->pathsel_table->entry_array[i].data;
                 PRINT_ONE(num,  " %d: Mesh route table info...", num++);
                 PRINT_ARRAY_ARG("    destMAC: ",	ptable->destMAC, "%02x", MACADDRLEN);
@@ -766,8 +766,8 @@ int mesh_pathsel_routetable_info(char *buf, char **start, off_t offset, int leng
                 else
                 {
                   PRINT_ONE("    portal enable: no", "%s", 1);
-                } 
-    			
+                }
+
                 PRINT_SINGL_ARG("    dsn: ", ptable->dsn, "%u");	// %lu=unsigned long
                 PRINT_SINGL_ARG("    metric: ", ptable->metric, "%u");
                 PRINT_SINGL_ARG("    hopcount: ", ptable->hopcount, "%u");		// %lu=unsigned long
@@ -791,10 +791,10 @@ int mesh_pathsel_routetable_info(char *buf, char **start, off_t offset, int leng
                                     PRINT_ARRAY_ARG("      client: ",  ptable->ipmc[j].srcMac[k], "%02x", MACADDRLEN);
                                 }
                             }
-                        }   
+                        }
                     }
                 }
-#endif            
+#endif
                 PRINT_ONE("", "%s", 1);
 
                 #if !defined(CONFIG_RTL_PROC_NEW)
@@ -803,22 +803,22 @@ int mesh_pathsel_routetable_info(char *buf, char **start, off_t offset, int leng
                 pos = len;
                 #endif
 
-            }	
+            }
 
-           
-            
-        }	
+
+
+        }
 
         RESTORE_INT(flags);
         SMP_UNLOCK_MESH_PATH(flags);
     }
     else {
         PRINT_ONE("  Mesh mode DISABLE !!", "%s", 1);
-        
+
         #if !defined(CONFIG_RTL_PROC_NEW)
         size = pos;
-        CHECK_LEN;       
-        #endif          
+        CHECK_LEN;
+        #endif
     }
 
 _ret:
@@ -855,7 +855,7 @@ int mesh_proxy_table_info(char *buf, char **start, off_t offset, int length, int
     struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
 
     int len = 0;
-#if !defined(CONFIG_RTL_PROC_NEW)    
+#if !defined(CONFIG_RTL_PROC_NEW)
     off_t begin = 0;
     off_t pos = 0;
     int size;
@@ -873,11 +873,11 @@ int mesh_proxy_table_info(char *buf, char **start, off_t offset, int length, int
 #if defined(CONFIG_RTL_MESH_SINGLE_IFACE)
         priv = (DRV_PRIV *)priv->mesh_priv_first;
 #endif	//CONFIG_RTL_MESH_SINGLE_IFACE
-        SMP_LOCK_MESH_PROXY(flags);    
+        SMP_LOCK_MESH_PROXY(flags);
         for(i = 0; i < (1 << priv->proxy_table->table_size_power); i++)
         {
             if(priv->proxy_table->entry_array[i].dirty != 0)
-            {               
+            {
                 ptable_entry = (struct proxy_table_entry*)priv->proxy_table->entry_array[i].data;
                 PRINT_ONE(num,  " %d: Mesh proxy table info...", num++);
 
@@ -891,15 +891,15 @@ int mesh_proxy_table_info(char *buf, char **start, off_t offset, int length, int
                 pos = len;
                 #endif
             }
-        }	
-        SMP_UNLOCK_MESH_PROXY(flags);    
-    } 
+        }
+        SMP_UNLOCK_MESH_PROXY(flags);
+    }
     else {
         PRINT_ONE("  Mesh mode DISABLE !!", "%s", 1);
         #if !defined(CONFIG_RTL_PROC_NEW)
         size = pos;
-        CHECK_LEN;       
-        #endif         
+        CHECK_LEN;
+        #endif
     }
 
 _ret:
@@ -933,27 +933,27 @@ int mesh_root_info(char *buf, char **start, off_t offset, int length, int *eof, 
     struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
 
     int len = 0;
-#if !defined(CONFIG_RTL_PROC_NEW)      
+#if !defined(CONFIG_RTL_PROC_NEW)
     off_t begin = 0;
     off_t pos = 0;
     int size;
 #endif
     if (1 == GET_MIB(priv)->dot1180211sInfo.mesh_enable) {
         if (!netif_running(priv->mesh_dev) )
-            goto _ret;		
+            goto _ret;
         PRINT_ARRAY_ARG("    ROOT_MAC: ",	priv->root_mac, "%02x", MACADDRLEN);
     } else {
-        PRINT_ONE("  Mesh mode DISABLE !!", "%s", 1);  
+        PRINT_ONE("  Mesh mode DISABLE !!", "%s", 1);
     }
 
-    #if !defined(CONFIG_RTL_PROC_NEW)      
+    #if !defined(CONFIG_RTL_PROC_NEW)
     size = pos;
     CHECK_LEN;
     #endif
 
 _ret:
 
-#if !defined(CONFIG_RTL_PROC_NEW)	
+#if !defined(CONFIG_RTL_PROC_NEW)
     *eof = 1;
     *start = buf + (offset - begin);	/* Start of wanted data */
     len -= (offset - begin);	/* Start slop */
@@ -1010,15 +1010,15 @@ int mesh_portal_table_info(char *buf, char **start, off_t offset, int length, in
     struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
 
     int len = 0;
-#if !defined(CONFIG_RTL_PROC_NEW)          
+#if !defined(CONFIG_RTL_PROC_NEW)
     off_t begin = 0;
     off_t pos = 0;
     int size;
-#endif    
+#endif
     struct pann_mpp_tb_entry * ptable;
     int i=0;
     int num;
-    
+
     if (1 == GET_MIB(priv)->dot1180211sInfo.mesh_enable) {
         if (!netif_running(priv->mesh_dev) )
             goto _ret;
@@ -1032,47 +1032,47 @@ int mesh_portal_table_info(char *buf, char **start, off_t offset, int length, in
         PRINT_SINGL_ARG("Portal enable: ", priv->pmib->dot1180211sInfo.mesh_portal_enable, "%u");
 
         if(priv->pmib->dot1180211sInfo.mesh_portal_enable)
-        {			
+        {
             PRINT_ONE(num,  " %d: Mesh portal table info...", num++);
             if( priv->pmib->dot1180211sInfo.mesh_portal_enable )
             {
-                PRINT_ARRAY_ARG("    PortalMAC: ",	priv->pmib->dot11OperationEntry.hwaddr, "%02x", MACADDRLEN);		
+                PRINT_ARRAY_ARG("    PortalMAC: ",	priv->pmib->dot11OperationEntry.hwaddr, "%02x", MACADDRLEN);
                 PRINT_SINGL_ARG("    timeout: ", 99, "%u");
-                PRINT_SINGL_ARG("    seqNum: ", 99, "%u");			
+                PRINT_SINGL_ARG("    seqNum: ", 99, "%u");
                 PRINT_ONE("", "%s", 1);
             }
         }
-        
-        #if !defined(CONFIG_RTL_PROC_NEW)      
+
+        #if !defined(CONFIG_RTL_PROC_NEW)
         size = pos;
         CHECK_LEN;
         pos = len;
         #endif
-        
+
         for(i=0;i<MAX_MPP_NUM;i++)
         {
             if(ptable[i].flag)
-            {			
-                PRINT_ONE(num,  " %d: Mesh portal table info...", num++);				
-                PRINT_ARRAY_ARG("    PortalMAC: ",	ptable[i].mac, "%02x", MACADDRLEN);		
+            {
+                PRINT_ONE(num,  " %d: Mesh portal table info...", num++);
+                PRINT_ARRAY_ARG("    PortalMAC: ",	ptable[i].mac, "%02x", MACADDRLEN);
                 PRINT_SINGL_ARG("    timeout: ", ptable[i].timeout, "%u");	// %lu=unsigned long
                 PRINT_SINGL_ARG("    seqNum: ", ptable[i].seqNum, "%u");
                 PRINT_ONE("", "%s", 1);
-            
-                #if !defined(CONFIG_RTL_PROC_NEW)      
+
+                #if !defined(CONFIG_RTL_PROC_NEW)
                 size = pos - len;
                 CHECK_LEN;
                 pos = len;
                 #endif
 
 
-            }	
-        }	
+            }
+        }
     }
     else {
         PRINT_ONE("  Mesh mode DISABLE !!", "%s", 1);
-        
-        #if !defined(CONFIG_RTL_PROC_NEW)      
+
+        #if !defined(CONFIG_RTL_PROC_NEW)
         size = pos;
         CHECK_LEN;
         #endif
@@ -1081,7 +1081,7 @@ int mesh_portal_table_info(char *buf, char **start, off_t offset, int length, in
 
 _ret:
 
-#if !defined(CONFIG_RTL_PROC_NEW)	
+#if !defined(CONFIG_RTL_PROC_NEW)
     *eof = 1;
     *start = buf + (offset - begin);	/* Start of wanted data */
     len -= (offset - begin);	/* Start slop */
@@ -1142,7 +1142,7 @@ int mesh_metric_r(char *buffer, char **buffer_location, off_t offset, int buffer
 #ifdef _MESH_PROC_DEBUG_
 /*
  *	@brief	Ckear ALL stat_info (debug only)
- *		
+ *
  *	@param	Unknow
  *
  *	@retval	int: pos:Unknow
@@ -1155,7 +1155,7 @@ static int mesh_proc_clear_table(char *buf, char **start, off_t offset, int leng
 	int pos = 0;
 
 	if (1 == GET_MIB(priv)->dot1180211sInfo.mesh_enable) {
-		
+
 #ifdef MESH_BOOTSEQ_AUTH
 		while (!list_empty(&priv->mesh_auth_hdr)) {
 			pstat = list_entry(priv->mesh_auth_hdr.next, struct stat_info, mesh_mp_ptr);
@@ -1164,21 +1164,21 @@ static int mesh_proc_clear_table(char *buf, char **start, off_t offset, int leng
 #endif
 
 		while (!list_empty(&priv->mesh_unEstablish_hdr)) {
-			pstat = list_entry(priv->mesh_unEstablish_hdr.next, struct stat_info, mesh_mp_ptr); 
+			pstat = list_entry(priv->mesh_unEstablish_hdr.next, struct stat_info, mesh_mp_ptr);
 			free_stainfo(priv, pstat);
 		}
 
 		while (!list_empty(&priv->mesh_mp_hdr)) {
-			pstat = list_entry(priv->mesh_mp_hdr.next, struct stat_info, mesh_mp_ptr); 
+			pstat = list_entry(priv->mesh_mp_hdr.next, struct stat_info, mesh_mp_ptr);
 			free_stainfo(priv, pstat);
 		}
-		
+
 		mesh_set_PeerLink_CAP(priv, GET_MIB(priv)->dot1180211sInfo.mesh_max_neightbor);	// Reset connection number
 
 		PRINT_ONE("  All table clear ok...", "%s", 1);
 	} else
 		PRINT_ONE("  Mesh mode DISABLE !!", "%s", 1);
-	
+
 	return pos;
 }
 
@@ -1188,34 +1188,34 @@ int mesh_ProcMACParser(const char *buffer, unsigned long *count)
 	char local_buf[19];
 	char *ptr;
 	UINT8 mac[MACADDRLEN];
-	
+
 	int idx = 0;
 
 	memset(local_buf, 0, sizeof(local_buf));
-			
+
 	if (*count < 11 ) { // a:b:c:d:e:f
 		return -EFAULT;
 	}
-	
+
 	if (*count > 18 ) {
 		*count = 18;
 	}
-	
+
 	/* write data to the buffer */
 	if ( copy_from_user((void *)local_buf, (const void *)buffer, *count) ) {
 		printk("*** mesh_test_sme_proc_write: copy from user error\r\n");
 		return -EFAULT;
 	}
-	
+
 	memset(mac, 0, sizeof(mac));
 	ptr = local_buf;
 	while(*ptr)
 	{
 		unsigned char val = 0;
-		
+
 		if(idx>5)
 			break;
-			
+
 		if(*ptr == ':')
 		{
 			ptr++;
@@ -1244,7 +1244,7 @@ int mesh_ProcMACParser(const char *buffer, unsigned long *count)
 		ptr++;
 	}
 	memcpy(mesh_proc_MAC, mac, MACADDRLEN);
-	
+
 	return SUCCESS;
 
 }
@@ -1253,7 +1253,7 @@ int mesh_ProcMACParser(const char *buffer, unsigned long *count)
 static int mesh_setMACAddr(struct file *file, const char *buffer, unsigned long count, void *data)
 {
 	mesh_ProcMACParser(buffer, &count);
-	
+
 	MESH_DEBUG_MSG("Set MAC Address %02X:%02X:%02X:%02X:%02X:%02X is OK !!\n",
 			mesh_proc_MAC[0], mesh_proc_MAC[1], mesh_proc_MAC[2], mesh_proc_MAC[3], mesh_proc_MAC[4], mesh_proc_MAC[5]);
 
@@ -1303,7 +1303,7 @@ static int mesh_proc_issueAuthRsp(char *buf, char **start, off_t offset, int len
 		}
 	} else
 		PRINT_ONE("  Mesh mode DISABLE !!", "%s", 1);
-	
+
 	return pos;
 }
 
@@ -1313,12 +1313,12 @@ static int mesh_proc_issueDeAuth(char *buf, char **start, off_t offset, int leng
 	struct net_device *dev = (struct net_device *)data;
 	DRV_PRIV *priv = (DRV_PRIV *)dev->priv;
 	struct stat_info	*pstat;
-	
+
 	int pos = 0;
-	
+
 	if (1 == GET_MIB(priv)->dot1180211sInfo.mesh_enable) {
 		pstat = get_stainfo(priv, mesh_proc_MAC);
-		
+
 		if (NULL != pstat) {
 			issue_deauth_MP(priv, mesh_proc_MAC, _RSON_CLS2_, TRUE);
 			PRINT_ONE(" Sent DeAuth OK....", "%s", 1);
@@ -1327,7 +1327,7 @@ static int mesh_proc_issueDeAuth(char *buf, char **start, off_t offset, int leng
 
 	} else
 		PRINT_ONE("  Mesh mode DISABLE !!", "%s", 1);
-	
+
 	return pos;
 }
 #endif
@@ -1339,16 +1339,16 @@ static int mesh_proc_openConnect(char *buf, char **start, off_t offset, int leng
 	struct stat_info	*pstat;
 
 	int pos = 0;
-	
+
 	if (1 == GET_MIB(priv)->dot1180211sInfo.mesh_enable) {
 		struct rx_frinfo	pfrinfo;	//Note: It isn't pointer !!
-		
+
 		PRINT_ARRAY_ARG("I will Active peer link MAC:", mesh_proc_MAC, "%02x", MACADDRLEN);
 		pfrinfo.sa = mesh_proc_MAC;
 		pfrinfo.rssi = priv->mesh_fake_mib.establish_rssi_threshold + 1;	// +1: Ensure connect
 		start_MeshPeerLink(priv, &pfrinfo, NULL, 1);
 		pstat = get_stainfo(priv, mesh_proc_MAC);
-		
+
 		if (NULL != pstat)
 			PRINT_SINGL_ARG("Start active PeerLink: LocalLinkID=", pstat->mesh_neighbor_TBL.LocalLinkID, "%lu");
 
@@ -1365,7 +1365,7 @@ static int mesh_proc_issueOpen(char *buf, char **start, off_t offset, int length
 	struct stat_info	*pstat;
 
 	int pos = 0;
-	
+
 	if (1 == GET_MIB(priv)->dot1180211sInfo.mesh_enable) {
 		pstat = get_stainfo(priv, mesh_proc_MAC);
 		if (NULL != pstat) {

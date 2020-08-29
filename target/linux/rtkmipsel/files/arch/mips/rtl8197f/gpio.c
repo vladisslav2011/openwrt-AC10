@@ -363,6 +363,7 @@ void rtl819x_gpio_pin_set_val(u32 pin, int val) //mark_wrt
 {
         rtl819x_gpio_set_value(0,pin, val);
 }
+EXPORT_SYMBOL(rtl819x_gpio_pin_set_val);//vlad
 
 #if 0 //move to platform.c
 unsigned int rtl819x_bond_option(void)

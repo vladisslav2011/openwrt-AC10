@@ -5,15 +5,15 @@ Copyright (c) Realtek Semiconductor Corp. All rights reserved.
 
 Module Name:
 	HalLib.h
-	
+
 Abstract:
-	API Interface that export Function Prototype & Variable & Strcture & Enum & Marco 
+	API Interface that export Function Prototype & Variable & Strcture & Enum & Marco
 	for Driver
-	    
+
 Major Change History:
 	When       Who               What
 	---------- ---------------   -------------------------------
-	2012-03-23 Filen            Create.	
+	2012-03-23 Filen            Create.
 --*/
 
 #ifndef WLAN_HAL_INTERNAL_USED
@@ -59,7 +59,7 @@ Major Change History:
 //Final Result
 #include "HalDef.h"
 
-#else //if ecos , use relative dir 
+#else //if ecos , use relative dir
 
 //Code below only are used by "Not WlanHAL"
 //1 HAL Library API
@@ -72,7 +72,7 @@ Major Change History:
 //4 HAL Common
 #include "../HalCfg.h"
 #include "../HalCommon.h"
-#ifdef CONFIG_WLAN_MACHAL_API 
+#ifdef CONFIG_WLAN_MACHAL_API
 #include "../HalMacAPI.h"
 #endif
 

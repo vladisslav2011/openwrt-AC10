@@ -15,6 +15,7 @@
 
 #include <linux/io.h>
 #include <linux/scatterlist.h>
+#include <linux/mutex.h>
 #include "dw_common.h"
 
 /* system endian */
@@ -355,6 +356,7 @@ struct sheipa_spi {
 	void __iomem		*regs;
 	void __iomem		*auto_regs;
 	void *			comp_param;
+	struct mutex lock;
 };
 
 /*

@@ -47,15 +47,15 @@ void flush_rx_list_inq(struct rtl8192cd_priv *priv,struct rx_frinfo *pfrinfo);
 #define	GetOffsetStartToRXDESC(priv, pskb)		(ALIGN_OFFSET_SKB_DATA - ((((unsigned long)pskb->data) + sizeof(struct rx_frinfo)) & (ALIGN_OFFSET_SKB_DATA-1)))
 
 
-static __inline__ 
+static __inline__
 #if (!defined(__OSK__)) || (defined(__OSK__) && !defined(CONFIG_RTL6028))
 __MIPS16
 #endif
 __IRAM_IN_865X
 void init_rxdesc_88XX(
-    struct rtl8192cd_priv   *priv, 
-    struct sk_buff          *pskb, 
-    u2Byte                  i, 
+    struct rtl8192cd_priv   *priv,
+    struct sk_buff          *pskb,
+    u2Byte                  i,
     pu4Byte                 pBufAddr,   // output
     pu4Byte                 pBufLen      // output
     )
@@ -69,7 +69,7 @@ void init_rxdesc_88XX(
     offset = GetOffsetStartToRXDESC(priv, pskb);
     skb_reserve(pskb, sizeof(struct rx_frinfo) + offset);
     pfrinfo = get_pfrinfo(pskb);
-    init_frinfo(pfrinfo);    
+    init_frinfo(pfrinfo);
 
 #if defined(UNIVERSAL_REPEATER) || defined(MBSSID)
     pfrinfo->is_br_mgnt = 0;
@@ -95,7 +95,7 @@ void init_rxdesc_88XX(
 #endif
 
     *pBufAddr   = (u4Byte)pskb->data;
-#if 0    
+#if 0
     *pBufLen    = RX_BUF_LEN - sizeof(struct rx_frinfo) - offset;
 #else
 
@@ -114,14 +114,14 @@ void init_rxdesc_88XX(
 
 #if defined(CONFIG_NET_PCI) && !defined(USE_RTL8186_SDK)
     // Remove it because pci_map_single() in get_physical_addr() already performed memory sync.
-    //rtl_cache_sync_wback(priv, bus_to_virt(phw->rx_infoL[i].paddr), RX_BUF_LEN - sizeof(struct rx_frinfo) - offset, PCI_DMA_FROMDEVICE);     
+    //rtl_cache_sync_wback(priv, bus_to_virt(phw->rx_infoL[i].paddr), RX_BUF_LEN - sizeof(struct rx_frinfo) - offset, PCI_DMA_FROMDEVICE);
 #else
 #ifdef CONFIG_ENABLE_NCBUFF
     if(skb_ncbuff_tag(pskb)->tag != NUBUFF_CACHE_TAG)
 #endif
-    rtl_cache_sync_wback(priv, (unsigned long)(bus_to_virt(phw->rx_infoL[i].paddr)-CONFIG_LUNA_SLAVE_PHYMEM_OFFSET), 
+    rtl_cache_sync_wback(priv, (unsigned long)(bus_to_virt(phw->rx_infoL[i].paddr)-CONFIG_LUNA_SLAVE_PHYMEM_OFFSET),
         RX_BUF_LEN - sizeof(struct rx_frinfo) - offset, PCI_DMA_FROMDEVICE);
-#endif 
+#endif
 }
 #endif  //CONFIG_WLAN_HAL
 
@@ -242,26 +242,26 @@ static __inline__ void update_sta_rssi(struct rtl8192cd_priv *priv,
 
 #if defined(HW_ANT_SWITCH)&& (defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT))
 			if (pfrinfo->driver_info_size > 0) {
-				unsigned char *phystatus =	(unsigned char*)pfrinfo->driver_info;			 
+				unsigned char *phystatus =	(unsigned char*)pfrinfo->driver_info;
 				int i = 1&(phystatus[27]>>7);
-				if (is_CCK_rate(pfrinfo->rx_rate)) 
-					++(pstat->cckPktCount[i]);				
-				else 
-					++(pstat->hwRxAntSel[i]);			
+				if (is_CCK_rate(pfrinfo->rx_rate))
+					++(pstat->cckPktCount[i]);
+				else
+					++(pstat->hwRxAntSel[i]);
 				if(!pstat->AntRSSI[i])
 					pstat->AntRSSI[i] = pfrinfo->rssi;
 				else
 					pstat->AntRSSI[i] = cal_rssi_avg(pstat->AntRSSI[i], pfrinfo->rssi);
-	
+
 				if(priv->pshare->rf_ft_var.ant_dump&1)  {
-					panic_printk("pkt--> cck:%d, B7=%d, B6=%d, R:(%d) Len:%d\n", is_CCK_rate(pfrinfo->rx_rate), 
+					panic_printk("pkt--> cck:%d, B7=%d, B6=%d, R:(%d) Len:%d\n", is_CCK_rate(pfrinfo->rx_rate),
 						i,  (1&(phystatus[27]>>6))
-						, pfrinfo->rssi, pfrinfo->pktlen);	
+						, pfrinfo->rssi, pfrinfo->pktlen);
 				}
-	
-			}	
-#endif	
-			
+
+			}
+#endif
+
 			for (i=0;i<4;i++)
 			pstat->rx_snr[i]		= pfrinfo->rx_snr[i];
 

@@ -86,7 +86,7 @@ enum network_type {
 };
 
 enum scan_abort_case {
-	SCAN_ABORT_DEL_IFACE = 0, 
+	SCAN_ABORT_DEL_IFACE = 0,
 	SCAN_ABORT_START_AP,
 };
 
@@ -96,7 +96,7 @@ enum mgmt_type {
 	MGMT_PROBERSP = 1,
 	MGMT_ASSOCRSP = 2,
 	MGMT_ASSOCREQ = 3,
-	MGMT_PROBEREQ = 4,	
+	MGMT_PROBEREQ = 4,
 };
 #endif
 
@@ -125,8 +125,8 @@ static const u32 cipher_suites[] = {
         .flags          = (_flags),                 \
         .max_antenna_gain   = 0,                    \
         .max_power      = 30,                       \
-} 
-   
+}
+
 
 static struct ieee80211_channel realtek_2ghz_channels[] = {
 	CHAN2G(1, 2412, IEEE80211_CHAN_NO_HT40MINUS),
@@ -295,14 +295,14 @@ struct rtknl {
 };
 
 #if defined(VAP_MAC_DRV_READ_FLASH)
-int read_flash_hw_mac_vap( unsigned char *mac, int vap_idx); 
+int read_flash_hw_mac_vap( unsigned char *mac, int vap_idx);
 #endif
 unsigned char is_WRT_scan_iface(unsigned char* if_name); //eric-vap
 void realtek_cfg80211_inform_ss_result(struct rtl8192cd_priv *priv);
-struct rtknl *realtek_cfg80211_create(void); 
+struct rtknl *realtek_cfg80211_create(void);
 int realtek_rtknl_init(struct rtknl *rtk);
-int realtek_cfg80211_init(struct rtknl *rtk,struct rtl8192cd_priv *priv); 
-int realtek_interface_add(struct rtl8192cd_priv *priv, struct rtknl *rtk, const char *name, 
+int realtek_cfg80211_init(struct rtknl *rtk,struct rtl8192cd_priv *priv);
+int realtek_interface_add(struct rtl8192cd_priv *priv, struct rtknl *rtk, const char *name,
 								enum nl80211_iftype type, u8 fw_vif_idx, u8 nw_type);
 int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int event, unsigned char *extra);
 void close_vxd_vap(struct rtl8192cd_priv *priv_root);
