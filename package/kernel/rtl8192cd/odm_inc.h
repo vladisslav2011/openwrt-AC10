@@ -9,6 +9,7 @@
 #ifndef	__AP_PRECOMP_H__
 #define __AP_PRECOMP_H__
 
+#undef DM_ODM_SUPPORT_TYPE
 #define		DM_ODM_SUPPORT_TYPE						ODM_AP
 #if defined(CONFIG_PCI_HCI)
 #define		DEV_BUS_TYPE 							RT_PCI_INTERFACE

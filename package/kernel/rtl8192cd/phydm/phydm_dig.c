@@ -2676,7 +2676,6 @@ odm_FalseAlarmCounterStatistics(
 	PRT_ADCSMP					AdcSmp = &(pDM_Odm->adcsmp);
 	#endif
 	u4Byte 						ret_value;
-	prtl8192cd_priv				priv = pDM_Odm->priv;
 
 #if (DM_ODM_SUPPORT_TYPE == ODM_AP)
 //Mark there, and check this in odm_DMWatchDog
@@ -3153,15 +3152,15 @@ odm_CCKPacketDetectionThresh(
 	PFALSE_ALARM_STATISTICS_ACC	FalseAlmCntAcc = &(pDM_Odm->FalseAlmCnt_Acc);
 #endif
 	PFALSE_ALARM_STATISTICS 	FalseAlmCnt = (PFALSE_ALARM_STATISTICS)PhyDM_Get_Structure( pDM_Odm, PHYDM_FALSEALMCNT);
-	u1Byte					CurCCK_CCAThres = pDM_DigTable->CurCCK_CCAThres, RSSI_thd = 35;
+	u1Byte					CurCCK_CCAThres = pDM_DigTable->CurCCK_CCAThres;
+#if (DM_ODM_SUPPORT_TYPE & (ODM_WIN|ODM_CE))
+	u1Byte RSSI_thd = 35;
+#endif
 	u1Byte					pd_th = 0, cs_ration = 0;
 	BOOLEAN					en_2rcca;
 
 	en_2rcca = ((BOOLEAN)ODM_GetBBReg(pDM_Odm, 0xa2c, BIT(18)) && (BOOLEAN)ODM_GetBBReg(pDM_Odm, 0xa2c, BIT(22)));
 
-#if (DM_ODM_SUPPORT_TYPE & (ODM_AP))
-	prtl8192cd_priv				priv = pDM_Odm->priv;
-#endif
 #if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
 //modify by Guo.Mingzhi 2011-12-29
 	if (pDM_Odm->bDualMacSmartConcurrent == TRUE)
@@ -3583,10 +3582,6 @@ ODM_MPT_DIG(
 
 #if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
 
-	#if ODM_FIX_2G_DIG
-	IGI_A = 0x22;
-	IGI_B = 0x24;
-	#endif
 
 #else
 	if (!(pDM_Odm->priv->pshare->rf_ft_var.mp_specific && pDM_Odm->priv->pshare->mp_dig_on))
@@ -3598,7 +3593,7 @@ ODM_MPT_DIG(
 
 	ODM_RT_TRACE(pDM_Odm,ODM_COMP_DIG, ODM_DBG_LOUD, ("===> ODM_MPT_DIG, pBandType = %d\n", *pDM_Odm->pBandType));
 
-#if (ODM_FIX_2G_DIG || (DM_ODM_SUPPORT_TYPE & ODM_AP))
+#if (DM_ODM_SUPPORT_TYPE & ODM_AP)
 	if (*pDM_Odm->pBandType == ODM_BAND_5G || (pDM_Odm->SupportICType & (ODM_RTL8814A|ODM_RTL8822B))) // for 5G or 8814
 #else
 	if (1) // for both 2G/5G

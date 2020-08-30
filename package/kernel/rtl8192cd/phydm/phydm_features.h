@@ -21,10 +21,11 @@
 #ifndef	__PHYDM_FEATURES_H__
 #define __PHYDM_FEATURES
 
-#if ((RTL8814A_SUPPORT == 1) || (RTL8821C_SUPPORT == 1) || (RTL8822B_SUPPORT == 1) || (RTL8197F_SUPPORT == 1))
+#undef PHYDM_LA_MODE_SUPPORT
+#if (defined(RTL8814A_SUPPORT) || defined(RTL8821C_SUPPORT) || defined(RTL8822B_SUPPORT) || defined(RTL8197F_SUPPORT))
 	#define PHYDM_LA_MODE_SUPPORT			1
-#else
-	#define PHYDM_LA_MODE_SUPPORT			0
+//#else
+//	#define PHYDM_LA_MODE_SUPPORT			0
 #endif
 
 #if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
@@ -32,7 +33,7 @@
 	#define CONFIG_PHYDM_ANTENNA_DIVERSITY
 	#ifdef CONFIG_PHYDM_ANTENNA_DIVERSITY
 
-		#if (RTL8723B_SUPPORT == 1) || (RTL8821A_SUPPORT == 1) || (RTL8188F_SUPPORT == 1)
+		#if defined(RTL8723B_SUPPORT) || defined(RTL8821A_SUPPORT) || defined(RTL8188F_SUPPORT)
 		#define	CONFIG_S0S1_SW_ANTENNA_DIVERSITY
 		#endif
 
@@ -55,23 +56,25 @@
 
 	#define PHYDM_CCX_LNA_CHK_SUPPORT 1
 
-	#if ((RTL8197F_SUPPORT == 1) || (RTL8814A_SUPPORT == 1))
+	#if (defined(RTL8197F_SUPPORT) || defined(RTL8814A_SUPPORT))
 		#define PHYDM_TDMA_DIG_SUPPORT	1
 	#endif
 
 	#define RA_MASK_PHYDMLIZE_AP	1
 
 	/* #define CONFIG_RA_DBG_CMD*/
-	#define	CONFIG_RA_FW_DBG_CODE	0
+	#undef CONFIG_RA_FW_DBG_CODE
+	//#define	CONFIG_RA_FW_DBG_CODE	0
 
 	/*#define CONFIG_PATH_DIVERSITY*/
 	/*#define CONFIG_RA_DYNAMIC_RTY_LIMIT*/
 	#define CONFIG_RA_DYNAMIC_RATE_ID
 	/*#define	CONFIG_BB_POWER_SAVING*/
-	#if (RTL8822B_SUPPORT == 1 || RTL8197F_SUPPORT == 1)
+	#undef CONFIG_ADAPTIVE_SOML
+	#if (defined(RTL8822B_SUPPORT) || defined(RTL8197F_SUPPORT))
 	#define	CONFIG_ADAPTIVE_SOML			1
-	#else
-	#define	CONFIG_ADAPTIVE_SOML			0
+	//#else
+	//#define	CONFIG_ADAPTIVE_SOML			0
 	#endif
 
 	/* [ Configure Antenna Diversity ] */
@@ -118,7 +121,7 @@
 		 /*----------*/
 	#endif
 
-	#if (RTL8188E_SUPPORT == 1 || RTL8192E_SUPPORT == 1)
+	#if (defined(RTL8188E_SUPPORT) || defined(RTL8192E_SUPPORT))
 		#define	CONFIG_RECEIVER_BLOCKING
 	#endif
 
@@ -132,11 +135,11 @@
 
 		#ifdef CONFIG_PHYDM_ANTENNA_DIVERSITY
 
-			#if (RTL8723B_SUPPORT == 1) || (RTL8821A_SUPPORT == 1) || (RTL8188F_SUPPORT == 1)
+			#if defined(RTL8723B_SUPPORT) || defined(RTL8821A_SUPPORT) || defined(RTL8188F_SUPPORT)
 			#define	CONFIG_S0S1_SW_ANTENNA_DIVERSITY
 			#endif
 
-			#if (RTL8821A_SUPPORT == 1)
+			#if defined(RTL8821A_SUPPORT)
 			/*#define CONFIG_HL_SMART_ANTENNA_TYPE1*/
 			#endif
 		#endif
@@ -147,7 +150,8 @@
 	#endif
 
 	/*#define CONFIG_RA_DBG_CMD*/
-	#define	CONFIG_RA_FW_DBG_CODE	0
+	#undef CONFIG_RA_FW_DBG_CODE
+	//#define	CONFIG_RA_FW_DBG_CODE	0
 	/*#define CONFIG_ANT_DETECTION*/
 	/*#define CONFIG_PATH_DIVERSITY*/
 	/*#define CONFIG_RA_DYNAMIC_RTY_LIMIT*/

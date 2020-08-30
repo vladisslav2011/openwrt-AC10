@@ -567,6 +567,11 @@ u1Byte DeltaSwingTableIdx_2GA_P_DEFAULT[DELTA_SWINGIDX_SIZE] = {0, 0, 0, 0, 1, 1
 u1Byte DeltaSwingTableIdx_2GA_N_DEFAULT[DELTA_SWINGIDX_SIZE] = {0, 0, 0, 2, 2, 3, 3, 4, 4, 4
 , 4, 5, 5,  6,  6,  7,  7,  7,  7,  8,  8,  9,  9, 10, 10, 10, 11, 11, 11, 11};
 
+u1Byte DeltaSwingTableIdx_2GA_P_8188E[DELTA_SWINGIDX_SIZE] = {0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4,  4,  4,  4,  4,  4,  5,  5,  7,  7,  8,  8,  8,  9,  9,  9,  9,  9};
+u1Byte DeltaSwingTableIdx_2GA_N_8188E[DELTA_SWINGIDX_SIZE] = {0, 0, 0, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5,  6,  6,  7,  7,  7,  7,  8,  8,  9,  9, 10, 10, 10, 11, 11, 11, 11};
+
+
+
 
 #ifdef CONFIG_WLAN_HAL_8192EE
 u4Byte OFDMSwingTable_92E[OFDM_TABLE_SIZE_92E] = {
@@ -1195,11 +1200,10 @@ odm_TXPowerTrackingCheckAP(
 	IN	PVOID		pDM_VOID
 	)
 {
-	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 #if (DM_ODM_SUPPORT_TYPE == ODM_AP)
-	prtl8192cd_priv	priv		= pDM_Odm->priv;
 
 #if ((RTL8188E_SUPPORT == 1) || (RTL8192E_SUPPORT == 1) || (RTL8812A_SUPPORT == 1) || (RTL8881A_SUPPORT == 1) || (RTL8814A_SUPPORT == 1) || (RTL8197F_SUPPORT == 1))
+	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	if (pDM_Odm->SupportICType & (ODM_RTL8188E | ODM_RTL8192E | ODM_RTL8812 | ODM_RTL8881A | ODM_RTL8814A | ODM_RTL8197F | ODM_RTL8822B))
 		ODM_TXPowerTrackingCallback_ThermalMeter(pDM_Odm);
 	else

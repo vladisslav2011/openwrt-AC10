@@ -791,7 +791,9 @@ void rtl819x_gpio_pin_set_val(unsigned int pin, int val);
 //-------------------------------------------------------------
 //
 #ifdef CONFIG_OPENWRT_SDK
-#define NETDEV_NO_PRIV 1  //mark_wrt
+	#ifndef NETDEV_NO_PRIV
+		#define NETDEV_NO_PRIV 1  //mark_wrt
+	#endif
 #undef EVENT_LOG //mark_wrt
 
 #if defined(CPTCFG_CFG80211_MODULE)
@@ -3880,6 +3882,9 @@ void rtl819x_gpio_pin_set_val(unsigned int pin, int val);
 #define NUM_TX_DESC    128
 #define RTL8192CD_NUM_VWLAN  4
 #else
+#ifdef RTL8192CD_NUM_VWLAN
+	#undef RTL8192CD_NUM_VWLAN
+#endif
 #ifdef CONFIG_RTL_VAP_COUNT
 	#define RTL8192CD_NUM_VWLAN (CONFIG_RTL_VAP_COUNT)
 #else

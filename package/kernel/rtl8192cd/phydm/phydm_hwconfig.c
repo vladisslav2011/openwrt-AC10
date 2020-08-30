@@ -371,88 +371,6 @@ static u1Byte odm_SQ_process_patch_RT_CID_819x_Lenovo(
 	return SQ;
 }
 
-static u1Byte odm_SQ_process_patch_RT_CID_819x_Acer(
-	IN PDM_ODM_T	pDM_Odm,
-	IN u1Byte 		isCCKrate,
-	IN u1Byte 		PWDB_ALL,
-	IN u1Byte 		path,
-	IN u1Byte 		RSSI
-)
-{
-	u1Byte	SQ = 0;
-
-#if (DM_ODM_SUPPORT_TYPE &  ODM_WIN)
-
-	if(isCCKrate){
-
-			RT_TRACE(COMP_DBG, DBG_WARNING, ("odm_SQ_process_patch_RT_Acer\n"));
-
-#if OS_WIN_FROM_WIN8(OS_VERSION)
-
-			if(PWDB_ALL >= 50)
-				SQ = 100;
-			else if(PWDB_ALL >= 35 && PWDB_ALL < 50)
-				SQ = 80;
-			else if(PWDB_ALL >= 30 && PWDB_ALL < 35)
-				SQ = 60;
-			else if(PWDB_ALL >= 25 && PWDB_ALL < 30)
-				SQ = 40;
-			else if(PWDB_ALL >= 20 && PWDB_ALL < 25)
-				SQ = 20;
-			else
-				SQ = 10;
-#else
-			if(PWDB_ALL >= 50)
-				SQ = 100;
-			else if(PWDB_ALL >= 35 && PWDB_ALL < 50)
-				SQ = 80;
-			else if(PWDB_ALL >= 30 && PWDB_ALL < 35)
-				SQ = 60;
-			else if(PWDB_ALL >= 25 && PWDB_ALL < 30)
-				SQ = 40;
-			else if(PWDB_ALL >= 20 && PWDB_ALL < 25)
-				SQ = 20;
-			else
-				SQ = 10;
-
-			if(PWDB_ALL == 0)// Abnormal case, do not indicate the value above 20 on Win7
-				SQ = 20;
-#endif
-
-
-
-	}
-	else
-	{//OFDM rate
-
-		if (IS_HARDWARE_TYPE_8192E(pDM_Odm->Adapter)) {
-			if(RSSI >= 45)
-				SQ = 100;
-			else if(RSSI >= 22 && RSSI < 45)
-				SQ = 80;
-			else if(RSSI >= 18 && RSSI < 22)
-				SQ = 40;
-			else
-			SQ = 20;
-	}
-		else
-		{
-			if(RSSI >= 35)
-			SQ = 100;
-			else if(RSSI >= 30 && RSSI < 35)
-			SQ = 80;
-		else if(RSSI >= 25 && RSSI < 30)
-			SQ = 40;
-		else
-			SQ = 20;
-	}
-	}
-
-	RT_TRACE(COMP_DBG, DBG_LOUD, ("isCCKrate(%#d), PWDB_ALL(%#d), RSSI(%#d), SQ(%#d)\n", isCCKrate, PWDB_ALL, RSSI, SQ));
-
-#endif
-	return SQ;
-}
 
 static u1Byte
 odm_EVMdbToPercentage(
@@ -512,6 +430,7 @@ odm_EVMdbm_JaguarSeries(
 	return (u1Byte)ret_val;
 }
 
+#if (DM_ODM_SUPPORT_TYPE != ODM_AP)
 static s2Byte
 odm_Cfo(
   IN s1Byte Value
@@ -532,6 +451,7 @@ odm_Cfo(
 	}
 	return ret_val;
 }
+#endif
 
 u1Byte
 phydm_rate_to_num_ss(
@@ -557,7 +477,7 @@ phydm_rate_to_num_ss(
 	return num_ss;
 }
 
-#if(ODM_IC_11N_SERIES_SUPPORT == 1)
+#if (ODM_IC_11N_SERIES_SUPPORT == 1)
 
 s1Byte
 odm_CCKRSSI_8703B(
@@ -697,14 +617,12 @@ odm_RxPhyStatus92CSeries_Parsing(
 	IN		PODM_PACKET_INFO_T			pPktinfo
 	)
 {
-	SWAT_T				*pDM_SWAT_Table = &pDM_Odm->DM_SWAT_Table;
 	u1Byte				i, Max_spatial_stream;
 	s1Byte				rx_pwr[4], rx_pwr_all=0;
 	u1Byte				EVM, PWDB_ALL = 0, PWDB_ALL_BT;
 	u1Byte				RSSI, total_rssi=0;
 	BOOLEAN				isCCKrate=FALSE;
 	u1Byte				rf_rx_num = 0;
-	u1Byte				cck_highpwr = 0;
 	u1Byte				LNA_idx = 0;
 	u1Byte				VGA_idx = 0;
 	u1Byte				cck_agc_rpt;
@@ -1048,7 +966,11 @@ odm_RxPhyStatusJaguarSeries_Parsing(
 	u1Byte					i, Max_spatial_stream;
 	s1Byte					rx_pwr[4], rx_pwr_all = 0;
 	u1Byte					EVM, EVMdbm, PWDB_ALL = 0, PWDB_ALL_BT;
-	u1Byte					RSSI, avg_rssi = 0, best_rssi = 0, second_rssi = 0;
+	u1Byte					RSSI;
+#if (DM_ODM_SUPPORT_TYPE &  (ODM_WIN|ODM_CE))
+	u1Byte					avg_rssi = 0;
+#endif
+	u1Byte					best_rssi = 0, second_rssi = 0;
 	u1Byte					isCCKrate = 0;
 	u1Byte					rf_rx_num = 0;
 	u1Byte					cck_highpwr = 0;
@@ -1525,7 +1447,7 @@ odm_Process_RSSIForDM(
 	)
 {
 
-	s4Byte			UndecoratedSmoothedPWDB, UndecoratedSmoothedCCK, UndecoratedSmoothedOFDM, RSSI_Ave, CCK_pkt;
+	s4Byte			UndecoratedSmoothedPWDB, UndecoratedSmoothedCCK, UndecoratedSmoothedOFDM, RSSI_Ave;
 	u1Byte			i, isCCKrate=0;
 	u1Byte			RSSI_max, RSSI_min;
 	u4Byte			Weighting=0;
@@ -3141,7 +3063,7 @@ phydm_GetRxPhyStatusType0(
 	/* Type 0 is used for cck packet */
 
 	PPHY_STATUS_RPT_JAGUAR2_TYPE0	pPhyStaRpt = (PPHY_STATUS_RPT_JAGUAR2_TYPE0)pPhyStatus;
-	u1Byte							i, SQ = 0;
+	u1Byte							SQ = 0;
 	s1Byte							RxPower = pPhyStaRpt->pwdb - 110;
 
 	/* Calculate Signal Quality*/
@@ -3355,19 +3277,19 @@ phydm_GetRxPhyStatusType2(
 
 			/* Update per-path information (RSSI_dB RSSI_percentage EVM SNR CFO SQ) */
 #if (RTL8197F_SUPPORT == 1)
-		if ((pDM_Odm->SupportICType & ODM_RTL8197F) && (pPhyStaRpt->pwdb[i] == 0x7f)) { /*for 97f workaround*/
-
-			if (i == ODM_RF_PATH_A) {
-				rx_path_pwr_db = (pPhyStaRpt->gain_a)<<1;
-				rx_path_pwr_db = rx_path_pwr_db - 110;
-			} else if (i == ODM_RF_PATH_B) {
-				rx_path_pwr_db = (pPhyStaRpt->gain_b)<<1;
-				rx_path_pwr_db = rx_path_pwr_db - 110;
+			if ((pDM_Odm->SupportICType & ODM_RTL8197F) && (pPhyStaRpt->pwdb[i] == 0x7f)) { /*for 97f workaround*/
+	
+				if (i == ODM_RF_PATH_A) {
+					rx_path_pwr_db = (pPhyStaRpt->gain_a)<<1;
+					rx_path_pwr_db = rx_path_pwr_db - 110;
+				} else if (i == ODM_RF_PATH_B) {
+					rx_path_pwr_db = (pPhyStaRpt->gain_b)<<1;
+					rx_path_pwr_db = rx_path_pwr_db - 110;
+				} else
+					rx_path_pwr_db = 0;
 			} else
-				rx_path_pwr_db = 0;
-		} else
 #endif
-			rx_path_pwr_db = pPhyStaRpt->pwdb[i] - 110;					/* per-path pwdb in dB domain */
+				rx_path_pwr_db = pPhyStaRpt->pwdb[i] - 110;					/* per-path pwdb in dB domain */
 
 			phydm_SetPerPathPhyInfo(i, rx_path_pwr_db, 0, 0, 0, pPhyInfo);
 

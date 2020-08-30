@@ -748,7 +748,7 @@ static __inline__ unsigned char RTL_R8_F(struct rtl8192cd_priv *priv, unsigned i
 	if (GET_CHIP_VER(priv) == VERSION_8197F) {
 	  if(!(REG32(0xB8000064)&BIT0)){
 	  	panic_printk("Should not access WiFi register since 0xB8000064[0]=0\n");
-		return;
+		return 0;
 	  }
 	}
 #endif
@@ -796,7 +796,7 @@ static __inline__ unsigned short RTL_R16_F(struct rtl8192cd_priv *priv, unsigned
 	if (GET_CHIP_VER(priv) == VERSION_8197F) {
 	  if(!(REG32(0xB8000064)&BIT0)){
 		panic_printk("Should not access WiFi register since 0xB8000064[0]=0\n");
-		return;
+		return 0;
 	  }
 	}
 #endif
@@ -853,7 +853,7 @@ static __inline__ unsigned int RTL_R32_F(struct rtl8192cd_priv *priv, unsigned i
 	if (GET_CHIP_VER(priv) == VERSION_8197F) {
 	  if(!(REG32(0xB8000064)&BIT0)){
 		panic_printk("Should not access WiFi register since 0xB8000064[0]=0\n");
-		return;
+		return 0;
 	  }
 	}
 #endif
@@ -1696,6 +1696,7 @@ static __inline__ void tx_sum_up(struct rtl8192cd_priv *priv, struct stat_info *
 		pnet_stats->tx_bytes += pktlen;
 
 #if defined(CONFIG_RTL8672) || defined(CONFIG_WLAN_STATS_EXTENTION)
+	{
 		extern int IS_BCAST2(unsigned char *da);
 		extern int IS_MCAST(unsigned char *da);
 		extern unsigned char *get_da(unsigned char *pframe);
@@ -1715,6 +1716,7 @@ static __inline__ void tx_sum_up(struct rtl8192cd_priv *priv, struct stat_info *
 			else
 				priv->ext_stats.tx_ucast_pkts_cnt++;
 		}
+	}
 #endif
 
 #ifdef TRX_DATA_LOG

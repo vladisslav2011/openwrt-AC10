@@ -87,9 +87,8 @@ extern	u1Byte CCKSwingTable_Ch14_88F[CCK_TABLE_SIZE_88F][16];
 // <20140613, YuChen> In case fail to read TxPowerTrack.txt, we use the table of 88E as the default table.
 extern u1Byte DeltaSwingTableIdx_2GA_P_DEFAULT[DELTA_SWINGIDX_SIZE];
 extern u1Byte DeltaSwingTableIdx_2GA_N_DEFAULT[DELTA_SWINGIDX_SIZE];
-
-static u1Byte DeltaSwingTableIdx_2GA_P_8188E[] = {0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4,  4,  4,  4,  4,  4,  5,  5,  7,  7,  8,  8,  8,  9,  9,  9,  9,  9};
-static u1Byte DeltaSwingTableIdx_2GA_N_8188E[] = {0, 0, 0, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5,  6,  6,  7,  7,  7,  7,  8,  8,  9,  9, 10, 10, 10, 11, 11, 11, 11};
+extern u1Byte DeltaSwingTableIdx_2GA_P_8188E[DELTA_SWINGIDX_SIZE];
+extern u1Byte DeltaSwingTableIdx_2GA_N_8188E[DELTA_SWINGIDX_SIZE];
 
 //extern	u4Byte OFDMSwingTable_92E[OFDM_TABLE_SIZE_92E];
 //extern	u1Byte CCKSwingTable_Ch1_Ch13_92E[CCK_TABLE_SIZE_92E][8];

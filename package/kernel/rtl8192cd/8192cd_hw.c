@@ -1194,15 +1194,16 @@ static unsigned char *get_digit_dot_8812(unsigned char **data)
 #define LMT_NUM 256
 static int get_chnl_lmt_dot_new(struct rtl8192cd_priv *priv, unsigned char *line_head, unsigned int *channel, unsigned int *limit, unsigned int *table_idx)
 {
-	unsigned char *next, *next2, *next3;
-	int base, idx;
+	unsigned char *next;//, *next2, *next3;
+	int base;
+	//int idx;
 	int num=0;
-	int num_index;
+//	int num_index;
 	int val;
-	int i; // for loop
+//	int i; // for loop
 	unsigned char *ch;
 	unsigned char lmt[LMT_NUM];
-	unsigned char *twpwr_lmt_index_array;
+//	unsigned char *twpwr_lmt_index_array;
 	unsigned char lmtIndex;
 	extern int _atoi(char *s, int base);
 
@@ -1332,7 +1333,7 @@ static int get_chnl_lmt_dot(unsigned char *line_head, unsigned int *ch_start, un
 	unsigned char *ch;
 	extern int _atoi(char * s, int base);
 
-	*ch_start = *ch_start = '\0';
+	*ch_start = *ch_end = '\0';
 
 	// remove comments
 	ch = line_head;
@@ -1685,7 +1686,7 @@ unsigned int generate_u4bRegValue_8812_new(struct rtl8192cd_priv *priv, unsigned
 	unsigned char tmp_reg[4];
 	unsigned int  reg_value = 0;
 	unsigned char target = 0;
-	int i;
+//	int i;
 	if(*u4bRegOffset == rTxAGC_A_Nss2Index1_Nss1Index8_JAguar)
 	{
 		tmp_reg[0]= tmp_byte[0]- priv->pshare->tgpwr_VHT1S_new[RF_PATH_A]; // tgpwr_VHT1S_new is ZERO?
@@ -1789,10 +1790,10 @@ unsigned int generate_u4bRegValue_8812_new(struct rtl8192cd_priv *priv, unsigned
 #if defined(CONFIG_WLAN_HAL_8197F)
 void set_power_by_rate(struct rtl8192cd_priv *priv, unsigned int *u4bRegOffset, unsigned char *tmp_byte)
 {
-	unsigned char tmp_reg[4];
-	unsigned int  reg_value = 0;
-	unsigned char target = 0;
-	int i;
+//	unsigned char tmp_reg[4];
+//	unsigned int  reg_value = 0;
+//	unsigned char target = 0;
+//	int i;
 
 	//panic_printk("[%s] u4bRegOffset=%x, tmp_byte=%x\n",__FUNCTION__,*u4bRegOffset, *((unsigned int*)tmp_byte));
 	switch (*u4bRegOffset) {
@@ -1918,10 +1919,10 @@ void set_power_by_rate(struct rtl8192cd_priv *priv, unsigned int *u4bRegOffset, 
 #if defined(CONFIG_WLAN_HAL_8814AE) || defined(CONFIG_WLAN_HAL_8822BE)
 void set_power_by_rate_8814(struct rtl8192cd_priv *priv, unsigned int *u4bRegOffset, unsigned char *tmp_byte)
 {
-	unsigned char tmp_reg[4];
-	unsigned int  reg_value = 0;
-	unsigned char target = 0;
-	int i;
+//	unsigned char tmp_reg[4];
+//	unsigned int  reg_value = 0;
+//	unsigned char target = 0;
+//	int i;
 
 	switch (*u4bRegOffset) {
 		case rTxAGC_A_CCK11_CCK1_JAguar:
@@ -2476,7 +2477,7 @@ void set_power_by_rate_8814(struct rtl8192cd_priv *priv, unsigned int *u4bRegOff
 
 static int find_str(char *line, char *str)
 {
-	int len=0, idx=0;
+	int /*len=0,*/ idx=0;
 	char *ch = NULL;
 
 	if (!line ||!str || (strlen(str)>strlen(line)))
@@ -2630,7 +2631,7 @@ static int get_target_val_new(struct rtl8192cd_priv *priv, unsigned char *line_h
 static int get_offset_mask_val_new(struct rtl8192cd_priv *priv, unsigned char *line_head, unsigned int *u4bRegOffset, unsigned int *u4bMask, unsigned int *u4bRegValue)
 {
 	int base, idx, round = 0;
-	unsigned char *ch, *next, *pMask, *pValue;
+	unsigned char *ch, *next, *pMask;//, *pValue;
 	extern int _atoi(char *s, int base);
 
 	unsigned char *b3, *b2, *b1, *b0;
@@ -3140,7 +3141,7 @@ int PHY_ConfigTXLmtWithParaFile_new(struct rtl8192cd_priv *priv)
     const unsigned char table_index_new[24]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23};
     struct TxPwrLmtTable_new *reg_table;
 
-    unsigned int tmp =0;
+//    unsigned int tmp =0;
 
     if(GET_CHIP_VER(priv) <= VERSION_8881A || GET_CHIP_VER(priv) == VERSION_8723B){/* for old ic format*/
         table_index = table_index_old;
@@ -3162,7 +3163,7 @@ int PHY_ConfigTXLmtWithParaFile_new(struct rtl8192cd_priv *priv)
 	priv->pshare->txpwr_lmt_VHT4S = 0;
 #endif
 
-	reg_table = (struct TxPwrLmtTable *)priv->pshare->txpwr_lmt_buf;
+	reg_table = (struct TxPwrLmtTable_new *)priv->pshare->txpwr_lmt_buf;
 
 	if((mem_ptr = (unsigned char *)kmalloc(MAX_CONFIG_FILE_SIZE, GFP_ATOMIC)) == NULL) {
 		printk("PHY_ConfigMACWithParaFile(): not enough memory\n");
@@ -3468,10 +3469,10 @@ int PHY_ConfigTXLmtWithParaFile_new_TXBF(struct rtl8192cd_priv *priv)
 	int read_bytes, found, num, len=0, round;
 	unsigned int  channel, limit, table_idx = 0;
 	unsigned char *mem_ptr, *line_head, *next_head;
-	int	tbl_idx[13], set_en=0, type=-1;
+	//int	tbl_idx[13], set_en=0, type=-1;
 	struct TxPwrLmtTable_new *reg_table;
 
-	unsigned int tmp =0;
+//	unsigned int tmp =0;
 
 
 	priv->pshare->txpwr_lmt_TXBF_HT1S = 0;
@@ -3485,7 +3486,7 @@ int PHY_ConfigTXLmtWithParaFile_new_TXBF(struct rtl8192cd_priv *priv)
 	priv->pshare->txpwr_lmt_TXBF_VHT4S = 0;
 #endif
 
-	reg_table = (struct TxPwrLmtTable *)priv->pshare->txpwr_lmt_buf;
+	reg_table = (struct TxPwrLmtTable_new *)priv->pshare->txpwr_lmt_buf;
 
 	if((mem_ptr = (unsigned char *)kmalloc(MAX_CONFIG_FILE_SIZE, GFP_ATOMIC)) == NULL) {
 		printk("PHY_ConfigMACWithParaFile(): not enough memory\n");
@@ -5779,7 +5780,7 @@ int PHY_ConfigBBWithParaFile(struct rtl8192cd_priv *priv, int reg_file)
 	unsigned int       u4bRegOffset, u4bRegValue, u4bRegMask = 0;
 	int 			   file_format = TWO_COLUMN;
 	unsigned char      *mem_ptr, *line_head, *next_head = NULL;
-#if 1//defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_WLAN_HAL)//TXPWR_LMT_8812 TXPWR_LMT_88E
+#if 0//defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_WLAN_HAL)//TXPWR_LMT_8812 TXPWR_LMT_88E
 	unsigned char      *mem_ptr2, *next_head2=NULL;
 #endif
 	struct PhyRegTable *phyreg_table = NULL;
@@ -6231,52 +6232,53 @@ int PHY_ConfigBBWithParaFile(struct rtl8192cd_priv *priv, int reg_file)
 		file_format = THREE_COLUMN;
 		priv->pshare->txpwr_pg_format_abs = 0;
 
-		unsigned char      *mem_ptr_tmp, *next_head_tmp=NULL;
-		if ((mem_ptr_tmp= (unsigned char *)kmalloc(MAX_CONFIG_FILE_SIZE, GFP_ATOMIC)) == NULL) {
-			printk("PHY_ConfigBBWithParaFile(): not enough memory\n");
-			return -1;
-		}
-
-		memset(mem_ptr_tmp, 0, MAX_CONFIG_FILE_SIZE); // clear memory
-		memcpy(mem_ptr_tmp, next_head, read_bytes);
-
-		next_head_tmp= mem_ptr_tmp;
-		round = 0;
-		while(1) {
-			line_head = next_head_tmp;
-			next_head_tmp= get_line(&line_head);
-
-			if (line_head == NULL)
-				break;
-			if (line_head[0] == '/')
-				continue;
-
-			if (line_head[0] == '#') {
-				int line_idx = 1; //line_len = strlen(line_head);
-
-				while (line_idx <= strlen(line_head))
-				{
-					if (!memcmp(&(line_head[line_idx]), "Exact", 5)) {
-						//panic_printk("\n******** PG Exact format !!! ********\n");
-						priv->pshare->txpwr_pg_format_abs = 1;
-						file_format = FIVE_COLUMN;
-						break;
+		{
+			unsigned char      *mem_ptr_tmp, *next_head_tmp=NULL;
+			if ((mem_ptr_tmp= (unsigned char *)kmalloc(MAX_CONFIG_FILE_SIZE, GFP_ATOMIC)) == NULL) {
+				printk("PHY_ConfigBBWithParaFile(): not enough memory\n");
+				return -1;
+			}
+	
+			memset(mem_ptr_tmp, 0, MAX_CONFIG_FILE_SIZE); // clear memory
+			memcpy(mem_ptr_tmp, next_head, read_bytes);
+	
+			next_head_tmp= mem_ptr_tmp;
+			round = 0;
+			while(1) {
+				line_head = next_head_tmp;
+				next_head_tmp= get_line(&line_head);
+	
+				if (line_head == NULL)
+					break;
+				if (line_head[0] == '/')
+					continue;
+	
+				if (line_head[0] == '#') {
+					int line_idx = 1; //line_len = strlen(line_head);
+	
+					while (line_idx <= strlen(line_head))
+					{
+						if (!memcmp(&(line_head[line_idx]), "Exact", 5)) {
+							//panic_printk("\n******** PG Exact format !!! ********\n");
+							priv->pshare->txpwr_pg_format_abs = 1;
+							file_format = FIVE_COLUMN;
+							break;
+						}
+						line_idx++;
 					}
-					line_idx++;
+				}
+	
+				if (!memcmp(line_head, "0x", 2) || !memcmp(line_head, "0X", 2))
+					break;
+	
+				if (++round > 10000) {
+					panic_printk("%s[%d] while (1) goes too many\n", __FUNCTION__, __LINE__);
+					break;
 				}
 			}
-
-			if (!memcmp(line_head, "0x", 2) || !memcmp(line_head, "0X", 2))
-				break;
-
-			if (++round > 10000) {
-				panic_printk("%s[%d] while (1) goes too many\n", __FUNCTION__, __LINE__);
-				break;
-			}
+	
+			kfree(mem_ptr_tmp);
 		}
-
-		kfree(mem_ptr_tmp);
-
 		//panic_printk("PG file_format : %s\n", ((file_format == THREE_COLUMN) ? "THREE_COLUMN" : "FIVE_COLUMN"));
 
 #ifdef TXPWR_LMT_NEWFILE
@@ -7153,8 +7155,10 @@ void set_slot_time(struct rtl8192cd_priv *priv, int use_short)
 void SwChnl(struct rtl8192cd_priv *priv, unsigned char channel, int offset)
 {
 	unsigned int val = channel, eRFPath, curMaxRFPath;
+#if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8881A)
 	unsigned int is_need_reload_txpwr=0;
 	int org_val, tmp_val;
+#endif
 #ifdef CONFIG_P2P_RTK_SUPPORT/*cfg p2p cfg p2p*/
     if(priv->pshare->rtk_remain_on_channel){
         NDEBUG("deny rtk_remain_on_channel\n");
@@ -8201,8 +8205,9 @@ void selectMinPowerIdex(struct rtl8192cd_priv *priv)
 {
 	int i = 0, idx, pwr_min = 0xff;
 	unsigned int val32;
+#if defined(CONFIG_RTL_8812_SUPPORT) || defined(CONFIG_WLAN_HAL_8881A)
 	unsigned char val;
-
+#endif
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT) || defined(CONFIG_RTL_88E_SUPPORT) || defined(CONFIG_WLAN_HAL_8192EE) || defined(CONFIG_WLAN_HAL_8197F)
 	if (GET_CHIP_VER(priv) == VERSION_8188E || GET_CHIP_VER(priv) == VERSION_8192C || GET_CHIP_VER(priv) == VERSION_8192D || GET_CHIP_VER(priv) == VERSION_8192E || GET_CHIP_VER(priv) == VERSION_8197F) {
 		unsigned int pwr_regA[] = {0xe00, 0xe04, 0xe08, 0x86c, 0xe10, 0xe14, 0xe18, 0xe1c};
@@ -8331,7 +8336,7 @@ void selectMinPowerIdex(struct rtl8192cd_priv *priv)
 
 #if defined(CONFIG_WLAN_HAL_8822BE)
 	if (GET_CHIP_VER(priv) == VERSION_8822B) {
-		unsigned int path,i;
+		unsigned int path;
 		for(path=0;path<2;path++) {
 			if(priv->pshare->phw->CurrentTxAgcCCK[path][3]!=0 &&
 				priv->pshare->phw->CurrentTxAgcCCK[path][3] < pwr_min)
@@ -8355,7 +8360,7 @@ void selectMinPowerIdex(struct rtl8192cd_priv *priv)
 
 #if defined(CONFIG_WLAN_HAL_8814AE)
 	if (GET_CHIP_VER(priv) == VERSION_8814A) {
-		unsigned int path,i;
+		unsigned int path;
 		for(path=0;path<4;path++) {
 			if(priv->pshare->phw->CurrentTxAgcCCK[path][3]!=0 &&
 				priv->pshare->phw->CurrentTxAgcCCK[path][3] < pwr_min)
@@ -9491,9 +9496,9 @@ static int phy_BB88XX_Config_ParaFile(struct rtl8192cd_priv *priv)
 {
 	int rtStatus = 0;
 	unsigned short val16;
-	unsigned int val32;
+#ifdef CONFIG_RF_DPK_SETTING_SUPPORT
 	unsigned int i, j;
-
+#endif
 	phy_InitBBRFRegisterDefinition(priv);
 
 #if defined(CONFIG_SDIO_HCI) && defined(HIGH_POWER_EXT_LNA)
@@ -9860,9 +9865,6 @@ int phy_RF6052_Config_ParaFile(struct rtl8192cd_priv *priv)
 	RF92CD_RADIO_PATH_E eRFPath;
 	BB_REGISTER_DEFINITION_T *pPhyReg;
 	unsigned int  u4RegValue = 0, NumTotalRFPath;
-#ifndef SMP_SYNC
-	unsigned long x;
-#endif
 
 #ifdef CONFIG_WLAN_HAL
 #if defined(HIGH_POWER_EXT_PA) && defined(HIGH_POWER_EXT_LNA)
@@ -12656,9 +12658,6 @@ static void IQK_88C(struct rtl8192cd_priv *priv)
 
 void PHY_IQCalibrate(struct rtl8192cd_priv *priv)
 {
-#ifndef SMP_SYNC
-	unsigned long x;
-#endif
 
 #ifdef RF_MIMO_SWITCH
 	if(priv->pshare->rf_status) {
@@ -13433,20 +13432,22 @@ void ODM_software_init(struct rtl8192cd_priv *priv)
 	ODM_CmnInfoInit(ODMPTR, ODM_CMNINFO_BOARD_TYPE, BoardType);
 
 #if defined(CONFIG_WLAN_HAL_8197F)
-	extern unsigned int rtl819x_bond_option(void);
-	if(GET_CHIP_VER(priv) == VERSION_8197F){
-		if(rtl819x_bond_option() == BSP_BOND_97FN){
-			panic_printk("[97F] Bonding Type 97FN, PKG2\n");
-			ODM_CmnInfoInit(ODMPTR, ODM_CMNINFO_PACKAGE_TYPE, 2); /* 97FN */
-		}else if(rtl819x_bond_option() == BSP_BOND_97FS){
-			panic_printk("[97F] Bonding Type 97FS, PKG1\n");
-			ODM_CmnInfoInit(ODMPTR, ODM_CMNINFO_PACKAGE_TYPE, 1); /* 97FS */
-		}else if(rtl819x_bond_option() == BSP_BOND_97FB){
-			panic_printk("[97F] Bonding Type 97FB, PKG0\n");
-			ODM_CmnInfoInit(ODMPTR, ODM_CMNINFO_PACKAGE_TYPE, 0); /* 97FB */
-		}else{
-			panic_printk("[97F] Bonding Type Unknown, PKG1\n");
-			ODM_CmnInfoInit(ODMPTR, ODM_CMNINFO_PACKAGE_TYPE, 1); /* Unknown */
+	{
+		extern unsigned int rtl819x_bond_option(void);
+		if(GET_CHIP_VER(priv) == VERSION_8197F){
+			if(rtl819x_bond_option() == BSP_BOND_97FN){
+				panic_printk("[97F] Bonding Type 97FN, PKG2\n");
+				ODM_CmnInfoInit(ODMPTR, ODM_CMNINFO_PACKAGE_TYPE, 2); /* 97FN */
+			}else if(rtl819x_bond_option() == BSP_BOND_97FS){
+				panic_printk("[97F] Bonding Type 97FS, PKG1\n");
+				ODM_CmnInfoInit(ODMPTR, ODM_CMNINFO_PACKAGE_TYPE, 1); /* 97FS */
+			}else if(rtl819x_bond_option() == BSP_BOND_97FB){
+				panic_printk("[97F] Bonding Type 97FB, PKG0\n");
+				ODM_CmnInfoInit(ODMPTR, ODM_CMNINFO_PACKAGE_TYPE, 0); /* 97FB */
+			}else{
+				panic_printk("[97F] Bonding Type Unknown, PKG1\n");
+				ODM_CmnInfoInit(ODMPTR, ODM_CMNINFO_PACKAGE_TYPE, 1); /* Unknown */
+			}
 		}
 	}
 #endif
@@ -14237,7 +14238,7 @@ void set_8822_trx_regs(struct rtl8192cd_priv *priv)
 
 void set_lck_cv(struct rtl8192cd_priv *priv, unsigned char channel)
 {
-	u1Byte eRFPath, cv=0, ch;
+	u1Byte cv=0, ch;
 	u1Byte delta[14] = {0,4,4,4,4,4,4,4,4,4,4,4,4,12};
 	cv = priv->pshare->rf_ft_var.cv_ch1;
 	for(ch=2; ch <= channel; ch++)
@@ -14306,8 +14307,8 @@ void spread_spectrum(struct rtl8192cd_priv *priv)
 void set_bcn_dont_ignore_edcca(struct rtl8192cd_priv *priv)
 {
 	BOOLEAN carrier_sense_enable = FALSE,
-			bcn_dont_ignore_edcca = priv->pshare->rf_ft_var.bcn_dont_ignore_edcca,
-			adaptivity_enable = priv->pshare->rf_ft_var.adaptivity_enable;
+			bcn_dont_ignore_edcca = priv->pshare->rf_ft_var.bcn_dont_ignore_edcca/*,
+			adaptivity_enable = priv->pshare->rf_ft_var.adaptivity_enable*/;
 
 #ifdef USE_OUT_SRC
 	if (IS_OUTSRC_CHIP(priv))
@@ -14502,7 +14503,6 @@ int rtl8192cd_init_hw_PCI(struct rtl8192cd_priv *priv)
 			#endif
 		} else {
 		#if defined(CONFIG_WLAN_HAL_8197F)
-				u1Byte	efuse0x3F0;
 				EFUSE_DATA efuse_virtual_data;
 				load_efuse_data_to_reg();
 				if(load_efuse_data(&efuse_virtual_data, 0))
@@ -17036,8 +17036,8 @@ int rtl8192cd_init_hw_PCI(struct rtl8192cd_priv *priv)
 
 #ifdef CONFIG_WLAN_HAL_8197F
     if(GET_CHIP_VER(priv) == VERSION_8197F) {
-        PHY_LCCalibrate_8197F(ODMPTR);
 	unsigned int rf_path=0, count=0, no_iqk=0;
+	PHY_LCCalibrate_8197F(ODMPTR);
 	for(rf_path=0; rf_path<2 ; rf_path++) {
 		PHY_SetRFReg(priv, rf_path, RF_WE_LUT, 0x80000,0x1); // RF Mode table write enable
 		PHY_SetRFReg(priv, rf_path, RF_WE_LUT, 0x80000,0x1); // RF Mode table write enable
@@ -20056,20 +20056,21 @@ int offloadTestFunction(struct rtl8192cd_priv *priv, unsigned char *data)
 	}
 
 	if (mode == 0x1) {
+		u4Byte u4_val;
+#if (IS_RTL8192E_SERIES | IS_RTL8881A_SERIES)
+		u1Byte u1_val;
+#endif
 		printk("epdn 6e: download probe rsp\n");
 		priv->offload_function_ctrl = 1;
 		//RTL_W16(0x100 , RTL_R16(0x100) | BIT(8));		// enable sw beacon
 //		tasklet_hi_schedule(&priv->pshare->rx_tasklet);
 		//RTL_W8(HWSEQ_CTRL,RTL_R8(HWSEQ_CTRL) | BIT(6)); // HW SEQ
 
-		u4Byte u4_val;
 
 		// enable sw beacon
-		GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_REG_CR, (pu4Byte)&u4_val);
+		GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_REG_CR, (pu1Byte)&u4_val);
 		u4_val = u4_val | BIT(8);
-		GET_HAL_INTERFACE(priv)->SetHwRegHandler(priv, HW_VAR_REG_CR, (pu4Byte)&u4_val);
-
-		u1Byte u1_val;
+		GET_HAL_INTERFACE(priv)->SetHwRegHandler(priv, HW_VAR_REG_CR, (pu1Byte)&u4_val);
 
 #if (IS_RTL8192E_SERIES | IS_RTL8881A_SERIES)
 		 // HW SEQ
@@ -20087,15 +20088,14 @@ int offloadTestFunction(struct rtl8192cd_priv *priv, unsigned char *data)
 		unsigned char      loc_probe[1];
         unsigned short     BcnHead;
         u1Byte temp_120count=0;
-        u1Byte H2CCommand[2]={0};
-        u1Byte reg_val;
-        u4Byte u4_val;
+//        u1Byte H2CCommand[2]={0};
+//        u4Byte u4_val;
 
 #ifdef GPIO_WAKEPIN
         if(IS_HARDWARE_TYPE_8822B(priv)) //for GPIO8 wakeup, test only
             RTL_W8(REG_LED_CFG+2,0x40);
 #endif
-        GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_BCN_HEAD, (pu2Byte)&BcnHead);
+        GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_BCN_HEAD, (pu1Byte)&BcnHead);
 
 		loc_bcn[0] = priv->offload_bcn_page;
 		loc_probe[0] = priv->offload_proc_page;

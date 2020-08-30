@@ -122,7 +122,7 @@ phydm_seq_sorting(
 	IN		u1Byte	seq_length
 )
 {
-	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
+//	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	u1Byte		i = 0 , j = 0;
 	u4Byte		tmp_a, tmp_b;
 	u4Byte		tmp_idx_a, tmp_idx_b;
@@ -241,7 +241,7 @@ phydm_traffic_load_decision(
 	)
 {
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
-	pSWAT_T		pDM_SWAT_Table = &pDM_Odm->DM_SWAT_Table;
+//	pSWAT_T		pDM_SWAT_Table = &pDM_Odm->DM_SWAT_Table;
 
 	/*---trafic load decision---*/
 	pDM_Odm->curTxOkCnt =  *(pDM_Odm->pNumTxBytesUnicast) - pDM_Odm->lastTxOkCnt;
@@ -291,7 +291,7 @@ phydm_config_ofdm_tx_path(
 	IN		u4Byte			path
 )
 {
-	u1Byte	ofdm_rx_path;
+//	u1Byte	ofdm_rx_path;
 
 	#if (RTL8192E_SUPPORT == 1)
 	if (pDM_Odm->SupportICType & (ODM_RTL8192E)) {
@@ -318,7 +318,7 @@ phydm_config_ofdm_rx_path(
 	IN		u4Byte			path
 )
 {
-	u1Byte	ofdm_rx_path = 0;
+//	u1Byte	ofdm_rx_path = 0;
 
 	#if (RTL8192E_SUPPORT == 1)
 	if (pDM_Odm->SupportICType & (ODM_RTL8192E)) {
@@ -501,7 +501,7 @@ phydm_config_trx_path(
 	)
 {
 	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
-	u4Byte			pre_support_ability;
+//	u4Byte			pre_support_ability;
 	u4Byte used = *_used;
 	u4Byte out_len = *_out_len;
 
@@ -559,7 +559,7 @@ phydm_Init_cck_setting(
 	IN		PDM_ODM_T		pDM_Odm
 )
 {
-	u4Byte value_824,value_82c;
+//	u4Byte value_824,value_82c;
 
 	pDM_Odm->bCckHighPower = (BOOLEAN) ODM_GetBBReg(pDM_Odm, ODM_REG(CCK_RPT_FORMAT,pDM_Odm), ODM_BIT(CCK_RPT_FORMAT,pDM_Odm));
 
@@ -609,8 +609,7 @@ phydm_Init_cck_setting(
 	} else
 #endif
 		pDM_Odm->cck_new_agc = FALSE;
-
-		phydm_get_cck_rssi_table_from_reg(pDM_Odm);
+	phydm_get_cck_rssi_table_from_reg(pDM_Odm);
 }
 
 VOID
@@ -2668,8 +2667,8 @@ phydm_NoisyDetection(
 
 #if (PHYDM_TDMA_DIG_SUPPORT == 1)
 	if (pDM_Odm->original_dig_restore == 0) {
-		Total_CCA_Cnt = pDM_Odm->FalseAlmCnt_Acc.Cnt_CCA_all_1sec;
-		Total_FA_Cnt  = pDM_Odm->FalseAlmCnt_Acc.Cnt_all_1sec;
+		Total_CCA_Cnt = pDM_Odm->FalseAlmCnt_Acc.Cnt_CCA_all_1sec[(pDM_Odm->DM_DigTable.tdma_dig_state == TDMA_DIG_HIGH_STATE)? 0: 1];
+		Total_FA_Cnt  = pDM_Odm->FalseAlmCnt_Acc.Cnt_all_1sec[(pDM_Odm->DM_DigTable.tdma_dig_state == TDMA_DIG_HIGH_STATE)? 0: 1];
 	} else
 #endif
 	{
@@ -3135,7 +3134,7 @@ phydm_csi_mask_setting(
 {
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	u4Byte		fc;
-	u4Byte		int_distance;
+//	u4Byte		int_distance;
 	u1Byte		tone_direction;
 	u4Byte		tone_idx_tmp;
 	u1Byte		set_result = SET_SUCCESS;
@@ -3185,10 +3184,10 @@ phydm_nbi_setting(
 {
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	u4Byte		fc;
-	u4Byte		int_distance;
+//	u4Byte		int_distance;
 	u4Byte		tone_idx_tmp;
 	u1Byte		set_result = SET_SUCCESS;
-	u4Byte		bw_max = 40;
+//	u4Byte		bw_max = 40;
 
 	if (enable == NBI_DISABLE)
 		set_result = SET_SUCCESS;

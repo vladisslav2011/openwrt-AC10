@@ -72,7 +72,7 @@
 
 #define AP_InitRateAdaptiveState	ODM_RateAdaptiveStateApInit
 
-#if (RA_MASK_PHYDMLIZE_CE || RA_MASK_PHYDMLIZE_AP || RA_MASK_PHYDMLIZE_WIN)
+#if (defined(RA_MASK_PHYDMLIZE_CE) || defined(RA_MASK_PHYDMLIZE_AP) || defined(RA_MASK_PHYDMLIZE_WIN))
 #define		DM_RATR_STA_INIT			0
 #define		DM_RATR_STA_HIGH			1
 #define 		DM_RATR_STA_MIDDLE		2
@@ -573,7 +573,7 @@ VOID
 phydm_gen_ramask_h2c_AP(
 	IN		PVOID			pDM_VOID,
 	IN		struct rtl8192cd_priv *priv,
-	IN		PSTA_INFO_T		*pEntry,
+	IN		PSTA_INFO_T		pEntry,
 	IN		u1Byte			rssi_level
 );
 

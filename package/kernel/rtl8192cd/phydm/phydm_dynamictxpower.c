@@ -29,8 +29,8 @@ odm_DynamicTxPowerInit(
 	IN		PVOID					pDM_VOID
 	)
 {
-	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 #if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
+	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	PADAPTER	Adapter = pDM_Odm->Adapter;
 	PMGNT_INFO			pMgntInfo = &Adapter->MgntInfo;
 	HAL_DATA_TYPE		*pHalData = GET_HAL_DATA(Adapter);
@@ -77,12 +77,12 @@ odm_DynamicTxPowerSavePowerIndex(
 	IN		PVOID					pDM_VOID
 	)
 {
-	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 #if (DM_ODM_SUPPORT_TYPE & (ODM_CE|ODM_WIN))
 	u1Byte		index;
 	u4Byte		Power_Index_REG[6] = {0xc90, 0xc91, 0xc92, 0xc98, 0xc99, 0xc9a};
 
 #if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
+	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	PADAPTER	Adapter = pDM_Odm->Adapter;
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
 	for(index = 0; index< 6; index++)
@@ -98,8 +98,8 @@ odm_DynamicTxPowerRestorePowerIndex(
 	IN		PVOID					pDM_VOID
 	)
 {
-	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 #if (DM_ODM_SUPPORT_TYPE & (ODM_CE|ODM_WIN))
+	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	u1Byte			index;
 	PADAPTER		Adapter = pDM_Odm->Adapter;
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);

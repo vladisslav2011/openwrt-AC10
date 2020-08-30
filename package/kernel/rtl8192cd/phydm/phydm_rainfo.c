@@ -303,11 +303,13 @@ ODM_C2HRaParaReportHandler(
 )
 {
 	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
-	pRA_T			pRA_Table = &pDM_Odm->DM_RA_Table;
 
 	u1Byte	para_idx = CmdBuf[0]; /*Retry Penalty, NH, NL*/
+#if (defined(CONFIG_RA_DBG_CMD))
+	pRA_T			pRA_Table = &pDM_Odm->DM_RA_Table;
 	u1Byte	RateTypeStart = CmdBuf[1];
 	u1Byte	RateTypeLength = CmdLen - 2;
+#endif
 	u1Byte	i;
 
 
@@ -419,10 +421,6 @@ phydm_ra_dynamic_retry_count(
 )
 {
 	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
-	pRA_T		        pRA_Table = &pDM_Odm->DM_RA_Table;
-	PSTA_INFO_T		pEntry;
-	u1Byte	i, retry_offset;
-	u4Byte	ma_rx_tp;
 
 	if (!(pDM_Odm->SupportAbility & ODM_BB_DYNAMIC_ARFR)) {
 		return;
@@ -542,7 +540,6 @@ phydm_ra_dynamic_retry_limit(
 	pRA_T		        pRA_Table = &pDM_Odm->DM_RA_Table;
 	PSTA_INFO_T		pEntry;
 	u1Byte	i, retry_offset;
-	u4Byte	ma_rx_tp;
 
 
 	if (pDM_Odm->pre_number_active_client == pDM_Odm->number_active_client) {
@@ -624,8 +621,6 @@ phydm_update_rate_id(
 )
 {
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
-	pRA_T		pRA_Table = &pDM_Odm->DM_RA_Table;
-	u1Byte		current_tx_ss;
 	u1Byte		rate_idx = rate & 0x7f; /*remove bit7 SGI*/
 	u1Byte		wireless_mode;
 	u1Byte		phydm_macid;
@@ -709,14 +704,12 @@ phydm_c2h_ra_report_handler(
 {
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	pRA_T		pRA_Table = &pDM_Odm->DM_RA_Table;
-	u1Byte	legacy_table[12] = {1,2,5,11,6,9,12,18,24,36,48,54};
-	u1Byte	isMU_RPT=0;
 	u1Byte	macid = CmdBuf[1];
 	u1Byte	rate = CmdBuf[0];
-	u1Byte	rate_idx = rate & 0x7f; /*remove bit7 SGI*/
 	u1Byte	pre_rate = pRA_Table->link_tx_rate[macid];
-	u1Byte	rate_order;
 	#if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
+	u1Byte	rate_idx = rate & 0x7f; /*remove bit7 SGI*/
+	u1Byte	rate_order;
 	PADAPTER	Adapter = pDM_Odm->Adapter;
 
 	GET_HAL_DATA(Adapter)->CurrentRARate = HwRateToMRate(rate_idx);
@@ -788,7 +781,7 @@ odm_RSSIMonitorInit(
 	IN		PVOID		pDM_VOID
 )
 {
-#if(DM_ODM_SUPPORT_TYPE & (ODM_WIN|ODM_CE))
+#if (DM_ODM_SUPPORT_TYPE & (ODM_WIN|ODM_CE))
 	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	pRA_T		pRA_Table = &pDM_Odm->DM_RA_Table;
 	#if (DM_ODM_SUPPORT_TYPE & (ODM_WIN))
@@ -812,8 +805,8 @@ ODM_RAPostActionOnAssoc(
 	IN	PVOID	pDM_VOID
 )
 {
-	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 /*
+	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	pDM_Odm->H2C_RARpt_connect = 1;
 	odm_RSSIMonitorCheck(pDM_Odm);
 	pDM_Odm->H2C_RARpt_connect = 0;
@@ -1355,13 +1348,17 @@ odm_RSSIMonitorCheckAP(
 		pstat = pDM_Odm->pODM_StaInfo[i];
 
 		if (IS_STA_VALID(pstat)) {
+		#if (BEAMFORMING_SUPPORT == 1)
+			BEAMFORMING_CAP Beamform_cap;
+			PRT_BEAMFORMING_ENTRY	pEntry;
+		#endif
 			if (pstat->sta_in_firmware != 1)
 				continue;
 
 			//2 BF_en
 		#if (BEAMFORMING_SUPPORT == 1)
-			BEAMFORMING_CAP Beamform_cap = Beamforming_GetEntryBeamCapByMacId(priv, pstat->aid);
-			PRT_BEAMFORMING_ENTRY	pEntry = Beamforming_GetEntryByMacId(priv, pstat->aid, &Idx);
+			Beamform_cap = Beamforming_GetEntryBeamCapByMacId(priv, pstat->aid);
+			pEntry = Beamforming_GetEntryByMacId(priv, pstat->aid, &Idx);
 
 			if (Beamform_cap & (BEAMFORMER_CAP_HT_EXPLICIT | BEAMFORMER_CAP_VHT_SU))	{
 
@@ -1936,7 +1933,6 @@ phydm_UpdateHalRAMask(
 	)
 {
 	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
-	u4Byte			mask_rate_threshold;
 	u1Byte			phydm_RfType;
 	u1Byte			phydm_BW;
 	u4Byte			ratr_bitmap = *ratr_bitmap_lsb_in, ratr_bitmap_msb = *ratr_bitmap_msb_in;
@@ -2079,7 +2075,6 @@ phydm_RA_level_decision(
 	)
 {
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
-	u1Byte	ra_lowest_rate;
 	u1Byte	ra_rate_floor_table[RA_FLOOR_TABLE_SIZE] = {20, 34, 38, 42, 46, 50, 100}; /*MCS0 ~ MCS4 , VHT1SS MCS0 ~ MCS4 , G 6M~24M*/
 	u1Byte	new_Ratr_State = 0;
 	u1Byte	i;
@@ -2440,7 +2435,6 @@ phydm_rate_order_compute(
 	IN	u1Byte	rate_idx
 	)
 {
-	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	u1Byte		rate_order = 0;
 
 	if (rate_idx >= ODM_RATEVHTSS4MCS0) {
@@ -3289,7 +3283,7 @@ VOID
 phydm_gen_ramask_h2c_AP(
 	IN		PVOID			pDM_VOID,
 	IN		struct rtl8192cd_priv *priv,
-	IN		PSTA_INFO_T		*pEntry,
+	IN		PSTA_INFO_T		pEntry,
 	IN		u1Byte			rssi_level
 )
 {
@@ -3323,7 +3317,7 @@ phydm_gen_ramask_h2c_AP(
 
 /* RA_MASK_PHYDMLIZE, will delete it later*/
 
-#if (RA_MASK_PHYDMLIZE_CE || RA_MASK_PHYDMLIZE_AP || RA_MASK_PHYDMLIZE_WIN)
+#if (defined(RA_MASK_PHYDMLIZE_CE) || defined(RA_MASK_PHYDMLIZE_AP) || defined(RA_MASK_PHYDMLIZE_WIN))
 
 BOOLEAN
 ODM_RAStateCheck(
@@ -3339,15 +3333,15 @@ ODM_RAStateCheck(
 	u1Byte HighRSSIThreshForRA = pRA->HighRSSIThresh;
 	u1Byte LowRSSIThreshForRA = pRA->LowRSSIThresh;
 	u1Byte RATRState;
-
+#if (DM_ODM_SUPPORT_TYPE & (ODM_AP))
+	u1Byte UltraLowRSSIThreshForRA = pRA->UltraLowRSSIThresh;
+#endif
 	ODM_RT_TRACE(pDM_Odm, ODM_COMP_RA_MASK, ODM_DBG_LOUD, ("RSSI= (( %d )), Current_RSSI_level = (( %d ))\n", RSSI, *pRATRState));
 	ODM_RT_TRACE(pDM_Odm, ODM_COMP_RA_MASK, ODM_DBG_LOUD, ("[Ori RA RSSI Thresh]  High= (( %d )), Low = (( %d ))\n", HighRSSIThreshForRA, LowRSSIThreshForRA));
 	/* Threshold Adjustment:*/
 	/* when RSSI state trends to go up one or two levels, make sure RSSI is high enough.*/
 	/* Here GoUpGap is added to solve the boundary's level alternation issue.*/
 #if (DM_ODM_SUPPORT_TYPE & (ODM_AP))
-	u1Byte UltraLowRSSIThreshForRA = pRA->UltraLowRSSIThresh;
-
 	if (pDM_Odm->SupportICType == ODM_RTL8881A)
 		LowRSSIThreshForRA = 30;		/* for LDPC / BCC switch*/
 #endif

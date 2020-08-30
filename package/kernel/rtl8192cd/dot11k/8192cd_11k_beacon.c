@@ -285,7 +285,7 @@ unsigned char rm_get_op_class(struct rtl8192cd_priv *priv, unsigned char channel
     int i,j;
     const OP_CLASS * op_class_array = NULL;
     int op_class_array_len;
-    unsigned char * channel_array;
+    const unsigned char * channel_array;
 
     switch(priv->pmib->dot11StationConfigEntry.dot11RegDomain)
     {
@@ -1188,7 +1188,7 @@ int rm_collect_bss_info(struct rtl8192cd_priv *priv, struct rx_frinfo *pfrinfo)
 
         beacon_rep->subelements[1] = beacon_rep->subelements_len - 2;
     }
-
+	return 0;
 }
 
 void rm_beacon_done(struct rtl8192cd_priv *priv)

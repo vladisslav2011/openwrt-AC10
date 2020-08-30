@@ -620,7 +620,7 @@ typedef BOOLEAN
     IN  PVOID           pDescData,
     IN  PVOID           pTxDesc,
     IN  u4Byte          direction,
-    IN  u4Byte          index
+    IN  BOOLEAN         useHW
     );
 
 typedef RT_STATUS
@@ -897,7 +897,7 @@ typedef VOID
 (*NicSetRsvdPageHandler) (
 	IN  IN HAL_PADAPTER     Adapter,
     IN  pu1Byte             prsp,
-    IN  pu1Byte             beaconbuf,
+    IN  pu4Byte             beaconbuf,
     IN  u4Byte              pktLen,
     IN  u4Byte              bigPktLen,
     IN  u4Byte              bcnLen

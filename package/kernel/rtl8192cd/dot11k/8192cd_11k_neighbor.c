@@ -150,11 +150,11 @@ issue_neighbor_report_fail:
 
 void OnNeighborReportRequest(struct rtl8192cd_priv *priv, struct stat_info *pstat, unsigned char *pframe, int frame_len)
 {
-    int len;
-    unsigned char * p;
+	int len;
+	unsigned char * p;
 
-    if((OPMODE & WIFI_AP_STATE) == 0)
-        return;
+	if((OPMODE & WIFI_AP_STATE) == 0)
+		return;
 
 	// checking SSID
 	p = get_ie(pframe + 3, _SSID_IE_, &len, frame_len-3);
@@ -302,7 +302,7 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
     if (p)
     {
         sta_count = le16_to_cpu(*(unsigned short *)(p+2));
-        channel_utilization = p+4;
+        channel_utilization = *(p+4);
     }
 
     memcpy(priv->rm_neighbor_info[i].ssid, ssid_ptr, ssid_len);
@@ -319,7 +319,7 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
    		priv->rm_neighbor_report[i].subelemnt.preference = getPreferredVal(priv, channel_utilization, pfrinfo->rssi<<1, 0);
     }
 #endif
-
+	return 0;
 }
 
 #ifdef CLIENT_MODE

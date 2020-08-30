@@ -60,9 +60,8 @@ unsigned char getPreferredVal(struct rtl8192cd_priv *priv, unsigned char channel
 				panic_printk("Undefined Algorithm Type! \n");
 				break;
 		}
-
-		return retval;
 	}
+	return retval;
 }
 
 #ifdef CONFIG_IEEE80211V_CLI
@@ -235,9 +234,9 @@ void send_bss_trans_event(struct rtl8192cd_priv *priv, struct stat_info *pstat, 
 		pstat->expire_to = MAX_FTREASSOC_DEADLINE;
 
 #ifdef RTK_SMART_ROAMING
-	if(issue_BSS_Trans_Req(priv, priv->bssTransPara.addr, NULL) == SUCCESS )
+	if(issue_BSS_Trans_Req(priv, priv->bssTransPara.addr, 0) == SUCCESS )
 #else
-	if(issue_BSS_Trans_Req(priv, priv->transition_list[i].addr, NULL) == SUCCESS)
+	if(issue_BSS_Trans_Req(priv, priv->transition_list[i].addr, 0) == SUCCESS)
 #endif
 	{
 		pstat->bssTransExpiredTime = 0;
@@ -1053,21 +1052,20 @@ static void process_status_code( struct stat_info *pstat, unsigned char status_c
 void OnBSSTransRsp(struct rtl8192cd_priv *priv, struct stat_info *pstat, unsigned char*pframe, int frame_len)
 {
 	int frlen = 0;
+	unsigned char status_code = pframe[3];
+	unsigned char bss_termination_delay = pframe[4];	//mins
 
 	if(frame_len < 3) {
 		panic_printk("Ignore too short BSS Trans Management RSP!\n");
 		return;
 	}
 
-	unsigned char dialog_token = pframe[2];
-	unsigned char status_code = pframe[3];
-	unsigned char bss_termination_delay = pframe[4];	//mins
 	frlen = 5;
 
 	if((frame_len - frlen) > MAX_LIST_LEN)
 		return;
 
-	DOT11VTRACE("dialog_token = %d, bss_termination_delay = %d\n", dialog_token, bss_termination_delay);
+	DOT11VTRACE("dialog_token = %d, bss_termination_delay = %d\n", /*dialog_token*/pframe[2], bss_termination_delay);
 	process_status_code(pstat, status_code);
 	pstat->bssTransExpiredTime = 0;
 	pstat->bssTransTriggered = 0;
@@ -1091,14 +1089,14 @@ void OnBSSTransRsp(struct rtl8192cd_priv *priv, struct stat_info *pstat, unsigne
 void OnBSSTransQuery(struct rtl8192cd_priv *priv, struct stat_info *pstat, unsigned char*pframe, int frame_len)
 {
 	int list_len;
+	unsigned char dialog_token = pframe[2];
+	unsigned char reason  = pframe[3];
 
 	if(frame_len < 2) {
 		DEBUG_ERR("Ignore too short BSS Transition Management Query!\n");
 		return;
 	}
 
-	unsigned char dialog_token = pframe[2];
-	unsigned char reason  = pframe[3];
 
 	DOT11VTRACE("dialog_token = %d, reason = %d\n", dialog_token, reason);
 

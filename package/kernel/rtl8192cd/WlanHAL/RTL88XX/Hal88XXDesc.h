@@ -6,7 +6,7 @@
             (((Dw) & ~((Mask)<<(Shift)))|(((Value32)&(Mask))<<(Shift)))
 
 
-#if CFG_HAL_CHECK_SWAP
+#ifdef CFG_HAL_CHECK_SWAP
 
 //No Clear First
 #define SET_DESC_FIELD_NO_CLR(Dw, Value32, Mask, Shift)   \

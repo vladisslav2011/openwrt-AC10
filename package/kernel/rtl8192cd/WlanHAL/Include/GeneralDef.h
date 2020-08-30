@@ -40,9 +40,9 @@
     #define _FALSE              0
 #endif
 
-#ifndef BIT
-#define BIT(x)		(1 << (x))
-#endif
+// #ifndef BIT
+// #define BIT(x)		(1 << (x))
+// #endif
 
 #ifndef BIT0
 #define BIT0		0x00000001

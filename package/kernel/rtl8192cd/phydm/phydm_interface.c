@@ -819,7 +819,9 @@ ODM_FillH2CCmd(
 	IN	pu1Byte			pCmdBuffer
 )
 {
+#if (DM_ODM_SUPPORT_TYPE & ODM_WIN)
 	PADAPTER 	Adapter = pDM_Odm->Adapter;
+#endif
 	u1Byte		platform_h2c_id;
 
 	platform_h2c_id=phydm_trans_h2c_id(pDM_Odm, phydm_h2c_id);

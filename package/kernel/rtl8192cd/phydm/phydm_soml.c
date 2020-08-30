@@ -237,7 +237,7 @@ else if (p_dm_odm->SupportICType == ODM_RTL8822B) {
 	}
 
 	for (i = 0; i < VHT_RATE_IDX; i++) {
-		byte_total += p_dm_soml_table->num_ht_bytes[i];
+		byte_total += p_dm_soml_table->num_vht_bytes[i];
 	}
 
 	ODM_RT_TRACE(p_dm_odm, ODM_COMP_ADAPTIVE_SOML, ODM_DBG_LOUD, ("[ byte_total = %d ]\n", byte_total));
@@ -254,7 +254,6 @@ phydm_soml_statistics(
 {
 	PDM_ODM_T				p_dm_odm = (PDM_ODM_T)pDM_VOID;
 	struct _ADAPTIVE_SOML_	*p_dm_soml_table = &(p_dm_odm->dm_soml_table);
-	ODM_PHY_DBG_INFO_T		*p_dbg = &(p_dm_odm->PhyDbgInfo);
 
 	u8	i;
 	u32	num_bytes_diff;

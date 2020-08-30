@@ -17,9 +17,9 @@ Major Change History:
 
 
 //3  Driver provide some header files in order to eliminate warning message
+#include "8192cd_cfg.h"             /// ??????
 #include "Wlan_TypeDef.h"
 #include "Wlan_QoSType.h"
-#include "8192cd_cfg.h"             /// ??????
 #include "wifi.h"
 #include "8192cd.h"
 #include "8192cd_util.h"

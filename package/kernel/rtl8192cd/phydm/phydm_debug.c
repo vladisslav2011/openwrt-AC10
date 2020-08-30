@@ -268,7 +268,7 @@ phydm_bb_debug_info_n_series(
 	u4Byte used = *_used;
 	u4Byte out_len = *_out_len;
 
-	u4Byte	value32 = 0, value32_1 = 0, value32_2 = 0, value32_3 = 0;
+	u4Byte	value32 = 0, value32_1 = 0;
 	u1Byte	rf_gain_a = 0, rf_gain_b = 0, rf_gain_c = 0, rf_gain_d = 0;
 	u1Byte	rx_snr_a = 0, rx_snr_b = 0, rx_snr_c = 0, rx_snr_d = 0;
 
@@ -1047,7 +1047,6 @@ VOID phydm_BasicProfile(
 	char *ICType = NULL;
 	u4Byte used = *_used;
 	u4Byte out_len = *_out_len;
-	u4Byte	commit_ver = 0;
 	u4Byte	date = 0;
 	char	*commit_by = NULL;
 	u4Byte	release_ver = 0;
@@ -1906,7 +1905,6 @@ phydm_cmd_parser(
 	u1Byte id = 0;
 	int var1[10] = {0};
 	int i, input_idx = 0, phydm_ary_size;
-	char help[] = "-h";
 
 	if (flag == 0) {
 		PHYDM_SNPRINTF((output + used, out_len - used, "GET, nothing to print\n"));
@@ -2413,7 +2411,6 @@ phydm_cmd_parser(
 	case PHYDM_NHM:
 	{
 		u1Byte		target_rssi;
-		u4Byte		value32;
 		u2Byte		nhm_period = 0xC350;	//200ms
 		u1Byte		IGI;
 		PCCX_INFO	CCX_INFO = &pDM_Odm->DM_CCX_INFO;
@@ -2785,7 +2782,7 @@ phydm_fw_trace_handler_code(
 	//	function, dbg_num, content_0, content_1, content_2, content_3, content_4));
 
 	/*--------------------------------------------*/
-#if (CONFIG_RA_FW_DBG_CODE)
+#if defined(CONFIG_RA_FW_DBG_CODE)
 	if(function == RATE_DECISION) {
 		if(dbg_num == 0) {
 			if(content_0 == 1) {
