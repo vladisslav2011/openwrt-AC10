@@ -22,7 +22,7 @@
 
 #ifdef DFS
 
-
+#undef DFS_VERSION
 #define DFS_VERSION		"2.0.14"
 
 
@@ -867,8 +867,7 @@ void rtl8192cd_ch144_timer(unsigned long task_priv)
 unsigned int DFS_SelectChannel(struct rtl8192cd_priv *priv)
 {
     unsigned int random;
-    unsigned int num, random_base, which_channel = -1;
-    int reg = priv->pmib->dot11StationConfigEntry.dot11RegDomain;
+    unsigned int num, which_channel = -1;
 
     if(priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_80){
         // When user select band 3 with 80M channel bandwidth

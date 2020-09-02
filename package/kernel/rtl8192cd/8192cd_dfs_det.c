@@ -120,14 +120,14 @@ void Scan_BB_PSD(
 	// Turn off TX
 	// Pause TX Queue
 	if (!priv->pmib->dot11DFSEntry.disable_tx)
-		ODM_Write1Byte(pDM_Odm, 0x522, 0xFF); //REG_TXPAUSE §ï¬°0x522
+		ODM_Write1Byte(pDM_Odm, 0x522, 0xFF); //REG_TXPAUSE ï¿½ï¬°0x522
 
 	// Turn off CCA
 	if((GET_CHIP_VER(priv) == VERSION_8814A) || (GET_CHIP_VER(priv) == VERSION_8822B)){
-		ODM_SetBBReg(pDM_Odm, 0x838, BIT1, 0x1); //838[1] ³]¬°1
+		ODM_SetBBReg(pDM_Odm, 0x838, BIT1, 0x1); //838[1] ï¿½]ï¿½ï¿½1
 	}
 	else{
-		ODM_SetBBReg(pDM_Odm, 0x838, BIT3, 0x1); //838[3] ³]¬°1
+		ODM_SetBBReg(pDM_Odm, 0x838, BIT3, 0x1); //838[3] ï¿½]ï¿½ï¿½1
 	}
 
 	// PHYTXON while loop
@@ -146,11 +146,11 @@ void Scan_BB_PSD(
 	odm_PauseDIG(pDM_Odm, PHYDM_PAUSE, PHYDM_PAUSE_LEVEL_7, initial_gain);
 
 	// Turn off 3-wire
-	ODM_SetBBReg(pDM_Odm, 0xC00, BIT1|BIT0, 0x0); //c00[1:0] ¼g0
+	ODM_SetBBReg(pDM_Odm, 0xC00, BIT1|BIT0, 0x0); //c00[1:0] ï¿½g0
 
 	// pts value = 128, 256, 512, 1024
-	ODM_SetBBReg(pDM_Odm, 0x910, BIT14|BIT15, 0x1); //910[15:14]³]¬°1, ¥Î256ÂI
-	ODM_SetBBReg(pDM_Odm, 0x910, BIT12|BIT13, 0x1); //910[13:12]³]¬°1, avg 8 ¦¸
+	ODM_SetBBReg(pDM_Odm, 0x910, BIT14|BIT15, 0x1); //910[15:14]ï¿½]ï¿½ï¿½1, ï¿½ï¿½256ï¿½I
+	ODM_SetBBReg(pDM_Odm, 0x910, BIT12|BIT13, 0x1); //910[13:12]ï¿½]ï¿½ï¿½1, avg 8 ï¿½ï¿½
 
 	// scan in-band PSD
 	channel_org = ODM_GetRFReg(pDM_Odm, RF_PATH_A, RF_CHNLBW, 0x3FF);
@@ -212,7 +212,7 @@ void Scan_BB_PSD(
 	priv->pshare->No_RF_Write = 1;
 
 	// Turn on 3-wire
-	ODM_SetBBReg(pDM_Odm, 0xc00, BIT1|BIT0, 0x3); //c00[1:0] ¼g3
+	ODM_SetBBReg(pDM_Odm, 0xc00, BIT1|BIT0, 0x3); //c00[1:0] ï¿½g3
 
 	// Restore Current Settings
 	// Resume DIG
@@ -221,17 +221,17 @@ void Scan_BB_PSD(
 
 	//Turn on CCA
 	if((GET_CHIP_VER(priv) == VERSION_8814A) || (GET_CHIP_VER(priv) == VERSION_8822B)){
-		ODM_SetBBReg(pDM_Odm, 0x838, BIT1, 0); //838[1] ³]¬°0
+		ODM_SetBBReg(pDM_Odm, 0x838, BIT1, 0); //838[1] ï¿½]ï¿½ï¿½0
 	}
 	else{
-		ODM_SetBBReg(pDM_Odm, 0x838, BIT3, 0); //838[3] ³]¬°0
+		ODM_SetBBReg(pDM_Odm, 0x838, BIT3, 0); //838[3] ï¿½]ï¿½ï¿½0
 	}
 
 
 	// Turn on TX
 	// Resume TX Queue
 	if (!priv->pmib->dot11DFSEntry.disable_tx)
-		ODM_Write1Byte(pDM_Odm, 0x522, 0x00); //REG_TXPAUSE §ï¬°0x522
+		ODM_Write1Byte(pDM_Odm, 0x522, 0x00); //REG_TXPAUSE ï¿½ï¬°0x522
 
 	// CCK on
 	if (priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_2G)
@@ -261,7 +261,7 @@ void rtl8192cd_dfs_det_chk(struct rtl8192cd_priv *priv)
 	unsigned int total_pulse_count_inc=0, max_sht_pusle_cnt_th=0;
 	unsigned int sum, k, fa_flag=0;
 	unsigned int st_L2H_new=0, st_L2H_tmp, index=0, fault_flag_det, fault_flag_psd;
-	int flags=0;
+	unsigned long flags=0;
 	unsigned long throughput = 0;
 	int j;
 

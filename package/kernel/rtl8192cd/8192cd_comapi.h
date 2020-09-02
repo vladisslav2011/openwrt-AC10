@@ -17,7 +17,7 @@
 #include "./8192cd.h"
 
 typedef struct rtl8192cd_priv	RTL_PRIV;
-#define MAX_CONFIG_FILE_SIZE (64*1024) // for 8192, added to 64k
+#define MAX_CONFIG_FILE_SIZE (20*1024) // for 8192, added to 20k
 #define MAX_PARAM_BUF_SIZE (1024) // for 8192, added to 20k
 
 #ifdef CONFIG_RTL_COMAPI_CFGFILE

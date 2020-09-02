@@ -276,8 +276,8 @@ phydm_AutoChannelSelectSettingAP(
     //3 ACS Setting
     else if(setting == ACS_NHM_SETTING)
     {
-        ODM_RT_TRACE(pDM_Odm, ODM_COMP_ACS, ODM_DBG_LOUD, ("ACS_NHM_SETTING\n"));
         u2Byte  period;
+        ODM_RT_TRACE(pDM_Odm, ODM_COMP_ACS, ODM_DBG_LOUD, ("ACS_NHM_SETTING\n"));
         period = 0x61a8;
         pACS->ACS_Step = acs_step;
 
@@ -362,7 +362,6 @@ phydm_GetNHMStatisticsAP(
 )
 {
     PDM_ODM_T	    pDM_Odm = (PDM_ODM_T)pDM_VOID;
-    prtl8192cd_priv     priv    = pDM_Odm->priv;
     PACS                  pACS    = &pDM_Odm->DM_ACS;
     u4Byte                value32 = 0;
     u1Byte                i;

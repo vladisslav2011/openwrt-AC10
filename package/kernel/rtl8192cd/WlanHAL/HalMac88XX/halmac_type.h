@@ -1236,20 +1236,20 @@ typedef struct _HALMAC_PLATFORM_API {
 	/* send pBuf to h2c queue, the tx_desc is not included in pBuf, driver need to fill tx_desc with qsel = h2c */
 	u8 (*SEND_H2C_PKT)(VOID *pDriver_adapter, u8 *pBuf, u32 size);
 
-	u8 (*RTL_FREE)(VOID *pDriver_adapter, VOID *pBuf, u32 size);
+	VOID  (*RTL_FREE)(VOID *pDriver_adapter, VOID *pBuf, u32 size);
 	VOID* (*RTL_MALLOC)(VOID *pDriver_adapter, u32 size);
-	u8 (*RTL_MEMCPY)(VOID *pDriver_adapter, VOID *dest, VOID *src, u32 size);
-	u8 (*RTL_MEMSET)(VOID *pDriver_adapter, VOID *pAddress, u8 value, u32 size);
-	VOID (*RTL_DELAY_US)(VOID *pDriver_adapter, u32 us);
+	VOID  (*RTL_MEMCPY)(VOID *pDriver_adapter, VOID *dest, VOID *src, u32 size);
+	VOID  (*RTL_MEMSET)(VOID *pDriver_adapter, VOID *pAddress, u8 value, u32 size);
+	VOID  (*RTL_DELAY_US)(VOID *pDriver_adapter, u32 us);
 
-	u8 (*MUTEX_INIT)(VOID *pDriver_adapter, HALMAC_MUTEX *pMutex);
-	u8 (*MUTEX_DEINIT)(VOID *pDriver_adapter, HALMAC_MUTEX *pMutex);
-	u8 (*MUTEX_LOCK)(VOID *pDriver_adapter, HALMAC_MUTEX *pMutex);
-	u8 (*MUTEX_UNLOCK)(VOID *pDriver_adapter, HALMAC_MUTEX *pMutex);
+	VOID (*MUTEX_INIT)(VOID *pDriver_adapter, HALMAC_MUTEX *pMutex);
+	VOID (*MUTEX_DEINIT)(VOID *pDriver_adapter, HALMAC_MUTEX *pMutex);
+	VOID (*MUTEX_LOCK)(VOID *pDriver_adapter, HALMAC_MUTEX *pMutex, unsigned long * pflag);
+	VOID (*MUTEX_UNLOCK)(VOID *pDriver_adapter, HALMAC_MUTEX *pMutex, unsigned long * pflag);
 
 	u8 (*MSG_PRINT)(VOID *pDriver_adapter, u32 msg_type, u8 msg_level, s8 *fmt, ...);
 
-	u8 (*EVENT_INDICATION)(VOID *pDriver_adapter, HALMAC_FEATURE_ID feature_id, HALMAC_CMD_PROCESS_STATUS process_status, u8 *buf, u32 size);
+	VOID (*EVENT_INDICATION)(VOID *pDriver_adapter, HALMAC_FEATURE_ID feature_id, HALMAC_CMD_PROCESS_STATUS process_status, u8 *buf, u32 size);
 
 #if HALMAC_PLATFORM_TESTPROGRAM
 	VOID* (*PCI_ALLOC_COMM_BUFF)(VOID *pDriver_adapter, u32 size, u32 *physical_addr, u8 cache_en);

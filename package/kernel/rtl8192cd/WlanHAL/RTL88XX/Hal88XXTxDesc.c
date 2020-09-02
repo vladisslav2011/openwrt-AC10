@@ -116,7 +116,7 @@ void DumpTxBDesc88XX(
         REG_HI4Q_TXBD_DESA, REG_HI5Q_TXBD_DESA, REG_HI6Q_TXBD_DESA, REG_HI7Q_TXBD_DESA,
         REG_BCNQ_TXBD_DESA
     };
-	PHCI_TX_DMA_MANAGER_88XX    ptx_dma         = (PHCI_TX_DMA_MANAGER_88XX)(_GET_HAL_DATA(Adapter)->PTxDMA88XX);;
+	PHCI_TX_DMA_MANAGER_88XX    ptx_dma         = (PHCI_TX_DMA_MANAGER_88XX)(_GET_HAL_DATA(Adapter)->PTxDMA88XX);
 	int                         i               = 0;
 	PTX_DESC_88XX               ptx_desc_head   = ptx_dma->tx_queue[q_num].ptx_desc_head;
 	PTX_BUFFER_DESCRIPTOR       ptxbd = ptx_dma->tx_queue[q_num].pTXBD_head;
@@ -251,7 +251,7 @@ PrepareTXBD88XX(
     PTX_BUFFER_DESCRIPTOR       ptxbd;
 
     PTX_BUFFER_DESCRIPTOR       ptxbd_bcn_head;
-    PTX_DESC_88XX               ptxdesc_bcn_head;
+    PTX_DESC_88XX               ptxdesc_bcn_head = NULL;
     PTX_BUFFER_DESCRIPTOR       ptxbd_bcn_cur;
 
     PTX_DESC_88XX               ptx_desc;
@@ -263,16 +263,15 @@ PrepareTXBD88XX(
     u4Byte                      beacon_offset;
     u4Byte                      TotalTXBDNum_NoBcn;
     u4Byte                      TXDESCSize;
-    u4Byte                      HCI_TX_DMA_QUEUE_MAX;
-    u4Byte                      TXBD_RWPtr_Reg_CMDQ;
-    u4Byte                      TXBD_Reg_CMDQ;
+    u4Byte                      TXBD_RWPtr_Reg_CMDQ = 0;
+    u4Byte                      TXBD_Reg_CMDQ = 0;
 
     //HCI_TX_DMA_QUEUE_MAX = HCI_TX_DMA_QUEUE_MAX_NUM;
 
 #if CFG_HAL_TX_AMSDU
-    pu1Byte                         pdesc_dma_buf_amsdu, desc_dma_buf_start_amsdu;
+    pu1Byte                         pdesc_dma_buf_amsdu = NULL, desc_dma_buf_start_amsdu = NULL;
     PHCI_TX_AMSDU_DMA_MANAGER_88XX  ptx_dma_amsdu;
-    PTX_BUFFER_DESCRIPTOR_AMSDU     ptxbd_head_amsdu;
+//    PTX_BUFFER_DESCRIPTOR_AMSDU     ptxbd_head_amsdu;
 #endif
 
 #ifdef WLAN_SUPPORT_H2C_PACKET
@@ -303,23 +302,7 @@ PrepareTXBD88XX(
         TX_CMDQ_TXBD_NUM, TX_BCNQ_TXBD_NUM_V1
     };
 #endif  //#if (IS_EXIST_RTL8192EE || IS_EXIST_RTL8814AE || IS_EXIST_RTL8197FEM || IS_EXIST_RTL8822BE)
-
-    // setting CMDQ register by chip
-#if (IS_EXIST_RTL8881AEM || IS_EXIST_RTL8192EE || IS_EXIST_RTL8814AE)
-        if ( IS_HARDWARE_TYPE_8881A(Adapter) || IS_HARDWARE_TYPE_8192EE(Adapter) || IS_HARDWARE_TYPE_8814AE(Adapter)) {
-            TXBD_RWPtr_Reg_CMDQ = 0;
-            TXBD_Reg_CMDQ       = 0;
-        }
-#endif  //#if (IS_EXIST_RTL8881AEM || IS_EXIST_RTL8192EE || IS_EXIST_RTL8814AE || IS_EXIST_RTL8197FEM)
-
-#if IS_EXIST_RTL8822BE || IS_EXIST_RTL8197FEM
-        if ( IS_HARDWARE_TYPE_8822B(Adapter) || IS_HARDWARE_TYPE_8197F(Adapter))  {
-            TXBD_RWPtr_Reg_CMDQ = REG_H2CQ_TXBD_IDX;
-            TXBD_Reg_CMDQ       = REG_H2CQ_TXBD_DESA;
-        }
-#endif //IS_EXIST_RTL8822BE
-
-
+    
     // TXBD_RWPtr_Reg: no entry for beacon queue, set NULL here
     u4Byte  TXBD_RWPtr_Reg[HCI_TX_DMA_QUEUE_MAX_NUM] =
     {
@@ -338,6 +321,25 @@ PrepareTXBD88XX(
         REG_HI4Q_TXBD_DESA, REG_HI5Q_TXBD_DESA, REG_HI6Q_TXBD_DESA, REG_HI7Q_TXBD_DESA,
         TXBD_Reg_CMDQ,REG_BCNQ_TXBD_DESA
     };
+
+
+    // setting CMDQ register by chip
+#if (IS_EXIST_RTL8881AEM || IS_EXIST_RTL8192EE || IS_EXIST_RTL8814AE)
+        if ( IS_HARDWARE_TYPE_8881A(Adapter) || IS_HARDWARE_TYPE_8192EE(Adapter) || IS_HARDWARE_TYPE_8814AE(Adapter)) {
+            TXBD_RWPtr_Reg_CMDQ = 0;
+            TXBD_Reg_CMDQ       = 0;
+        }
+#endif  //#if (IS_EXIST_RTL8881AEM || IS_EXIST_RTL8192EE || IS_EXIST_RTL8814AE || IS_EXIST_RTL8197FEM)
+
+#if IS_EXIST_RTL8822BE || IS_EXIST_RTL8197FEM
+        if ( IS_HARDWARE_TYPE_8822B(Adapter) || IS_HARDWARE_TYPE_8197F(Adapter))  {
+            TXBD_RWPtr_Reg_CMDQ = REG_H2CQ_TXBD_IDX;
+            TXBD_Reg_CMDQ       = REG_H2CQ_TXBD_DESA;
+            TXBD_RWPtr_Reg[13]  = TXBD_RWPtr_Reg_CMDQ;
+            TXBD_Reg[13]        = TXBD_Reg_CMDQ;
+        }
+#endif //IS_EXIST_RTL8822BE
+
 
 #if IS_EXIST_RTL8881AEM
     if ( IS_HARDWARE_TYPE_8881A(Adapter) ) {
@@ -551,7 +553,9 @@ printk("%s(%d), q_num:%d, TXBD_RWPtr_Reg:0x%x, TXBD_Reg:0x%x, ptxbd:%p %08lx, pt
     return RT_STATUS_SUCCESS;
 #endif
 
+#ifdef CONFIG_NET_PCI
 original:
+#endif
 
 #if CFG_HAL_TX_AMSDU
     if ( IS_SUPPORT_TX_AMSDU(Adapter) ) {
@@ -629,7 +633,7 @@ original:
 		if(TXBD_RWPtr_Reg[q_num])
         	HAL_RTL_W32(TXBD_RWPtr_Reg[q_num], 0);
 		if(TXBD_Reg[q_num]){
-            HAL_RTL_W32(TXBD_Reg[q_num], HAL_VIRT_TO_BUS((u4Byte)ptxbd) + CONFIG_LUNA_SLAVE_PHYMEM_OFFSET_HAL);
+            HAL_RTL_W32(TXBD_Reg[q_num], HAL_VIRT_TO_BUS(ptxbd) + CONFIG_LUNA_SLAVE_PHYMEM_OFFSET_HAL);
 #ifdef PCIE_POWER_SAVING_TEST
             _GET_HAL_DATA(Adapter)->txBD_dma_ring_addr[q_num] = HAL_VIRT_TO_BUS((u4Byte)ptxbd) + CONFIG_LUNA_SLAVE_PHYMEM_OFFSET_HAL;
 #endif
@@ -652,7 +656,7 @@ original:
                         TXDESCSize, \
                         TXBD_DW0_TXBUFSIZE_MSK, TXBD_DW0_TXBUFSIZE_SH);
                 SET_DESC_FIELD_CLR(ptxbd[i].TXBD_ELE[0].Dword1, \
-                        HAL_VIRT_TO_BUS((u4Byte)&ptx_desc[i]) + CONFIG_LUNA_SLAVE_PHYMEM_OFFSET_HAL, \
+                        HAL_VIRT_TO_BUS(&ptx_desc[i]) + CONFIG_LUNA_SLAVE_PHYMEM_OFFSET_HAL, \
                         TXBD_DW1_PHYADDR_LOW_MSK, TXBD_DW1_PHYADDR_LOW_SH);
 
                 PlatformZeroMemory(&(ptxbd[i].TXBD_ELE[1]), sizeof(TXBD_ELEMENT)*(TXBD_ELE_NUM-1));
@@ -714,7 +718,7 @@ original:
                         TXDESCSize, \
                         TXBD_DW0_TXBUFSIZE_MSK, TXBD_DW0_TXBUFSIZE_SH);
                 SET_DESC_FIELD_CLR(ptxbd_bcn_cur->TXBD_ELE[0].Dword1, \
-                        HAL_VIRT_TO_BUS((u4Byte)&ptx_desc[i]) + CONFIG_LUNA_SLAVE_PHYMEM_OFFSET_HAL, \
+                        HAL_VIRT_TO_BUS(&ptx_desc[i]) + CONFIG_LUNA_SLAVE_PHYMEM_OFFSET_HAL, \
                         TXBD_DW1_PHYADDR_LOW_MSK, TXBD_DW1_PHYADDR_LOW_SH);
 #ifdef TRXBD_CACHABLE_REGION
                 _dma_cache_wback((unsigned long)(&(ptxbd_bcn_cur->TXBD_ELE[0])-CONFIG_LUNA_SLAVE_PHYMEM_OFFSET),
@@ -739,10 +743,22 @@ original:
     //ptx_dma_amsdu = pdesc_dma_buf_amsdu;
 
     // BK, BE, VI, VO
-    ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_BK].pTXBD_head_amsdu = pdesc_dma_buf_amsdu;
-    ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_BE].pTXBD_head_amsdu = (pu1Byte)ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_BK].pTXBD_head_amsdu + TX_BKQ_TXBD_NUM * sizeof(TXBD_ELEMENT)* MAX_NUM_OF_MSDU_IN_AMSDU;
-    ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_VI].pTXBD_head_amsdu = (pu1Byte)ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_BE].pTXBD_head_amsdu + TX_BEQ_TXBD_NUM * sizeof(TXBD_ELEMENT)* MAX_NUM_OF_MSDU_IN_AMSDU;
-    ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_VO].pTXBD_head_amsdu = (pu1Byte)ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_VI].pTXBD_head_amsdu + TX_VIQ_TXBD_NUM * sizeof(TXBD_ELEMENT)* MAX_NUM_OF_MSDU_IN_AMSDU;
+    ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_BK].pTXBD_head_amsdu = (PTX_BUFFER_DESCRIPTOR_AMSDU)pdesc_dma_buf_amsdu;
+    ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_BE].pTXBD_head_amsdu = (PTX_BUFFER_DESCRIPTOR_AMSDU)
+    	(
+    		(pu1Byte)ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_BK].pTXBD_head_amsdu +
+    		TX_BKQ_TXBD_NUM * sizeof(TXBD_ELEMENT)* MAX_NUM_OF_MSDU_IN_AMSDU
+    	);
+    ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_VI].pTXBD_head_amsdu =(PTX_BUFFER_DESCRIPTOR_AMSDU)
+    	(
+    		(pu1Byte)ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_BE].pTXBD_head_amsdu +
+    		TX_BEQ_TXBD_NUM * sizeof(TXBD_ELEMENT)* MAX_NUM_OF_MSDU_IN_AMSDU
+    	);
+    ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_VO].pTXBD_head_amsdu =(PTX_BUFFER_DESCRIPTOR_AMSDU)
+    	(
+    		(pu1Byte)ptx_dma_amsdu->tx_amsdu_queue[HCI_TX_AMSDU_DMA_QUEUE_VI].pTXBD_head_amsdu +
+    		TX_VIQ_TXBD_NUM * sizeof(TXBD_ELEMENT)* MAX_NUM_OF_MSDU_IN_AMSDU
+    	);
     }
 #endif
 
@@ -750,6 +766,7 @@ original:
 }
 
 
+#if 0
 static BOOLEAN
 IsTXBDFull88XX(
     IN   HAL_PADAPTER               Adapter,
@@ -769,7 +786,7 @@ IsTXBDFull88XX(
     }
     return _FALSE;
 }
-
+#endif
 
 #if IS_EXIST_RTL8192EE || IS_EXIST_RTL8881AEM || IS_EXIST_RTL8814AE
 
@@ -1348,7 +1365,7 @@ SyncSWTXBDHostIdxToHW88XX (
     else {
         LastHostIdx = cur_q->host_idx - 1;
     }
-#if WLAN_HAL_TXDESC_CHECK_ADDR_LEN
+#ifdef WLAN_HAL_TXDESC_CHECK_ADDR_LEN
 #if IS_EXIST_RTL8881AEM
     if ( IS_HARDWARE_TYPE_8881A(Adapter) ) {
     pu4Byte pTxDescPhyAddr, pTxDescLen, pTxPSBLen;
@@ -1411,7 +1428,7 @@ SetTxBufferDesc88XX (
     PTX_BUFFER_DESCRIPTOR           cur_txbd;
     u1Byte                          i;
     u4Byte                          TotalLen    = 0;
-    u4Byte                          PSBLen;
+    u4Byte                          PSBLen = 0;
     // if each queue num is different, need modify this number....
     u4Byte                          TXBDSegNum  = TXBD_ELE_NUM;
     u4Byte                          hdrLen      = pdesc_data->hdrLen + pdesc_data->llcLen;
@@ -1420,8 +1437,8 @@ SetTxBufferDesc88XX (
     u4Byte                          TXDESCSize;
 
 #if CFG_HAL_TX_AMSDU
-    PHCI_TX_AMSDU_DMA_MANAGER_88XX  ptx_dma_amsdu;
-    PTX_BUFFER_DESCRIPTOR_AMSDU     cur_txbd_amsdu;
+    PHCI_TX_AMSDU_DMA_MANAGER_88XX  ptx_dma_amsdu = 0;
+    PTX_BUFFER_DESCRIPTOR_AMSDU     cur_txbd_amsdu = NULL;
 #endif
 
 #ifdef MERGE_TXDESC_HEADER_PAYLOAD
@@ -1686,7 +1703,7 @@ SetTxBufferDesc88XX (
     //3 Final one HW IO of Tx Pkt
     TxPktFinalIO88XX(Adapter, cur_txbd, TxPktFinalIO88XX_WRITE, PSBLen);
 
-#if WLAN_HAL_TXDESC_CHECK_ADDR_LEN
+#ifdef WLAN_HAL_TXDESC_CHECK_ADDR_LEN
 #if IS_EXIST_RTL8881AEM
     if ( IS_HARDWARE_TYPE_8881A(Adapter) ) {
     _GET_HAL_DATA(Adapter)->cur_txbd                = cur_txbd;
@@ -2312,7 +2329,7 @@ SigninBeaconTXBD88XX
     PTX_BUFFER_DESCRIPTOR           pTXBD;
     PTX_DESC_88XX                   ptx_desc;
     u4Byte                          TotalLen;
-    u4Byte                          PSBLen;
+    u4Byte                          PSBLen = 0;
     u4Byte                          TXDESCSize;
 
     GetBeaconTXBDTXDESC88XX(Adapter, &pTXBD, &ptx_desc);
@@ -3378,6 +3395,22 @@ FillRsrvPageDesc88XX_V1
     }
 
 
+static inline u4Byte TXDESCSize_init(IN  HAL_PADAPTER    Adapter)
+{
+#if (IS_EXIST_RTL8197FEM)
+        if ( IS_HARDWARE_TYPE_8197F(Adapter) ) {
+            return SIZE_TXDESC_88XX;
+        }
+#endif  //IS_EXIST_RTL8814AE || IS_EXIST_RTL8197FEM)
+
+#if IS_EXIST_RTL8822BE
+        if ( IS_HARDWARE_TYPE_8822B(Adapter))  {
+            return SIZE_TXDESC_88XX_V1;
+        }
+#endif //IS_EXIST_RTL8822BE
+	return SIZE_TXDESC_88XX_V1;
+}
+
 VOID
 FillTxDesc88XX_V1 (
     IN  HAL_PADAPTER    Adapter,
@@ -3389,21 +3422,8 @@ FillTxDesc88XX_V1 (
     PHCI_TX_DMA_QUEUE_STRUCT_88XX   cur_q;
     PTX_DESC_88XX                   ptx_desc;
     PTX_DESC_DATA_88XX              pdesc_data = (PTX_DESC_DATA_88XX)pDescData;
-    u4Byte                          val;
-    u4Byte                          tmp,tmpCache;
-    u4Byte                          TXDESCSize;
+    u4Byte                          TXDESCSize = TXDESCSize_init(Adapter);
 
-#if (IS_EXIST_RTL8197FEM)
-        if ( IS_HARDWARE_TYPE_8197F(Adapter) ) {
-            TXDESCSize = SIZE_TXDESC_88XX;
-        }
-#endif  //IS_EXIST_RTL8814AE || IS_EXIST_RTL8197FEM)
-
-#if IS_EXIST_RTL8822BE
-        if ( IS_HARDWARE_TYPE_8822B(Adapter))  {
-            TXDESCSize = SIZE_TXDESC_88XX_V1;
-        }
-#endif //IS_EXIST_RTL8822BE
 
     //Dword 0
     u2Byte  TX_DESC_TXPKTSIZE        = pdesc_data->hdrLen + pdesc_data->llcLen + pdesc_data->frLen;
@@ -3476,7 +3496,9 @@ FillTxDesc88XX_V1 (
     BOOLEAN TX_DESC_RTY_LMT_EN       = pdesc_data->rtyLmtEn;
     u1Byte  TX_DESC_DATA_RT_LMT      = pdesc_data->dataRtyLmt;
     u1Byte  TX_DESC_RTSRATE          = pdesc_data->RTSRate;
+#if CFG_HAL_MULTICAST_BMC_ENHANCE
     u1Byte  TX_DESC_BMCRtyLmt        = pdesc_data->BMCRtyLmt;
+#endif
 
     //Dword 5
     u1Byte  TX_DESC_DATA_SC          = pdesc_data->dataSC;
@@ -3920,19 +3942,8 @@ FillHwShortCutTxDesc88XX_V1(
     PHCI_TX_DMA_QUEUE_STRUCT_88XX   cur_q;
     PTX_DESC_88XX                   ptx_desc;
     PTX_DESC_DATA_88XX              pdesc_data = (PTX_DESC_DATA_88XX)pDescData;
-    u4Byte                          TXDESCSize;
+    u4Byte                          TXDESCSize=TXDESCSize_init(Adapter);
 
-#if IS_EXIST_RTL8197FEM
-        if (IS_HARDWARE_TYPE_8197F(Adapter) ) {
-            TXDESCSize = SIZE_TXDESC_88XX;
-        }
-#endif  //IS_EXIST_RTL8814AE || IS_EXIST_RTL8197FEM)
-
-#if IS_EXIST_RTL8822BE
-        if ( IS_HARDWARE_TYPE_8822B(Adapter))  {
-            TXDESCSize = SIZE_TXDESC_88XX_V1;
-        }
-#endif //IS_EXIST_RTL8822BE
 
 	// Dword 0
 	u2Byte  TX_DESC_TXPKTSIZE		= pdesc_data->hdrLen + pdesc_data->llcLen + pdesc_data->frLen + pdesc_data->iv;

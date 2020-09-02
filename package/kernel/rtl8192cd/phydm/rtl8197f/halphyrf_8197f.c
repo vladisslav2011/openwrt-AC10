@@ -156,7 +156,7 @@ ODM_TxPwrTrackSetPwr8197F(
 {
 	PDM_ODM_T		pDM_Odm		= (PDM_ODM_T)pDM_VOID;
 	PODM_RF_CAL_T	pRFCalibrateInfo	= &(pDM_Odm->RFCalibrateInfo);
-	prtl8192cd_priv priv = pDM_Odm->priv;
+//	prtl8192cd_priv priv = pDM_Odm->priv;
 	s1Byte			Final_OFDM_Swing_Index = 0;
 	s1Byte			Final_CCK_Swing_Index = 0;
 	u4Byte			BitMask_10_0 = (BIT10 | BIT9 | BIT8 | BIT7 | BIT6 | BIT5 | BIT4 | BIT3 | BIT2 | BIT1 | BIT0);

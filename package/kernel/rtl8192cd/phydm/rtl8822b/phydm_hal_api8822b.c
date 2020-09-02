@@ -1265,7 +1265,7 @@ config_phydm_switch_band_8822b(
 		ODM_SetBBReg(pDM_Odm, 0x808, BIT28, 0x0);
 
 		/*CCA Mask*/
-		if ((!pDM_Odm->WIFITest==1) || ((DM_ODM_SUPPORT_TYPE == ODM_AP) && (pDM_Odm->WIFITest)))
+		if (!(pDM_Odm->WIFITest==1) || ((DM_ODM_SUPPORT_TYPE == ODM_AP) && (pDM_Odm->WIFITest)))
 			ODM_SetBBReg(pDM_Odm, 0x814, 0x0000FC00, 34); /*CCA mask = 13.6us*/
 		else
 			ODM_SetBBReg(pDM_Odm, 0x814, 0x0000FC00, 15); /*default value*/

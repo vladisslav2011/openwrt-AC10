@@ -55,6 +55,7 @@
 #include <linux/wireless.h>
 #include <net80211/ieee80211.h>
 #include <net80211/ieee80211_crypto.h>
+#undef NUM_ACL
 #include <net80211/ieee80211_ioctl.h>
 #include "./8192cd_net80211.h"
 
@@ -3483,6 +3484,7 @@ int set_mib(struct rtl8192cd_priv *priv, unsigned char *data)
 				if (QOS_ENABLE) {
 					if ( (memcmp(entry->name, "manual_edca", 11) == 0) ||
 						(memcmp(entry->name, "sta_", 4) == 0) || (memcmp(entry->name, "ap_", 3) == 0)) {
+						extern void dynamic_EDCA_para(struct rtl8192cd_priv *priv, int mode);
 						if ((OPMODE & WIFI_AP_STATE)
 #ifdef CLIENT_MODE
 							|| (OPMODE & WIFI_ADHOC_STATE)
@@ -3496,7 +3498,6 @@ int set_mib(struct rtl8192cd_priv *priv, unsigned char *data)
 							init_WMM_Para_Element(priv, priv->pmib->dot11QosEntry.WMM_IE);	//	WMM STA
 						}
 #endif
-						extern void dynamic_EDCA_para(struct rtl8192cd_priv *priv, int mode);
 						dynamic_EDCA_para(priv,  priv->pmib->dot11BssType.net_work_type);
 					}
 				}
@@ -4026,7 +4027,7 @@ int get_mib(struct rtl8192cd_priv *priv, unsigned char *data)
 	#define PRINT_INFO  printk
 #endif
 	struct iwpriv_arg *entry;
-	int i, len, *int_ptr, copy_len;
+	int i, *int_ptr, copy_len;
 	char tmpbuf[40];
 
 	DEBUG_TRACE;
@@ -6550,10 +6551,9 @@ int del_sta(struct rtl8192cd_priv *priv, unsigned char *data)
 {
 	struct stat_info *pstat;
 	unsigned char macaddr[MACADDRLEN], tmpbuf[3];
-#ifndef SMP_SYNC
+#ifdef SMP_SYNC
 	unsigned long flags;
 #endif
-	DOT11_DISASSOCIATION_IND Disassociation_Ind;
 	int i, send_disasoc=1;
 
 	if (!netif_running(priv->dev))
@@ -8332,116 +8332,118 @@ extern void rtl88XX_tx_dsr(unsigned long task_priv);
 
 void RX_MAC_Verify_8814(struct rtl8192cd_priv *priv,unsigned char * pframe,struct rx_frinfo *pfrinfo)
 {
-     PRX_DESC_88XX                   prx_desc;
-    int i;
-    unsigned char macid;
-    unsigned char pattern[5] = {0x55,0x55,0x55,0x55,0x55};
-    unsigned char pwrBit;
-    unsigned char payLoadMACid;
+	PRX_DESC_88XX                   prx_desc;
+	unsigned char pattern[5] = {0x55,0x55,0x55,0x55,0x55};
+#ifdef HW_DETEC_POWER_STATE
+	int i;
+	unsigned char macid;
+	unsigned char pwrBit;
+#endif
+	unsigned char payLoadMACid;
 
-    prx_desc                        = (PRX_DESC_88XX)(pframe-sizeof(RX_DESC_88XX));
+	prx_desc                        = (PRX_DESC_88XX)(pframe-sizeof(RX_DESC_88XX));
 
-    if(!memcmp((pframe+pfrinfo->hdr_len),&pattern,5))
-    {
+	if(!memcmp((pframe+pfrinfo->hdr_len),&pattern,5))
+	{
 
-       // printk("pfrinfo->macid = %x \n",pfrinfo->macid);
-        // Verify MACID
+	// printk("pfrinfo->macid = %x \n",pfrinfo->macid);
+		// Verify MACID
 
-        payLoadMACid = *(pframe+pfrinfo->hdr_len+6);
-    #ifdef HW_FILL_MACID
-        if(pfrinfo->macid < 0x7E)
-        {
-            if(pfrinfo->macid == payLoadMACid)
-            {
-                printk("macID %x match \n",pfrinfo->macid);
-            }
-            else
-            {
-               printk("macID mismatch HW = %x SW = %x \n",pfrinfo->macid,payLoadMACid);
+		payLoadMACid = *(pframe+pfrinfo->hdr_len+6);
+	#ifdef HW_FILL_MACID
+		if(pfrinfo->macid < 0x7E)
+		{
+			if(pfrinfo->macid == payLoadMACid)
+			{
+				printk("macID %x match \n",pfrinfo->macid);
+			}
+			else
+			{
+			printk("macID mismatch HW = %x SW = %x \n",pfrinfo->macid,payLoadMACid);
 
-               for(i=0 ; i<pfrinfo->hdr_len ;i++ )
-               {
-                   printk("%02X ",*(pframe+i));
+			for(i=0 ; i<pfrinfo->hdr_len ;i++ )
+			{
+				printk("%02X ",*(pframe+i));
 
-                   if((i%16)==15)
-                   {
-                       printk("\n");
-                   }
-               }
-               printk("\n\n");
-            }
-        }else if(pfrinfo->macid == 0x7E)
-        {
-            printk("Serious issue, HW detect macid fail = 0x7F \n");
-        }
-    #endif //HW_FILL_MACID
+				if((i%16)==15)
+				{
+					printk("\n");
+				}
+			}
+			printk("\n\n");
+			}
+		}else if(pfrinfo->macid == 0x7E)
+		{
+			printk("Serious issue, HW detect macid fail = 0x7F \n");
+		}
+	#endif //HW_FILL_MACID
 
-    #ifdef HW_DETEC_POWER_STATE
-        // Verify PowerBit
-        pwrBit = GetPwrMgt(pframe);
-        static u4Byte seq = 0;
-        static u4Byte carrier = 0;
+	#ifdef HW_DETEC_POWER_STATE
+		// Verify PowerBit
+		pwrBit = GetPwrMgt(pframe);
+		static u4Byte seq = 0;
+		static u4Byte carrier = 0;
 
 
-        if(pfrinfo->macid != 0x7F) {
-            //if(priv->testResult == true)
-            {
-                if(priv->pwrState[pfrinfo->macid]!= pwrBit) {
-                    priv->pwrStateCnt[pfrinfo->macid]++;
+		if(pfrinfo->macid != 0x7F) {
+			//if(priv->testResult == true)
+			{
+				if(priv->pwrState[pfrinfo->macid]!= pwrBit) {
+					priv->pwrStateCnt[pfrinfo->macid]++;
 
-                  if(!priv->test_Compare)
-                  {
-                     printk("[%s][%d]power state change at MACID:%x, Seq:%x, Cur Pwr:%x Cnt = %x HW pwr =%x HW seq=%x carrier =%x \n"
-                        ,__FUNCTION__,__LINE__,pfrinfo->macid,GetSequence(pframe),pwrBit,priv->pwrStateCnt[pfrinfo->macid],RTL_R8(0x1140),priv->hw_seq[1],carrier);
-                  }
+				if(!priv->test_Compare)
+				{
+					printk("[%s][%d]power state change at MACID:%x, Seq:%x, Cur Pwr:%x Cnt = %x HW pwr =%x HW seq=%x carrier =%x \n"
+						,__FUNCTION__,__LINE__,pfrinfo->macid,GetSequence(pframe),pwrBit,priv->pwrStateCnt[pfrinfo->macid],RTL_R8(0x1140),priv->hw_seq[1],carrier);
+				}
 
-                    // compare 128 HW/SW pwr bit
-                  if(priv->test_Compare)
-                    {
-                      // comapre pwr bit
-                      if(pwrBit!= priv->pwrHWState[pfrinfo->macid])
-                      {
+					// compare 128 HW/SW pwr bit
+				if(priv->test_Compare)
+					{
+					// comapre pwr bit
+					if(pwrBit!= priv->pwrHWState[pfrinfo->macid])
+					{
 
-                         printk("MACID%x PwrStatus error SW=%x HW=%x \n",pfrinfo->macid,pwrBit,priv->pwrHWState[pfrinfo->macid]);
-                         priv->testResult = false;
-                      }
+						printk("MACID%x PwrStatus error SW=%x HW=%x \n",pfrinfo->macid,pwrBit,priv->pwrHWState[pfrinfo->macid]);
+						priv->testResult = false;
+					}
 
-                        // comapre CNT
-                        if(priv->pwrStateCnt[pfrinfo->macid]!= priv->pwrStateHWCnt[pfrinfo->macid])
-                        {
+						// comapre CNT
+						if(priv->pwrStateCnt[pfrinfo->macid]!= priv->pwrStateHWCnt[pfrinfo->macid])
+						{
 
-                            printk("MACID%x PwrStatus CNT error SW=%x HW=%x \n",
-                                pfrinfo->macid,priv->pwrStateCnt[pfrinfo->macid],priv->pwrStateHWCnt[pfrinfo->macid]);
-                            priv->testResult = false;
-                        }
+							printk("MACID%x PwrStatus CNT error SW=%x HW=%x \n",
+								pfrinfo->macid,priv->pwrStateCnt[pfrinfo->macid],priv->pwrStateHWCnt[pfrinfo->macid]);
+							priv->testResult = false;
+						}
 
-                        // comapre Seq
-                        if(GetSequence(pframe)!= priv->hw_seq[pfrinfo->macid])
-                        {
-                        //    printk("MACID%x Sequence error SW=%x HW=%x  \n",pfrinfo->macid,GetSequence(pframe),priv->hw_seq[pfrinfo->macid]);
-                        //  priv->testResult = false;
-                        }
+						// comapre Seq
+						if(GetSequence(pframe)!= priv->hw_seq[pfrinfo->macid])
+						{
+						//    printk("MACID%x Sequence error SW=%x HW=%x  \n",pfrinfo->macid,GetSequence(pframe),priv->hw_seq[pfrinfo->macid]);
+						//  priv->testResult = false;
+						}
 
-                        if(priv->testResult == true)
-                        {
-                            printk("MACID%x PASS CNT = %x \n",pfrinfo->macid,priv->pwrStateCnt[pfrinfo->macid]);
-                        }
-                    }
-                }
-                else
-                {
-                  //  printk("MACID%x No change \n",pfrinfo->macid);
-                }
-            }
-            priv->pwrState[pfrinfo->macid] = pwrBit;
-            // compare seq number
-        }else {
-            printk("[%x][%d]MacId can't Read \n",__FUNCTION__,__LINE__);
-        }
+						if(priv->testResult == true)
+						{
+							printk("MACID%x PASS CNT = %x \n",pfrinfo->macid,priv->pwrStateCnt[pfrinfo->macid]);
+						}
+					}
+				}
+				else
+				{
+				//  printk("MACID%x No change \n",pfrinfo->macid);
+				}
+			}
+			priv->pwrState[pfrinfo->macid] = pwrBit;
+			// compare seq number
+		}else {
+			printk("[%x][%d]MacId can't Read \n",__FUNCTION__,__LINE__);
+		}
 
-    #endif   //  #ifdef HW_DETEC_POWER_STATE
+	#endif   //  #ifdef HW_DETEC_POWER_STATE
 
-    }
+	}
 }
 
 #endif   //    #ifdef CONFIG_8814_AP_MAC_VERI
@@ -8455,7 +8457,7 @@ void issue_Test_NullData(struct rtl8192cd_priv *priv,unsigned char macID,unsigne
 //    unsigned char hwaddr[6] = {0x00,0x11,0x11,0x11,0x11,0x11};
     unsigned char BMCaddr[6] = {0xff,0xff,0xff,0xff,0xff,0xff};
     unsigned char RAhwaddr[6] = {0x00,0xE0,0x4C,0x55,0x66,0x77};
-    unsigned char VirualSoruce[6] = {0x00,0xE0,0x4C,0x77,0x88,0x99};
+//    unsigned char VirualSoruce[6] = {0x00,0xE0,0x4C,0x77,0x88,0x99};
 
     unsigned char pattern[5] = {0x55,0x55,0x55,0x55,0x55};
     unsigned char *pbuf;
@@ -8572,9 +8574,21 @@ void KeepIssueVOPkt(struct rtl8192cd_priv *priv);
 int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 {
     unsigned char *val[10];
-    int i=0, op=0, offset;
+    int i=0;
     char *delim = ",";
-    unsigned char input;
+    int mode = 0;
+    unsigned char RetryLimitNum = 0;
+    unsigned char Enable = 0;
+    unsigned char macIDNum = 0;
+    unsigned char lowestRate =0;
+    unsigned char macID = 0;
+    unsigned char type;
+    unsigned char tempEn;
+    static unsigned char pollingCnt;
+    // mode2
+    unsigned char option;
+    unsigned int reg_addr;
+    unsigned char releaseBit;
 
 
 
@@ -8586,33 +8600,16 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
     }
 
     for(i=0;i<10;i++)
-    {
       val[i] = kmalloc(10,GFP_ATOMIC);
-    }
-
-    if(val[0] = strtok2(data,delim))
+	
+	val[0] = strtok2(data,delim);
+    if(val[0])
     {
         i= 1;
-        while(val[i]= strtok2(NULL,delim))
-        {
+        while(!!(val[i] = strtok2(NULL,delim)))
             i++;
-        }
     }
 
-    int mode = 0;
-    unsigned char RetryLimitNum = 0;
-    unsigned char lowestRetry = 0;
-    unsigned char Enable = 0;
-    unsigned char macIDNum = 0;
-    unsigned char lowestRate =0;
-    unsigned char macID;
-    unsigned char type;
-    unsigned char tempEn;
-    static unsigned char pollingCnt;
-    // mode2
-    unsigned char option;
-    unsigned int reg_addr;
-    unsigned char releaseBit;
 
 
     RTL_W32(0x80, RTL_R32(0x80)|BIT15);
@@ -8628,7 +8625,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 
         if((!val[1])||(!val[2])||(!val[3])||(!val[4])) {
             printk("%s %d CMD : iwpriv wlan0 apTest 0,enableBit,RetryLimitNum,macIDNum,type\n",__FUNCTION__,__LINE__);
-            return;
+            return 0;
         }
 
         // enable=0, in TXDESC
@@ -8677,7 +8674,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 
         if((!val[1])||(!val[2])||(!val[3])||(!val[4])) {
            printk("%s %d CMD : iwpriv wlan0 apTest 1,TXDESC/RPTBuffer,LowestRTYRate,macIDNum,type\n",__FUNCTION__,__LINE__);
-           return;
+           return 0;
         }
 
         Enable   = _atoi(val[1],10);
@@ -8724,7 +8721,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 
         if((!val[1])||(!val[2])||(!val[3])) {
            printk("%s %d CMD : iwpriv wlan0 apTest 2,Option,MPDU/AMPDU,macIDNum\n",__FUNCTION__,__LINE__);
-           return;
+           return 0;
         }
 
         option = _atoi(val[1],10);
@@ -8963,24 +8960,24 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
         printk("%s %d AppendMACHeaderForRXpacket Test \n",__FUNCTION__,__LINE__);
     break;
     case HWAutoAppendMACID:
+    {
+    	unsigned char hwaddr[6] = {0x00,0x11,0x11,0x11,0x11,0x11};
         //HWAutoAppendMACID iwpriv wlan0 apTest 4,macID,
         // example iwpriv wlan0 apTest 4,1
         // Test For 128 MACID
 
         if((!val[1])) {
            printk("%s %d CMD : iwpriv wlan0 apTest 1,TXDESC/RPTBuffer,LowestRTYRate,macIDNum,type\n",__FUNCTION__,__LINE__);
-           return;
+           return 0;
         }
 
         macIDNum = _atoi(val[1],10);
         RTL_W32(0x6bc, 0x03000000);  // set CRC5 buffer addr
         // fill mac address
-    	unsigned char hwaddr[6] = {0x00,0x11,0x11,0x11,0x11,0x11};
-        unsigned int test;
         for(macID = 0;macID < macIDNum;macID++)
         {
             hwaddr[5]= 0x11 + macID;
-            GET_HAL_INTERFACE(priv)->SetTxRPTHandler(priv, macID, TXRPT_VAR_MAC_ADDRESS, &hwaddr);
+            GET_HAL_INTERFACE(priv)->SetTxRPTHandler(priv, macID, TXRPT_VAR_MAC_ADDRESS, &hwaddr[0]);
             GET_HAL_INTERFACE(priv)->SetCRC5ToRPTBufferHandler(priv,CRC5(hwaddr,6), macID,1);
          }
 
@@ -8988,13 +8985,14 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
          priv->RXMACIDTestEn = true;
 
          printk("%s %d HWAutoAppendMACID Test \n",__FUNCTION__,__LINE__);
+    }
     break;
     case HWSupportPowerStatedetect:
     {
         unsigned char cmp = 0;
         if((!val[1])) {
            printk("%s %d CMD : iwpriv wlan0 apTest 5,macID\n",__FUNCTION__,__LINE__);
-           return;
+           return 0;
         }
 
         cmp = _atoi(val[2],10);
@@ -9035,7 +9033,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 
         if((!val[1])) {
            printk("%s %d CMD : iwpriv wlan0 apTest 8 BMC_RTY_LMT\n",__FUNCTION__,__LINE__);
-           return;
+           return 0;
         }
 
         mode = _atoi(val[1],10);
@@ -9062,20 +9060,19 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
     break;
 #endif //MULTICAST_BMC_ENHANCE
 	case VedioEnhancement:
+	{
 		//remember to open #define CONFIG_8814_AP_MAC_VERI, and manual EDCA, change Q_MAP -->#define TXDMA_VOQ_MAP_SEL   TXDMA_MAP_HIGH
 		//disable download FW to avoid printing tx hang due to drop bit is not cleared
-		if((!val[1])) {
-           printk("%s %d CMD : iwpriv wlan0 apTest 2,Option\n",__FUNCTION__,__LINE__);
-           return;
-        }
-
-        option = _atoi(val[1],10);
 		u1Byte count_i;
-		u1Byte  data[2];
 		u2Byte	specialQ;
 		u1Byte bufvalue[8];
 		u1Byte test_value = 0;
-		int count_loop=0;
+		if((!val[1])) {
+           printk("%s %d CMD : iwpriv wlan0 apTest 2,Option\n",__FUNCTION__,__LINE__);
+           return 0;
+        }
+
+        option = _atoi(val[1],10);
 
 		//enable video enhancement function
 		RTL_W16(0x4E4, 0x1);
@@ -9084,7 +9081,8 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
         switch(option)
         {
         	case 1: //test Check if Q0~Q7 are full, new VOQ packet will be put in S0/S1.
-
+			{
+				u1Byte pkt_i = 0;
 				//pause Q0-Q7
 				for(count_i = 1; count_i < 9; count_i++)
 					GET_HAL_INTERFACE(priv)->SetMACIDSleepHandler(priv,1,count_i);
@@ -9094,13 +9092,12 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
             		issue_Test_NullData(priv,count_i,BE_QUEUE,0);
 
 				//check info before issue VO pkt
-				GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue);
+				GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue[0]);
 				specialQ = 0;
 				specialQ = bufvalue[6] | ((bufvalue[7]&0xf) << 8);
 				printk("BEFORE EXE, MACID=1, Special Queue Number = %d.\n",specialQ);
 
 				//issue packet to queue S0/S1
-				u1Byte pkt_i = 0;
 				for(pkt_i=0;pkt_i<100;pkt_i++)
 				{
 					//MACID=1
@@ -9111,7 +9108,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 				}
 				//pkt should be in S1 (even number MAC)
 				//read ctrl info to get Special Queue Number
-				GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue);
+				GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue[0]);
 				specialQ = 0;
 				specialQ = bufvalue[6] | ((bufvalue[7]&0xf) << 8);
 				if(specialQ > 0)
@@ -9122,7 +9119,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 				//cancel pause Q0-Q7
 				for(count_i = 1; count_i < 9; count_i++)
 					GET_HAL_INTERFACE(priv)->SetMACIDSleepHandler(priv,0,count_i);
-
+			}
 			break;
 #if 1
 			case 2:
@@ -9139,7 +9136,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
             		issue_Test_NullData(priv,count_i,BE_QUEUE,0);
 
 				//check Special Queue Number
-				GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue);
+				GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue[0]);
 				specialQ = 0;
 				specialQ = bufvalue[6] | ((bufvalue[7] & 0xf) << 8);
 				printk("BEFORE issue VO Pkt, MACID=1, Special Queue Number = %d.\n",specialQ);
@@ -9149,7 +9146,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 
 				loop_countr = 0;
 				init_timer(&tickfn);
-				tickfn.function = KeepIssueVOPkt;
+				tickfn.function = (void*) &KeepIssueVOPkt;
 				tickfn.data = (unsigned long)priv;
 				//tickfn.expires = jiffies + RTL_MILISECONDS_TO_JIFFIES(1);
 				mod_timer(&tickfn,jiffies + RTL_MILISECONDS_TO_JIFFIES(1));
@@ -9157,7 +9154,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 				break;
 			case 7: //exe after command 2, handled by KeepIssueVOPkt func, don't exe by manual keyin command.
 				//check Special Queue Number
-				GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue);
+				GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue[0]);
 				specialQ = 0;
 				specialQ = bufvalue[6] | ((bufvalue[7] & 0xf) << 8);
 				printk("BEFORE cacel MACID=1 sleep bit, MACID=1, Special Queue Number = %d.\n",specialQ);
@@ -9167,7 +9164,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 				printk("cancel MACID=1 sleep bit.\n");
 
 				//check Special Queue Number
-				GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue);
+				GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue[0]);
 				specialQ = 0;
 				specialQ = bufvalue[6] | ((bufvalue[7] & 0xf) << 8);
 				printk("AFTER cancel MACID=1 sleep bit, Special Queue Number = %d.\n",specialQ);
@@ -9199,14 +9196,14 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 					GET_HAL_INTERFACE(priv)->SetMACIDSleepHandler(priv,1,1);
 					//check S0/S1 is empty
 					//check Special Queue Number
-					GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue);
+					GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue[0]);
 					specialQ = 0;
 					specialQ = bufvalue[6] | ((bufvalue[7] & 0xf) << 8);
 					printk("STOP issue VO pkt, MACID=1, Special Queue Number = %d.\n",specialQ);
 					printk("Q0-Q1: %x, Q2-Q3: %x, Q4-Q5: %x, Q6-Q7: %x,\n",RTL_R32(0x1400), RTL_R32(0x1404), RTL_R32(0x1408), RTL_R32(0x140c));
 					while(specialQ > 0) //now the special number is always not 0, don't use while(1)
 					{
-						GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue);
+						GET_HAL_INTERFACE(priv)->GetTxRPTHandler(priv, 1, TXRPT_VAR_ALL, 1,&bufvalue[0]);
 						specialQ = 0;
 						specialQ = bufvalue[6] | ((bufvalue[7] & 0xf) << 8);
 						printk("STOP issue VO pkt, MACID=1, Special Queue Number = %d.\n",specialQ);
@@ -9252,7 +9249,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 				for(count_i = 1; count_i < 9; count_i++)
             		issue_Test_NullData(priv,count_i,BE_QUEUE,0);
 
-				//³]©wª½±µdrop, check sniffer
+				//ï¿½]ï¿½wï¿½ï¿½ï¿½ï¿½drop, check sniffer
 				RTL_W16(0x4E4, RTL_R16(0x4E4) | BIT(1));
 				issue_Test_NullData(priv,1,VO_QUEUE,0);
 				//sniffer will not see any pkt due to pkts are droped.
@@ -9303,7 +9300,8 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 				printk("No such option item.\n");
 			break;
         }
-		break;
+	}
+	break;
 
     #ifdef CONFIG_WLAN_MACHAL_API
     case 0x0a:
@@ -9344,7 +9342,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 
         if((!val[1])||(!val[2])||(!val[3])) {
           printk("%s(%d): CMD: iwpriv wlan0 apTest dd,macID,type,cnt \n", __FUNCTION__, __LINE__);
-          return;
+          return 0;
         }
 
         macID = _atoi(val[1], 10);
@@ -9374,7 +9372,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
 
 		if((!val[1])||(!val[2])) {
 			printk("%s(%d): CMD: iwpriv wlan0 apTest de,REG_QX_INFO,cnt \n", __FUNCTION__, __LINE__);
-			return;
+			return 0;
 		}
 
 		reg1 = _atoi(val[1], 16); // ex: 400
@@ -9418,7 +9416,7 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
                 RTL_W8(0x8000+i,0);
             }
         printk("Reset TXPKTBuffer !!! \n");
-        return;
+        return 0;
     case 0xFF:
         GET_HAL_INTERFACE(priv)->SetTxRPTHandler(priv, macID, TXRPT_VAR_ALL, NULL);
 
@@ -9436,19 +9434,20 @@ int APmacTestFunction_8814(struct rtl8192cd_priv *priv, unsigned char *data)
         RTL_W32(0x1144,0x0);
         RTL_W32(0x1148,0x0);
         printk("Reset RPTBuffer !!! \n");
-        return;
+        return 0;
     break;
 
     default:
         printk("%s %d Unkonw operation ! mode=%x\n",__FUNCTION__,__LINE__,mode);
     break;
 	}
+ 	return 0;
  }
 
 void KeepIssueVOPkt(struct rtl8192cd_priv *priv)
 {
-	printk("timer func: issue VO pkt\n");
 	u1Byte pkt_i = 0;
+	printk("timer func: issue VO pkt\n");
 	for(pkt_i=0;pkt_i<100;pkt_i++)
 	{
 		//MACID=1
@@ -9808,7 +9807,7 @@ subtract all-rate power:\n	iwpriv wlanx set_power sub,{a,b,c,d},{power index}\n"
 static int shift_power_index(struct rtl8192cd_priv *priv, unsigned char* data)
 {
 	volatile char tmpbuf[100];
-	int i=0, size=0, len;
+	int i=0;
 	unsigned char *ptxagc = NULL, add=0, sub=0;
 	char shift_power_idx=0;
 
@@ -9941,7 +9940,7 @@ static int shift_power_index(struct rtl8192cd_priv *priv, unsigned char* data)
 		}
 
 	}
-
+	return 0;
 }
 
 
@@ -11435,7 +11434,6 @@ int ioctl_AddDelMCASTGroup2STA(struct net_device *dev, struct ifreq *ifr, int cm
 	struct iwreq *wrq = (struct iwreq *) ifr;
 #endif
 	struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
-	struct wifi_mib *pmib = priv->pmib;
 
 	int ret, i;
 	if (!priv->pshare->rf_ft_var.mc2u_disable) {
@@ -11765,82 +11763,82 @@ void reset_nop_channel(struct rtl8192cd_priv *priv)
 {
 	if (timer_pending(&priv->ch52_timer)) {
 		del_timer_sync(&priv->ch52_timer);
-		rtl8192cd_ch52_timer(priv);
+		rtl8192cd_ch52_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch56_timer)) {
 		del_timer_sync(&priv->ch56_timer);
-		rtl8192cd_ch56_timer(priv);
+		rtl8192cd_ch56_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch60_timer)) {
 		del_timer_sync(&priv->ch60_timer);
-		rtl8192cd_ch60_timer(priv);
+		rtl8192cd_ch60_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch64_timer)) {
 		del_timer_sync(&priv->ch64_timer);
-		rtl8192cd_ch64_timer(priv);
+		rtl8192cd_ch64_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch100_timer)) {
 		del_timer_sync(&priv->ch100_timer);
-		rtl8192cd_ch100_timer(priv);
+		rtl8192cd_ch100_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch104_timer)) {
 		del_timer_sync(&priv->ch104_timer);
-		rtl8192cd_ch104_timer(priv);
+		rtl8192cd_ch104_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch108_timer)) {
 		del_timer_sync(&priv->ch108_timer);
-		rtl8192cd_ch108_timer(priv);
+		rtl8192cd_ch108_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch112_timer)) {
 		del_timer_sync(&priv->ch112_timer);
-		rtl8192cd_ch112_timer(priv);
+		rtl8192cd_ch112_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch116_timer)) {
 		del_timer_sync(&priv->ch116_timer);
-		rtl8192cd_ch116_timer(priv);
+		rtl8192cd_ch116_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch120_timer)) {
 		del_timer_sync(&priv->ch120_timer);
-		rtl8192cd_ch120_timer(priv);
+		rtl8192cd_ch120_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch124_timer)) {
 		del_timer_sync(&priv->ch124_timer);
-		rtl8192cd_ch124_timer(priv);
+		rtl8192cd_ch124_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch128_timer)) {
 		del_timer_sync(&priv->ch128_timer);
-		rtl8192cd_ch128_timer(priv);
+		rtl8192cd_ch128_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch132_timer)) {
 		del_timer_sync(&priv->ch132_timer);
-		rtl8192cd_ch132_timer(priv);
+		rtl8192cd_ch132_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch136_timer)) {
 		del_timer_sync(&priv->ch136_timer);
-		rtl8192cd_ch136_timer(priv);
+		rtl8192cd_ch136_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch140_timer)) {
 		del_timer_sync(&priv->ch140_timer);
-		rtl8192cd_ch140_timer(priv);
+		rtl8192cd_ch140_timer((unsigned long)priv);
 	}
 
 	if (timer_pending(&priv->ch144_timer)) {
 		del_timer_sync(&priv->ch144_timer);
-		rtl8192cd_ch144_timer(priv);
+		rtl8192cd_ch144_timer((unsigned long)priv);
 	}
 }
 #endif
@@ -12183,7 +12181,7 @@ int rtl8192cd_ioctl_getmac(struct net_device *dev, struct ifreq *ifr, int cmd)
 #endif
 	unsigned long flags;
 	struct iwreq *wrq = (struct iwreq *) ifr;
-	int i = 0, ret = 0;
+	int ret = 0;
 
 	SAVE_INT_AND_CLI(flags);
 	SMP_LOCK(flags);
@@ -14939,13 +14937,13 @@ case DO_KFREE:
        if(ioctl_copy_from_user(tmpbuf, (void *)wrq->u.data.pointer, wrq->u.data.length))
 			break;
 
-			i = shift_power_index(priv, tmpbuf);
-			if (i > 0) {
-				if (ioctl_copy_to_user((void *)wrq->u.data.pointer, tmpbuf, i))
-					break;
-			}
-			wrq->u.data.length = i;
-			ret = 0;
+		i = shift_power_index(priv, tmpbuf);
+		if (i > 0) {
+			if (ioctl_copy_to_user((void *)wrq->u.data.pointer, tmpbuf, i))
+				break;
+		}
+		wrq->u.data.length = i;
+		ret = 0;
 
 		break;
     }

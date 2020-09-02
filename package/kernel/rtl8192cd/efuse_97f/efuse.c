@@ -26,6 +26,8 @@ void get_efuse_data(u1Byte offset, u1Byte len, pu1Byte value)
 {
     // TODO: endian issue ???????//
     // beforce calling this function, you must guarantee that the function "load_efuse_data_to_reg" has been called
+    //never gets called
+    #if 0
     u1Byte UNIT = 4;
     u1Byte cnt = len / UNIT;
     u4Byte i;
@@ -38,6 +40,7 @@ void get_efuse_data(u1Byte offset, u1Byte len, pu1Byte value)
         memcpy(REG32(REG_EFUSE_P0_0 + offset + i), value, UNIT);
         value += UNIT;
     }
+    #endif
 }
 
 #if 0
@@ -55,7 +58,7 @@ void set_efuse_options(PEFUSE_DATA pefuse_data)
     }
 }
 #endif
-#if FPGA_VERIFY_EFUSE
+#ifdef FPGA_VERIFY_EFUSE
 void efuse_test_data(void)
 {
     // Note: if you want to write different data, you must reset FPGA
@@ -133,7 +136,7 @@ void dump_efuse_reg_data(u4Byte max_num)
     }
 }
 
-#if EFUSE_WRITE_CMD
+#ifdef EFUSE_WRITE_CMD
 // dataPort: 0~7, dataIdx: 0~3
 u1Byte write_efuse_byte(u4Byte data, u4Byte mask, u4Byte dataPort, u4Byte dataIdx)
 {

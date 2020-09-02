@@ -627,7 +627,7 @@ odm_RxPhyStatus92CSeries_Parsing(
 	u1Byte				VGA_idx = 0;
 	u1Byte				cck_agc_rpt;
 	u1Byte				num_ss;
-	u8					stream_rxevm_tmp;
+	u8					stream_rxevm_tmp = 0;
 	PPHY_STATUS_RPT_8192CD_T pPhyStaRpt = (PPHY_STATUS_RPT_8192CD_T)pPhyStatus;
 
 	isCCKrate = (pPktinfo->DataRate <= ODM_RATE11M) ? TRUE : FALSE;

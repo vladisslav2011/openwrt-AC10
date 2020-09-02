@@ -947,16 +947,16 @@ void rtl819x_gpio_pin_set_val(unsigned int pin, int val);
 // Support Multiple BSSID
 //-------------------------------------------------------------
 #if defined(CONFIG_RTL_VAP_SUPPORT)
-#define MBSSID
+	#define MBSSID
 #endif
 #ifdef MBSSID
-#if (!defined(CONFIG_RTL_SDRAM_GE_32M) && (defined(CONFIG_RTL_8196E))) || (defined(CONFIG_RTL_SHRINK_MEMORY_SIZE) && defined(CONFIG_RTL_8197F))
-#define RTL8192CD_NUM_VWLAN  1
+	#if (!defined(CONFIG_RTL_SDRAM_GE_32M) && (defined(CONFIG_RTL_8196E))) || (defined(CONFIG_RTL_SHRINK_MEMORY_SIZE) && defined(CONFIG_RTL_8197F))
+		#define RTL8192CD_NUM_VWLAN  3
+	#else
+		#define RTL8192CD_NUM_VWLAN  4
+	#endif
 #else
-#define RTL8192CD_NUM_VWLAN  4
-#endif
-#else
-#define RTL8192CD_NUM_VWLAN  0
+	#define RTL8192CD_NUM_VWLAN  0
 #endif
 
 
@@ -2468,7 +2468,7 @@ void rtl819x_gpio_pin_set_val(unsigned int pin, int val);
 
 #ifdef MBSSID
 	#undef RTL8192CD_NUM_VWLAN
-	#define RTL8192CD_NUM_VWLAN  1
+	#define RTL8192CD_NUM_VWLAN  3
 #endif
 
 //#ifdef HIGH_POWER_EXT_PA
@@ -3365,7 +3365,7 @@ void rtl819x_gpio_pin_set_val(unsigned int pin, int val);
 
 #ifdef MBSSID
 	#undef RTL8192CD_NUM_VWLAN
-	#define RTL8192CD_NUM_VWLAN  1
+	#define RTL8192CD_NUM_VWLAN  3
 #endif
 
 #undef NUM_STAT
@@ -3383,7 +3383,7 @@ void rtl819x_gpio_pin_set_val(unsigned int pin, int val);
 
 #ifdef MBSSID
 	#undef RTL8192CD_NUM_VWLAN
-	#define RTL8192CD_NUM_VWLAN  1
+	#define RTL8192CD_NUM_VWLAN  3
 #endif
 
 #undef NUM_STAT

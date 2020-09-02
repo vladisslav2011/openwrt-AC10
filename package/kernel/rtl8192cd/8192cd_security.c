@@ -1128,7 +1128,9 @@ int __DOT11_Indicate_MIC_Failure(struct net_device *dev, struct stat_info *pstat
 {
 	struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
 	struct stat_info *pstat_del;
+#if !defined(WITHOUT_ENQUEUE) && !defined(RTK_NL80211)
 	DOT11_MIC_FAILURE	Mic_Failure;
+#endif
 	DOT11_DISASSOCIATION_IND Disassociation_Ind;
 	int	i;
 

@@ -223,10 +223,12 @@ phydm_dfs_debug(
 	IN		u4Byte		*_out_len
 	)
 {
+	#if defined(CONFIG_PHYDM_DFS_MASTER)
 	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	u4Byte used = *_used;
 	u4Byte out_len = *_out_len;
-
+	#endif
+	
 	switch (argv[0]) {
 	case 1:
 		#if defined(CONFIG_PHYDM_DFS_MASTER)

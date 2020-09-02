@@ -156,6 +156,7 @@ static int HAPD_Process_Set_Port(struct net_device *dev, unsigned char *MACAddr,
 int	rtl_wpas_join(struct rtl8192cd_priv *priv, int bss_num)
 {
 	char tmpbuf[33];
+	extern int is_support_ac(struct rtl8192cd_priv *priv);
 
 	if (!netif_running(priv->dev)) {
 		printk("WiFi driver is NOT open!!\n");
@@ -221,7 +222,6 @@ int	rtl_wpas_join(struct rtl8192cd_priv *priv, int bss_num)
 
 	//mod_timer(&priv->WPAS_timer, jiffies + 300);
 
-	extern int is_support_ac(struct rtl8192cd_priv *priv);
 #ifdef RTK_NL80211
 	if(priv->pmib->dot11Bss.channel >=36)
 	{
@@ -244,8 +244,6 @@ int	rtl_wpas_join(struct rtl8192cd_priv *priv, int bss_num)
 	priv->pmib->dot11nConfigEntry.dot11nAMPDU = 1;
 	priv->pmib->dot11nConfigEntry.dot11nShortGIfor20M = 1;
 	priv->pmib->dot11nConfigEntry.dot11nShortGIfor40M = 1;
-
-	extern int is_support_ac(struct rtl8192cd_priv *priv);
 
 	if(is_support_ac(priv))
 		priv->pmib->dot11nConfigEntry.dot11nShortGIfor80M = 1;
@@ -282,7 +280,6 @@ int rtl_net80211_setparam(struct net_device *dev, struct iw_request_info *info, 
 {
 	struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
 
-	int *i = (int *) extra;
 	int param = wrqu->mode;		/* parameter id is 1st */
 	int value = 0;		/* NB: most values are TYPE_INT */
 	int ret = 0;
@@ -440,13 +437,13 @@ int rtl_net80211_setparam(struct net_device *dev, struct iw_request_info *info, 
 			else if((value & BIT(0)))
 				{//only WPA1, so clear mib of wpa2_cipher & wpa2_psk
 					priv->pmib->dot1180211AuthEntry.dot11WPA2Cipher = 0;
-					priv->pmib->dot1180211AuthEntry.dot11EnablePSK & ~(BIT(1));
+					priv->pmib->dot1180211AuthEntry.dot11EnablePSK &= ~(BIT(1));
 					return 0;
 				}
 			else if((value & BIT(1)))
 				{//only WPA2, so clear mib of wpa_cipher & wps2_psk
 					priv->pmib->dot1180211AuthEntry.dot11WPACipher = 0;
-					priv->pmib->dot1180211AuthEntry.dot11EnablePSK & ~(BIT(0));
+					priv->pmib->dot1180211AuthEntry.dot11EnablePSK &= ~(BIT(0));
 					return 0;
 				}
 
@@ -677,7 +674,7 @@ int rtl_net80211_setoptie(struct net_device *dev, struct iw_request_info *info, 
 int rtl_net80211_setmlme(struct net_device *dev, struct iw_request_info *info, union iwreq_data *wrqu, char *extra)
 {
 	struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
-	struct ieee80211req_mlme *mlme = (struct ieee80211req_key *)wrqu->data.pointer;
+	struct ieee80211req_mlme *mlme = (struct ieee80211req_mlme *)wrqu->data.pointer;
 	struct stat_info *pstat = get_stainfo(priv, mlme->im_macaddr);
 
 	int ret = 0;

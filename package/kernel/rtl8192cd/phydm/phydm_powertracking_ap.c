@@ -983,7 +983,7 @@ odm_TXPowerTrackingThermalMeterInit(
 	PODM_RF_CAL_T	pRFCalibrateInfo = &(pDM_Odm->RFCalibrateInfo);
 	prtl8192cd_priv		priv = pDM_Odm->priv;
 	u1Byte p;
-	u1Byte defaultSwingIndex, defaultCckSwingIndex;
+	u1Byte defaultSwingIndex = 0, defaultCckSwingIndex = 0;
 #if (RTL8197F_SUPPORT == 1 || RTL8822B_SUPPORT == 1)
 	if ((GET_CHIP_VER(priv) == VERSION_8197F) || (GET_CHIP_VER(priv) == VERSION_8822B))
 		defaultSwingIndex = getSwingIndex(pDM_Odm);

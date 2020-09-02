@@ -1058,6 +1058,43 @@ ODM_TXPowerTrackingCallback_ThermalMeter(
 {
 	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	PODM_RF_CAL_T	pRFCalibrateInfo = &(pDM_Odm->RFCalibrateInfo);
+	u1Byte			ThermalValue = 0, delta, delta_LCK, delta_IQK, offset;
+	u1Byte			ThermalValue_AVG_count = 0;
+	u4Byte			ThermalValue_AVG = 0;
+//	s4Byte			ele_A=0, ele_D, TempCCk, X, value32;
+//	s4Byte			Y, ele_C=0;
+//	s1Byte			OFDM_index[2], CCK_index=0, OFDM_index_old[2]={0,0}, CCK_index_old=0, index;
+//	s1Byte			deltaPowerIndex = 0;
+	u4Byte			i = 0;//, j = 0;
+	BOOLEAN 		is2T = FALSE;
+//	BOOLEAN 		bInteralPA = FALSE;
+
+	u1Byte			OFDM_max_index = 34, rf = (is2T) ? 2 : 1; //OFDM BB Swing should be less than +3.0dB, which is required by Arthur
+	u1Byte			Indexforchannel = 0;/*GetRightChnlPlaceforIQK(pHalData->CurrentChannel)*/
+    enum            _POWER_DEC_INC { POWER_DEC, POWER_INC };
+	#if (DM_ODM_SUPPORT_TYPE == ODM_CE)
+	PDM_ODM_T		pDM_Odm;
+	#endif
+	#if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
+	PDM_ODM_T		pDM_Odm;
+	#endif
+
+	TXPWRTRACK_CFG 	c;
+
+
+	//4 1. The following TWO tables decide the final index of OFDM/CCK swing table.
+	s1Byte			deltaSwingTableIdx[2][index_mapping_NUM_88E] = {
+                        // {{Power decreasing(lower temperature)}, {Power increasing(higher temperature)}}
+                        {0,0,2,3,4,4,5,6,7,7,8,9,10,10,11}, {0,0,1,2,3,4,4,4,4,5,7,8,9,9,10}
+                    };
+	u1Byte			thermalThreshold[2][index_mapping_NUM_88E]={
+                        // {{Power decreasing(lower temperature)}, {Power increasing(higher temperature)}}
+					    {0,2,4,6,8,10,12,14,16,18,20,22,24,26,27}, {0,2,4,6,8,10,12,14,16,18,20,22,25,25,25}
+                    };
+
+#if (DM_ODM_SUPPORT_TYPE & ODM_AP)
+	prtl8192cd_priv	priv;
+#endif
 
 
 #if (RTL8197F_SUPPORT == 1 || RTL8822B_SUPPORT == 1)
@@ -1092,42 +1129,16 @@ ODM_TXPowerTrackingCallback_ThermalMeter(
 #endif
 
 
-	u1Byte			ThermalValue = 0, delta, delta_LCK, delta_IQK, offset;
-	u1Byte			ThermalValue_AVG_count = 0;
-	u4Byte			ThermalValue_AVG = 0;
-//	s4Byte			ele_A=0, ele_D, TempCCk, X, value32;
-//	s4Byte			Y, ele_C=0;
-//	s1Byte			OFDM_index[2], CCK_index=0, OFDM_index_old[2]={0,0}, CCK_index_old=0, index;
-//	s1Byte			deltaPowerIndex = 0;
-	u4Byte			i = 0;//, j = 0;
-	BOOLEAN 		is2T = FALSE;
-//	BOOLEAN 		bInteralPA = FALSE;
-
-	u1Byte			OFDM_max_index = 34, rf = (is2T) ? 2 : 1; //OFDM BB Swing should be less than +3.0dB, which is required by Arthur
-	u1Byte			Indexforchannel = 0;/*GetRightChnlPlaceforIQK(pHalData->CurrentChannel)*/
-    enum            _POWER_DEC_INC { POWER_DEC, POWER_INC };
 	#if (DM_ODM_SUPPORT_TYPE == ODM_CE)
-	PDM_ODM_T		pDM_Odm = &pHalData->odmpriv;
+	pDM_Odm = &pHalData->odmpriv;
 	#endif
 	#if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
-	PDM_ODM_T		pDM_Odm = &pHalData->DM_OutSrc;
+	pDM_Odm = &pHalData->DM_OutSrc;
 	#endif
 
-	TXPWRTRACK_CFG 	c;
-
-
-	//4 1. The following TWO tables decide the final index of OFDM/CCK swing table.
-	s1Byte			deltaSwingTableIdx[2][index_mapping_NUM_88E] = {
-                        // {{Power decreasing(lower temperature)}, {Power increasing(higher temperature)}}
-                        {0,0,2,3,4,4,5,6,7,7,8,9,10,10,11}, {0,0,1,2,3,4,4,4,4,5,7,8,9,9,10}
-                    };
-	u1Byte			thermalThreshold[2][index_mapping_NUM_88E]={
-                        // {{Power decreasing(lower temperature)}, {Power increasing(higher temperature)}}
-					    {0,2,4,6,8,10,12,14,16,18,20,22,24,26,27}, {0,2,4,6,8,10,12,14,16,18,20,22,25,25,25}
-                    };
 
 #if (DM_ODM_SUPPORT_TYPE & ODM_AP)
-	prtl8192cd_priv	priv = pDM_Odm->priv;
+	priv = pDM_Odm->priv;
 #endif
 
 	//4 2. Initilization ( 7 steps in total )
@@ -1254,7 +1265,7 @@ ODM_TXPowerTrackingCallback_ThermalMeter(
 			pDM_Odm->RFCalibrateInfo.PowerIndexOffset = pDM_Odm->RFCalibrateInfo.DeltaPowerIndex - pDM_Odm->RFCalibrateInfo.DeltaPowerIndexLast;
 
 	    for(i = 0; i < rf; i++)
-	    	pDM_Odm->RFCalibrateInfo.OFDM_index[i] = pRFCalibrateInfo->BbSwingIdxOfdmBase + pDM_Odm->RFCalibrateInfo.PowerIndexOffset;
+			pDM_Odm->RFCalibrateInfo.OFDM_index[i] = pRFCalibrateInfo->BbSwingIdxOfdmBase + pDM_Odm->RFCalibrateInfo.PowerIndexOffset;
 		pDM_Odm->RFCalibrateInfo.CCK_index = pRFCalibrateInfo->BbSwingIdxCckBase + pDM_Odm->RFCalibrateInfo.PowerIndexOffset;
 
 		pRFCalibrateInfo->BbSwingIdxCck = pDM_Odm->RFCalibrateInfo.CCK_index;
@@ -2719,7 +2730,6 @@ odm_IQCalibrate(
 		IN	PDM_ODM_T	pDM_Odm
 		)
 {
-	PADAPTER	Adapter = pDM_Odm->Adapter;
 
 #if (DM_ODM_SUPPORT_TYPE == ODM_WIN)
 	if (*pDM_Odm->pIsFcsModeEnable)
@@ -2789,8 +2799,8 @@ void phydm_rf_init(IN	PVOID		pDM_VOID)
 
 void phydm_rf_watchdog(IN	PVOID		pDM_VOID)
 {
-	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 #if (DM_ODM_SUPPORT_TYPE & (ODM_WIN|ODM_CE))
+	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	ODM_TXPowerTrackingCheck(pDM_Odm);
 	if (pDM_Odm->SupportICType & ODM_IC_11AC_SERIES)
 		odm_IQCalibrate(pDM_Odm);

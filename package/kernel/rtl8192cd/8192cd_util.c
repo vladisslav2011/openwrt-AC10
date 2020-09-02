@@ -2021,7 +2021,6 @@ struct	stat_info *alloc_stainfo(struct rtl8192cd_priv *priv, unsigned char *hwad
 	unsigned long	flags;
 #endif
     unsigned int	i;
-	struct list_head	*phead, *plist;
 	struct stat_info	*pstat;
 
 	SAVE_INT_AND_CLI(flags);
@@ -2413,7 +2412,7 @@ int	free_stainfo(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 
 
 /* any station allocated can be searched by hash list */
-#ifdef CONFIG_WLAN_HAL_8197F)
+#ifdef CONFIG_WLAN_HAL_8197F
 #ifdef __OSK__
 __IRAM_WIFI_PRI1
 #else
@@ -6447,7 +6446,8 @@ void checkBandwidth(struct rtl8192cd_priv *priv)
     unsigned int _80m_stamap = orSTABitMap(&priv->pshare->_80m_staMap);
 		
     int FA_counter = priv->pshare->FA_total_cnt;
-
+	int assoc_num,i;
+	
     if(!priv->pshare->rf_ft_var.bws_enable)
     return;
 
@@ -6492,9 +6492,9 @@ void checkBandwidth(struct rtl8192cd_priv *priv)
 #endif
 
     if (priv->pmib->dot11RFEntry.phyBandSelect == PHY_BAND_5G)
-    {	    
-        if (priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_80) {            
-            unsigned char do_switch = 0;        
+    {
+        if (priv->pmib->dot11nConfigEntry.dot11nUse40M == HT_CHANNEL_WIDTH_80) {
+            unsigned char do_switch = 0;
             switch (priv->pshare->CurrentChannelBW) {
                 case HT_CHANNEL_WIDTH_80:
                     if (_80m_stamap == 0 && _40m_stamap == 0) {
@@ -6552,12 +6552,12 @@ void checkBandwidth(struct rtl8192cd_priv *priv)
 				update_RAMask_to_FW(priv,1);
 #endif
             }
-            return;  
-        }        
+            return;
+        }
     }
 
 	//check assoc num
-	int assoc_num = GET_ROOT(priv)->assoc_num, i;
+	assoc_num = GET_ROOT(priv)->assoc_num;
 #ifdef MBSSID
 	if (GET_ROOT(priv)->pmib->miscEntry.vap_enable){
 		for (i=0; i<RTL8192CD_NUM_VWLAN; ++i)
@@ -6941,7 +6941,7 @@ void refill_skb_queue(struct rtl8192cd_priv *priv)
 #ifdef CONFIG_WLAN_HAL
     unsigned int                    q_num;
     PHCI_RX_DMA_MANAGER_88XX        prx_dma;
-    PHCI_RX_DMA_QUEUE_STRUCT_88XX   cur_q;
+    PHCI_RX_DMA_QUEUE_STRUCT_88XX   cur_q = NULL;
 
     if (IS_HAL_CHIP(priv)) {
         q_num   = 0;
@@ -10600,7 +10600,7 @@ int checkAPfunc(struct rtl8192cd_priv *priv, unsigned int *func_map)
 //2(SS_LV_ROOTFUNCOFF), root AP only and func_off=1
 int get_ss_level(struct rtl8192cd_priv *priv)
 {
-	int idx=0, ss_level=SS_LV_WSTA;
+	int ss_level=SS_LV_WSTA;
 	unsigned int func_map=0;
 	checkAPfunc(priv, &func_map);
 
@@ -10930,11 +10930,12 @@ struct dhcpMessage {
 	//dhcp reply only
 	if(ap_priv && IS_DRV_OPEN(ap_priv) && (dhcph->op == 2)) {
         unsigned char sta_ip[4];
-
+#ifdef MBSSID
+		unsigned char vap_asso_sta = 0;
+#endif
 		memcpy(sta_ip,&dhcph->yiaddr,4);
 		DEBUG_INFO("[%s]External DHCP Server give IP[%d.%d.%d.%d]\n",priv->dev->name,sta_ip[0],sta_ip[1],sta_ip[2],sta_ip[3]);
 #ifdef MBSSID
-		unsigned char vap_asso_sta = 0;
 		if (GET_ROOT(priv)->pmib->miscEntry.vap_enable) {
 			for (i=0; i<RTL8192CD_NUM_VWLAN; i++) {
 				if (IS_DRV_OPEN(ap_priv->pvap_priv[i]) && get_stainfo(ap_priv->pvap_priv[i],&dhcph->chaddr[0]))
@@ -10956,7 +10957,7 @@ struct dhcpMessage {
 int changePreamble(struct rtl8192cd_priv *priv, int preamble)
 {
 	unsigned char *p = (unsigned char *)priv->beaconbuf;
-	unsigned short *bcn_cap = p+BEACON_MACHDR_LEN+_TIMESTAMP_+_BEACON_ITERVAL_;
+	unsigned short *bcn_cap = (unsigned short *) (p+BEACON_MACHDR_LEN+_TIMESTAMP_+_BEACON_ITERVAL_);
 
 	if(preamble)
 		*bcn_cap |= cpu_to_le16(BIT(5));
@@ -11230,10 +11231,10 @@ u8* rtk_get_wps_ie(u8 *in_ie, int in_len, u8 *wps_ie, int *wps_ielen)
  * Returns: The address of the P2P IE found, or NULL
  */
 /*cfg p2p*/
-unsigned char*  rtk_get_p2p_ie(unsigned char*  in_ie, int in_len, unsigned char*  p2p_ie, int* p2p_ielen)
+unsigned char*  rtk_get_p2p_ie(const unsigned char*  in_ie, int in_len, unsigned char*  p2p_ie, int* p2p_ielen)
 {
 	int cnt=0;
-	unsigned char* p2p_ptr=NULL;
+	const unsigned char* p2p_ptr=NULL;
 	unsigned char eid=0;
     unsigned char P2P_OUI[4]={0x50,0x6F,0x9A,0x09};
 

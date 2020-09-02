@@ -9,7 +9,7 @@
 
 #ifdef RTK_AC_SUPPORT
 
-void input_value_32(unsigned long *p, unsigned char start, unsigned char end, unsigned int value)
+void input_value_32(unsigned *p, unsigned char start, unsigned char end, unsigned int value)
 {
 	unsigned int bit_mask = 0;
 
@@ -433,8 +433,9 @@ void construct_vht_ie(struct rtl8192cd_priv *priv, unsigned char channel_center)
 	struct vht_oper_elmt *vht_oper;
 	unsigned int value;
 
+#ifdef CONFIG_WLAN_HAL_8814AE
 	unsigned char txbf_max_ant, txbf_sounding_dim;
-
+#endif
 	unsigned int supported_vht = priv->pmib->dot11acConfigEntry.dot11SupportedVHT;
 
 

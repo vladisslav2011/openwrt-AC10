@@ -103,7 +103,8 @@ InitLLT_Table88XX_V1(
 
 RT_STATUS
 InitPON88XX(
-    IN  HAL_PADAPTER Adapter
+    IN  HAL_PADAPTER Adapter,
+	IN  u4Byte ClkSel
 );
 
 RT_STATUS

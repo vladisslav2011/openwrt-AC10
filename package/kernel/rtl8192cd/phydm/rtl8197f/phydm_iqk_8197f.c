@@ -347,7 +347,7 @@ phy_PathA_IQK_8197F(
 {
 	PDM_ODM_T		pDM_Odm	= (PDM_ODM_T)pDM_VOID;
 
-	u4Byte regEAC, regE94, regE9C, regEA4, tmp;
+	u4Byte regEAC, regE94, regE9C;
 	u1Byte result = 0x00;
 	#if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(pAdapter);
@@ -443,7 +443,7 @@ phy_PathA_RxIQK_97F(
 {
 	PDM_ODM_T		pDM_Odm	= (PDM_ODM_T)pDM_VOID;
 
-	u4Byte regEAC, regE94, regE9C, regEA4, u4tmp, RXPGA;
+	u4Byte regEAC, regE94, regE9C, regEA4, u4tmp, RXPGA = 0;
 	u1Byte result = 0x00;
 	#if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(pAdapter);
@@ -724,7 +724,7 @@ phy_PathB_RxIQK_97F(
 {
 	PDM_ODM_T		pDM_Odm	= (PDM_ODM_T)pDM_VOID;
 
-	u4Byte regEAC, regEB4, regEBC, regECC, regEC4, u4tmp, RXPGA;
+	u4Byte regEAC, regEB4, regEBC, regECC, regEC4, u4tmp, RXPGA = 0;
 	u1Byte result = 0x00;
 	#if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(pAdapter);
@@ -1269,8 +1269,7 @@ _PHY_PathADDAOn_97F(
 {
 	PDM_ODM_T		pDM_Odm	= (PDM_ODM_T)pDM_VOID;
 
-	u4Byte	pathOn;
-	u4Byte	i;
+//	u4Byte	pathOn;
 	#if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(pAdapter);
 	#if (DM_ODM_SUPPORT_TYPE == ODM_CE)
@@ -1943,7 +1942,7 @@ phy_LCCalibrate_8197F(
 	PDM_ODM_T		pDM_Odm	= (PDM_ODM_T)pDM_VOID;
 
 	u1Byte	tmpReg;
-	u4Byte	RF_Amode = 0, RF_Bmode = 0, LC_Cal, cnt;
+	u4Byte	LC_Cal, cnt;
 	#if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(pAdapter);
 	#if (DM_ODM_SUPPORT_TYPE == ODM_CE)
@@ -2025,11 +2024,13 @@ PHY_IQCalibrate_8197F(
 
 	s4Byte			result[4][8];	/*last is final result*/
 	u1Byte			i, final_candidate, Indexforchannel;
-	u1Byte          channelToIQK = 7;
 	BOOLEAN			bPathAOK, bPathBOK;
 	s4Byte			RegE94, RegE9C, RegEA4, RegEAC, RegEB4, RegEBC, RegEC4, RegECC;
 	BOOLEAN			is12simular, is13simular, is23simular;
-	BOOLEAN			bStartContTx = FALSE, bSingleTone = FALSE, bCarrierSuppression = FALSE;
+	#if MP_DRIVER == 1
+	BOOLEAN			bStartContTx = FALSE;
+	#endif
+	BOOLEAN bSingleTone = FALSE, bCarrierSuppression = FALSE;
 	u4Byte			IQK_BB_REG_92C[IQK_BB_REG_NUM] = {
 		rOFDM0_XARxIQImbalance,		rOFDM0_XBRxIQImbalance,
 		rOFDM0_ECCAThreshold,		0xca8,
@@ -2323,7 +2324,10 @@ PHY_LCCalibrate_8197F(
 )
 {
 	PDM_ODM_T		pDM_Odm = (PDM_ODM_T)pDM_VOID;
-	BOOLEAN			bStartContTx = FALSE, bSingleTone = FALSE, bCarrierSuppression = FALSE;
+	#if MP_DRIVER == 1
+	BOOLEAN			bStartContTx = FALSE;
+	#endif
+	BOOLEAN bSingleTone = FALSE, bCarrierSuppression = FALSE;
 	u4Byte			timeout = 2000, timecount = 0;
 
 	#if !(DM_ODM_SUPPORT_TYPE & ODM_AP)
@@ -3034,7 +3038,7 @@ phy_path_a_dodpk_8197f(
 	#endif
 	#endif
 
-	u4Byte			REG_B68, result;
+	u4Byte			REG_B68 = 0x11160200, result;
 	u1Byte			TX_AGC = 0x0;
 
 
@@ -3143,7 +3147,7 @@ phy_path_b_dodpk_8197f(
 	#endif
 	#endif
 
-	u4Byte			REG_B6C, result;
+	u4Byte			REG_B6C = 0x11160200, result;
 	u1Byte			TX_AGC = 0x0;
 
 
@@ -3568,7 +3572,7 @@ phy_lut_sram_read_8197f(
 	#endif
 	#endif
 
-	u1Byte		addr, i;
+	u1Byte		addr;
 	u4Byte		regb2c;
 
 	ODM_SetBBReg(pDM_Odm, 0xe28, bMaskDWord, 0x00000000);
@@ -3630,6 +3634,7 @@ phy_lut_sram_read_8197f(
 
 	if (k == 2)
 	{
+		u1Byte		i;
 		for (i = 0; i < 3; i++)
 		{
 			for(addr = 0; addr < 16; addr++)
@@ -3652,6 +3657,7 @@ phy_lut_sram_read_8197f(
 	{
 		printk("bDPPathAOK=%d   bDPPathBOK=%d\n", pDM_Odm->RFCalibrateInfo.bDPPathAOK, pDM_Odm->RFCalibrateInfo.bDPPathBOK);
 		u4Byte j;
+		u1Byte		i;
 
 		//for (i = 0; i < 3; i++)
 		{

@@ -485,8 +485,8 @@ IotEdcaSwitch(
 
 			else
 			{
-				PSTA_INFO_T 	pstat = priv->pshare->highTP_found_pstat;
 #ifdef MCR_WIRELESS_EXTEND
+				PSTA_INFO_T 	pstat = priv->pshare->highTP_found_pstat;
 #ifdef CONFIG_WLAN_HAL_8192EE
 				if(GET_CHIP_VER(priv) == VERSION_8192E) {
 					// TXOP normal
@@ -748,7 +748,7 @@ IotEngine(
 	 u2Byte do_tx_slowpath=0;
 #endif
 #ifdef WIFI_WMM
-	unsigned int switch_turbo = 0, avg_tp;
+	unsigned int switch_turbo = 0;
 #endif
 	int assoc_num = GET_ROOT(priv)->assoc_num;
 #ifdef MBSSID
@@ -1230,9 +1230,9 @@ IotEngine(
 			priv->pshare->swq_en = 0;
 			priv->pshare->swqen_keeptime = 0;
 		} else if (priv->pshare->rf_ft_var.swq_enable == 2) {
+			extern void init_STA_SWQAggNum(struct rtl8192cd_priv *priv);
 			priv->pshare->swq_en = 1;
 			priv->pshare->swqen_keeptime = priv->up_time;
-			extern void init_STA_SWQAggNum(struct rtl8192cd_priv *priv);
 			init_STA_SWQAggNum(priv);
 		}
 #endif

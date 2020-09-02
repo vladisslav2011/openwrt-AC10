@@ -182,9 +182,11 @@ extern unsigned int _HS2_debug_warn;	/* warn flag */
 								8192cd_util.c
 ------------------------------------------------------------------------------*/
 #ifndef	_8192CD_UTILS_C_
-#define EXTERN	extern
+	#undef EXTERN
+	#define EXTERN	extern
 #else
-#define EXTERN
+	#undef EXTERN
+	#define EXTERN
 #endif
 
 EXTERN unsigned long rtw_get_current_time(void);
@@ -200,7 +202,7 @@ EXTERN void init_STA_SWQAggNum(struct rtl8192cd_priv *priv);
 EXTERN int rtk_p2p_is_enabled(struct rtl8192cd_priv *priv);
 EXTERN u8* rtk_get_ie_with_oui(u8 *in_ie, int in_len, u8 ie_to_search, u8* oui_input ,int oui_len, int *report_ielen);
 EXTERN int rtk_get_wfd_ie(u8 *in_ie, int in_len, u8 *wfd_ie, int *wfd_ielen);
-EXTERN u8* rtk_get_p2p_ie(u8 *in_ie, int in_len, u8 *p2p_ie, int *p2p_ielen);
+EXTERN u8* rtk_get_p2p_ie(const u8 *in_ie, int in_len, u8 *p2p_ie, int *p2p_ielen);
 EXTERN u8* rtk_get_wps_ie(u8 *in_ie, int in_len, u8 *wps_ie, int *wps_ielen);
 EXTERN void copy_wps_ie(struct rtl8192cd_priv *priv, unsigned char *wps_ie, unsigned char mgmt_type);
 EXTERN void copy_p2p_ie(struct rtl8192cd_priv *priv, unsigned char *p2p_ie_input, unsigned char mgmt_type);
@@ -852,9 +854,9 @@ void start_repeater_ss(struct rtl8192cd_priv *priv);
 #ifdef RTK_NL80211 //wrt-adhoc
 EXTERN void construct_ibss_beacon(struct rtl8192cd_priv *priv);
 #ifdef __KERNEL__
-void issue_beacon_ibss_vxd(unsigned long task_priv);
-#elif defined(__ECOS)
 EXTERN void issue_beacon_ibss_vxd(void *task_priv);
+#elif defined(__ECOS)
+void issue_beacon_ibss_vxd(unsigned long task_priv);
 #endif
 #endif
 #endif
@@ -1668,7 +1670,7 @@ EXTERN int rtl8192cd_autochannel_sel(struct rtl8192cd_priv *priv);
 #undef EXTERN
 
 
-int rtk_cfg80211_set_wps_p2p_ie(struct rtl8192cd_priv *priv, char *buf, int len, int mgmt_type)    ;
+int rtk_cfg80211_set_wps_p2p_ie(struct rtl8192cd_priv *priv,const char *buf, int len, int mgmt_type)    ;
 /*cfg p2p cfg p2p*/
 
 #if 0	//move to hw.c

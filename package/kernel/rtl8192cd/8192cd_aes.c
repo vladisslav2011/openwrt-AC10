@@ -736,120 +736,120 @@ static void aes_tx(struct rtl8192cd_priv *priv, UINT8 *key, UINT8 keyid,
 									,isMgmt
 #endif
 
-                            );
-    construct_mic_header2(
-                            mic_header2,
-                            message,
-                            a4_exists,
-                            qc_exists
-                            );
+							);
+	construct_mic_header2(
+							mic_header2,
+							message,
+							a4_exists,
+							qc_exists
+							);
 
 
 	payload_remainder = (payload_length) % 16;
-    num_blocks = (payload_length) / 16;
+	num_blocks = (payload_length) / 16;
 
-    /* Find start of payload */
-    payload_index = (hdrlen + 8);
+	/* Find start of payload */
+	payload_index = (hdrlen + 8);
 
-    /* Calculate MIC */
-    aes128k128d(key, mic_iv, aes_out);
-    bitwise_xor(aes_out, mic_header1, chain_buffer);
-    aes128k128d(key, chain_buffer, aes_out);
-    bitwise_xor(aes_out, mic_header2, chain_buffer);
-    aes128k128d(key, chain_buffer, aes_out);
+	/* Calculate MIC */
+	aes128k128d(key, mic_iv, aes_out);
+	bitwise_xor(aes_out, mic_header1, chain_buffer);
+	aes128k128d(key, chain_buffer, aes_out);
+	bitwise_xor(aes_out, mic_header2, chain_buffer);
+	aes128k128d(key, chain_buffer, aes_out);
 
 	for (i = 0; i < num_blocks; i++)
-    {
-        bitwise_xor(aes_out, &message[payload_index], chain_buffer);
+	{
+		bitwise_xor(aes_out, &message[payload_index], chain_buffer);
 
-        payload_index += 16;
-        aes128k128d(key, chain_buffer, aes_out);
-    }
+		payload_index += 16;
+		aes128k128d(key, chain_buffer, aes_out);
+	}
 
-    /* Add on the final payload block if it needs padding */
-    if (payload_remainder > 0)
-    {
-        for (j = 0; j < 16; j++) padded_buffer[j] = 0x00;
-        for (j = 0; j < payload_remainder; j++)
-        {
-            padded_buffer[j] = message[payload_index++];
-        }
-        bitwise_xor(aes_out, padded_buffer, chain_buffer);
-        aes128k128d(key, chain_buffer, aes_out);
+	/* Add on the final payload block if it needs padding */
+	if (payload_remainder > 0)
+	{
+		for (j = 0; j < 16; j++)
+			padded_buffer[j] = 0x00;
+		for (j = 0; j < payload_remainder; j++)
+			padded_buffer[j] = message[payload_index++];
+		bitwise_xor(aes_out, padded_buffer, chain_buffer);
+		aes128k128d(key, chain_buffer, aes_out);
 
-    }
+	}
 
-    for (j = 0 ; j < 8; j++) mic[j] = aes_out[j];
+	for (j = 0 ; j < 8; j++)
+		mic[j] = aes_out[j];
 
-    /* Insert MIC into payload */
-    for (j = 0; j < 8; j++)
-    	message[payload_index+j] = mic[j];
+	/* Insert MIC into payload */
+	for (j = 0; j < 8; j++)
+		message[payload_index+j] = mic[j];
 
 	payload_index = hdrlen + 8;
 	for (i=0; i< num_blocks; i++)
-    {
-        construct_ctr_preload(
-                                ctr_preload,
-                                a4_exists,
-                                qc_exists,
-                                message,
-                                pn_vector,
-                                i+1
+	{
+		construct_ctr_preload(
+								ctr_preload,
+								a4_exists,
+								qc_exists,
+								message,
+								pn_vector,
+								i+1
 #ifdef CONFIG_IEEE80211W
 								,isMgmt
 #endif
 							);
-        aes128k128d(key, ctr_preload, aes_out);
-        bitwise_xor(aes_out, &message[payload_index], chain_buffer);
-        for (j=0; j<16;j++) message[payload_index++] = chain_buffer[j];
-    }
+		aes128k128d(key, ctr_preload, aes_out);
+		bitwise_xor(aes_out, &message[payload_index], chain_buffer);
+		for (j=0; j<16;j++) message[payload_index++] = chain_buffer[j];
+	}
 
-    if (payload_remainder > 0)          /* If there is a short final block, then pad it,*/
-    {                                   /* encrypt it and copy the unpadded part back   */
-        construct_ctr_preload(
-                                ctr_preload,
-                                a4_exists,
-                                qc_exists,
-                                message,
-                                pn_vector,
-                                num_blocks+1
+	if (payload_remainder > 0)          /* If there is a short final block, then pad it,*/
+	{                                   /* encrypt it and copy the unpadded part back   */
+		construct_ctr_preload(
+								ctr_preload,
+								a4_exists,
+								qc_exists,
+								message,
+								pn_vector,
+								num_blocks+1
 #ifdef CONFIG_IEEE80211W
 								,isMgmt
 #endif
 		);
 
-        for (j = 0; j < 16; j++) padded_buffer[j] = 0x00;
-        for (j = 0; j < payload_remainder; j++)
-        {
-            padded_buffer[j] = message[payload_index+j];
-        }
-        aes128k128d(key, ctr_preload, aes_out);
-        bitwise_xor(aes_out, padded_buffer, chain_buffer);
-        for (j=0; j<payload_remainder;j++) message[payload_index++] = chain_buffer[j];
-    }
+		for (j = 0; j < 16; j++)
+			padded_buffer[j] = 0x00;
+		for (j = 0; j < payload_remainder; j++)
+			padded_buffer[j] = message[payload_index+j];
+		aes128k128d(key, ctr_preload, aes_out);
+		bitwise_xor(aes_out, padded_buffer, chain_buffer);
+		for (j=0; j<payload_remainder;j++)
+			message[payload_index++] = chain_buffer[j];
+	}
 
-    /* Encrypt the MIC */
-    construct_ctr_preload(
-                        ctr_preload,
-                        a4_exists,
-                        qc_exists,
-                        message,
-                        pn_vector,
-                        0
+	/* Encrypt the MIC */
+	construct_ctr_preload(
+						ctr_preload,
+						a4_exists,
+						qc_exists,
+						message,
+						pn_vector,
+						0
 #ifdef CONFIG_IEEE80211W
 						,isMgmt
 #endif
 	);
 
-    for (j = 0; j < 16; j++) padded_buffer[j] = 0x00;
-    for (j = 0; j < 8; j++)
-    {
-        padded_buffer[j] = message[j+hdrlen+8+payload_length];
-    }
+	for (j = 0; j < 16; j++)
+		padded_buffer[j] = 0x00;
+	for (j = 0; j < 8; j++)
+		padded_buffer[j] = message[j+hdrlen+8+payload_length];
 
-    aes128k128d(key, ctr_preload, aes_out);
-    bitwise_xor(aes_out, padded_buffer, chain_buffer);
-    for (j=0; j<8;j++) message[payload_index++] = chain_buffer[j];
+	aes128k128d(key, ctr_preload, aes_out);
+	bitwise_xor(aes_out, padded_buffer, chain_buffer);
+	for (j=0; j<8;j++)
+		message[payload_index++] = chain_buffer[j];
 
 	// now, going to copy the final result back to the input buf...
 	offset =0;

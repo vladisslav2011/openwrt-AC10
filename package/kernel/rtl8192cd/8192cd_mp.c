@@ -758,14 +758,12 @@ static void mp_RF_RxLPFsetting(struct rtl8192cd_priv *priv)
 
 static void mp_8192CD_tx_setting(struct rtl8192cd_priv *priv)
 {
-	unsigned int odd_pwr = 0;
 //	extern int get_CCK_swing_index(struct rtl8192cd_priv*);
 //#ifndef CONFIG_RTL_92D_SUPPORT
-#if 1//!defined(CONFIG_RTL_92D_SUPPORT) || defined(CONFIG_RTL_DUAL_PCIESLOT_BIWLAN_D)
-	extern void set_CCK_swing_index(struct rtl8192cd_priv*, short );
-#endif
 
 #if defined(CONFIG_RTL_92C_SUPPORT) || defined(CONFIG_RTL_92D_SUPPORT)
+	extern void set_CCK_swing_index(struct rtl8192cd_priv*, short );
+	unsigned int odd_pwr = 0;
 	if (is_CCK_rate(priv->pshare->mp_datarate)
 		&& (
 #ifdef CONFIG_RTL_92C_SUPPORT
@@ -1670,7 +1668,6 @@ void mp_start_test(struct rtl8192cd_priv *priv)
  */
 void mp_stop_test(struct rtl8192cd_priv *priv)
 {
-	int i;
 
 	if (!netif_running(priv->dev))	{
 		printk("\nFail: interface not opened\n");
@@ -1918,10 +1915,9 @@ static unsigned int get_ig_reg(enum _CHIP_VERSION_ chip, unsigned char path){
 
 void mp_set_rx_gain(struct rtl8192cd_priv *priv, unsigned char *data)
 {
-	int group_idx,rx_gain_offset,initial_gain;
+	int group_idx = 0,rx_gain_offset,initial_gain;
 	unsigned char path;
 	unsigned int ig_reg;
-	char *val;
 
 	if (!netif_running(priv->dev))
 	{
@@ -1944,7 +1940,7 @@ void mp_set_rx_gain(struct rtl8192cd_priv *priv, unsigned char *data)
 
 		for(path = priv->pshare->phw->rx_path_start; path <= priv->pshare->phw->rx_path_end; path++){
 			if((ig_reg = get_ig_reg(GET_CHIP_VER(priv),path)) == 0){
-				panic_printk("[Error] get_ig_reg fail!\n",__FUNCTION__);
+				panic_printk("%s [Error] get_ig_reg fail!\n",__FUNCTION__);
 				return;
 			}
 
@@ -1962,7 +1958,7 @@ void mp_set_rx_gain(struct rtl8192cd_priv *priv, unsigned char *data)
 	}else if (get_value_by_token((char *)data, "off")){
 		for(path = priv->pshare->phw->rx_path_start; path <= priv->pshare->phw->rx_path_end; path++){
 			if((ig_reg = get_ig_reg(GET_CHIP_VER(priv),path)) == 0){
-				panic_printk("[Error] get_ig_reg fail!\n",__FUNCTION__);
+				panic_printk("%s [Error] get_ig_reg fail!\n",__FUNCTION__);
 				return;
 			}
 			RTL_W8(ig_reg, (RTL_R8(ig_reg) & 0x80)| 0x20);
@@ -2127,27 +2123,27 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 		unsigned int val= channel;
 
 		val_read = PHY_QueryRFReg(priv, 0, 0x18, bMask20Bits, 1);
-	if(CHECKICIS92D())
-		val_read &= 0xffffff00;
-	else
-		val_read &= 0xfffffff0;
-
+		if(CHECKICIS92D())
+			val_read &= 0xffffff00;
+		else
+			val_read &= 0xfffffff0;
+	
 		for(eRFPath = RF92CD_PATH_A; eRFPath < RF92CD_PATH_MAX; eRFPath++) {
 #ifdef CONFIG_RTL_92D_SUPPORT
 			if(CHECKICIS92D()) {
 				priv->pshare->RegRF18[eRFPath] = (val_read | val);
-
+	
 				if (priv->pmib->dot11RFEntry.phyBandSelect & PHY_BAND_5G) {
 					/*
-					 *	Set Bit18 when channel >= 100, for 5G only
-					 */
+						*	Set Bit18 when channel >= 100, for 5G only
+						*/
 					if (val >= 100)
 						//PHY_SetRFReg(priv, eRFPath, rRfChannel, BIT(18), 1);
 						priv->pshare->RegRF18[eRFPath] |= BIT(18);
 					else
 						//PHY_SetRFReg(priv, eRFPath, rRfChannel, BIT(18), 0);
 						priv->pshare->RegRF18[eRFPath] &= (~BIT(18));
-
+	
 					//PHY_SetRFReg(priv, eRFPath, rRfChannel, BIT(16), 1);
 					//PHY_SetRFReg(priv, eRFPath, rRfChannel, BIT(8), 1);
 					priv->pshare->RegRF18[eRFPath] |= BIT(16);
@@ -2162,7 +2158,7 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 					//PHY_SetRFReg(priv, eRFPath, rRfChannel, BIT(8), 0);
 					priv->pshare->RegRF18[eRFPath] &= (~BIT(16));
 					priv->pshare->RegRF18[eRFPath] &= (~BIT(8));
-
+	
 					// CLOAD for RF paht_A/B (MP-chip)
 					PHY_SetRFReg(priv, eRFPath, 0xB, BIT(16)|BIT(15)|BIT(14), 0x7);
 				}
@@ -2173,7 +2169,7 @@ void mp_set_channel(struct rtl8192cd_priv *priv, unsigned char *data)
 				PHY_SetRFReg(priv, eRFPath, 0x18, bMask20Bits, val_read | val);
 			}
 		}
-
+	
 		channel = val;
 	}
 
@@ -3485,7 +3481,7 @@ void mp_ctx(struct rtl8192cd_priv *priv, unsigned char *data)
 	struct rtl8192cd_hw *phw = GET_HW(priv);
 	volatile unsigned int head, tail;
 #endif
-	RF92CD_RADIO_PATH_E eRFPath;
+	RF92CD_RADIO_PATH_E eRFPath = 0;
 
 #ifdef CONFIG_RTL_92D_SUPPORT
 	unsigned int temp_860=0,  temp_864=0, temp_870=0;
@@ -4582,9 +4578,9 @@ void mp_set_tmac_tx(struct rtl8192cd_priv *priv)
 void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 {
 	RT_PMAC_TX_INFO  PMacTxInfo;
-	int iPMacTxInfo[sizeof(RT_PMAC_TX_INFO)+1], i, j, k=0;
+	int iPMacTxInfo[sizeof(RT_PMAC_TX_INFO)+1], i, j = 0, k=0;
 	unsigned char sPMacTxInfo[sizeof(RT_PMAC_TX_INFO)+1], tmp[10];
-	u4Byte u4bTmp, offset;
+	u4Byte u4bTmp, offset = 0;
 
 	if (!netif_running(priv->dev))
 	{
@@ -4906,11 +4902,13 @@ void mp_pmac_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 		PHY_SetBBReg(priv, 0xf50, 0x1ff, u4bTmp); /* 0xb4c 3:0 TXSC	5:4	BW	7:6 m_STBC	8 NDP_Sound*/
 
 	if(CHECKICIS8814()||CHECKICIS8822())
+	{
 		if(IS_HAL_TEST_CHIP(priv))
 			offset = 0xb4c;
 		else
 			offset = 0xb44;
-
+	}
+	
 	if(is_OFDM_rate(PMacTxInfo.TX_RATE)){
 		if ((GET_CHIP_VER(priv) == VERSION_8814A)||(GET_CHIP_VER(priv) == VERSION_8822B))
 			PHY_SetBBReg(priv, offset, 0xc0000000, 0);
@@ -5256,7 +5254,6 @@ void mp_txpower_tracking(struct rtl8192cd_priv *priv, unsigned char *data)
 {
 	char *val;
 	unsigned int target_ther = 0;
-	int tmp_ther;
 	if (!netif_running(priv->dev)) {
 		printk("\nFail: interface not opened\n");
 		return;
@@ -5477,8 +5474,9 @@ int mp_query_tssi(struct rtl8192cd_priv *priv, unsigned char *data)
 int mp_query_ther(struct rtl8192cd_priv *priv, unsigned char *data)
 {
 	unsigned int ther=0;
+#ifdef THER_TRIM
 	int tmp_ther;
-
+#endif
 	if (!netif_running(priv->dev)) {
 		printk("\nFail: interface not opened\n");
 		return 0;
@@ -7562,9 +7560,9 @@ static void mp_chk_sw_ant(struct rtl8192cd_priv *priv)
 	p_ofdm_tx->r_ant_non_ht 		= 0x3;
 	p_ofdm_tx->r_ant_ht2			= 0x2;
 
-	// ­ì¦]¬OTx 3-wire enable»ÝÀHTx Ant path¥´¶}¤~·|¶}±Ò¡A
-	// ©Ò¥H»Ý¦b³]BB 0x824»P0x82C®É¡A¦P®É±NBB 0x804[3:0]³]¬°3(¦P®É¥´¶}Ant. A and B)¡C
-	// ­n¬Ù¹qªº±¡ªp¤U¡AA Tx®É 0x90C=0x11111111¡AB Tx®É 0x90C=0x22222222¡AAB¦P®É¶}´Nºû«ù­ì¨Ó³]©w0x3321333
+	// ï¿½ï¿½ï¿½]ï¿½OTx 3-wire enableï¿½ï¿½ï¿½HTx Ant pathï¿½ï¿½ï¿½}ï¿½~ï¿½|ï¿½}ï¿½Ò¡A
+	// ï¿½Ò¥Hï¿½Ý¦bï¿½]BB 0x824ï¿½P0x82Cï¿½É¡Aï¿½Pï¿½É±NBB 0x804[3:0]ï¿½]ï¿½ï¿½3(ï¿½Pï¿½É¥ï¿½ï¿½}Ant. A and B)ï¿½C
+	// ï¿½nï¿½Ù¹qï¿½ï¿½ï¿½ï¿½ï¿½pï¿½Uï¿½AA Txï¿½ï¿½ 0x90C=0x11111111ï¿½AB Txï¿½ï¿½ 0x90C=0x22222222ï¿½AABï¿½Pï¿½É¶}ï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³]ï¿½w0x3321333
 
 
 	switch(priv->pshare->mp_antenna_tx)
@@ -7742,6 +7740,7 @@ __NOMIPS16
 #endif
 void mp_set_ant_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 {
+	unsigned char tx2path=0;
 	if (!netif_running(priv->dev)) {
 		printk("\nFail: interface not opened\n");
 		return;
@@ -7751,7 +7750,6 @@ void mp_set_ant_tx(struct rtl8192cd_priv *priv, unsigned char *data)
 		printk("Fail: not in MP mode\n");
 		return;
 	}
-	unsigned char tx2path=0;
 
 	if (!strcmp(data, "a")) {
 		priv->pshare->mp_antenna_tx = ANTENNA_A;
@@ -7824,7 +7822,10 @@ __NOMIPS16
 #endif
 void mp_set_ant_rx(struct rtl8192cd_priv *priv, unsigned char *data)
 {
+#if defined(CONFIG_WLAN_HAL_8814AE)
 	int temp_IG;
+#endif
+	unsigned char tx2path=0;
 
 	if (!netif_running(priv->dev)) {
 		printk("\nFail: interface not opened\n");
@@ -7835,7 +7836,6 @@ void mp_set_ant_rx(struct rtl8192cd_priv *priv, unsigned char *data)
 		printk("Fail: not in MP mode\n");
 		return;
 	}
-	unsigned char tx2path=0;
 	if (!strcmp(data, "a")) {
 		priv->pshare->mp_antenna_rx = ANTENNA_A;
 	} else if (!strcmp(data, "b")) {

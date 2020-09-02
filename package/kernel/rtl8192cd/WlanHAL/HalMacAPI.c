@@ -21,25 +21,25 @@ Major Change History:
 void associate_halMac_API(struct rtl8192cd_priv *priv)
 {
 
+    PHALMAC_PLATFORM_API              pMacHalFunc = (PHALMAC_PLATFORM_API)kmalloc(sizeof(HALMAC_PLATFORM_API), GFP_ATOMIC);
     priv->pshare->use_macHalAPI = 1;
-    priv->pHalmac_platform_api = (PHALMAC_PLATFORM_API)kmalloc(sizeof(HALMAC_PLATFORM_API), GFP_ATOMIC);
+    priv->pHalmac_platform_api = pMacHalFunc;
     //priv->pHalmac_adapter      = (PHALMAC_ADAPTER)kmalloc(sizeof(HALMAC_ADAPTER), GFP_ATOMIC);
     //priv->pHalmac_api          = (PHALMAC_API)kmalloc(sizeof(HALMAC_API), GFP_ATOMIC);
 
-    PHALMAC_PLATFORM_API              pMacHalFunc = priv->pHalmac_platform_api;
 
 
     //
     //Initialization Related
     //
-    pMacHalFunc->SDIO_CMD52_READ            = MacHalGeneralDummy;
-    pMacHalFunc->SDIO_CMD53_READ_8          = MacHalGeneralDummy;
-    pMacHalFunc->SDIO_CMD53_READ_16         = MacHalGeneralDummy;
-    pMacHalFunc->SDIO_CMD53_READ_32         = MacHalGeneralDummy;
-    pMacHalFunc->SDIO_CMD52_WRITE           = MacHalGeneralDummy;
-    pMacHalFunc->SDIO_CMD53_WRITE_8         = MacHalGeneralDummy;
-    pMacHalFunc->SDIO_CMD53_WRITE_16        = MacHalGeneralDummy;
-    pMacHalFunc->SDIO_CMD53_WRITE_32        = MacHalGeneralDummy;
+    pMacHalFunc->SDIO_CMD52_READ            = (void *)MacHalGeneralDummy;
+    pMacHalFunc->SDIO_CMD53_READ_8          = (void *)MacHalGeneralDummy;
+    pMacHalFunc->SDIO_CMD53_READ_16         = (void *)MacHalGeneralDummy;
+    pMacHalFunc->SDIO_CMD53_READ_32         = (void *)MacHalGeneralDummy;
+    pMacHalFunc->SDIO_CMD52_WRITE           = (void *)MacHalGeneralDummy;
+    pMacHalFunc->SDIO_CMD53_WRITE_8         = (void *)MacHalGeneralDummy;
+    pMacHalFunc->SDIO_CMD53_WRITE_16        = (void *)MacHalGeneralDummy;
+    pMacHalFunc->SDIO_CMD53_WRITE_32        = (void *)MacHalGeneralDummy;
     pMacHalFunc->REG_READ_8                 = HALAPI_R8;
     pMacHalFunc->REG_READ_16                = HALAPI_R16;
     pMacHalFunc->REG_READ_32                = HALAPI_R32;
@@ -223,13 +223,13 @@ HALAPI_PRINT(
  return _TRUE;
 }
 
-VOID
+VOID *
 HALAPI_MALLOC(
     IN VOID *pDriver_adapter,
     IN u32 size
 )
 {
-    kmalloc(size, GFP_ATOMIC);
+    return kmalloc(size, GFP_ATOMIC);
 }
 
 
@@ -304,11 +304,11 @@ HALAPI_MUTEX_DEINIT(
 VOID
 HALAPI_MUTEX_LOCK(
  IN VOID *pDriver_adapter,
- IN HALMAC_MUTEX *pMutex
+ IN HALMAC_MUTEX *pMutex,
+ unsigned long * pflag
 )
 {
-    u32 flag;
-    spin_lock_irqsave(pMutex, flag);
+    spin_lock_irqsave(pMutex, *pflag);
 }
 
 
@@ -316,11 +316,11 @@ HALAPI_MUTEX_LOCK(
 VOID
 HALAPI_MUTEX_UNLOCK(
  IN VOID *pDriver_adapter,
- IN HALMAC_MUTEX *pMutex
+ IN HALMAC_MUTEX *pMutex,
+ unsigned long * pflag
 )
 {
-    u32 flag;
-    spin_unlock_irqrestore(pMutex, flag);
+    spin_unlock_irqrestore(pMutex, *pflag);
 }
 
 VOID

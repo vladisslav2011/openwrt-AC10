@@ -14,7 +14,7 @@
 #ifndef _8192CD_NET80211_H_
 #define _8192CD_NET80211_H_
 
-
+#undef MAX_CONFIG_FILE_SIZE
 #define MAX_CONFIG_FILE_SIZE (20*1024) // for 8192, added to 20k
 #define MAX_PARAM_BUF_SIZE (1024) // for 8192, added to 20k
 

@@ -543,8 +543,8 @@ CheckAddrRange(
         hiAddr  = lowAddr + sizeof(TX_BUFFER_DESCRIPTOR);
     } else if (type == 1) {
         // TX DESC
-        lowAddr = HAL_VIRT_TO_BUS(txDescBaseAddr[qNum] + offset * sizeof(TX_DESC_88XX));
-        hiAddr  = HAL_VIRT_TO_BUS(lowAddr + sizeof(TX_DESC_88XX));
+        lowAddr = HAL_VIRT_TO_BUS((void *)(txDescBaseAddr[qNum] + offset * sizeof(TX_DESC_88XX)));
+        hiAddr  = HAL_VIRT_TO_BUS((void *)(lowAddr + sizeof(TX_DESC_88XX)));
     } else if (type == 2) {
         // RXBD
         lowAddr = rxBaseAddr[qNum] + offset * sizeof(RX_BUFFER_DESCRIPTOR);

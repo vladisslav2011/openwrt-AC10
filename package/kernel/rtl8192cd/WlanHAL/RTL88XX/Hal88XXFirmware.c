@@ -48,7 +48,6 @@ u2Byte checksum(u1Byte *idx, u4Byte len) //Cnt - count of bytes
 {
 
 	u4Byte	i;
-	u4Byte	val, val_32;
 	u1Byte	val_8[4];
  	u1Byte	checksum[4]={0,0,0,0};
 	u4Byte	checksum32 = 0;
@@ -190,7 +189,6 @@ RestoreAfterDLFW(
     IN  pu4Byte         temBuf
 )
 {
-    u4Byte tmpVal,count = 0;
 
     SetBeaconDownload88XX(Adapter, HW_VAR_BEACON_DISABLE_DOWNLOAD);
 
@@ -225,7 +223,6 @@ InitDDMA88XX(
 
 	u4Byte	ch0ctrl = (DDMA_CHKSUM_EN|DDMA_CH_OWN );
 	u4Byte	cnt=50000;
-	u1Byte	tmp;
 
 	//check if ddma ch0 is idle
 	while(HAL_RTL_R32(REG_DDMA_CH0CTRL)&DDMA_CH_OWN){
@@ -266,7 +263,6 @@ DLImageCheckSum(
 )
 {
     u4Byte	cnt=5000;
-	u1Byte	tmp;
 
 	//check if ddma ch0 is idle
 	while(HAL_RTL_R32(REG_DDMA_CH0CTRL)&DDMA_CH_OWN){
@@ -481,7 +477,6 @@ InitMIPSFirmware88XX(
     u4Byte                  temBuf[8];
     u4Byte                  imemSZ;
     u2Byte                  dmemSZ;
-    u4Byte                  offset = 0;
     RT_STATUS status;
     PHAL_DATA_TYPE          pHalData    = _GET_HAL_DATA(Adapter);
 
@@ -929,7 +924,7 @@ SetBcnCtrlReg88XX(
 	HAL_RTL_W8(REG_BCN_CTRL, tmp);
 }
 
-static u1Byte
+u1Byte
 MRateIdxToARFRId88XX(
 	IN HAL_PADAPTER     Adapter,
 	u1Byte  			RateIdx,    //RATR_TABLE_MODE
@@ -1191,7 +1186,11 @@ UpdateHalRAMask88XX(
 	PRTL8192CD_PRIV		priv = Adapter;
 	u1Byte		        WirelessMode    = WIRELESS_MODE_A;
 	u1Byte		        BW              = HT_CHANNEL_WIDTH_20;
-	u1Byte			MimoPs = MIMO_PS_NOLIMIT, MimoPs_enable = FALSE, ratr_index = 8, H2CCommand[7] ={ 0};
+	u1Byte			MimoPs = MIMO_PS_NOLIMIT, MimoPs_enable = FALSE;
+#if CFG_HAL_RTK_AC_SUPPORT
+//	u1Byte			ratr_index = 8;
+#endif
+	u1Byte			H2CCommand[7] ={ 0};
 	u1Byte			disable_cck_rate = FALSE;
 	u4Byte			ratr_bitmap = 0, ratr_bitmap_msb = 0;
 	u4Byte			IOTAction = 0;
@@ -1583,7 +1582,11 @@ UpdateHalRAMask8814A(
 
 	u1Byte		        WirelessMode    = WIRELESS_MODE_A;
 	u1Byte		        BW              = HT_CHANNEL_WIDTH_20;
-	u1Byte			MimoPs          = MIMO_PS_NOLIMIT, MimoPs_enable = FALSE, ratr_index = 8, H2CCommand[7] ={ 0};
+	u1Byte			MimoPs          = MIMO_PS_NOLIMIT, MimoPs_enable = FALSE;
+#if CFG_HAL_RTK_AC_SUPPORT
+//	u1Byte			ratr_index = 8;
+#endif
+	u1Byte			H2CCommand[7] ={ 0};
 	u8Byte			ratr_bitmap = 0, IOTAction = 0;
 	u1Byte			disable_cck_rate = FALSE;
 	u4Byte			ratr_bitmap_lsb = 0, ratr_bitmap_msb = 0;
@@ -2109,7 +2112,7 @@ SetAPOffloadEnable88XX
 
 
     u1Byte      H2CCommand[8] ={0};
-    u1Byte      i;
+//    u1Byte      i;
 
     H2CCommand[0] = bEn;
 
@@ -2707,13 +2710,10 @@ ParseC2HPacket88XX(
 )
 {
 
-	u8 c2h_cmd, c2h_sub_cmd_id, resource_index, h2c_cmd_id, h2c_sub_cmd_id;
-	u16 h2c_seq;
-	u8  segment_id=0, segment_size=0;
+	u8 c2h_cmd, c2h_sub_cmd_id, h2c_cmd_id;
 	//u8* pC2h_buf = halmac_buf+HALMAC_RX_DESC_SIZE_88XX;
 	u8* pC2h_buf = pbuf;
 	//u32 c2h_size = halmac_size -HALMAC_TX_DESC_SIZE_88XX;
-	u32 c2h_size = c2hsize;
 	HALMAC_H2C_RETURN_CODE return_status = HALMAC_H2C_RETURN_SUCCESS;
 
     //printk("parse c2h pkt!!\n");
@@ -2971,8 +2971,6 @@ C2HExtEventHandler88XX
 	u1Byte cmdsubLen = 0;
 	u1Byte cmdsubSeq = 0;
 	u1Byte cmdsubcontent[LENGTH_C2HEXT_CONTENT];
-	u2Byte count_i=0;
-	pu1Byte print_tmp=tmpBuf;
 
 	while(c2hissued_len < c2hCmdLen-1)
 	{
@@ -3012,7 +3010,7 @@ C2HTxBeamformingHandler88XX(
 #endif
 #ifdef CONFIG_WLAN_HAL_8822BE
 	if ( IS_HARDWARE_TYPE_8822B(Adapter))  {
-		u1Byte 	status = CmdBuf[0] & BIT0;
+//		u1Byte 	status = CmdBuf[0] & BIT0;
 		C2HTxBeamformingHandler_8822B(priv, CmdBuf, CmdLen);
 		/*phydm_Beamforming_End_SW(ODMPTR, status);*/	/*temp mask by YuChen*/ //eric-mu ??
 	}
@@ -3028,7 +3026,7 @@ C2HTxBeamformingHandler88XX(
 //eric-gid C2HCCXRptHandler88XX
 unsigned int output_value_32(unsigned int value, unsigned char start, unsigned char end)
 {
-	unsigned int bit_mask, output = 0;
+	unsigned int bit_mask = 0, output = 0;
 
 	if(start == end) //1-bit value
 	{
@@ -3067,7 +3065,7 @@ C2HCCXRptHandler88XX(
 	if((CmdLen-2) != 0x10)
 		panic_printk("C2H CCX RPT LEN Invalid\n");
 
-	ptmp = CmdBuf + 2;
+	ptmp = (unsigned int *)(CmdBuf + 2);
 	tmp = *ptmp;
 	tmp = le32_to_cpu(tmp);
 

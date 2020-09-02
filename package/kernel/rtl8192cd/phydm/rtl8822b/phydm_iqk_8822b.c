@@ -60,7 +60,7 @@ void DoIQK_8822B(
 	)
 {
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
-	BOOLEAN		bReCovery = (BOOLEAN) DeltaThermalIndex;
+//	BOOLEAN		bReCovery = (BOOLEAN) DeltaThermalIndex;
 
 	PHY_IQCalibrate_8822B(pDM_Odm, TRUE);
 }
@@ -68,7 +68,7 @@ void DoIQK_8822B(
 
 void
 _iqk_rf_set_check(
-	struct PHY_DM_STRUCT	*p_dm_odm,
+	PDM_ODM_T p_dm_odm,
 	u8		path,
 	u16		add,
 	u32		data
@@ -544,7 +544,7 @@ _IQK_ConfigureMACBB_8822B(
 	ODM_Write1Byte(pDM_Odm, 0x522, 0x7f);
 	ODM_SetBBReg(pDM_Odm, 0x550, BIT11|BIT3, 0x0);
 	ODM_SetBBReg(pDM_Odm, 0x90c, BIT15, 0x1);			/*0x90c[15]=1: dac_buf reset selection*/
-	/*0xc94[0]=1, 0xe94[0]=1: Åýtx±qiqk¥´¥X¨Ó*/
+	/*0xc94[0]=1, 0xe94[0]=1: ï¿½ï¿½txï¿½qiqkï¿½ï¿½ï¿½Xï¿½ï¿½*/
 	ODM_SetBBReg(pDM_Odm, 0xc94, BIT0, 0x1);
 	ODM_SetBBReg(pDM_Odm, 0xe94, BIT0, 0x1); 
 	/* 3-wire off*/
@@ -627,8 +627,6 @@ _IQK_RXK1Setting_8822B(
 	IN u1Byte Path
 	)
 {
-	PIQK_INFO	pIQK_info = &pDM_Odm->IQK_info;
-
 	ODM_Write4Byte(pDM_Odm, 0x1b00, 0xf8000008 | Path << 1);
 
 	switch (*pDM_Odm->pBandType) {
@@ -826,7 +824,7 @@ _LOK_One_Shot_8822B(
 {	
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	PIQK_INFO	pIQK_info = &pDM_Odm->IQK_info;
-	u1Byte		delay_count = 0, ii;
+	u1Byte		delay_count = 0;
 	BOOLEAN		LOK_notready = FALSE;
 	u4Byte		LOK_temp = 0;
 	u4Byte		IQK_CMD = 0x0;
@@ -892,8 +890,8 @@ _IQK_One_Shot_8822B(
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	PIQK_INFO	pIQK_info = &pDM_Odm->IQK_info;
 	u1Byte		delay_count = 0;
-	BOOLEAN		notready = TRUE, fail = TRUE, search_fail = TRUE;
-	u4Byte		IQK_CMD = 0x0, tmp;
+	BOOLEAN		notready = TRUE, fail = TRUE;
+	u4Byte		IQK_CMD = 0x0;
 	u2Byte		IQK_Apply[2]	= {0xc94, 0xe94};
 
 	if (idx == TXIQK)
@@ -1001,7 +999,6 @@ _IQK_RXIQKbyPath_8822B(
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	PIQK_INFO	pIQK_info = &pDM_Odm->IQK_info;
 	BOOLEAN		KFAIL = TRUE, gonext;
-	u1Byte		i;
 
 #if 1
 		switch (pIQK_info->rxiqk_step) {
@@ -1293,7 +1290,6 @@ phy_IQCalibrate_8822B(
 	u4Byte 	Backup_MAC_REG[MAC_REG_NUM_8822B] = {0x520, 0x550}; 
 	u4Byte	Backup_BB_REG[BB_REG_NUM_8822B] = {0x808, 0x90c, 0xc00, 0xcb0, 0xcb4, 0xcbc, 0xe00, 0xeb0, 0xeb4, 0xebc, 0x1990, 0x9a4, 0xa04, 0xb00}; 
 	u4Byte	Backup_RF_REG[RF_REG_NUM_8822B] = {0xdf, 0x8f, 0x65, 0x0, 0x1}; 
-	u1Byte	i, j;
 	BOOLEAN segment_iqk = false, is_mp = false;
 
 	PIQK_INFO	pIQK_info = &pDM_Odm->IQK_info;

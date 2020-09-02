@@ -913,7 +913,7 @@ typedef u4Byte
 typedef BOOLEAN
 (*NicDownloadRsvdPageHandler)(
 	IN HAL_PADAPTER     Adapter,
-    IN  pu1Byte         beaconbuf,
+    IN  pu4Byte         beaconbuf,
     IN  u4Byte          beaconPktLen,
     IN  u1Byte          bReDownload
     );

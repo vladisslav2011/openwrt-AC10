@@ -4664,6 +4664,7 @@ InitLLT_Table88XX(
 
 #define POLLING_LLT_THRESHOLD				20
 
+#if 0
 static RT_STATUS
 _LLTWrite_8814AE(
 	IN  HAL_PADAPTER    Adapter,
@@ -4697,7 +4698,7 @@ _LLTWrite_8814AE(
 	return status;
 
 }
-
+#endif
 
 
 RT_STATUS
@@ -4705,10 +4706,10 @@ InitLLT_Table88XX_V1(
 	IN  HAL_PADAPTER    Adapter
 )
 {
-	u4Byte          i, count = 0;
+//	u4Byte          i;
 	u1Byte	        tmp1byte = 0, testcnt = 0;
 	u4Byte          txpktbuf_bndy;
-	RT_STATUS		status;
+//	RT_STATUS		status;
 
 #if (IS_RTL8814A_SERIES || IS_RTL8822B_SERIES)
     if ( IS_HARDWARE_TYPE_8814A(Adapter) || IS_HARDWARE_TYPE_8822B(Adapter)) {
@@ -4852,7 +4853,8 @@ InitLLT_Table88XX_V1(
 
 RT_STATUS
 InitPON88XX(
-	IN  HAL_PADAPTER Adapter
+	IN  HAL_PADAPTER Adapter,
+	IN  u4Byte ClkSel
 )
 {
     u4Byte result = 0;
@@ -4878,6 +4880,7 @@ InitPON88XX(
     	}
     }
 #endif //IS_SUPPORT_MACHAL_API
+    return RT_STATUS_FAILURE;
 }
 
 RT_STATUS
@@ -4886,7 +4889,9 @@ InitMAC88XX(
 )
 {
 	u4Byte  errorFlag = 0;
+#if CFG_HAL_MACDM
 	u4Byte  MaxAggreNum;
+#endif
 	RT_STATUS   status;
     u1Byte result;
     pu1Byte pFWStart;
@@ -4964,7 +4969,7 @@ InitMAC88XX(
             printk("halmac_cfg_rx_aggregation OK\n");
         }
 
-        if (HALMAC_RET_SUCCESS != GET_MACHALAPI_INTERFACE(Adapter)->halmac_cfg_mac_addr(Adapter->pHalmac_adapter,0,(pu1Byte)Adapter->dev->dev_addr)||
+        if (HALMAC_RET_SUCCESS != GET_MACHALAPI_INTERFACE(Adapter)->halmac_cfg_mac_addr(Adapter->pHalmac_adapter,0,(PHALMAC_WLAN_ADDR)Adapter->dev->dev_addr)||
             HALMAC_RET_SUCCESS != GET_MACHALAPI_INTERFACE(Adapter)->halmac_cfg_operation_mode(Adapter->pHalmac_adapter,HALMAC_WIRELESS_MODE_AC))
         {
             panic_printk("halmac_init_mac_cfg Failed\n");
@@ -5263,7 +5268,7 @@ InitMAC88XX(
 	// Set Driver info size
 	HAL_RTL_W8(REG_RX_DRVINFO_SZ, (HAL_RTL_R8(REG_RX_DRVINFO_SZ) & 0xF0 ) | BIT_DRVINFO_SZ_V1(4));
     // Enable RX shift to make payload(IP header) is 4-byte alignment
-    HAL_RTL_W8(REG_RX_DRVINFO_SZ, HAL_RTL_R8(REG_RX_DRVINFO_SZ) | BIT_APP_MH_SHIFT_VAL & ~BIT_WMAC_ENSHIFT);
+    HAL_RTL_W8(REG_RX_DRVINFO_SZ, (HAL_RTL_R8(REG_RX_DRVINFO_SZ) | BIT_APP_MH_SHIFT_VAL) & ~BIT_WMAC_ENSHIFT);
 	}
 #endif
 
@@ -6036,7 +6041,7 @@ InitMBSSID88XX(
 	IN  HAL_PADAPTER Adapter
 )
 {
-	s4Byte      i, j;
+//	s4Byte      i, j;
 	u4Byte      camData[2], camIdx;
 	pu1Byte     macAddr = HAL_VAR_MY_HWADDR;
 	u4Byte      bcn_early_time ;
@@ -6104,7 +6109,7 @@ InitMBSSID88XX(
 		HAL_RTL_W32(REG_MBIDCAMCFG_1, camData[1]);
 		HAL_RTL_W32(REG_MBIDCAMCFG_2, camData[0]);
 
-#if CFG_HAL_DUAL_BCN_BUF
+#ifdef CFG_HAL_DUAL_BCN_BUF
 		// if odd number of AP, open one more AP.
 		if ((HAL_VAR_VAP_COUNT % 2) == 0) {
 			vap_bcn_offset = HAL_VAR_BCN_INTERVAL/(HAL_VAR_VAP_COUNT+2);
@@ -6142,7 +6147,7 @@ InitMBSSID88XX(
 		HAL_RTL_W8(REG_BCN_CTRL, BIT_EN_BCN_FUNCTION | BIT_DIS_TSF_UDT | BIT_EN_TXBCN_RPT | BIT_DIS_RX_BSSID_FIT);
 
 		// if odd number of AP, open one more AP. add close this additional AP
-#if CFG_HAL_DUAL_BCN_BUF
+#ifdef CFG_HAL_DUAL_BCN_BUF
 		if ((HAL_VAR_VAP_INIT_SEQ % 2) == 0) {
 			HAL_RTL_W8(REG_MBID_NUM, (HAL_RTL_R8(REG_MBID_NUM) & ~BIT_MASK_MBID_BCN_NUM) | ((HAL_VAR_VAP_INIT_SEQ + 1) & BIT_MASK_MBID_BCN_NUM));
 			HAL_RTL_W8(REG_MBSSID_CTRL, (HAL_RTL_R8(REG_MBSSID_CTRL) | (1 << (HAL_VAR_VAP_INIT_SEQ))));
@@ -6154,13 +6159,13 @@ InitMBSSID88XX(
 			HAL_RTL_W8(REG_MBSSID_CTRL, (HAL_RTL_R8(REG_MBSSID_CTRL) | (1 << (HAL_VAR_VAP_INIT_SEQ))));
 		}
 
-#if CFG_HAL_DUAL_BCN_BUF
+#ifdef CFG_HAL_DUAL_BCN_BUF
 		bcn_early_time = HAL_RTL_R8(REG_DRVERLYINT);
 #else
 		bcn_early_time = HAL_RTL_R8(REG_BCNDMATIM);
 #endif
 		if ((HAL_VAR_VAP_COUNT % 2) == 0) {
-#if CFG_HAL_DUAL_BCN_BUF
+#ifdef CFG_HAL_DUAL_BCN_BUF
 			tbtt_hold = (HAL_VAR_BCN_INTERVAL / (HAL_VAR_VAP_COUNT + 2)) * 2 - bcn_early_time - 2;
 #else
 			tbtt_hold = (HAL_VAR_BCN_INTERVAL / (HAL_VAR_VAP_COUNT + 1))   - bcn_early_time - 2;
@@ -6209,7 +6214,7 @@ StopMBSSID88XX(
 	IN  HAL_PADAPTER Adapter
 )
 {
-	s4Byte      i, j;
+	s4Byte      i;
 	u4Byte      camData[2], camIdx;
 	u4Byte      tempVal;
 	HAL_PADAPTER tmpAdapter;
@@ -6257,7 +6262,7 @@ StopMBSSID88XX(
 			}
 
 			if (HAL_RTL_R8(REG_MBID_NUM) & BIT_MASK_MBID_BCN_NUM) {
-#if CFG_HAL_DUAL_BCN_BUF
+#ifdef CFG_HAL_DUAL_BCN_BUF
 				// if odd number of AP, open one more AP.
 				if ((HAL_VAR_VAP_COUNT != 0) && ((HAL_VAR_VAP_COUNT % 2) == 0)) {
 					vap_bcn_offset = HAL_VAR_BCN_INTERVAL / (HAL_VAR_VAP_COUNT + 2);
@@ -6300,7 +6305,7 @@ StopMBSSID88XX(
 
 			HAL_RTL_W8(REG_MBSSID_CTRL, (HAL_RTL_R8(REG_MBSSID_CTRL) & (~(1 << (HAL_VAR_VAP_COUNT + 1)))));
 			// if odd number of AP, open one more AP. add close this additional AP
-#if CFG_HAL_DUAL_BCN_BUF
+#ifdef CFG_HAL_DUAL_BCN_BUF
 			if ((HAL_VAR_VAP_COUNT != 0) && (HAL_VAR_VAP_COUNT % 2) == 0) {
 				HAL_RTL_W8(REG_MBID_NUM, (HAL_RTL_R8(REG_MBID_NUM) & ~BIT_MASK_MBID_BCN_NUM) | ((HAL_VAR_VAP_COUNT + 1) & BIT_MASK_MBID_BCN_NUM));
 			} else
@@ -6309,13 +6314,13 @@ StopMBSSID88XX(
 				HAL_RTL_W8(REG_MBID_NUM, (HAL_RTL_R8(REG_MBID_NUM) & ~BIT_MASK_MBID_BCN_NUM) | (HAL_VAR_VAP_COUNT & BIT_MASK_MBID_BCN_NUM));
 			}
 
-#if CFG_HAL_DUAL_BCN_BUF
+#ifdef CFG_HAL_DUAL_BCN_BUF
 			bcn_early_time = HAL_RTL_R8(REG_DRVERLYINT);
 #else
 			bcn_early_time = HAL_RTL_R8(REG_BCNDMATIM);
 #endif
 			if ((HAL_VAR_VAP_COUNT % 2) == 0) {
-#if CFG_HAL_DUAL_BCN_BUF
+#ifdef CFG_HAL_DUAL_BCN_BUF
 				tbtt_hold = (HAL_VAR_BCN_INTERVAL / (HAL_VAR_VAP_COUNT + 2)) * 2 - bcn_early_time - 2;
 #else
 				tbtt_hold = (HAL_VAR_BCN_INTERVAL / (HAL_VAR_VAP_COUNT + 1))   - bcn_early_time - 2;
@@ -6536,7 +6541,6 @@ ReleaseOnePacket88XX(
 	unsigned char releaseBit;
 	unsigned int reg_addr;
 	u4Byte  value;
-	u4Byte  data[2];
 	u1Byte	WaitReadLimmit = 0;
 
 	releaseBit = macID % 32;
@@ -6726,12 +6730,22 @@ GetTxRPTBuf88XX(
 	OUT pu1Byte             val
 )
 {
+#if (IS_EXIST_RTL8192EE||IS_EXIST_RTL8881AEM)
 	u4Byte  addr = 0x8100 + macID * 16; // txrpt buffer start at 0x8100, sizeof(TXRPT) per MACID = 16bytes
+#endif
+#if IS_EXIST_RTL8192EE
 	u4Byte  cnt = 0;
-	u4Byte  i = 0;
-	u4Byte  value;
+#endif
+#if (IS_RTL88XX_MAC_V2||IS_EXIST_RTL8192EE||IS_EXIST_RTL8881AEM)
 	u4Byte  data[2];
+#endif
+#if (IS_EXIST_RTL8192EE||IS_EXIST_RTL8881AEM)
+	u4Byte  i = 0;
+#endif
+#if IS_EXIST_RTL8192EE
+	u4Byte  value;
 	u1Byte	WaitReadLimmit = 0;
+#endif
 	u1Byte	txrpt[16];
 
 #if IS_RTL88XX_MAC_V2
@@ -6846,7 +6860,7 @@ SetMBIDCAM88XX(
 	IN  u1Byte       IsRoot
 )
 {
-	s4Byte      i, j;
+	s4Byte      i;
 	u4Byte      camData[2];
 	pu1Byte     macAddr = HAL_VAR_MY_HWADDR;
 
@@ -6878,7 +6892,6 @@ StopMBIDCAM88XX(
 	IN  u1Byte       MBID_Addr
 )
 {
-	s4Byte      i;
 	u4Byte      camData[2];
 
 	// clear the rest area of CAM
@@ -6957,7 +6970,6 @@ GetMACIDQueueInTXPKTBUF88XX(
 	u1Byte result = RT_STATUS_FAILURE;
 	u1Byte MacID = 0;
 	u1Byte totoalPkt = 0;
-	u4Byte AC_NUM = 0;
 	u4Byte q_info = 0;
 	u4Byte q_list = 0;
 
@@ -7167,8 +7179,12 @@ CheckHang88XX(
 )
 {
 	u4Byte hang_state = HANG_VAR_NORMAL;
+#if IS_RTL8881A_SERIES
 	u4Byte value32;
+#endif
+#if (IS_RTL8814A_SERIES||IS_RTL8192E_SERIES)
 	u1Byte stateVal;
+#endif
 
 #if IS_RTL8881A_SERIES
 	if ( IS_HARDWARE_TYPE_8881A(Adapter) ) {

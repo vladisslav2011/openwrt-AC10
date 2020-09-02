@@ -404,7 +404,7 @@ void enable_sw_LED(struct rtl8192cd_priv *priv, int init)
 	#endif
     #if defined(CONFIG_RTL_8197F)&& !defined(__ECOS)
     if (GET_CHIP_VER(priv) == VERSION_8197F) {
-	  int err;
+	  int err = 0;
 	  #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
         //r = gpio_request_one(BSP_GPIO_PIN_E1, GPIOF_OUT_INIT_HIGH | GPIOF_EXPORT_DIR_FIXED, "2G Wifi");
         writel(readl(IO_TYPE_CAST(0xb8000844)) | BIT(28), IO_TYPE_CAST(0xb8000844));

@@ -61,7 +61,7 @@ void PHY_SetRFReg_8197F
     IN  u4Byte                      Data
 )
 {
-    u4Byte          flags;
+    unsigned long          flags;
     HAL_PADAPTER    priv     = Adapter;
 #if CFG_HAL_DISABLE_BB_RF
     return;

@@ -1942,7 +1942,9 @@ void rtl_netif_rx(struct rtl8192cd_priv *priv, struct sk_buff *pskb, struct stat
 	struct net_device *dev;
 #endif
 #endif
+#ifdef CONFIG_RTK_VLAN_SUPPORT
 	struct vlan_info *vlan=NULL;
+#endif
 #ifdef CONFIG_RTL_VLAN_8021Q
         int index;
 #endif
@@ -3559,7 +3561,8 @@ int get_rx_sc_free_entry(struct stat_info *pstat, struct rx_frinfo *pfrinfo)
 
 	// no free entry
 	i = pstat->rx_sc_replace_idx;
-	pstat->rx_sc_replace_idx = (++pstat->rx_sc_replace_idx) % RX_SC_ENTRY_NUM;
+	++pstat->rx_sc_replace_idx;
+	pstat->rx_sc_replace_idx %= RX_SC_ENTRY_NUM;
 	return i;
 }
 
@@ -4767,14 +4770,13 @@ static int rtl8192cd_rx_dispatch_mgmt_adhoc(struct rtl8192cd_priv **priv_p, stru
 	if (memcmp(bssid, "\x0\x0\x0\x0\x0\x0", MACADDRLEN) &&
 			is_vxd_bssid(priv, bssid))
 	{
-		unsigned char *sa = pfrinfo->sa;
-
-		priv = GET_VXD_PRIV(priv);
 #if 0
+		unsigned char *sa = pfrinfo->sa;
 		printk(" VXD_ADHOC Rx data packets !! \n");
 		dump_mac_rx(da);
 		dump_mac_rx(sa);
 #endif
+		priv = GET_VXD_PRIV(priv);
 
 #ifdef RTL8190_DIRECT_RX
 		rtl8192cd_rx_dataframe(priv, NULL, pfrinfo);
@@ -5359,7 +5361,9 @@ static void rtl_ieee80211_radiotap_header(struct rtl8192cd_priv *priv, struct rx
 	struct rtl_wifi_header *rthdr;
 	struct sk_buff *pskb = pfrinfo->pskb;
 	unsigned char *pframe = get_pframe(pfrinfo);	//skb data
+#ifdef CONFIG_PKT_FILTER
 	unsigned int pkt_len = pfrinfo->pktlen;
+#endif
 
 	rthdr = (void *)skb_push(pskb, sizeof(*rthdr));
 	if(!rthdr) {
@@ -5407,7 +5411,7 @@ int validate_mpdu(struct rtl8192cd_priv *priv, struct rx_frinfo *pfrinfo)
 
 	int reuse = 1;
 #ifdef MBSSID
-	unsigned int opmode = OPMODE;
+//	unsigned int opmode = OPMODE;
 	int i, vap_idx=-1;
 #endif
 
@@ -5949,17 +5953,15 @@ int refill_rx_ring_88XX(
     PHCI_RX_DMA_QUEUE_STRUCT_88XX   cur_q
 )
 {
-
-	/* return 0 means can't refill (because interface be closed or not opened yet) to rx ring but relesae to skb_poll*/
-    if (!(priv->drv_state & DRV_STATE_OPEN)){
-        return 0;
-	}
-	struct rtl8192cd_hw *phw=GET_HW(priv);
 	struct sk_buff *new_skb;
 #if (defined(__LINUX_2_6__) || defined(__ECOS)) && defined(RX_TASKLET)
 	unsigned long x;
 #endif
 	extern struct sk_buff *dev_alloc_8190_skb(unsigned char *data, int size);
+	/* return 0 means can't refill (because interface be closed or not opened yet) to rx ring but relesae to skb_poll*/
+    if (!(priv->drv_state & DRV_STATE_OPEN)){
+        return 0;
+	}
 #if (defined(__LINUX_2_6__) || defined(__ECOS)) && defined(RX_TASKLET)
 	SAVE_INT_AND_CLI(x);
 	SMP_LOCK_SKB(x);
@@ -5991,7 +5993,7 @@ int refill_rx_ring_88XX(
 
 		{
             GET_HAL_INTERFACE(priv)->UpdateRXBDInfoHandler(priv, q_num,
-                (cur_q->host_idx+cur_q->rxbd_ok_cnt)%cur_q->total_rxbd_num, new_skb, init_rxdesc_88XX, _FALSE);
+                (cur_q->host_idx+cur_q->rxbd_ok_cnt)%cur_q->total_rxbd_num, (pu1Byte)new_skb, init_rxdesc_88XX, _FALSE);
 
             cur_q->rxbd_ok_cnt++;
         }
@@ -6125,8 +6127,7 @@ void flush_gathered_buff_list(struct rtl8192cd_priv *priv, struct list_head *phe
 
 void flush_rx_list(struct rtl8192cd_priv *priv)
 {
-	struct rx_frinfo *pfrinfo;
-	struct list_head *phead, *plist;
+	struct list_head *phead;
 #ifndef SMP_SYNC
 	unsigned long flags;
 #endif
@@ -6398,13 +6399,12 @@ unsigned char get_sta_nss(struct rtl8192cd_priv *priv, struct stat_info *pstat)
 
 void check_csi_report_info(struct rtl8192cd_priv *priv, unsigned char *pframe, struct rx_frinfo *pfrinfo, unsigned int pktlen)
 {
-	unsigned char				*pMIMOCtrlField, *pCSIMatrix;
+	unsigned char				*pMIMOCtrlField;
 	unsigned char				Idx=0, Nc=0;
-	unsigned int				pktType, CSIMatrixLen = 0;
+	unsigned int				pktType;
 	unsigned char				csi_nss, sta_nss = 0;
 	unsigned char				support_nss = 2;
-	unsigned int				i;
-	PRT_BEAMFORMING_ENTRY	pBfeeEntry, pEntry;
+	PRT_BEAMFORMING_ENTRY	pBfeeEntry;
 #ifdef CONFIG_VERIWAVE_MU_CHECK
 	unsigned char isVerwaveSTA;
 #endif
@@ -6412,7 +6412,9 @@ void check_csi_report_info(struct rtl8192cd_priv *priv, unsigned char *pframe, s
 	struct stat_info *pstat = NULL;
 
 	PRT_BEAMFORMING_INFO	pBeamInfo = &(priv->pshare->BeamformingInfo);
+#ifdef CONFIG_VERIWAVE_MU_CHECK
 	PRT_SOUNDING_INFOV2			pSoundingInfo = &(pBeamInfo->SoundingInfoV2);
+#endif
 
 #if defined(WDS) || defined(CONFIG_RTK_MESH) || defined(A4_STA)
 	if (get_tofr_ds((unsigned char *)get_pframe(pfrinfo)) == 3) {
@@ -6459,6 +6461,7 @@ void check_csi_report_info(struct rtl8192cd_priv *priv, unsigned char *pframe, s
 
 #ifdef CONFIG_VERIWAVE_MU_CHECK
 	if(pBfeeEntry->is_mu_sta == TXBF_TYPE_MU) {
+		unsigned int				i;
 		unsigned char invalid_csi[2][3] = {{0x08,0x80,0x00},
 										{0x89,0x92,0x28}};
 		memcpy(pstat->mu_csi_data, pframe+30, 3);
@@ -6515,7 +6518,7 @@ void check_csi_report_info(struct rtl8192cd_priv *priv, unsigned char *pframe, s
 void set_csi_report_info(struct rtl8192cd_priv *priv, unsigned char *pframe, unsigned int pktlen)
 {
 	unsigned char				*pMIMOCtrlField, *pCSIMatrix;
-	unsigned char				Idx, Nc=0, Nr=0, CH_W=0, Ng=0, CodeBook=0, is_vht=0;
+	unsigned char				Nc=0, Nr=0, CH_W=0, Ng=0, CodeBook=0, is_vht=0;
 	unsigned int				pktType, CSIMatrixLen = 0;
 
 	PRT_BEAMFORMING_INFO 	pBeamInfo = &(priv->pshare->BeamformingInfo);
@@ -6611,8 +6614,7 @@ void rtl88XX_rx_isr(struct rtl8192cd_priv *priv)
 #if defined(DELAY_REFILL_RX_BUF)
 	unsigned int            cmp_flags;
 #endif
-	unsigned int            rtl8192cd_ICV, privacy;
-	struct stat_info        *pstat;
+	struct stat_info        *pstat = NULL;
 #if (defined(__ECOS) || defined(__LINUX_2_6__)) && defined(RX_TASKLET)
     unsigned long           x;
 #if defined(SMP_SYNC)
@@ -7516,7 +7518,6 @@ void rtl8192cd_rx_isr(struct rtl8192cd_priv *priv)
 #endif
 
 	unsigned int rxdescDW1;
-	unsigned int rxdescDW2;
 	unsigned int rxdescDW3;
 	unsigned int rxdescDW4;
 #if /*defined(__ECOS) ||*/ (defined (CONFIG_RTK_VOIP_QOS) && !defined (CONFIG_RTK_VOIP_ETHERNET_DSP_IS_HOST))
@@ -8079,10 +8080,10 @@ void rtl8192cd_rx_isr(struct rtl8192cd_priv *priv)
 										 	get_desc(pdesc->Dword1),
 										 	get_desc(pdesc->Dword2),
 										 	get_desc(pdesc->Dword3)					 );
-#endif
 										if ((pfrinfo->physt)&& (pfrinfo->driver_info_size > 0))	 {
 											unsigned char *p = pfrinfo->driver_info;
 										}
+#endif
 									 }
 #if 1 //eric-6s
 								 check_csi_report_info(priv, pframe, pfrinfo, pfrinfo->pktlen); //eric-6s
@@ -8613,11 +8614,13 @@ static struct rx_frinfo *defrag_frame_main(struct rtl8192cd_priv *priv, struct r
 #endif
 
 #ifdef CLIENT_MODE
+#ifdef CONFIG_RTL_WLAN_DIAGNOSTIC
 		if((OPMODE & WIFI_STATION_STATE) && (priv->pmib->wscEntry.wsc_enable==1) && (privacy == _WEP_40_PRIVACY_ || privacy == _WEP_104_PRIVACY_))
 		{
 			DEBUG_TRACE("RX : Recv unencrypted packet when encryption is WEP!, Don't drop the EAPOL packet when doing WPS!\n");
 		}
 		else
+#endif
 #endif
 #ifdef CONFIG_RTL_WAPI_SUPPORT
         if(privacy == _WAPI_SMS4_)
@@ -11223,7 +11226,7 @@ static __inline__ unsigned char parse_ps_poll(struct rtl8192cd_priv *priv, struc
                 }
             }
 
-#ifdef CONFIG_WLAN_HAL_8814AE || defined (CONFIG_WLAN_HAL_8822BE) || CONFIG_WLAN_HAL_8197F
+#if defined(CONFIG_WLAN_HAL_8814AE) || defined (CONFIG_WLAN_HAL_8822BE) || defined(CONFIG_WLAN_HAL_8197F)
 			if (GET_CHIP_VER(priv) == VERSION_8814A || GET_CHIP_VER(priv) == VERSION_8822B || GET_CHIP_VER(priv) == VERSION_8197F) {
 				// Release one packet
 				if(packet_num >=1) {

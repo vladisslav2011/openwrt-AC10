@@ -84,15 +84,6 @@ u4Byte    driver3 = 0;
 	else
 		return FALSE;
 }
-static BOOLEAN
-CheckNegative(
-	IN  PDM_ODM_T     pDM_Odm,
-	IN  const u4Byte  Condition1,
-	IN  const u4Byte  Condition2
-)
-{
-	return TRUE;
-}
 
 /******************************************************************************
 *                           AGC_TAB.TXT

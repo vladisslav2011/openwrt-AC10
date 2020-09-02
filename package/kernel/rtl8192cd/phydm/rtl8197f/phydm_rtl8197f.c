@@ -34,7 +34,7 @@ odm_CCKRSSI_8197F(
 	IN		u1Byte	VGA_idx
 	)
 {
-	s1Byte	rx_pwr_all;
+	s1Byte	rx_pwr_all = 0;
 	s1Byte	diff_para;
 
 	if ((pDM_Odm->BoardType == (ODM_BOARD_EXT_TRSW|ODM_BOARD_EXT_LNA|ODM_BOARD_EXT_PA)) && (pDM_Odm->PackageType == 1))
@@ -171,7 +171,7 @@ phydm_dynamic_ant_weighting(
 }
 
 
-phydm_hwsetting_8197f(
+void phydm_hwsetting_8197f(
 	IN		PDM_ODM_T		pDM_Odm
 	)
 {
@@ -182,7 +182,7 @@ phydm_hwsetting_8197f(
 /*DSC(double side band) = 0 or 3*/
 /*LSC(left side band) = 1*/
 /*USC(right side band) = 2*/
-phydm_api_primary_cca(
+void phydm_api_primary_cca(
 	IN		PDM_ODM_T		pDM_Odm,
 	IN		u8				DSC_LSC_USC
 	)

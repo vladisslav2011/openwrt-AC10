@@ -472,7 +472,7 @@ BOOLEAN PHY_QueryRFPathSwitch_8822B(
 	)
 {
 
-#if DISABLE_BB_RF
+#if defined(DISABLE_BB_RF)
 	return TRUE;
 #endif
 

@@ -234,9 +234,9 @@ struct rtk_clnt_info {
 	struct wpa_ie_info	wpa_ie;
 	struct rsn_ie_info	rsn_ie;
 	unsigned char assoc_req[MAX_ASSOC_REQ_LEN];
-	unsigned char assoc_req_len;
+	unsigned short assoc_req_len;
 	unsigned char assoc_rsp[MAX_ASSOC_RSP_LEN];
-	unsigned char assoc_rsp_len;
+	unsigned short assoc_rsp_len;
 };
 
 struct rtk_iface_info {

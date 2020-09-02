@@ -1470,7 +1470,7 @@ void rtl8192cd_SearchPwdBLowerBound(struct rtl8192cd_priv *priv)
 {
 	u4Byte			value32;
 	u1Byte			cnt, IGI_Pause = 0x7f, IGI_Resume = 0x20, IGI = 0x50;	//IGI = 0x50 for cal EDCCA lower bound
-	BOOLEAN			bAdjust = TRUE, bAdjust2 = TRUE;
+	BOOLEAN			bAdjust = TRUE;
 	s1Byte 			TH_L2H_dmc, TH_H2L_dmc, Diff, IGI_target = 0x32;
 	u1Byte			txEdcca1 = 0, txEdcca0 = 0;
 
@@ -2090,7 +2090,7 @@ void PHY_LCCalibrate(struct rtl8192cd_priv *priv)
 #ifdef RTL_MANUAL_EDCA
 void dynamic_EDCA_para(struct rtl8192cd_priv *priv, int mode)
 {
-	static unsigned int slot_time, VO_TXOP, VI_TXOP, sifs_time;
+	static unsigned int slot_time, sifs_time;
     struct ParaRecord EDCA[4];
 	slot_time = 20;
 	sifs_time = 10;

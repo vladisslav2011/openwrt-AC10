@@ -167,8 +167,7 @@ halmac_priority_queue_config_8822b(
 	u8 value8;
 	u16 HPQ_num = 0, LPQ_Nnum = 0, NPQ_num = 0, GAPQ_num = 0;
 	u16 EXPQ_num = 0, PUBQ_num = 0;
-	u16 tx_page_boundary = 0, rx_f_ifo_boundary = 0;
-	u16 h2c_extra_info_boundary = 0, fw_txbuff_boundary = 0;
+	u16 rx_f_ifo_boundary = 0;
 	u32 counter;
 	VOID *pDriver_adapter = NULL;
 	PHALMAC_API pHalmac_api;

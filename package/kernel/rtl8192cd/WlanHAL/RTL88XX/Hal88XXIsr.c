@@ -821,10 +821,11 @@ DisableRxRelatedInterrupt88XX(
     )
 {
     PHAL_DATA_TYPE      pHalData = _GET_HAL_DATA(Adapter);
-    HAL_PADAPTER        priv     = Adapter;
-    ULONG               flags;
 
 #if 0
+    HAL_PADAPTER        priv     = Adapter;
+    ULONG               flags;
+    
     HAL_SAVE_INT_AND_CLI(flags);
 
     pHalData->IntMask_RxINTBackup[0] = pHalData->IntMask[0];
@@ -851,10 +852,11 @@ EnableRxRelatedInterrupt88XX(
     )
 {
     PHAL_DATA_TYPE      pHalData    = _GET_HAL_DATA(Adapter);
-    HAL_PADAPTER        priv        = Adapter;
-    ULONG               flags;
 
 #if 0
+    HAL_PADAPTER        priv        = Adapter;
+    ULONG               flags;
+    
     HAL_SAVE_INT_AND_CLI(flags);
 
     pHalData->IntMask[0] = pHalData->IntMask_RxINTBackup[0];

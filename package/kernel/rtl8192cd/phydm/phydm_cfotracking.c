@@ -51,7 +51,7 @@ odm_SetCrystalCap(
 		/* write 0x2C[26:21] = 0x2C[20:15] = CrystalCap */
 		CrystalCap = CrystalCap & 0x3F;
 		ODM_SetBBReg(pDM_Odm, REG_MAC_PHY_CTRL, 0x07FF8000, (CrystalCap|(CrystalCap << 6)));
-	} else if (pDM_Odm->SupportICType & ODM_RTL8822B|ODM_RTL8197F) {
+	} else if (pDM_Odm->SupportICType & (ODM_RTL8822B|ODM_RTL8197F)) {
 		/* write 0x24[30:25] = 0x28[6:1] = CrystalCap */
 		CrystalCap = CrystalCap & 0x3F;
 		ODM_SetBBReg(pDM_Odm, REG_AFE_XTAL_CTRL, 0x7e000000, CrystalCap);

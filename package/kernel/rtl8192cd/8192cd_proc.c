@@ -867,6 +867,7 @@ struct timer_list *get_channel_timer(struct rtl8192cd_priv *priv, int channel)
 			DEBUG_ERR("DFS_timer: Channel match none!\n");
 			break;
 	}
+	return NULL;
 }
 
 
@@ -900,12 +901,15 @@ static int rtl8192cd_proc_mib_DFS(char *buf, char **start, off_t offset,
 	for (i=0; i<priv->NOP_chnl_num; i++) {
 		PRINT_ONE(priv->NOP_chnl[i], "[%d]:", 0);
 		ch_timer = get_channel_timer(priv, priv->NOP_chnl[i]);
-		rem_time = RTL_JIFFIES_TO_SECOND(TSF_DIFF(ch_timer->expires, jiffies));
-		if (rem_time > 0) {
-			PRINT_ONE(rem_time, "%dsec ", 0);
-		}
-		else {
-			PRINT_ONE("<1sec ", "%s" , 0);
+		if(ch_timer)
+		{
+			rem_time = RTL_JIFFIES_TO_SECOND(TSF_DIFF(ch_timer->expires, jiffies));
+			if (rem_time > 0) {
+				PRINT_ONE(rem_time, "%lusec ", 0);
+			}
+			else {
+				PRINT_ONE("<1sec ", "%s" , 0);
+			}
 		}
 	}
 	PRINT_ONE(" ", "%s", 1);
@@ -1046,12 +1050,6 @@ static int rtl8192cd_proc_wmm(char *buf, char **start, off_t offset,
 	struct net_device *dev = PROC_GET_DEV();
 	struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
 	int pos = 0;
-	int rf_path;
-#ifdef __ECOS
-	char tmpbuf[16];
-#else
-	unsigned char tmpbuf[16];
-#endif
 	panic_printk("	  Cwin	Cmax  AIFS	TXOP\n");
 	panic_printk("BK  %3d	%3d   %3d	%3d (%x)\n",PHY_QueryBBReg(priv, 0x50c, 0xf00),PHY_QueryBBReg(priv, 0x50c, 0xf000),PHY_QueryBBReg(priv, 0x50c, bMaskByte0),PHY_QueryBBReg(priv, 0x50c, 0x7ff0000),PHY_QueryBBReg(priv, 0x50c, bMaskDWord));
 	panic_printk("BE  %3d	%3d   %3d	%3d (%x)\n",PHY_QueryBBReg(priv, 0x508, 0xf00),PHY_QueryBBReg(priv, 0x508, 0xf000),PHY_QueryBBReg(priv, 0x508, bMaskByte0),PHY_QueryBBReg(priv, 0x508, 0x7ff0000),PHY_QueryBBReg(priv, 0x508, bMaskDWord));
@@ -1504,8 +1502,8 @@ static int rtl8192cd_proc_mib_rf(char *buf, char **start, off_t offset,
         {
             sprintf(tmpbuf, "RTL8197F Test");
         } else {
-            sprintf(tmpbuf, "RTL8197F");
             extern unsigned int rtl819x_bond_option(void);
+            sprintf(tmpbuf, "RTL8197F");
             if(rtl819x_bond_option() == 1)
                 strcat(tmpbuf, "B");
             else if(rtl819x_bond_option() == 2)
@@ -1769,8 +1767,6 @@ static int rtl8192cd_proc_diagnostic(char *buf, char **start, off_t offset,
 			int length, int *eof, void *data)
 #endif
 {
-	struct net_device *dev = PROC_GET_DEV();
-	struct rtl8192cd_priv *priv = GET_DEV_PRIV(dev);
 	int pos = 0;
 	PRINT_ONE(diag_log_buff, "%s", 1);
 	return pos;
@@ -2331,7 +2327,6 @@ int rtl8192cd_proc_transition_write(struct file *file, const char *buffer,
 	int i;
 	char tmp[TRANS_LIST_PROC_LEN];
 	char *tmpptr;
-	int oldest_idx;
 	struct target_transition_list list;
 
 	if((OPMODE & WIFI_AP_STATE) == 0) {
@@ -6460,11 +6455,11 @@ PRINT_SINGL_ARG("    mu_BB_fail:  ", priv->pshare->rf_ft_var.mu_BB_fail, "%d");
 	PRINT_SINGL_ARG("    rx_peak:       ", priv->ext_stats.rx_peak, "%lu");
 #endif
 
-	PRINT_SINGL_ARG("    rx_desc_num:   ", RX_DESC_NUM, "%lu")
+	PRINT_SINGL_ARG("    rx_desc_num:   ", RX_DESC_NUM, "%d")
 #ifdef CONFIG_RTL8190_PRIV_SKB
 	PRINT_SINGL_ARG("    rx_skb_num:    ", RX_MAX_SKB_NUM, "%lu")
 #endif
-	PRINT_SINGL_ARG("    rx_buf_len:    ", RX_BUF_LEN, "%lu")
+	PRINT_SINGL_ARG("    rx_buf_len:    ", RX_BUF_LEN, "%d")
 
 #ifdef RTK_AC_SUPPORT  //vht rate , todo, dump vht rates in Mbps
 	if(priv->pshare->current_tx_rate >= VHT_RATE_ID){
@@ -7152,7 +7147,7 @@ static int rtl8192cd_proc_psd_scan_read(char *buf, char **start, off_t offset,
 	int pos=0;
 	int i, idx=0;
 	char tmp[200];
-	int freq=0, p=0, dBm=0;
+	int freq=0, p=0;
 
 	memset(tmp, 0x0, sizeof(tmp));
 

@@ -591,9 +591,9 @@ Beamforming_AddBFeeEntry(
 	)
 {
 	PRT_BEAMFORMING_ENTRY	pEntry;
-	pEntry = Beamforming_GetFreeBFeeEntry(priv, Idx,RA);
 	PRT_BEAMFORMING_INFO 		pBeamInfo = &(priv->pshare->BeamformingInfo);
 	u4Byte i;
+	pEntry = Beamforming_GetFreeBFeeEntry(priv, Idx,RA);
 
 #if defined(BEAMFORMING_AUTO) && defined(TXPWR_LMT)
 	if(priv->pshare->rf_ft_var.txbf_pwrlmt == TXBF_TXPWRLMT_AUTO) {
@@ -944,7 +944,7 @@ Beamforming_InitEntry(
 #ifdef RTK_AC_SUPPORT			
 		if(WirelessMode == WIRELESS_MODE_AC_5G || WirelessMode == WIRELESS_MODE_AC_24G)
 		{
-			if(pSTA->vht_cap_len && (cpu_to_le32(pSTA->vht_cap_buf.vht_cap_info) & BIT(SU_BFEE_S)) && (priv->pmib->dot11RFEntry.txbfer == 1))  // ACÁÙ¨S¨Ì¾Úbfer or bfee¾×
+			if(pSTA->vht_cap_len && (cpu_to_le32(pSTA->vht_cap_buf.vht_cap_info) & BIT(SU_BFEE_S)) && (priv->pmib->dot11RFEntry.txbfer == 1))  // ACï¿½Ù¨Sï¿½Ì¾ï¿½bfer or bfeeï¿½ï¿½
 			{
 			BeamformCap |=BEAMFORMER_CAP_VHT_SU;
 			CompSteeringNumofBFer = (u1Byte)((cpu_to_le32(pSTA->vht_cap_buf.vht_cap_info) & (BIT(MAX_ANT_SUPP_S)|BIT(MAX_ANT_SUPP_S+1)|BIT(MAX_ANT_SUPP_E)))>>MAX_ANT_SUPP_S);
@@ -956,7 +956,7 @@ Beamforming_InitEntry(
 			}
 			#if (MU_BEAMFORMING_SUPPORT == 1)
 			if((GET_CHIP_VER(priv) == VERSION_8822B) && priv->pmib->dot11RFEntry.txbf_mu){
-				if(pSTA->vht_cap_len && (cpu_to_le32(pSTA->vht_cap_buf.vht_cap_info) & BIT(MU_BFEE_S)) && (priv->pmib->dot11RFEntry.txbfer == 1) && get_sta_vht_mimo_mode(pSTA) == MIMO_1T1R)  { // ACÁÙ¨S¨Ì¾Úbfer or bfee¾×
+				if(pSTA->vht_cap_len && (cpu_to_le32(pSTA->vht_cap_buf.vht_cap_info) & BIT(MU_BFEE_S)) && (priv->pmib->dot11RFEntry.txbfer == 1) && get_sta_vht_mimo_mode(pSTA) == MIMO_1T1R)  { // ACï¿½Ù¨Sï¿½Ì¾ï¿½bfer or bfeeï¿½ï¿½
 					BeamformCap |=BEAMFORM_CAP_VHT_MU_BFER;
 					CompSteeringNumofBFer = (u1Byte)((cpu_to_le32(pSTA->vht_cap_buf.vht_cap_info) & (BIT(MAX_ANT_SUPP_S)|BIT(MAX_ANT_SUPP_S+1)|BIT(MAX_ANT_SUPP_E)))>>MAX_ANT_SUPP_S);
 				}
@@ -1014,7 +1014,7 @@ Beamforming_InitEntry(
 	}
 
 //bfer
-	if((BeamformCap & BEAMFORMER_CAP_HT_EXPLICIT) || (BeamformCap & BEAMFORMER_CAP_VHT_SU) && (pSTA->IOTPeer != HT_IOT_PEER_INTEL))
+	if((BeamformCap & BEAMFORMER_CAP_HT_EXPLICIT) || ((BeamformCap & BEAMFORMER_CAP_VHT_SU) && (pSTA->IOTPeer != HT_IOT_PEER_INTEL)))
 	{
 		pBeamformEntry = Beamforming_GetBFeeEntryByAddr(priv, RA, &BFeeIdx);
 		
@@ -1610,7 +1610,7 @@ beamforming_ClearEntry_SW(
 	)
 {
 	u1Byte						Idx = 0;
-	PRT_BEAMFORMING_ENTRY		pBeamformEntry;
+	PRT_BEAMFORMING_ENTRY		pBeamformEntry = NULL;
 	PRT_BEAMFORMING_INFO 		pBeamInfo = &(priv->pshare->BeamformingInfo);
 
 	if(IsDelete)
@@ -1624,19 +1624,19 @@ beamforming_ClearEntry_SW(
 				ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("%s, SW DeleteIdx is wrong!\n", __FUNCTION__)); 
 				return;
 			}
-		}
 
-		if(pBeamformEntry->BeamformEntryState == BEAMFORMING_ENTRY_STATE_PROGRESSING)
-		{
-			pBeamformEntry->bBeamformingInProgress = FALSE;
-			pBeamformEntry->BeamformEntryState = BEAMFORMING_ENTRY_STATE_UNINITIALIZE;
+			if(pBeamformEntry->BeamformEntryState == BEAMFORMING_ENTRY_STATE_PROGRESSING)
+			{
+				pBeamformEntry->bBeamformingInProgress = FALSE;
+				pBeamformEntry->BeamformEntryState = BEAMFORMING_ENTRY_STATE_UNINITIALIZE;
+			}
+			else if(pBeamformEntry->BeamformEntryState == BEAMFORMING_ENTRY_STATE_PROGRESSED)
+			{
+				pBeamformEntry->BeamformEntryState  = BEAMFORMING_ENTRY_STATE_UNINITIALIZE;
+				Beamforming_SetBeamFormStatus(priv, DeleteIdx);
+			}	
+			pBeamformEntry->bSound=FALSE;
 		}
-		else if(pBeamformEntry->BeamformEntryState == BEAMFORMING_ENTRY_STATE_PROGRESSED)
-		{
-			pBeamformEntry->BeamformEntryState  = BEAMFORMING_ENTRY_STATE_UNINITIALIZE;
-			Beamforming_SetBeamFormStatus(priv, DeleteIdx);
-		}	
-		pBeamformEntry->bSound=FALSE;
 		
 	}
 	else
@@ -2459,11 +2459,11 @@ Beamforming_Init(
 
 
 		init_timer(&pBeamInfo->BeamformingTimer);
-		pBeamInfo->BeamformingTimer.function = beamform_SoundingTimerCallback;
+		pBeamInfo->BeamformingTimer.function = (void *) &beamform_SoundingTimerCallback;
 		pBeamInfo->BeamformingTimer.data = (unsigned long)priv;
 	
 		init_timer(&pBeamInfo->BFSoundingTimeoutTimer);
-		pBeamInfo->BFSoundingTimeoutTimer.function = beamform_SoundingTimeout;
+		pBeamInfo->BFSoundingTimeoutTimer.function = (void*) &beamform_SoundingTimeout;
 		pBeamInfo->BFSoundingTimeoutTimer.data = (unsigned long)priv;
 		beamform_InitSoundingVars(priv);
 	}
@@ -2782,15 +2782,16 @@ ConstructVHTNDPAPacket_MU(
 	u1Byte					Sequence = 0;
 	pu1Byte					pNDPAFrame = Buffer;
 	u2Byte					tmp16 = 0;
-	char					idx =0, cnt ;
-	
+	int					idx =0;
+#ifdef CONFIG_VERIWAVE_MU_CHECK		
+	char cnt ;
+#endif	
 	
 	RT_NDPA_STA_INFO		STAInfo;
 	int aSifsTime = ((priv->pmib->dot11BssType.net_work_type & WIRELESS_11N) && (priv->pshare->ht_sta_num)) ? 0x10 : 10;
 
 	PRT_BEAMFORMING_INFO		pBeamInfo = &(priv->pshare->BeamformingInfo);
 	PRT_BEAMFORMING_ENTRY	pEntry;
-	struct stat_info *pstat;
 
 	// Frame control.
 	SET_80211_HDR_FRAME_CONTROL(pNDPAFrame, 0);
@@ -2827,7 +2828,7 @@ ConstructVHTNDPAPacket_MU(
 #ifdef CONFIG_VERIWAVE_MU_CHECK		
 	cnt = 0;
 	for (idx = 0; idx < BEAMFORMEE_ENTRY_NUM; idx++) {		
-		pEntry = &(pBeamInfo->BeamformeeEntry[idx]);
+		pEntry = &(pBeamInfo->BeamformeeEntry[(int)idx]);
 		if (pEntry->bUsed && pEntry->is_mu_sta && pEntry->pSTA && pEntry->pSTA->isSendNDPA)
 			cnt++;
 	}
@@ -3071,6 +3072,7 @@ void issue_action_GROUP_ID(struct rtl8192cd_priv *priv, unsigned char idx)
 	unsigned char	*pbuf;
 	PRT_BEAMFORMING_INFO	pBeamInfo = &(priv->pshare->BeamformingInfo);
 	struct stat_info *pstat;
+	DECLARE_TXINSN(txinsn);
 
 	if (idx < BEAMFORMEE_ENTRY_NUM)
 		pstat = pBeamInfo->BeamformeeEntry[idx].pSTA;
@@ -3084,7 +3086,6 @@ void issue_action_GROUP_ID(struct rtl8192cd_priv *priv, unsigned char idx)
 		return;
 	}
 	
-	DECLARE_TXINSN(txinsn);
 
 	txinsn.q_num = MANAGE_QUE_NUM;
 	txinsn.fr_type = _PRE_ALLOCMEM_;
@@ -3307,7 +3308,6 @@ beamform_MUGrouping(
 	u1Byte *pairResult
 )
 {
-	u1Byte					candidateIdx = -1;
 	PRT_BEAMFORMING_ENTRY	CandidateEntry[MAX_NUM_BEAMFORMEE_MU], tmpEntry;
 	u1Byte					numCandidate;
 	PRT_BEAMFORMING_ENTRY	pEntry = NULL;
@@ -3548,8 +3548,7 @@ beamform_GetSUSoundingIdx(
 )
 {
 	PRT_BEAMFORMING_INFO 		pBeamInfo = &(priv->pshare->BeamformingInfo);
-	PRT_SOUNDING_INFOV2			pSoundingInfo = &(pBeamInfo->SoundingInfoV2);
-	u1Byte						i, idx = BEAMFORMEE_ENTRY_NUM;
+	u1Byte						idx = BEAMFORMEE_ENTRY_NUM;
 
 	//
 	// Get non-sound SU BFee index
@@ -3654,8 +3653,10 @@ beamform_SoundingTimerCallback(
 	PRT_BEAMFORMING_ENTRY		pEntry = NULL;
 #if (MU_BEAMFORMING_SUPPORT == 1) 	
 	PRT_BEAMFORMING_ENTRY		pEntry_poll[TOTAL_BEAMFORMEE_ENTRY_NUM];
-	u1Byte						cnt, cnt_valid;
-	struct stat_info *pstat;
+	u1Byte						cnt;
+#ifdef CONFIG_VERIWAVE_MU_CHECK
+	u1Byte						cnt_valid;
+#endif	
 #endif	
 	u1Byte			SUSoundingIdx = BEAMFORMEE_ENTRY_NUM;
 	u4Byte			TimeoutPeriod = 0;
@@ -3783,12 +3784,11 @@ beamform_SoundingTimerCallback(
 			//
 			if(pSoundingInfo->CandidateMUBFeeCnt > 0)
 			{				
+				// Update MU BFee info
+				u1Byte				idx;
 				pSoundingInfo->State = SOUNDING_STATE_MU_START;
 				ODM_RT_TRACE(ODMPTR, PHYDM_COMP_TXBF, ODM_DBG_LOUD, ("[%s]: Set to SOUNDING_STATE_MU_START \n", __func__));
 	
-				// Update MU BFee info
-				u1Byte	i;
-				u1Byte				idx;
 				
 				if(pSoundingInfo->CandidateMUBFeeCnt >= 1)
 				{ /* More than 1 MU STA*/											

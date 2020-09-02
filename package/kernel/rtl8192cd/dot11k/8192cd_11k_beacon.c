@@ -490,7 +490,7 @@ int rm_parse_beacon_report(struct stat_info *pstat,
     unsigned char element_id;
     unsigned char subelement_len;
     unsigned char subelement_id;
-    unsigned short subelements_begin;
+    unsigned short subelements_begin = 0;
     unsigned short subelements_copy_len = 0;
     unsigned short subelements_add = 1;
 

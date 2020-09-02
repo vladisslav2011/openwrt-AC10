@@ -64,7 +64,7 @@ phydm_la_get_tx_pkt_buf(
 	BOOLEAN				bRoundUp;
 	static u4Byte			page = 0xFF;
 	u4Byte				smp_cnt = 0, smp_number = 0, Addr_8byte = 0;
-	u1Byte				backup_DMA;
+	u1Byte				backup_DMA = 0;
 
 	ODM_Memory_Set(pDM_Odm, ADCSmpBuf->Octet, 0, ADCSmpBuf->Length);
 	ODM_Write1Byte(pDM_Odm, 0x0106, 0x69);
@@ -693,10 +693,8 @@ phydm_lamode_trigger_setting(
 		PRT_ADCSMP	AdcSmp = &(pDM_Odm->adcsmp);
 		u1Byte		trig_mode, DmaDataSigSel;
 		u4Byte		TrigSigSel;
-		BOOLEAN		bEnableLaMode, bTriggerEdge;
-		u4Byte		DbgPort, TriggerTime_mu_sec;
-		u4Byte		mac_ref_signal_mask;
-		u1Byte		sampling_rate = 0, i;
+		BOOLEAN		bEnableLaMode;
+		u4Byte		TriggerTime_mu_sec;
 		char 		help[] = "-h";
 		u4Byte 			var1[10] = {0};
 		u4Byte used = *_used;

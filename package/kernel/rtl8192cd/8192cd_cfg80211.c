@@ -369,15 +369,13 @@ void realtek_cfg80211_inform_bss(struct rtl8192cd_priv *priv)
 {
 	struct wiphy *wiphy = priv->rtk->wiphy;
 	struct ieee80211_channel *channel = NULL;
-	struct ieee80211_bss *bss = NULL;
-	char tmpbuf[33];
+	struct cfg80211_bss *bss = NULL;
 	UINT8 *mac = NULL;
-	unsigned long timestamp = 0;
+	u64 timestamp = 0;
 	unsigned char ie[MAX_IE_LEN];
 	unsigned char ie_len = 0;
 	unsigned char wpa_ie_len = 0;
 	unsigned char rsn_ie_len = 0;
-	unsigned int  freq = 0;
 
 	mac = priv->pmib->dot11Bss.bssid;
 	wpa_ie_len = priv->rtk->clnt_info.wpa_ie.wpa_ie_len;
@@ -391,7 +389,7 @@ void realtek_cfg80211_inform_bss(struct rtl8192cd_priv *priv)
 		return;
 	}
 
-	timestamp = priv->pmib->dot11Bss.t_stamp[0] + (priv->pmib->dot11Bss.t_stamp[0]<<32);
+	timestamp = (u64)priv->pmib->dot11Bss.t_stamp[0] + ((u64)priv->pmib->dot11Bss.t_stamp[1]<<32);
 
 	ie[0]= _SSID_IE_;
 	ie[1]= priv->pmib->dot11Bss.ssidlen;
@@ -466,7 +464,7 @@ void realtek_cfg80211_inform_ss_result(struct rtl8192cd_priv *priv)
 	int i;
 	struct wiphy *wiphy = priv->rtk->wiphy;
 	struct ieee80211_channel *channel = NULL;
-	struct ieee80211_bss *bss = NULL;
+	struct cfg80211_bss *bss = NULL;
 
 	NLMSG("SiteSurvey Count=%d\n", priv->site_survey->count);
 	//printk("SSID                 BSSID        ch  prd cap  bsc  oper ss sq bd 40m\n");
@@ -479,16 +477,14 @@ void realtek_cfg80211_inform_ss_result(struct rtl8192cd_priv *priv)
 
 	for(i=0; i<priv->site_survey->count; i++)
 	{
-		char tmpbuf[33];
 		UINT8 *mac = priv->site_survey->bss[i].bssid;
-		unsigned long timestamp = 0;
+		u64 timestamp = 0;
 		unsigned char report_ie[MAX_IE_LEN];
 		unsigned int report_ie_len = 0;
 		unsigned char wpa_ie_len = priv->site_survey->bss[i].wpa_ie_len;
 		unsigned char rsn_ie_len = priv->site_survey->bss[i].rsn_ie_len;
 		unsigned char wps_ie_len = priv->site_survey->wscie[i].wps_ie_len; //wrt-wps-clnt
 		unsigned char rtk_p2p_ie_len = priv->site_survey->rtk_p2p_ie[i].p2p_ie_len; //wrt-wps-clnt
-		unsigned int  freq = 0;
 
 		channel = rtk_get_iee80211_channel(wiphy, priv->site_survey->bss[i].channel);
 
@@ -498,7 +494,7 @@ void realtek_cfg80211_inform_ss_result(struct rtl8192cd_priv *priv)
 			continue;
 		}
 
-		timestamp = priv->site_survey->bss[i].t_stamp[0] + (priv->site_survey->bss[i].t_stamp[0]<<32);
+		timestamp = (u64)priv->site_survey->bss[i].t_stamp[0] + ((u64)priv->site_survey->bss[i].t_stamp[1]<<32);
 
 		report_ie[0]= _SSID_IE_;
 		report_ie[1]= priv->site_survey->bss[i].ssidlen;
@@ -538,11 +534,11 @@ void realtek_cfg80211_inform_ss_result(struct rtl8192cd_priv *priv)
                 //NDEBUG("scan include p2p ie[%d]\n",rtk_p2p_ie_len);
 			}
 			//for DSSET IE
-			realtek_cfg80211_inform_bss_ies(report_ie,&report_ie_len,_DSSET_IE_,&priv->site_survey->bss[i].channel,DSSET_IE_LEN);
+			realtek_cfg80211_inform_bss_ies(report_ie,&report_ie_len,_DSSET_IE_,(unsigned char *)&priv->site_survey->bss[i].channel,DSSET_IE_LEN);
 			//for ht cap
-			realtek_cfg80211_inform_bss_ies(report_ie,&report_ie_len,_HT_CAP_,&priv->site_survey->bss[i].ht_cap,HTCAP_IE_LEN);
+			realtek_cfg80211_inform_bss_ies(report_ie,&report_ie_len,_HT_CAP_,(unsigned char *)&priv->site_survey->bss[i].ht_cap,HTCAP_IE_LEN);
 			//for ht oper
-			realtek_cfg80211_inform_bss_ies(report_ie,&report_ie_len,_HT_IE_,&priv->site_survey->bss[i].ht_info,HTINFO_IE_LEN);
+			realtek_cfg80211_inform_bss_ies(report_ie,&report_ie_len,_HT_IE_,(unsigned char *)&priv->site_survey->bss[i].ht_info,HTINFO_IE_LEN);
 		}
 		else{
 			printk("report_ie_len too long !!!\n");
@@ -581,7 +577,6 @@ void realtek_cfg80211_inform_ss_result(struct rtl8192cd_priv *priv)
 static void rtk_abort_scan(struct rtl8192cd_priv *priv, enum scan_abort_case abort_case)
 {
 	struct rtl8192cd_priv *priv_root = GET_ROOT(priv);
-	struct cfg80211_scan_request *scan_req = priv_root->scan_req;
 
 	NLMSG("[%s] rtk_abort_scan [0x%x]+++ \n", priv->dev->name, GET_ROOT(priv)->scan_req);
 
@@ -656,13 +651,14 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
     u8 assoc_req_ies_buf[256*3];
     u8* ie_pos=assoc_req_ies_buf;
 
+#ifdef SMP_SYNC
 	int flags;
-
+#endif
 	//NLENTER;
 	{
 		char event_name[32];
 		event_to_name(event, event_name);
-		NLMSG("EVENT [%s][%s=%d]\n", priv->dev->name, event_name, event);
+		NLMSG("EVENT [%s][%s=%d]\n", dev->name, event_name, event);
 	}
 
     /*cfg p2p 2014-0330 , report CFG80211_NEW_STA , ASAP*/
@@ -674,7 +670,7 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
     	if( (OPMODE & WIFI_AP_STATE) && (priv->up_time <= HAPD_READY_RX_EVENT) )
     	{
     		NLMSG("ignore cfg event,up_time[%d],event[%d]\n", priv->up_time,event);
-    		return;
+    		return -1;
     	}
     }
 
@@ -688,8 +684,8 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
 	switch(event) {
 		case CFG80211_CONNECT_RESULT:
 			{
+//				struct cfg80211_bss *bss = NULL;
 				NDEBUG3("cfg80211_event [CFG80211_CONNECT_RESULT][%d]\n", event);
-				struct cfg80211_bss *bss = NULL;
 
 				if(priv->receive_connect_cmd == 0)
 				{
@@ -710,7 +706,7 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
 				}
 #endif
 
-				cfg80211_connect_result(priv->dev, BSSID,
+				cfg80211_connect_result(dev, BSSID,
 						priv->rtk->clnt_info.assoc_req, priv->rtk->clnt_info.assoc_req_len,
 						priv->rtk->clnt_info.assoc_rsp, priv->rtk->clnt_info.assoc_rsp_len,
 						WLAN_STATUS_SUCCESS, GFP_KERNEL);
@@ -728,9 +724,9 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
 				NDEBUG3("cfg80211_event [CFG80211_DISCONNECTED][%d]\n", event);
 //#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 1, 0)) && defined(OPENWRT_CC)
 #if  defined(OPENWRT_CC) //mark_cc
-				cfg80211_disconnected(priv->dev, 0, NULL, 0, 1, GFP_KERNEL);
+				cfg80211_disconnected(dev, 0, NULL, 0, 1, GFP_KERNEL);
 #else
-				cfg80211_disconnected(priv->dev, 0, NULL, 0, GFP_KERNEL);
+				cfg80211_disconnected(dev, 0, NULL, 0, GFP_KERNEL);
 #endif
 				break;
 			}
@@ -740,8 +736,9 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
 				struct cfg80211_bss *bss = NULL;
 				struct ieee80211_channel *channel = NULL;
 
+				channel = rtk_get_iee80211_channel(wiphy, priv->pmib->dot11Bss.channel);
 				bss = cfg80211_get_bss(wiphy,
-						priv->pmib->dot11Bss.channel, priv->pmib->dot11Bss.bssid,
+						channel, priv->pmib->dot11Bss.bssid,
 						priv->pmib->dot11Bss.ssid, priv->pmib->dot11Bss.ssidlen,
 						WLAN_CAPABILITY_ESS, WLAN_CAPABILITY_ESS);
 
@@ -751,11 +748,10 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
 					realtek_cfg80211_inform_bss(priv);
 				}
 
-				channel = rtk_get_iee80211_channel(wiphy, priv->pmib->dot11Bss.channel);
 #ifdef CONFIG_OPENWRT_SDK
-				cfg80211_ibss_joined(priv->dev, BSSID, channel, GFP_KERNEL);
+				cfg80211_ibss_joined(dev, BSSID, channel, GFP_KERNEL);
 #else
-				cfg80211_ibss_joined(priv->dev, BSSID, GFP_KERNEL);
+				cfg80211_ibss_joined(dev, BSSID, GFP_KERNEL);
 #endif
 			}
 			break;
@@ -764,7 +760,7 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
 				NDEBUG3("cfg80211_event [CFG80211_NEW_STA][%d]\n", event);
 				/* send event to application */
 				memset(&sinfo, 0, sizeof(struct station_info));
-				memset(assoc_req_ies_buf, 0, sizeof(256*3));
+				memset(assoc_req_ies_buf, 0, sizeof(assoc_req_ies_buf));
 		        sinfo.assoc_req_ies = assoc_req_ies_buf;
 
 				if(pstat == NULL)
@@ -775,7 +771,7 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
 						NDEBUG3("NO PSTA for CFG80211_NEW_STA\n");
 						break;
 					} else
-						pstat = extra;
+						pstat = (struct stat_info *)extra;
 				}
 
 				/* TODO: sinfo.generation ???*/
@@ -809,12 +805,12 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
 					sinfo.filled |= STATION_INFO_ASSOC_REQ_IES;
 #endif
 
-				NDEBUG2("cfg80211_new_sta assoc req,[idx=%d] Rx assoc_req_ies_len = %d\n", priv->dev->ifindex, sinfo.assoc_req_ies_len);
-				cfg80211_new_sta(priv->dev, mac, &sinfo, GFP_KERNEL);
+				NDEBUG2("cfg80211_new_sta assoc req,[idx=%d] Rx assoc_req_ies_len = %d\n", dev->ifindex, sinfo.assoc_req_ies_len);
+				cfg80211_new_sta(dev, mac, &sinfo, GFP_KERNEL);
 				NDEBUG3("cfg80211_new_sta ,STA[%02x%02x%02x:%02x%02x%02x]\n",mac[0], mac[1], mac[2], mac[3], mac[4], mac[5] );
 
 
-				netif_wake_queue(priv->dev); //wrt-vap
+				netif_wake_queue(dev); //wrt-vap
 			}
 			break;
 		case CFG80211_SCAN_ABORDED:
@@ -858,14 +854,14 @@ int event_indicate_cfg80211(struct rtl8192cd_priv *priv, unsigned char *mac, int
 			break;
 		case CFG80211_DEL_STA:
 			NDEBUG("cfg80211_event [CFG80211_DEL_STA][%d]\n", event);
-			cfg80211_del_sta(priv->dev, mac, GFP_KERNEL);
+			cfg80211_del_sta(dev, mac, GFP_KERNEL);
 			break;
 		case CFG80211_RADAR_CAC_FINISHED:
 			NDEBUG("cfg80211_event [CFG80211_RADAR_CAC_FINISHED][%d]\n", event);
 #ifdef CONFIG_OPENWRT_SDK
-			cfg80211_cac_event(priv->dev, priv->pshare->dfs_chan_def, NL80211_RADAR_CAC_FINISHED, GFP_KERNEL);
+			cfg80211_cac_event(dev, priv->pshare->dfs_chan_def, NL80211_RADAR_CAC_FINISHED, GFP_KERNEL);
 #else
-			cfg80211_cac_event(priv->dev, NL80211_RADAR_CAC_FINISHED, GFP_KERNEL);
+			cfg80211_cac_event(dev, NL80211_RADAR_CAC_FINISHED, GFP_KERNEL);
 #endif
 			break;
 		case CFG80211_RADAR_DETECTED:
@@ -943,19 +939,6 @@ void realtek_ap_calibration(struct rtl8192cd_priv	*priv)
 
 
 //mark_swc
-static void rtk_set_phy_channel(struct rtl8192cd_priv *priv,unsigned int channel,unsigned int bandwidth,unsigned int chan_offset)
-{
-    NDEBUG3("ch[%d]bw[%d]offset[%d]\n",channel,bandwidth,chan_offset);
-	//priv , share  part
-	priv->pshare->CurrentChannelBW = bandwidth;
-	priv->pshare->offset_2nd_chan =chan_offset ;
-
-	// wifi chanel  hw settting  API
-	SwBWMode(priv, priv->pshare->CurrentChannelBW, priv->pshare->offset_2nd_chan);
-	SwChnl(priv, channel, priv->pshare->offset_2nd_chan);
-	//printk("rtk_set_phy_channel end !!!\n  chan=%d \n",channel );
-
-}
 
 static void rtk_get_band_capa(struct rtl8192cd_priv *priv,BOOLEAN *band_2gig ,BOOLEAN *band_5gig)
 {
@@ -1330,7 +1313,7 @@ void realtek_auth_wep(struct rtl8192cd_priv *priv, int cipher)
 
 void realtek_auth_wpa(struct rtl8192cd_priv *priv, int wpa, int psk, int cipher)
 {
-	int wpa_cipher;
+	int wpa_cipher=0;
 
 	// bit0-wep64, bit1-tkip, bit2-wrap,bit3-ccmp, bit4-wep128
 	if(cipher & _TKIP_PRIVACY_)
@@ -1440,6 +1423,7 @@ unsigned int realtek_get_key_from_sta(struct rtl8192cd_priv *priv, struct stat_i
 {
 	unsigned int cipher = 0;
 	struct Dot11EncryptKey *pEncryptKey;
+	static u8 key[64] = {0};
 
 	//_eric_cfg ?? key len data seq for get_key ??
 	if(pstat == NULL)
@@ -1457,22 +1441,30 @@ unsigned int realtek_get_key_from_sta(struct rtl8192cd_priv *priv, struct stat_i
 	case _WEP_40_PRIVACY_:
 		params->cipher = WLAN_CIPHER_SUITE_WEP40;
 		params->key_len = 5;
-		memcpy(params->key, pEncryptKey->dot11TTKey.skey, pEncryptKey->dot11TTKeyLen);
+		params->key=key;
+		memcpy(key, pEncryptKey->dot11TTKey.skey, pEncryptKey->dot11TTKeyLen);
+		return 0;
 	case _WEP_104_PRIVACY_:
 		params->cipher = WLAN_CIPHER_SUITE_WEP104;
 		params->key_len = 10;
-		memcpy(params->key, pEncryptKey->dot11TTKey.skey, pEncryptKey->dot11TTKeyLen);
+		params->key=key;
+		memcpy(key, pEncryptKey->dot11TTKey.skey, pEncryptKey->dot11TTKeyLen);
+		return 0;
 	case _CCMP_PRIVACY_:
 		params->cipher = WLAN_CIPHER_SUITE_CCMP;/*eric refine*/
 		params->key_len = 32;
-		memcpy(params->key, pEncryptKey->dot11TTKey.skey, pEncryptKey->dot11TTKeyLen);
-		memcpy(params->key+16, pEncryptKey->dot11TMicKey1.skey, pEncryptKey->dot11TMicKeyLen);
+		params->key=key;
+		memcpy(key, pEncryptKey->dot11TTKey.skey, pEncryptKey->dot11TTKeyLen);
+		memcpy(key+16, pEncryptKey->dot11TMicKey1.skey, pEncryptKey->dot11TMicKeyLen);
+		return 0;
 	case _TKIP_PRIVACY_:
 		params->cipher = WLAN_CIPHER_SUITE_TKIP;/*eric refine*/
 		params->key_len = 32;
-		memcpy(params->key, pEncryptKey->dot11TTKey.skey, pEncryptKey->dot11TTKeyLen);
-		memcpy(params->key+16, pEncryptKey->dot11TMicKey1.skey, pEncryptKey->dot11TMicKeyLen);
-		memcpy(params->key+24, pEncryptKey->dot11TMicKey2.skey, pEncryptKey->dot11TMicKeyLen);
+		params->key=key;
+		memcpy(key, pEncryptKey->dot11TTKey.skey, pEncryptKey->dot11TTKeyLen);
+		memcpy(key+16, pEncryptKey->dot11TMicKey1.skey, pEncryptKey->dot11TMicKeyLen);
+		memcpy(key+24, pEncryptKey->dot11TMicKey2.skey, pEncryptKey->dot11TMicKeyLen);
+		return 0;
 	default:
 		return -ENOTSUPP;
 	}
@@ -1497,20 +1489,21 @@ void clear_wps_ies(struct rtl8192cd_priv *priv)
 
 
 //static int rtw_cfg80211_set_probe_req_wpsp2pie(struct rtl8192cd_priv *priv, char *buf, int len)
-int rtk_cfg80211_set_wps_p2p_ie(struct rtl8192cd_priv *priv, char *buf, int len, int mgmt_type)
+int rtk_cfg80211_set_wps_p2p_ie(struct rtl8192cd_priv *priv, const char *buf, int len, int mgmt_type)
 {
-	int ret = 0;
+//	int ret = 0;
 	int wps_ielen = 0;
 	u8 *wps_ie;
+#if defined(P2P_SUPPORT)
 	u32	p2p_ielen = 0;
 	u8 *p2p_ie;
 	//u32	wfd_ielen = 0;
 	//u8 *wfd_ie;
     u8* p2p_ie_listen_tag_ptr=NULL;
 	int p2p_ie_listen_tag;
-
+#endif
     if(len<=0)
-        return;
+        return 0;
 
     NDEBUG2("mgmt_type=[%d]\n",mgmt_type);
 
@@ -1540,6 +1533,7 @@ int rtk_cfg80211_set_wps_p2p_ie(struct rtl8192cd_priv *priv, char *buf, int len,
 	}
 #endif
     /*set WFD IE to do */
+    return len;
 }
 
 void dump_ies(struct rtl8192cd_priv *priv,
@@ -1547,7 +1541,7 @@ void dump_ies(struct rtl8192cd_priv *priv,
 {
 	unsigned char *pie = pies;
 	unsigned int len, total_len = 0;
-	int i = 0;
+//	int i = 0;
 
 	while(1)
 	{
@@ -1672,7 +1666,6 @@ static int realtek_set_auth_type(struct rtl8192cd_priv *priv, enum nl80211_auth_
 static int realtek_change_beacon(struct wiphy *wiphy, struct net_device *dev,
 				struct cfg80211_beacon_data *beacon)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
@@ -1693,7 +1686,6 @@ static int realtek_change_beacon(struct wiphy *wiphy, struct net_device *dev,
 
 static int realtek_cfg80211_del_beacon(struct wiphy *wiphy, struct net_device *dev)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
@@ -1703,7 +1695,7 @@ static int realtek_cfg80211_del_beacon(struct wiphy *wiphy, struct net_device *d
 	    priv->pmib->p2p_mib.p2p_enabled=0;
 	}
 
-	if (OPMODE & WIFI_AP_STATE == 0)
+	if ((OPMODE & WIFI_AP_STATE) == 0)
 		return -EOPNOTSUPP;
 
 	rtl8192cd_close(priv->dev);
@@ -1716,7 +1708,6 @@ static int realtek_cfg80211_del_beacon(struct wiphy *wiphy, struct net_device *d
 
 static int realtek_stop_ap(struct wiphy *wiphy, struct net_device *dev)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 	int ret = 0;
 
@@ -1788,7 +1779,6 @@ static int realtek_cfg80211_del_beacon(struct wiphy *wiphy, struct net_device *d
 static int realtek_cfg80211_set_channel(struct wiphy *wiphy, struct net_device *dev,
 			      struct cfg80211_chan_def *chandef)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, NULL);
 	int channel = 0;
 
@@ -1817,7 +1807,6 @@ static int realtek_cfg80211_change_bss(struct wiphy *wiphy,
 				struct net_device *dev,
 				struct bss_parameters *params)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	unsigned char dot11_rate_table[]={2,4,11,22,12,18,24,36,48,72,96,108,0};
@@ -1936,11 +1925,10 @@ void set_pairwise_key_for_ibss(struct rtl8192cd_priv *priv, union iwreq_data *wr
 
 #ifdef CPTCFG_CFG80211_MODULE
 static int realtek_cfg80211_add_key(struct wiphy *wiphy, struct net_device *dev,
-				   u8 key_index, BOOLEAN pairwise,
+				   u8 key_index, bool pairwise,
 				   const u8 *mac_addr,
 				   struct key_params *params)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 	union iwreq_data wrqu;
 	struct ieee80211req_key wk;
@@ -2054,10 +2042,9 @@ static int realtek_cfg80211_add_key(struct wiphy *wiphy, struct net_device *dev,
 }
 
 static int realtek_cfg80211_del_key(struct wiphy *wiphy, struct net_device *dev,
-				   u8 key_index, BOOLEAN pairwise,
+				   u8 key_index, bool pairwise,
 				   const u8 *mac_addr)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 	union iwreq_data wrqu;
 	struct ieee80211req_del_key wk;
@@ -2123,17 +2110,15 @@ realtek_cfg80211_del_key_end:
 
 
 static int realtek_cfg80211_get_key(struct wiphy *wiphy, struct net_device *dev,
-				   u8 key_index, BOOLEAN pairwise,
+				   u8 key_index, bool pairwise,
 				   const u8 *mac_addr, void *cookie,
 				   void (*callback) (void *cookie,
 						     struct key_params *))
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 	struct key_params params;
 	struct stat_info	*pstat = NULL;
-	unsigned int cipher = 0;
-	u8 key[64] = {0};
+//	unsigned int cipher = 0;
 
 	NLENTER;
 
@@ -2163,7 +2148,6 @@ static int realtek_cfg80211_get_key(struct wiphy *wiphy, struct net_device *dev,
     #endif
 
 	memset(&params, 0, sizeof(params));
-	params.key = key;
 	realtek_get_key_from_sta(priv, pstat, &params);
 
 	//_eric_cfg ?? key seq is not used ??
@@ -2186,8 +2170,6 @@ static int realtek_cfg80211_set_default_key(struct wiphy *wiphy,
 					   u8 key_index, BOOLEAN unicast,
 					   BOOLEAN multicast)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
 	NDEBUG2("defaukt key_index[%d] unicast[%d] multicast[%d] \n", key_index, unicast, multicast);
@@ -2199,31 +2181,26 @@ static int realtek_cfg80211_set_default_mgmt_key(struct wiphy *wiphy,
 					     struct net_device *dev,
 					     u8 key_idx)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
+	NLEXIT;
 	return 0;
 }
 
-//not in ath6k
+#if 0
 static int realtek_cfg80211_auth(struct wiphy *wiphy, struct net_device *dev,
 			  struct cfg80211_auth_request *req)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
-
 	NLENTER;
+	NLEXIT;
 	return 0;
 }
 
 static int realtek_cfg80211_assoc(struct wiphy *wiphy, struct net_device *dev,
 			   struct cfg80211_assoc_request *req)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
-
 	NLENTER;
+	NLEXIT;
 	return 0;
 }
 
@@ -2231,10 +2208,8 @@ static int realtek_cfg80211_deauth(struct wiphy *wiphy, struct net_device *dev,
 			    struct cfg80211_deauth_request *req,
 			    void *cookie)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
-
 	NLENTER;
+	NLEXIT;
 	return 0;
 }
 
@@ -2242,20 +2217,15 @@ static int realtek_cfg80211_disassoc(struct wiphy *wiphy, struct net_device *dev
 			      struct cfg80211_disassoc_request *req,
 			      void *cookie)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
-
 	NLENTER;
+	NLEXIT;
 	return 0;
 }
-
+#endif
 //Not in ath6k
 static int realtek_cfg80211_add_station(struct wiphy *wiphy, struct net_device *dev,
 				 u8 *mac, struct station_parameters *params)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
-
 	NLENTER;
 
 	NLEXIT;
@@ -2306,7 +2276,6 @@ static int realtek_cfg80211_del_station(struct wiphy *wiphy, struct net_device *
 static int realtek_cfg80211_del_station(struct wiphy *wiphy, struct net_device *dev, u8 *mac)
 #endif
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 	struct stat_info	*pstat;
 	int ret=0;
@@ -2337,7 +2306,6 @@ static int realtek_cfg80211_change_station(struct wiphy *wiphy,
 				    u8 *mac,
 				    struct station_parameters *params)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 	struct stat_info *pstat = NULL;
 	union iwreq_data wrqu;
@@ -2471,7 +2439,6 @@ static void realtek_cfg80211_set_rate_info(struct rate_info *r_info, unsigned in
 static int realtek_cfg80211_get_station(struct wiphy *wiphy, struct net_device *dev,
 				 u8 *mac, struct station_info *sinfo)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 	struct stat_info *pstat = NULL;
 
@@ -2554,7 +2521,6 @@ static int realtek_cfg80211_get_station(struct wiphy *wiphy, struct net_device *
 static int realtek_cfg80211_dump_station(struct wiphy *wiphy, struct net_device *dev,
 				 int idx, u8 *mac, struct station_info *sinfo)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 	int num = 0;
 	struct list_head *phead, *plist;
@@ -2614,7 +2580,6 @@ static int realtek_cfg80211_set_txq_params(struct wiphy *wiphy,
 
 static int realtek_cfg80211_set_wiphy_params(struct wiphy *wiphy, u32 changed)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, NULL);
 
 	NLENTER;
@@ -2628,7 +2593,7 @@ static int realtek_cfg80211_set_wiphy_params(struct wiphy *wiphy, u32 changed)
 	if (changed & WIPHY_PARAM_RETRY_LONG)
 		priv->pmib->dot11OperationEntry.dot11LongRetryLimit = wiphy->retry_long;
 
-    if(under_apmode_repeater) {
+    if(under_apmode_repeater(priv)) {
         priv = GET_VXD_PRIV(priv);
 
         if (changed & WIPHY_PARAM_FRAG_THRESHOLD)
@@ -2651,8 +2616,6 @@ static int realtek_cfg80211_set_ap_chanwidth(struct wiphy *wiphy,
 				      struct net_device *dev,
 				      struct cfg80211_chan_def *chandef)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, NULL);
 
 	NLENTER;
 	return realtek_cfg80211_set_channel(wiphy, dev, chandef);
@@ -2661,7 +2624,6 @@ static int realtek_cfg80211_set_ap_chanwidth(struct wiphy *wiphy,
 static int realtek_cfg80211_set_monitor_channel(struct wiphy *wiphy,
 					 struct cfg80211_chan_def *chandef)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, NULL);
 
 	NLENTER;
@@ -2891,7 +2853,6 @@ static int realtek_cfg80211_get_tx_power(struct wiphy *wiphy,
 				  struct wireless_dev *wdev, int *dbm)
 {
 	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = get_priv_from_wdev(rtk, wdev);
 
 	//NLENTER;
 
@@ -2914,8 +2875,6 @@ static int realtek_cfg80211_get_tx_power(struct wiphy *wiphy,
 //_eric_nl ?? suspend/resume use open/close ??
 static int realtek_cfg80211_suspend(struct wiphy *wiphy, struct cfg80211_wowlan *wow)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, NULL);
 
 	NLENTER;
 	NLNOT;
@@ -2925,8 +2884,6 @@ static int realtek_cfg80211_suspend(struct wiphy *wiphy, struct cfg80211_wowlan 
 
 static int realtek_cfg80211_resume(struct wiphy *wiphy)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, NULL);
 
 	NLENTER;
 	NLNOT;
@@ -2936,7 +2893,7 @@ static int realtek_cfg80211_resume(struct wiphy *wiphy)
 
 
 /*cfg p2p*/
-int realtek_cfg80211_fill_available_channel(struct rtl8192cd_priv *priv,
+void realtek_cfg80211_fill_available_channel(struct rtl8192cd_priv *priv,
 			  struct cfg80211_scan_request *request)
 {
 	int idx=0;
@@ -3200,7 +3157,6 @@ static int realtek_start_ap(struct wiphy *wiphy, struct net_device *dev,
 static int realtek_cfg80211_join_ibss(struct wiphy *wiphy, struct net_device *dev,
 			       struct cfg80211_ibss_params *ibss_param)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
@@ -3208,7 +3164,7 @@ static int realtek_cfg80211_join_ibss(struct wiphy *wiphy, struct net_device *de
 	if (!realtek_cfg80211_ready(priv))
 		return -EIO;
 
-	if (OPMODE & WIFI_ADHOC_STATE == 0)
+	if ((OPMODE & WIFI_ADHOC_STATE) == 0)
 		return -EOPNOTSUPP;
 
 	//printk("Ad-Hoc join [%s] \n", ibss_param->ssid);
@@ -3260,15 +3216,15 @@ static int realtek_cfg80211_join_ibss(struct wiphy *wiphy, struct net_device *de
 
 	NLEXIT;
 
+	NLNOT;
 	return 0;
 }
 
 static int realtek_cfg80211_leave_ibss(struct wiphy *wiphy, struct net_device *dev)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
+	NLNOT;
 	return 0;
 }
 
@@ -3276,30 +3232,27 @@ static int realtek_cfg80211_leave_ibss(struct wiphy *wiphy, struct net_device *d
 static int realtek_cfg80211_set_wds_peer(struct wiphy *wiphy, struct net_device *dev,
 				  u8 *addr)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
+	NLNOT;
 	return 0;
 }
 
 static void realtek_cfg80211_rfkill_poll(struct wiphy *wiphy)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, NULL);
 
 	NLENTER;
-	return 0;
+	NLNOT;
+	return;
 }
 
 
 static int realtek_cfg80211_set_power_mgmt(struct wiphy *wiphy, struct net_device *dev,
 				    BOOLEAN enabled, int timeout)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
+	NLNOT;
 	return 0;
 }
 
@@ -3309,8 +3262,6 @@ static int realtek_cfg80211_set_bitrate_mask(struct wiphy *wiphy,
 				      const u8 *addr,
 				      const struct cfg80211_bitrate_mask *mask)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
 	NLNOT;
@@ -3350,7 +3301,7 @@ static int realtek_reset_mac_acl(struct rtl8192cd_priv *priv)
 {
 	int i=0;
 
-	for(i;i<priv->pmib->dot11StationConfigEntry.dot11AclNum;i++) {
+	for(i=0;i<priv->pmib->dot11StationConfigEntry.dot11AclNum;i++) {
 		NDEBUG("Reset MAC ACL entry[%d]: %02x:%02x:%02x:%02x:%02x:%02x\n",i,
 			priv->pmib->dot11StationConfigEntry.dot11AclAddr[i][0],priv->pmib->dot11StationConfigEntry.dot11AclAddr[i][1],
 			priv->pmib->dot11StationConfigEntry.dot11AclAddr[i][2],priv->pmib->dot11StationConfigEntry.dot11AclAddr[i][3],
@@ -3380,7 +3331,7 @@ static int realtek_set_mac_acl(struct wiphy *wiphy, struct net_device *dev,
 	NDEBUG("MAC ACL mode:%s configured\n",(params->acl_policy&NL80211_ACL_POLICY_DENY_UNLESS_LISTED)? "Allow":"Deny");
 	priv->pmib->dot11StationConfigEntry.dot11AclMode = (params->acl_policy&NL80211_ACL_POLICY_DENY_UNLESS_LISTED)? 1:2;
 
-	for(i;i<params->n_acl_entries;i++) {
+	for(i=0;i<params->n_acl_entries;i++) {
 		priv->pmib->dot11StationConfigEntry.dot11AclNum++;
 		memcpy(priv->pmib->dot11StationConfigEntry.dot11AclAddr[i],params->mac_addrs[i].addr,MACADDRLEN);
 		NDEBUG("Append MAC ACL entry[%d]: %02x:%02x:%02x:%02x:%02x:%02x\n",i,
@@ -3401,10 +3352,10 @@ static int realtek_start_radar_detection (struct wiphy *wiphy,
 					 u32 cac_time_ms)
 {
 	int ret=0;
-	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, NULL);
 	int channel = 0;
 	enum nl80211_dfs_regions dfs_region;
+	EXTERN enum nl80211_dfs_regions reg_get_dfs_region(struct wiphy *wiphy);
 
 	NLENTER;
 
@@ -3439,7 +3390,6 @@ static int realtek_start_radar_detection (struct wiphy *wiphy,
 	NDEBUG3("center_freq=[%u] channel=[%d] hw_value=[%u] bandwidth=[%d]\n",
 		chandef->chan->center_freq, channel, chandef->chan->hw_value, chandef->width);
 
-	EXTERN enum nl80211_dfs_regions reg_get_dfs_region(struct wiphy *wiphy);
 	dfs_region = reg_get_dfs_region(wiphy);
 	switch(dfs_region) {
 		case NL80211_DFS_ETSI:
@@ -3591,7 +3541,6 @@ static int realtek_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 	unsigned int bssdb_count=0;
 	struct bss_desc *bssdb=NULL;
-	int status = 0;
 	int bss_num = -1;
 	int ret = 0;
 
@@ -3708,7 +3657,7 @@ static int realtek_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 
 	syncMulticastCipher(priv, &bssdb[bss_num]); /*eric refine 23277*/
 
-    if(OPMODE&(WIFI_AUTH_SUCCESS|WIFI_ASOC_STATE)==(WIFI_AUTH_SUCCESS|WIFI_ASOC_STATE)){
+    if((OPMODE&(WIFI_AUTH_SUCCESS|WIFI_ASOC_STATE))==(WIFI_AUTH_SUCCESS|WIFI_ASOC_STATE)){
         NDEBUG3("try issue deauth to...\n");
         if(memcmp(priv->pmib->dot11StationConfigEntry.dot11Bssid , bssdb[bss_num].bssid , 6)==0){
             NDEBUG3("issue deauth to...\n");
@@ -3729,8 +3678,6 @@ static int realtek_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
 static int realtek_cfg80211_disconnect(struct wiphy *wiphy,
 						  struct net_device *dev, u16 reason_code)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
 	//rtk_abort_scan(priv);
@@ -3743,8 +3690,6 @@ static int realtek_cfg80211_channel_switch(struct wiphy *wiphy,
 			struct net_device *dev, struct cfg80211_csa_settings *params)
 
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = realtek_get_priv(wiphy, dev);
 
 	NLENTER;
 	return 0;
@@ -3755,8 +3700,6 @@ static void realtek_mgmt_frame_register(struct wiphy *wiphy,
 				       struct  wireless_dev *wdev,
 				       u16 frame_type, BOOLEAN reg)
 {
-	struct rtknl *rtk = wiphy_priv(wiphy);
-	struct rtl8192cd_priv *priv = get_priv_from_wdev(rtk, wdev);
 	NLENTER;
 	if (frame_type != (IEEE80211_FTYPE_MGMT | IEEE80211_STYPE_PROBE_REQ)){
         NDEBUG3("frame_type=[%02X]\n",frame_type);
@@ -3790,6 +3733,7 @@ int register_netdevice_name_rtk(struct net_device *dev)
 
 #if 1 //wrt-vap
 
+#if 0 
 static int realtek_nliftype_to_drv_iftype(enum nl80211_iftype type, u8 *nw_type)
 {
 	switch (type) {
@@ -3811,38 +3755,17 @@ static int realtek_nliftype_to_drv_iftype(enum nl80211_iftype type, u8 *nw_type)
 
 	return 0;
 }
-
-static BOOLEAN realtek_is_valid_iftype(struct rtknl *rtk, enum nl80211_iftype type,
-				   u8 *if_idx, u8 *nw_type)
-{
-	int i;
-
-	if (realtek_nliftype_to_drv_iftype(type, nw_type))
-		return false;
-
-	if (  type == NL80211_IFTYPE_AP
-        || type == NL80211_IFTYPE_STATION
-        || type == NL80211_IFTYPE_ADHOC
-#if defined(P2P_SUPPORT)
-        || type == 	NL80211_IFTYPE_P2P_CLIENT
-        || type == 	NL80211_IFTYPE_P2P_GO
-        || type == 	NL80211_IFTYPE_P2P_DEVICE
 #endif
-        ) //wrt-adhoc
-		return true;
-
-	return false;
-}
 
 char check_vif_existed(struct rtl8192cd_priv *priv, struct rtknl *rtk, unsigned char *name)
 {
-	char tmp = 0;
+	int tmp = 0;
 
 	for(tmp =0; tmp<= VIF_NUM; tmp++)
 	{
 		if(!strcmp(name, rtk->ndev_name[tmp]))
 		{
-			printk("%s = %s, existed in vif[%d]\n", name, rtk->ndev_name[tmp]);
+			printk("%s = %s, existed in vif[%d]\n", name, rtk->ndev_name[tmp],tmp);
 			return 1;
 		}
 	}
@@ -4024,13 +3947,13 @@ void realtek_create_vap_iface(struct rtknl *rtk, unsigned char *name)
 	if(check_vif_existed(priv, rtk, name))
 	{
 		printk("vif interface already existed !! \n");
-		return 0;
+		return;
 	}
 
 	if (rtk->num_vif == VIF_NUM)
 	{
 		printk("Reached maximum number of supported vif\n");
-		return -1;
+		return;
 	}
 
 	rtk->idx_vif = find_ava_vif_idx(rtk);
@@ -4050,7 +3973,7 @@ void realtek_create_vap_iface(struct rtknl *rtk, unsigned char *name)
 	else
 	{
 		printk("No interface name !!\n");
-		return -1;
+		return;
 	}
 
 	rtl8192cd_init_one_cfg80211(rtk);
@@ -4067,8 +3990,7 @@ int realtek_interface_add(struct rtl8192cd_priv *priv,
 {
 
  	struct net_device *ndev;
-	struct ath6kl_vif *vif;
-
+	
 	NLENTER;
 
 	NDEBUG("type[%d]\n", type);
@@ -4224,7 +4146,7 @@ void realtek_change_iftype(struct rtl8192cd_priv *priv ,enum nl80211_iftype type
 	default:
 		NDEBUG("invalid interface type [%d]\n", type);
 		OPMODE = WIFI_AP_STATE;
-		return -EOPNOTSUPP;
+		//return -EOPNOTSUPP;
 	}
 }
 
@@ -4256,7 +4178,7 @@ void type_to_name(type, type_name)
 		break;
 	default:
 		strcpy(type_name, "NOT SUPPORT TYPE");
-		return -EOPNOTSUPP;
+//		return -EOPNOTSUPP;
 	}
 
 }
@@ -4265,7 +4187,7 @@ static struct wireless_dev *realtek_cfg80211_add_iface(struct wiphy *wiphy,
 						      const char *name,
 //#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 1, 0))
 #ifdef OPENWRT_CC
-						      char name_assign_type,
+						      unsigned char name_assign_type,
 #endif
 						      enum nl80211_iftype type,
 						      u32 *flags,
@@ -4274,7 +4196,6 @@ static struct wireless_dev *realtek_cfg80211_add_iface(struct wiphy *wiphy,
 	struct rtknl *rtk = wiphy_priv(wiphy); //return &wiphy->priv;
 	struct rtl8192cd_priv	*priv = rtk->priv;
 	struct rtl8192cd_priv *priv_add = NULL;
-	u8 if_idx, nw_type;
 	unsigned char type_name[32];
 
 	NLENTER;
@@ -4329,7 +4250,6 @@ static struct wireless_dev *realtek_cfg80211_add_iface(struct wiphy *wiphy,
 			unsigned char name_tmp[32];
 			struct rtl8192cd_priv *priv_vxd = NULL;
 			struct rtl8192cd_priv *priv_vap = NULL;
-			struct rtl8192cd_priv *priv_tmp = NULL;
 
 			printk("Type NOT Match !!! need to change name\n");
 
@@ -4403,7 +4323,7 @@ static struct wireless_dev *realtek_cfg80211_add_iface(struct wiphy *wiphy,
 	else
 	{
 		printk("Can not find correspinding priv for %s !!\n", name);
-		return -1;
+		return NULL;
 	}
 
 	NLEXIT;
@@ -4520,7 +4440,7 @@ static int realtek_dump_survey(struct wiphy *wiphy,
 		}
 	}
 
-	if(sband->band == NL80211_BAND_2GHZ)
+	if(sband->band == IEEE80211_BAND_2GHZ)
 		freq = ieee80211_channel_to_frequency(priv->rtk->survey_info[idx].channel, IEEE80211_BAND_2GHZ);
 	else
 		freq = ieee80211_channel_to_frequency(priv->rtk->survey_info[idx].channel, IEEE80211_BAND_5GHZ);
@@ -4570,7 +4490,6 @@ static int realtek_cfg80211_change_iface(struct wiphy *wiphy,
 {
 	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv	*priv = get_priv_from_ndev(rtk, ndev); //rtk->priv;
-	int i;
 	unsigned char type_name[32];
 
 	NLENTER;
@@ -4883,10 +4802,10 @@ static int realtek_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
 {
 	struct rtknl *rtk = wiphy_priv(wiphy);
 	struct rtl8192cd_priv *priv = get_priv_from_wdev(rtk, wdev);
+#ifdef P2P_SUPPORT
 	int tx_ch = ieee80211_frequency_to_channel(params->chan->center_freq);
+#endif
 
-	int ret = 0;
-    u32 cookie_id;
     const struct ieee80211_mgmt *mgmt;
 	NLENTER;
 
@@ -5022,7 +4941,6 @@ struct cfg80211_ops realtek_cfg80211_ops = {
 static void  rtk_create_dev(struct rtknl *rtk,int idx)
 {
 	/* define class here */
-	unsigned char zero[] = {0, 0, 0, 0, 0, 0};
     rtk->cl = class_create(THIS_MODULE, rtk_dev_name[idx]);
 
     /* create first device */
@@ -5256,8 +5174,12 @@ int realtek_cfg80211_init(struct rtknl *rtk,struct rtl8192cd_priv *priv)
 #ifdef EN_EFUSE
 	char efusemac[ETH_ALEN];
 #endif
+#if defined(EN_EFUSE) && !defined(CUSTOMIZE_FLASH_EFUSE)
 	char zero[ETH_ALEN] = {0,0,0,0,0,0};
+#endif
+#ifdef CONFIG_WLAN_HAL_8814AE
 	unsigned char txbf_max_ant, txbf_sounding_dim;
+#endif
 	NLENTER;
 	rtk->priv = priv;  //mark_dual
 
@@ -5394,43 +5316,43 @@ int realtek_cfg80211_init(struct rtknl *rtk,struct rtl8192cd_priv *priv)
 			unsigned int value=0;
 
 			wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.vht_supported = true;
-	        input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, MAX_MPDU_LENGTH_S, MAX_MPDU_LENGTH_E, 0x1);
+	        input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, MAX_MPDU_LENGTH_S, MAX_MPDU_LENGTH_E, 0x1);
 			//Support 80MHz bandwidth only
 			//0 - not support 160/80+80; 1 - support 160; 2 - support 80+80
 			if(priv->pshare->CurrentChannelBW == HT_CHANNEL_WIDTH_AC_160)
 				value = 1;
 			else
 				value = 0;
-			input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, CHL_WIDTH_S, CHL_WIDTH_E, value);
+			input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, CHL_WIDTH_S, CHL_WIDTH_E, value);
 
 			if((GET_CHIP_VER(priv) == VERSION_8814A) && (priv->pshare->is_40m_bw == HT_CHANNEL_WIDTH_AC_80))
-				input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SHORT_GI80M_S, SHORT_GI80M_E, (priv->pmib->dot11nConfigEntry.dot11nShortGIfor40M ? 1 : 0));
+				input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SHORT_GI80M_S, SHORT_GI80M_E, (priv->pmib->dot11nConfigEntry.dot11nShortGIfor40M ? 1 : 0));
 
-			input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SHORT_GI160M_S, SHORT_GI160M_E, 0);
-			input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, RX_STBC_S, RX_STBC_E, 1);
+			input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SHORT_GI160M_S, SHORT_GI160M_E, 0);
+			input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, RX_STBC_S, RX_STBC_E, 1);
 			if ((get_rf_mimo_mode(priv) == MIMO_2T2R) || (get_rf_mimo_mode(priv) == MIMO_3T3R)) //eric_8814
-				input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, TX_STBC_S, TX_STBC_E, 1);
+				input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, TX_STBC_S, TX_STBC_E, 1);
             else
-                input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, TX_STBC_S, TX_STBC_E, 0);
+                input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, TX_STBC_S, TX_STBC_E, 0);
 
 #if defined(CONFIG_WLAN_HAL_8881A)
 			if(GET_CHIP_VER(priv) == VERSION_8881A)
-				input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, RX_LDPC_S, RX_LDPC_E, 0);
+				input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, RX_LDPC_S, RX_LDPC_E, 0);
 			else
 #endif
-				input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, RX_LDPC_S, RX_LDPC_E, 1);
+				input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, RX_LDPC_S, RX_LDPC_E, 1);
 
 #if (BEAMFORMING_SUPPORT == 1)
-			input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SU_BFER_S, SU_BFER_E, 1);
-			input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SU_BFEE_S, SU_BFEE_E, 1);
+			input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SU_BFER_S, SU_BFER_E, 1);
+			input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SU_BFEE_S, SU_BFEE_E, 1);
 #else
-			input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SU_BFER_S, SU_BFER_E, 0);
-			input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SU_BFEE_S, SU_BFEE_E, 0);
+			input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SU_BFER_S, SU_BFER_E, 0);
+			input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SU_BFEE_S, SU_BFEE_E, 0);
 #endif
 #ifdef CONFIG_WLAN_HAL_8814AE
 			if(priv->pshare->rf_ft_var.bf_sup_val != 0){
-				input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, MAX_ANT_SUPP_S, MAX_ANT_SUPP_E, priv->pshare->rf_ft_var.bf_sup_val);
-				input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SOUNDING_DIMENSIONS_S, SOUNDING_DIMENSIONS_E, priv->pshare->rf_ft_var.bf_sup_val);
+				input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, MAX_ANT_SUPP_S, MAX_ANT_SUPP_E, priv->pshare->rf_ft_var.bf_sup_val);
+				input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SOUNDING_DIMENSIONS_S, SOUNDING_DIMENSIONS_E, priv->pshare->rf_ft_var.bf_sup_val);
 			}else
 #endif
 			{
@@ -5452,18 +5374,18 @@ int realtek_cfg80211_init(struct rtknl *rtk,struct rtl8192cd_priv *priv)
 						txbf_max_ant = 1;
 					    txbf_sounding_dim = 1;
 					}
-					input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, MAX_ANT_SUPP_S, MAX_ANT_SUPP_E, txbf_max_ant);
-					input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SOUNDING_DIMENSIONS_S, SOUNDING_DIMENSIONS_E, txbf_sounding_dim);
+					input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, MAX_ANT_SUPP_S, MAX_ANT_SUPP_E, txbf_max_ant);
+					input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SOUNDING_DIMENSIONS_S, SOUNDING_DIMENSIONS_E, txbf_sounding_dim);
 				} else
 #endif
 				{
-					input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, MAX_ANT_SUPP_S, MAX_ANT_SUPP_E, BEAMFORM_MAX_ANT_SUPP);
-					input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SOUNDING_DIMENSIONS_S, SOUNDING_DIMENSIONS_E, BEAMFORM_SOUNDING_DIMENSIONS);
+					input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, MAX_ANT_SUPP_S, MAX_ANT_SUPP_E, BEAMFORM_MAX_ANT_SUPP);
+					input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, SOUNDING_DIMENSIONS_S, SOUNDING_DIMENSIONS_E, BEAMFORM_SOUNDING_DIMENSIONS);
 				}
 			}
 
-            input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, HTC_VHT_S, HTC_VHT_E, 1);
-            input_value_32(&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, MAX_RXAMPDU_FACTOR_S, MAX_RXAMPDU_FACTOR_E, 7);
+            input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, HTC_VHT_S, HTC_VHT_E, 1);
+            input_value_32((unsigned  long *)&wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.cap, MAX_RXAMPDU_FACTOR_S, MAX_RXAMPDU_FACTOR_E, 7);
 			if (get_rf_mimo_mode(priv) == MIMO_2T2R) {
 				wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.vht_mcs.rx_mcs_map = cpu_to_le16(0xfffa);
 				wiphy->bands[IEEE80211_BAND_5GHZ]->vht_cap.vht_mcs.tx_mcs_map = cpu_to_le16(0xfffa);

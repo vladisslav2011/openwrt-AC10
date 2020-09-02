@@ -252,6 +252,7 @@ halmac_dump_efuse_drv_88xx(
 	u8 *pEfuse_map = NULL;
 	u32 efuse_size;
 	VOID *pDriver_adapter = NULL;
+	unsigned long flag;
 
 	pDriver_adapter = pHalmac_adapter->pDriver_adapter;
 
@@ -274,10 +275,10 @@ halmac_dump_efuse_drv_88xx(
 	if (HALMAC_RET_SUCCESS != halmac_read_hw_efuse_88xx(pHalmac_adapter, 0, efuse_size, pEfuse_map))
 		return HALMAC_RET_EFUSE_R_FAIL;
 
-	PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex));
+	PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex),&flag);
 	PLATFORM_RTL_MEMCPY(pDriver_adapter, pHalmac_adapter->pHalEfuse_map, pEfuse_map, efuse_size);
 	pHalmac_adapter->hal_efuse_map_valid = _TRUE;
-	PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex));
+	PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex),&flag);
 
 	PLATFORM_RTL_FREE(pDriver_adapter, pEfuse_map, efuse_size);
 
@@ -290,7 +291,6 @@ halmac_dump_efuse_fw_88xx(
 )
 {
 	u8 pH2c_buff[HALMAC_H2C_CMD_SIZE_88XX] = { 0 };
-	u32 eeprom_size = pHalmac_adapter->hw_config_info.eeprom_size;
 	u16 h2c_seq_mum = 0;
 	VOID *pDriver_adapter = NULL;
 	HALMAC_H2C_HEADER_INFO h2c_header_info;
@@ -334,13 +334,14 @@ halmac_func_write_efuse_88xx(
 	u32 value32, tmp32, counter;
 	VOID *pDriver_adapter = NULL;
 	PHALMAC_API pHalmac_api;
+	unsigned long flag;
 
 	pDriver_adapter = pHalmac_adapter->pDriver_adapter;
 	pHalmac_api = (PHALMAC_API)pHalmac_adapter->pHalmac_api;
 
-	PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex));
+	PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex),&flag);
 	pHalmac_adapter->hal_efuse_map_valid = _FALSE;
-	PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex));
+	PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex),&flag);
 
 	HALMAC_REG_WRITE_8(pHalmac_adapter, REG_PMC_DBG_CTRL2 + 3, wite_protect_code);
 
@@ -380,7 +381,6 @@ halmac_func_switch_efuse_bank_88xx(
 	u8 reg_value;
 	PHALMAC_API pHalmac_api;
 
-	HALMAC_RET_STATUS status = HALMAC_RET_SUCCESS;
 
 	pHalmac_api = (PHALMAC_API)pHalmac_adapter->pHalmac_api;
 
@@ -498,6 +498,7 @@ halmac_read_logical_efuse_map_88xx(
 	u32 efuse_size;
 	VOID *pDriver_adapter = NULL;
 	HALMAC_RET_STATUS status = HALMAC_RET_SUCCESS;
+	unsigned long flag;
 
 	pDriver_adapter = pHalmac_adapter->pDriver_adapter;
 	efuse_size = pHalmac_adapter->hw_config_info.efuse_size;
@@ -523,10 +524,10 @@ halmac_read_logical_efuse_map_88xx(
 			return status;
 		}
 
-		PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex));
+		PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex),&flag);
 		PLATFORM_RTL_MEMCPY(pDriver_adapter, pHalmac_adapter->pHalEfuse_map, pEfuse_map, efuse_size);
 		pHalmac_adapter->hal_efuse_map_valid = _TRUE;
-		PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex));
+		PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex),&flag);
 
 		PLATFORM_RTL_FREE(pDriver_adapter, pEfuse_map, efuse_size);
 	}
@@ -934,8 +935,6 @@ halmac_send_fwpkt_88xx(
 	IN u32 code_size
 )
 {
-	VOID *pDriver_adapter = pHalmac_adapter->pDriver_adapter;
-
 	if (HALMAC_RET_SUCCESS != halmac_download_rsvd_page_88xx(pHalmac_adapter, pRam_code, code_size)) {
 		PLATFORM_MSG_PRINT(pDriver_adapter, HALMAC_MSG_FW, HALMAC_DBG_ERR, "PLATFORM_SEND_RSVD_PAGE 0 error!!\n");
 		return HALMAC_RET_DL_RSVD_PAGE_FAIL;
@@ -1296,17 +1295,18 @@ halmac_set_h2c_header_88xx(
 )
 {
 	VOID *pDriver_adapter = pHalmac_adapter->pDriver_adapter;
+	unsigned long flag;
 
 	PLATFORM_MSG_PRINT(pDriver_adapter, HALMAC_MSG_H2C, HALMAC_DBG_TRACE, "halmac_set_h2c_header_88xx!!\n");
 
 	H2C_CMD_HEADER_SET_CATEGORY(pHal_h2c_hdr, 0x00);
 	H2C_CMD_HEADER_SET_TOTAL_LEN(pHal_h2c_hdr, 16);
 
-	PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->h2c_seq_mutex));
+	PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->h2c_seq_mutex),&flag);
 	H2C_CMD_HEADER_SET_SEQ_NUM(pHal_h2c_hdr, pHalmac_adapter->h2c_packet_seq);
 	*seq = pHalmac_adapter->h2c_packet_seq;
 	pHalmac_adapter->h2c_packet_seq++;
-	PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->h2c_seq_mutex));
+	PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->h2c_seq_mutex),&flag);
 
 	if (_TRUE == ack)
 		H2C_CMD_HEADER_SET_ACK(pHal_h2c_hdr, _TRUE);
@@ -1323,6 +1323,7 @@ halmac_set_fw_offload_h2c_header_88xx(
 )
 {
 	VOID *pDriver_adapter = pHalmac_adapter->pDriver_adapter;
+	unsigned long flag;
 
 	PLATFORM_MSG_PRINT(pDriver_adapter, HALMAC_MSG_H2C, HALMAC_DBG_TRACE, "halmac_set_fw_offload_h2c_header_88xx!!\n");
 
@@ -1332,11 +1333,11 @@ halmac_set_fw_offload_h2c_header_88xx(
 	FW_OFFLOAD_H2C_SET_CATEGORY(pHal_h2c_hdr, 0x01);
 	FW_OFFLOAD_H2C_SET_CMD_ID(pHal_h2c_hdr, 0xFF);
 
-	PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->h2c_seq_mutex));
+	PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->h2c_seq_mutex),&flag);
 	FW_OFFLOAD_H2C_SET_SEQ_NUM(pHal_h2c_hdr, pHalmac_adapter->h2c_packet_seq);
 	*pSeq_num = pHalmac_adapter->h2c_packet_seq;
 	pHalmac_adapter->h2c_packet_seq++;
-	PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->h2c_seq_mutex));
+	PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->h2c_seq_mutex),&flag);
 
 	if (_TRUE == pH2c_header_info->ack)
 		FW_OFFLOAD_H2C_SET_ACK(pHal_h2c_hdr, _TRUE);
@@ -1656,7 +1657,6 @@ halmac_enqueue_para_buff_88xx(
 	OUT u8 *pEnd_cmd
 )
 {
-	VOID *pDriver_adapter = NULL;
 	PHALMAC_CONFIG_PARA_INFO pConfig_para_info = &(pHalmac_adapter->config_para_info);
 
 	*pEnd_cmd = _FALSE;
@@ -1708,7 +1708,6 @@ halmac_gen_cfg_para_h2c_88xx(
 	IN u8 *pH2c_buff
 )
 {
-	VOID *pDriver_adapter = NULL;
 	PHALMAC_CONFIG_PARA_INFO pConfig_para_info = &(pHalmac_adapter->config_para_info);
 
 	CFG_PARAMETER_SET_NUM(pH2c_buff, pConfig_para_info->para_num);
@@ -2131,7 +2130,6 @@ halmac_parse_c2h_packet_88xx(
 	u8 c2h_cmd, c2h_sub_cmd_id;
 	u8 *pC2h_buf = halmac_buf + pHalmac_adapter->hw_config_info.rxdesc_size;
 	u32 c2h_size = halmac_size - pHalmac_adapter->hw_config_info.rxdesc_size;
-	VOID *pDriver_adapter = pHalmac_adapter->pDriver_adapter;
 	HALMAC_RET_STATUS status = HALMAC_RET_SUCCESS;
 
 	/* PLATFORM_MSG_PRINT(pDriver_adapter, HALMAC_MSG_H2C, HALMAC_DBG_TRACE, "halmac_parse_c2h_packet_88xx!!\n"); */
@@ -2293,6 +2291,7 @@ halmac_parse_efuse_data_88xx(
 	u8 h2c_return_code = 0;
 	VOID *pDriver_adapter = pHalmac_adapter->pDriver_adapter;
 	HALMAC_CMD_PROCESS_STATUS process_status = HALMAC_CMD_PROCESS_UNDEFINE;
+	unsigned long flag;
 
 	pEeprom_map = (u8 *)PLATFORM_RTL_MALLOC(pDriver_adapter, eeprom_size);
 	if (NULL == pEeprom_map) {
@@ -2319,10 +2318,10 @@ halmac_parse_efuse_data_88xx(
 	if (0 == segment_id)
 		pHalmac_adapter->efuse_segment_size = segment_size;
 
-	PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex));
+	PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex),&flag);
 	PLATFORM_RTL_MEMCPY(pDriver_adapter, pHalmac_adapter->pHalEfuse_map + segment_id * pHalmac_adapter->efuse_segment_size, \
 		pC2h_buf + HALMAC_C2H_DATA_OFFSET_88XX, segment_size);
-	PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex));
+	PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex),&flag);
 
 	if (_FALSE == EFUSE_DATA_GET_END_SEGMENT(pC2h_buf))
 		return HALMAC_RET_SUCCESS;
@@ -2331,9 +2330,9 @@ halmac_parse_efuse_data_88xx(
 		process_status = HALMAC_CMD_PROCESS_DONE;
 		pHalmac_adapter->halmac_state.efuse_state_set.process_status = process_status;
 
-		PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex));
+		PLATFORM_MUTEX_LOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex),&flag);
 		pHalmac_adapter->hal_efuse_map_valid = _TRUE;
-		PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex));
+		PLATFORM_MUTEX_UNLOCK(pDriver_adapter, &(pHalmac_adapter->EfuseMutex),&flag);
 
 		if (1 == pHalmac_adapter->event_trigger.physical_efuse_map) {
 			PLATFORM_EVENT_INDICATION(pDriver_adapter, HALMAC_FEATURE_DUMP_PHYSICAL_EFUSE, process_status, pHalmac_adapter->pHalEfuse_map, pHalmac_adapter->hw_config_info.efuse_size);
@@ -2376,10 +2375,7 @@ halmac_parse_h2c_ack_88xx(
 )
 {
 	u8 h2c_cmd_id, h2c_sub_cmd_id;
-	u8 h2c_seq = 0, offset = 0, shift = 0;
 	u8 h2c_return_code;
-	VOID *pDriver_adapter = pHalmac_adapter->pDriver_adapter;
-	HALMAC_CMD_PROCESS_STATUS process_status = HALMAC_CMD_PROCESS_UNDEFINE;
 	HALMAC_RET_STATUS status = HALMAC_RET_SUCCESS;
 
 

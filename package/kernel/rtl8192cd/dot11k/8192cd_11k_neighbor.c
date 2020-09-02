@@ -178,8 +178,8 @@ int rm_construct_neighbor_report(struct rtl8192cd_priv *priv, struct rx_frinfo *
 {
     int i, len, empty_slot;
     unsigned char *pframe, *p, *bssid;
-    unsigned int oldest_aging;
-    int oldest_idx;
+    unsigned int oldest_aging = 0;
+    int oldest_idx=0;
     unsigned char * ssid_ptr;
     int ssid_len;
     unsigned char cap_info;
@@ -590,8 +590,8 @@ int rtl8192cd_proc_neighbor_write(struct file *file, const char *buffer,
     int i;
     char tmp[NEIGHBOR_REPORT_PROC_LEN];
     char *tmpptr;
-    unsigned int oldest_aging;
-    int oldest_idx;
+    unsigned int oldest_aging = 0;
+    int oldest_idx=0;
     struct dot11k_neighbor_report report;
     char *ssid_ptr = NULL;
     unsigned short sta_count = 0;

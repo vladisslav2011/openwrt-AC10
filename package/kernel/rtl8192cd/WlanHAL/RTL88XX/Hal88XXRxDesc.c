@@ -112,7 +112,6 @@ PrepareRXBD88XX(
     u2Byte                      rxbd_idx;
 
     pu1Byte                     pdesc_dma_buf, desc_dma_buf_start;
-    u4Byte                      value32 = 0;
     PHAL_BUF                    pbuf;
 
 #if CFG_HAL_TX_AMSDU
@@ -126,14 +125,14 @@ PrepareRXBD88XX(
 #ifdef CONFIG_BAND_2G_ON_WLAN0
 	u4Byte RXBD_NUM[NUM_WLAN_IFACE][HCI_RX_DMA_QUEUE_MAX_NUM] =
 	{
-		RX_Q_RXBD_NUM_2G,
-		RX_Q_RXBD_NUM
+		{RX_Q_RXBD_NUM_2G},
+		{RX_Q_RXBD_NUM}
 	};
 #else
 	u4Byte RXBD_NUM[NUM_WLAN_IFACE][HCI_RX_DMA_QUEUE_MAX_NUM] =
 	{
-		RX_Q_RXBD_NUM,
-		RX_Q_RXBD_NUM_2G
+		{RX_Q_RXBD_NUM},
+		{RX_Q_RXBD_NUM_2G}
 	};
 #endif
 #else
@@ -518,16 +517,20 @@ QueryRxDesc88XX_V1 (
     u1Byte                          tempByte;
     u4Byte                          rx_crc32;
 #endif
+    u4Byte RXBDDword0;
+    PRX_BUFFER_DESCRIPTOR nonCacheAddr;
+#ifdef CONFIG_NET_PCI
+    unsigned long rxbd_dma_addr;
+#endif
 
     prx_dma         = (PHCI_RX_DMA_MANAGER_88XX)(_GET_HAL_DATA(Adapter)->PRxDMA88XX);
     cur_q           = &(prx_dma->rx_queue[queueIndex]);
 
     prx_desc_status = (PRX_DESC_STATUS_88XX)pRxDescStatus;
 
-    PRX_BUFFER_DESCRIPTOR nonCacheAddr = (PRX_BUFFER_DESCRIPTOR)HAL_TO_NONCACHE_ADDR((u4Byte)(&(cur_q->pRXBD_head[cur_q->cur_host_idx])));
-    u4Byte RXBDDword0;
+    nonCacheAddr = (PRX_BUFFER_DESCRIPTOR)HAL_TO_NONCACHE_ADDR((u4Byte)(&(cur_q->pRXBD_head[cur_q->cur_host_idx])));
 #ifdef CONFIG_NET_PCI
-    unsigned long rxbd_dma_addr = cur_q->rxbd_dma_addr + sizeof(RX_BUFFER_DESCRIPTOR)*cur_q->cur_host_idx;
+    rxbd_dma_addr = cur_q->rxbd_dma_addr + sizeof(RX_BUFFER_DESCRIPTOR)*cur_q->cur_host_idx;
 #endif
 
     do {
@@ -647,7 +650,9 @@ QueryRxDesc88XX_V1 (
 #endif
     }
 
+#if CFG_HAL_DBG
 _RXPKT_DUMP:
+#endif
 
 #if 0 // CFG_HAL_DBG
     //RXBD

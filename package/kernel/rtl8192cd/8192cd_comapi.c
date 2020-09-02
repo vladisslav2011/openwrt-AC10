@@ -832,9 +832,9 @@ int rtl_giwmode(struct net_device *dev,
 	else if (OPMODE & WIFI_SITE_MONITOR)
 		wrqu->mode = IW_MODE_MONITOR;
 #endif
-    else
-        wrqu->mode = IW_MODE_AUTO;
-
+	else
+		wrqu->mode = IW_MODE_AUTO;
+	
 	return 0;
 }
 

@@ -729,6 +729,7 @@ void clear_Multi_Mac_Clone(struct rtl8192cd_priv *priv, int idx)
 }
 #endif
 
+#if (CONFIG_WLAN_NOT_HAL_EXIST)
 #ifdef CONFIG_PCI_HCI
 static void rtl8192cd_bcnProc(struct rtl8192cd_priv *priv, unsigned int bcnInt,
 				unsigned int bcnOk, unsigned int bcnErr, unsigned int status
@@ -982,6 +983,8 @@ static void rtl8192cd_bcnProc(struct rtl8192cd_priv *priv, unsigned int bcnInt,
 #endif
 }
 #endif // CONFIG_PCI_HCI
+#endif //CONFIG_WLAN_NOT_HAL_EXIST
+
 
 #ifdef CONFIG_WLAN_HAL
 
@@ -1030,6 +1033,9 @@ rtl88XX_bcnProc(
 #ifdef MBSSID
 	int i;
 #endif
+#ifdef UNIVERSAL_REPEATER
+	struct rtl8192cd_priv *priv_root=NULL;
+#endif
 
 	/* ================================================================
 			Process Beacon OK/ERROR interrupt
@@ -1045,7 +1051,6 @@ rtl88XX_bcnProc(
 #endif
 
 #ifdef UNIVERSAL_REPEATER
-		struct rtl8192cd_priv *priv_root=NULL;
 		if ((OPMODE & WIFI_STATION_STATE) && GET_VXD_PRIV(priv) &&
 						(GET_VXD_PRIV(priv)->drv_state & DRV_STATE_VXD_AP_STARTED)) {
 			priv_root = priv;
@@ -1262,7 +1267,6 @@ rtl88XX_bcnProc(
 		// Polling highQ as there is multicast waiting for tx...
 		//
 #ifdef UNIVERSAL_REPEATER
-		struct rtl8192cd_priv *priv_root=NULL;
 		if ((OPMODE & WIFI_STATION_STATE) && GET_VXD_PRIV(priv) &&
 			(GET_VXD_PRIV(priv)->drv_state & DRV_STATE_VXD_AP_STARTED)) {
 			priv_root = priv;
@@ -1532,7 +1536,7 @@ __inline__ static int __rtl_wlan_interrupt(void *dev_instance)
     struct net_device       *dev;
     struct rtl8192cd_priv   *priv;
 	u4Byte ints=0;
-    unsigned int status, status_ext, retry_cnt = 0;
+    unsigned int retry_cnt = 0;
 
 
     dev = (struct net_device *)dev_instance;
@@ -1854,9 +1858,9 @@ int_retry_process:
     		reg_val = reg_val | BIT(6);
     		GET_HAL_INTERFACE(priv)->SetHwRegHandler(priv, HW_VAR_REG_CCK_CHECK, (pu1Byte)&reg_val);
 
-            GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_REG_CR, (pu4Byte)&u4_val);
+            GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_REG_CR, (pu1Byte)&u4_val);
     		u4_val = u4_val & ~BIT(8);
-    		GET_HAL_INTERFACE(priv)->SetHwRegHandler(priv, HW_VAR_REG_CR, (pu4Byte)&u4_val);
+    		GET_HAL_INTERFACE(priv)->SetHwRegHandler(priv, HW_VAR_REG_CR, (pu1Byte)&u4_val);
             //printk("0x284=%x\n",RTL_R32(0x284));
         #if 0
             GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_RXPKT_NUM, (pu4Byte)&u4_val); //release RXDMA
@@ -1883,9 +1887,9 @@ int_retry_process:
             printk("apoffload disable success\n");
 
 
-            GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_RXPKT_NUM, (pu4Byte)&u4_val); //release RXDMA
+            GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_RXPKT_NUM, (pu1Byte)&u4_val); //release RXDMA
             u4_val = u4_val & ~BIT(18);
-            GET_HAL_INTERFACE(priv)->SetHwRegHandler(priv, HW_VAR_RXPKT_NUM, (pu4Byte)&u4_val);
+            GET_HAL_INTERFACE(priv)->SetHwRegHandler(priv, HW_VAR_RXPKT_NUM, (pu1Byte)&u4_val);
 
         }
     #endif
@@ -5619,7 +5623,7 @@ SMP_LOCK(flags);
 			// free tx queue skb
 			struct tx_desc_info *tx_info;
 			int j;
-			int	head, tail;
+			int	head = 0, tail = 0;
 			int max_qnum = HIGH_QUEUE;
 #if defined(CONFIG_WLAN_HAL) && defined(MBSSID)
 			if(IS_HAL_CHIP(priv) && GET_ROOT(priv)->pmib->miscEntry.vap_enable)
@@ -7311,7 +7315,7 @@ int is_iface_ready_nl80211(struct net_device *dev, struct rtl8192cd_priv *priv)
 	{
 		DEBUG_INFO("+++ OPEN[%s] for priv = 0x%x (root=%d vxd=%d vap=%d) +++ \n\n",
 				dev->name,
-				priv, IS_ROOT_INTERFACE(priv), IS_VXD_INTERFACE(priv), IS_VAP_INTERFACE(priv));
+				(unsigned int)priv, IS_ROOT_INTERFACE(priv), IS_VXD_INTERFACE(priv), IS_VAP_INTERFACE(priv));
 		//printk("rtk->num_vap = %d rtk->num_vxd = %d \n", priv->rtk->num_vap, priv->rtk->num_vxd);
 	}
 
@@ -8800,29 +8804,29 @@ priv->drv_state |= DRV_STATE_OPEN;      // set driver as has been opened, david
 	if (GET_CHIP_VER(priv) == VERSION_8822B)
 		RTLWIFINIC_GPIO_init_priv(priv);
 
-		// for HW/SW LED
-		if ((LED_TYPE >= LEDTYPE_HW_TX_RX) && (LED_TYPE <= LEDTYPE_HW_LINKACT_INFRA))
-			enable_hw_LED(priv, LED_TYPE);
-		else if ((LED_TYPE >= LEDTYPE_SW_LINK_TXRX) && (LED_TYPE < LEDTYPE_SW_MAX)) {
-			if (LED_TYPE == LEDTYPE_SW_RESERVED)
-				LED_TYPE = LEDTYPE_SW_LED2_GPIO10_LINKTXRX_92D;
+	// for HW/SW LED
+	if ((LED_TYPE >= LEDTYPE_HW_TX_RX) && (LED_TYPE <= LEDTYPE_HW_LINKACT_INFRA))
+		enable_hw_LED(priv, LED_TYPE);
+	else if ((LED_TYPE >= LEDTYPE_SW_LINK_TXRX) && (LED_TYPE < LEDTYPE_SW_MAX)) {
+		if (LED_TYPE == LEDTYPE_SW_RESERVED)
+			LED_TYPE = LEDTYPE_SW_LED2_GPIO10_LINKTXRX_92D;
 
-			if ((LED_TYPE == LEDTYPE_SW_LINK_TXRX) ||
-				(LED_TYPE <= LEDTYPE_SW_LINKTXRX) ||
-				(LED_TYPE == LEDTYPE_SW_LED2_GPIO8_LINKTXRX) ||
-				(LED_TYPE == LEDTYPE_SW_LED2_GPIO10_LINKTXRX) ||
-				(LED_TYPE == LEDTYPE_SW_LED1_GPIO9_LINKTXRX_92D) ||
-				(LED_TYPE == LEDTYPE_SW_LED2_GPIO10_LINKTXRX_92D))
-				priv->pshare->LED_cnt_mgn_pkt = 1;
+		if ((LED_TYPE == LEDTYPE_SW_LINK_TXRX) ||
+			(LED_TYPE <= LEDTYPE_SW_LINKTXRX) ||
+			(LED_TYPE == LEDTYPE_SW_LED2_GPIO8_LINKTXRX) ||
+			(LED_TYPE == LEDTYPE_SW_LED2_GPIO10_LINKTXRX) ||
+			(LED_TYPE == LEDTYPE_SW_LED1_GPIO9_LINKTXRX_92D) ||
+			(LED_TYPE == LEDTYPE_SW_LED2_GPIO10_LINKTXRX_92D))
+			priv->pshare->LED_cnt_mgn_pkt = 1;
 
-			enable_sw_LED(priv, 1);
-		}
+		enable_sw_LED(priv, 1);
+	}
 
 #ifdef CONFIG_RTL_ULINKER
-		{
-			extern void enable_sys_LED(struct rtl8192cd_priv *priv);
-			enable_sys_LED(priv);
-		}
+	{
+		extern void enable_sys_LED(struct rtl8192cd_priv *priv);
+		enable_sys_LED(priv);
+	}
 #endif
 
 #if !defined(USE_OUT_SRC) || defined(_OUTSRC_COEXIST)
@@ -9487,7 +9491,7 @@ int  rtl8192cd_set_hwaddr(struct net_device *dev, void *addr)
 		if(!IS_DRV_OPEN(priv)) {
 			RESTORE_INT(flags);
 			SMP_UNLOCK(flags);
-			return;
+			return 0;
 		}
 	    #endif
 	    GET_HAL_INTERFACE(priv)->GetHwRegHandler(priv, HW_VAR_MAC_IO_ENABLE, (pu1Byte)&bVal);
@@ -9540,7 +9544,9 @@ int  rtl8192cd_set_hwaddr(struct net_device *dev, void *addr)
 	}
 #endif
 
+#ifdef SDIO_2_PORT
 out:
+#endif
 	RESTORE_INT(flags);
 	SMP_UNLOCK(flags);
 
@@ -11193,14 +11199,12 @@ void *rtl8192cd_init_one(struct sdio_func *psdio_func, void *ent, struct _device
 
 	struct priv_shared_info *pshare;	// david
 
-#ifdef CONFIG_WLAN_HAL
-    BOOLEAN     bVal;
-	unsigned int errorFlag;
-#endif  //CONFIG_WLAN_HAL
-
 #ifdef USE_DMA_ALLOCATE
 	dma_addr_t	dma_phys = NULL;
 	void		*dma_virt = NULL;
+#endif
+#ifdef RTK_NL80211
+	struct rtknl *rtk=NULL; //mark_dual
 #endif
 
     int rc=0;
@@ -11253,7 +11257,6 @@ void *rtl8192cd_init_one(struct sdio_func *psdio_func, void *ent, struct _device
 	printk("=====>> INSIDE %s <<=====\n", __func__);
 #endif
 #ifdef RTK_NL80211
-	struct rtknl *rtk=NULL; //mark_dual
 
 	if(vap_idx < 0)
 	{
@@ -11279,13 +11282,13 @@ void *rtl8192cd_init_one(struct sdio_func *psdio_func, void *ent, struct _device
 		else
 		{
 			printk("can't find the root if for this virtual interface \n");
-			return NULL;
+			return 0;
 		}
 #if 0 //wrt-vap
 		if(rtk->ndev_name[rtk->num_vif][0]==0)
 		{
 			printk("virtual interface shall be created by cfg80211\n");
-			return NULL;
+			return 0;
 		}
 #endif
 	}
@@ -11304,7 +11307,7 @@ void *rtl8192cd_init_one(struct sdio_func *psdio_func, void *ent, struct _device
 #ifdef __KERNEL__
 		return -ENOMEM;
 #else
-		return NULL;
+		return 0;
 #endif
 	}
 
@@ -12146,10 +12149,12 @@ void *rtl8192cd_init_one(struct sdio_func *psdio_func, void *ent, struct _device
             config_base = wdev->conf_addr;
             base_addr = wdev->base_addr;
             #endif
+#ifdef SMP_SYNC
+			int flags;
+#endif
 			_DEBUG_INFO("INIT PCI config space directly\n");
 
 #ifdef RTK_NL80211 //Do protection before PCIE Reset (for watchdog reboot)
-			int flags;
 			SMP_LOCK(flags);
 #endif
 
@@ -12432,7 +12437,7 @@ void *rtl8192cd_init_one(struct sdio_func *psdio_func, void *ent, struct _device
 #endif
 			}
 			#if defined(CONFIG_RTL_88E_SUPPORT)
-                        else
+			else
 			{
 				REG32(dev->base_addr+0x354)=0x4104; //Card PCIE PHY initial  parameter for rtl8196c revision B
 				for(i=0; i<1000000; i++);

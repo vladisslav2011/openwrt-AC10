@@ -47,7 +47,7 @@ unsigned char HAL_get_byte_from_dw(unsigned int tmp_dw, unsigned char byte_num)
 		return 0;
 }
 
-unsigned int HAL_assign_lmt_reg_value(IN  HAL_PADAPTER	Adapter, unsigned int reg_offset, unsigned char max_idx, unsigned char max_idx2)
+void HAL_assign_lmt_reg_value(IN  HAL_PADAPTER	Adapter, unsigned int reg_offset, unsigned char max_idx, unsigned char max_idx2)
 {
 
 	unsigned int tmp_dw;
@@ -180,13 +180,6 @@ void TxLMT_OFDM_Jaguar_PathX_AC(
 	char	max_lmt_idx_ht1s, max_lmt_idx_ht2s = 0;
 	char	max_lmt_idx_vht1s, max_lmt_idx_vht2s = 0;
 
-    // for MIMO 3T3R, 4T4R
-	unsigned char	idx_vht_3ss_mcs7 =0;
-	unsigned char	idx_vht_4ss_mcs7 =0;
-	char	        lmt_pg_idx_ht3s, lmt_pg_idx_ht4s = 0;
-	char	        lmt_pg_idx_vht3s, lmt_pg_idx_vht4s = 0;
-	char	max_lmt_idx_ht3s, max_lmt_idx_ht4s = 0;
-	char	max_lmt_idx_vht3s, max_lmt_idx_vht4s = 0;
 
     u4Byte REG_BB_TXAGC_X_OFDM18_OFDM6_AC[4] =  {REG_BB_TXAGC_A_OFDM18_OFDM6_AC, REG_BB_TXAGC_B_OFDM18_OFDM6_AC, REG_BB_TXAGC_C_OFDM18_OFDM6_AC, REG_BB_TXAGC_D_OFDM18_OFDM6_AC};
     u4Byte REG_BB_TXAGC_X_OFDM54_OFDM24_AC[4] = {REG_BB_TXAGC_A_OFDM54_OFDM24_AC, REG_BB_TXAGC_B_OFDM54_OFDM24_AC, REG_BB_TXAGC_C_OFDM54_OFDM24_AC, REG_BB_TXAGC_D_OFDM54_OFDM24_AC};
@@ -262,28 +255,22 @@ void TxLMT_OFDM_Jaguar_AC_8814(
     )
 {
 
-	unsigned int  	tmp_dw = 0;
 	unsigned char	bPathXEnIdx, rate, start, end;
-
-	unsigned char	idx_odfm_54m = 0;
-	unsigned char	idx_ht_mcs7 = 0;
-	unsigned char	idx_ht_mcs15 = 0;
-	unsigned char	idx_vht_1ss_mcs7 =0;
-	unsigned char	idx_vht_2ss_mcs7 =0;
-	unsigned char	idx_vht_3ss_mcs7 =0;
-	unsigned char	idx_vht_4ss_mcs7 =0;
 
 	char			lmt_pg_idx_ofdm = 0;
 	char			lmt_pg_idx_ht1s, lmt_pg_idx_ht2s = 0;
 	char			lmt_pg_idx_vht1s, lmt_pg_idx_vht2s = 0;
+#ifdef CONFIG_WLAN_HAL_8814AE
 	char	        lmt_pg_idx_ht3s, lmt_pg_idx_ht4s = 0;
 	char	        lmt_pg_idx_vht3s, lmt_pg_idx_vht4s = 0;
-
+#endif
 	char	max_lmt_idx_ofdm = 0;
 	char	max_lmt_idx_ht1s, max_lmt_idx_ht2s = 0;
 	char	max_lmt_idx_vht1s, max_lmt_idx_vht2s = 0;
-	char	max_lmt_idx_ht3s, max_lmt_idx_ht4s = 0;
-	char	max_lmt_idx_vht3s, max_lmt_idx_vht4s = 0;
+#ifdef CONFIG_WLAN_HAL_8814AE
+	char	max_lmt_idx_ht3s;
+	char	max_lmt_idx_vht3s;
+#endif
 
 #if defined(CONFIG_SLOT_0_8814_2T2R_SUPPORT) || defined(CONFIG_SLOT_1_8814_2T2R_SUPPORT)
 	if(Adapter->pmib->dot11RFEntry.phyBandSelect ==  PHY_BAND_5G) {
@@ -388,11 +375,9 @@ void TxLMT_OFDM_Jaguar_AC_8814(
 void TxLMT_CCK_Jaguar_AC_8814(IN  HAL_PADAPTER	Adapter)
 {
 
-	unsigned int	tmp_dw = 0;
-	unsigned char	idx_cck_11m = 0;
 	unsigned char	bPathXEnIdx, rate;
 	char			max_lmt_idx_cck, lmt_pg_idx_cck;
-	int i, start, end;
+	int start=0, end=1;
 
 #if defined(CONFIG_SLOT_0_8814_2T2R_SUPPORT) || defined(CONFIG_SLOT_1_8814_2T2R_SUPPORT)
 	if(Adapter->pmib->dot11RFEntry.phyBandSelect ==  PHY_BAND_5G) {
@@ -406,10 +391,12 @@ void TxLMT_CCK_Jaguar_AC_8814(IN  HAL_PADAPTER	Adapter)
 		end=2;
 	} else
 #endif
+#ifdef CONFIG_WLAN_HAL_8814AE
 	{
 		start=0;
 		end=3;
 	}
+#endif
 
 
 	//Cal Max tx pwr idx for CCK
@@ -568,7 +555,7 @@ void TxLMT_CCK_Jaguar_N(IN  HAL_PADAPTER	Adapter)
 
 	unsigned char	idx_cck_11m_A = 0, idx_cck_11m_B = 0;
 
-	char	lmt_pg_idx_cck_A,lmt_pg_idx_cck_B;
+	char	lmt_pg_idx_cck_A,lmt_pg_idx_cck_B = 0;
 
 	char	max_lmt_idx_cck_A;
 	char	max_lmt_idx_cck_B = 0;
@@ -2454,7 +2441,7 @@ SwitchWirelessBand88XX_AC(
 					PHY_SetBBReg_88XX(Adapter, REG_BB_B_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x45704570);
 					PHY_SetBBReg_88XX(Adapter, REG_BB_C_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x45704570);
 					PHY_SetBBReg_88XX(Adapter, REG_BB_D_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x77707770);
-					PHY_SetBBReg_88XX(Adapter, 0x1ABC, 0x0FF00000, 0x45); // (D¸ô, use ANTSW/ANTSWB pins as LNAON), 0x1ABC[27:20]
+					PHY_SetBBReg_88XX(Adapter, 0x1ABC, 0x0FF00000, 0x45); // (Dï¿½ï¿½, use ANTSW/ANTSWB pins as LNAON), 0x1ABC[27:20]
 					break;
 				case 2:
 				case 4:
@@ -2465,7 +2452,7 @@ SwitchWirelessBand88XX_AC(
 					PHY_SetBBReg_88XX(Adapter, REG_BB_B_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x72707270);
 					PHY_SetBBReg_88XX(Adapter, REG_BB_C_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x72707270);
 					PHY_SetBBReg_88XX(Adapter, REG_BB_D_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x77707770);
-					PHY_SetBBReg_88XX(Adapter, 0x1ABC, 0x0FF00000, 0x72); // (D¸ô, use ANTSW/ANTSWB pins as LNAON), 0x1ABC[27:20]
+					PHY_SetBBReg_88XX(Adapter, 0x1ABC, 0x0FF00000, 0x72); // (Dï¿½ï¿½, use ANTSW/ANTSWB pins as LNAON), 0x1ABC[27:20]
 					break;
 				default:
 					GDEBUG("TRSWITCH: Unknown RFE type (%d)!\n", Adapter->pmib->dot11RFEntry.rfe_type);
@@ -2576,7 +2563,7 @@ SwitchWirelessBand88XX_AC(
 					PHY_SetBBReg_88XX(Adapter, REG_BB_B_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x54175417);
 					PHY_SetBBReg_88XX(Adapter, REG_BB_C_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x54175417);
 					PHY_SetBBReg_88XX(Adapter, REG_BB_D_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x77177717);
-					PHY_SetBBReg_88XX(Adapter, 0x1ABC, 0x0FF00000, 0x54); // (D¸ô, use ANTSW/ANTSWB pins as LNAON), 0x1ABC[27:20]
+					PHY_SetBBReg_88XX(Adapter, 0x1ABC, 0x0FF00000, 0x54); // (Dï¿½ï¿½, use ANTSW/ANTSWB pins as LNAON), 0x1ABC[27:20]
 					break;
 				case 2:
 				case 4:
@@ -2588,7 +2575,7 @@ SwitchWirelessBand88XX_AC(
 					PHY_SetBBReg_88XX(Adapter, REG_BB_B_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x37173717);
 					PHY_SetBBReg_88XX(Adapter, REG_BB_C_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x37173717);
 					PHY_SetBBReg_88XX(Adapter, REG_BB_D_RFE_PINMUX_AC, BIT_MASK_SET_MASKDWORD_COMMON, 0x77177717);
-					PHY_SetBBReg_88XX(Adapter, 0x1ABC, 0x0FF00000, 0x37); // (D¸ô, use ANTSW/ANTSWB pins as LNAON), 0x1ABC[27:20]
+					PHY_SetBBReg_88XX(Adapter, 0x1ABC, 0x0FF00000, 0x37); // (Dï¿½ï¿½, use ANTSW/ANTSWB pins as LNAON), 0x1ABC[27:20]
 					break;
 				default:
 					GDEBUG("TRSWITCH: Unknown RFE type (%d)!\n", Adapter->pmib->dot11RFEntry.rfe_type);
@@ -2716,7 +2703,6 @@ PHYSetTxPower88XX(
     u1Byte tx_none      = 0x1;
     u1Byte tx_write     = 0x1;
     u1Byte def_power    = defPower;
-    u4Byte value32      = 0;
 
 #if 0
 	printk("[%s] Path %u, rate from 0x%x to 0x%x: 0x%x\n", __FUNCTION__, tx_path_idx+1, txRateStart, txRateEnd, def_power);
@@ -2759,7 +2745,9 @@ PHYSetCCKTxPower88XX_AC(
     u1Byte bPathXEn[4]   = {0};
     u1Byte i;
 
+#if IS_RTL8814A_SERIES
     u1Byte def_power_value = 0x12;
+#endif
 
     u4Byte REG_BB_TXAGC_X_CCK11_CCK1_AC[4] = {REG_BB_TXAGC_A_CCK11_CCK1_AC, REG_BB_TXAGC_B_CCK11_CCK1_AC,
 		REG_BB_TXAGC_C_CCK11_CCK1_AC, REG_BB_TXAGC_D_CCK11_CCK1_AC
@@ -3430,20 +3418,26 @@ CalOFDMTxPower5G_88XX_AC(
 )
 {
 	u1Byte tmp_TPI = 0;
-	u1Byte pwr_40_1s = 0, pwr_80_1s = 0, ch_idx_ht40 = 0, ch_idx_vht80 = 0;
+	u1Byte pwr_40_1s = 0;
 	s1Byte diff_ofdm_1t = 0;
 	s1Byte diff_bw40_2s = 0;
+#if defined(CONFIG_WLAN_HAL_8814AE)
 	s1Byte diff_bw40_3s = 0;
+#endif
 	s1Byte diff_bw20_1s = 0;
 	s1Byte diff_bw20_2s = 0;
+#if IS_RTL8814A_SERIES
 	s1Byte diff_bw20_3s = 0;
+#endif
 	s1Byte diff_bw80_1s = 0;
 	s1Byte diff_bw80_2s = 0;
+#if defined(CONFIG_WLAN_HAL_8814AE)
 	s1Byte diff_bw80_3s = 0;
+#endif
 	u4Byte writeVal     = 0;
     u1Byte bPathXEn[4]  = {0};
-	ch_idx_ht40 = ((HAL_VAR_OFFSET_2ND_CHANNEL==1) ? (HAL_VAR_DOT11CHANNEL-2) : (HAL_VAR_DOT11CHANNEL+2)) -1;
-	ch_idx_vht80 = get_center_channel(Adapter, HAL_VAR_DOT11CHANNEL, HAL_VAR_OFFSET_2ND_CHANNEL, 1) -1;
+	u1Byte ch_idx_ht40 = ((HAL_VAR_OFFSET_2ND_CHANNEL==1) ? (HAL_VAR_DOT11CHANNEL-2) : (HAL_VAR_DOT11CHANNEL+2)) -1;
+	u1Byte ch_idx_vht80 = get_center_channel(Adapter, HAL_VAR_DOT11CHANNEL, HAL_VAR_OFFSET_2ND_CHANNEL, 1) -1;
 
     u1Byte i;
     u1Byte HAL_VAR_pwrlevel5GHT40_1S_X[4] = {HAL_VAR_pwrlevel5GHT40_1S_A(ch_idx), HAL_VAR_pwrlevel5GHT40_1S_B(ch_idx),
@@ -3472,9 +3466,12 @@ CalOFDMTxPower5G_88XX_AC(
     s1Byte HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_X[4] = {HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_A(ch_idx), HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_B(ch_idx),
 		HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_C(ch_idx), HAL_VAR_pwrdiff_5G_80BW2S_160BW2S_D(ch_idx)
 		};
+#if IS_RTL8814A_SERIES
     s1Byte HAL_VAR_pwrdiff_5G_40BW3S_20BW3S_X[4] = {HAL_VAR_pwrdiff_5G_40BW3S_20BW3S_A(ch_idx), HAL_VAR_pwrdiff_5G_40BW3S_20BW3S_B(ch_idx), HAL_VAR_pwrdiff_5G_40BW3S_20BW3S_C(ch_idx), HAL_VAR_pwrdiff_5G_40BW3S_20BW3S_D(ch_idx)};
+#endif
+#if defined(CONFIG_WLAN_HAL_8814AE)
 	s1Byte HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_X[4] = {HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_A(ch_idx), HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_B(ch_idx), HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_C(ch_idx), HAL_VAR_pwrdiff_5G_80BW3S_160BW3S_D(ch_idx)};
-
+#endif
 
     if (GetChipIDMIMO88XX(Adapter) == MIMO_4T4R) {
         bPathXEn[0] = 1;
@@ -3760,18 +3757,16 @@ CalOFDMTxPower2G_88XX_AC(
 )
 {
 	u1Byte tmp_TPI = 0;
-	u1Byte pwr_40_1s = 0, ch_idx_ht40 = 0;
+	u1Byte pwr_40_1s = 0;
 	s1Byte diff_ofdm_1t = 0;
 	s1Byte diff_bw40_2s = 0;
-	s1Byte diff_bw40_3s = 0;
 	s1Byte diff_bw20_1s = 0;
 	s1Byte diff_bw20_2s = 0;
-	s1Byte diff_bw20_3s = 0;
 	u4Byte writeVal = 0;
     u1Byte bPathXEn[4] = {0};
     u1Byte i;
 
-	ch_idx_ht40 = ((HAL_VAR_OFFSET_2ND_CHANNEL==1) ? (HAL_VAR_DOT11CHANNEL-2) : (HAL_VAR_DOT11CHANNEL+2)) -1;
+	u1Byte ch_idx_ht40 = ((HAL_VAR_OFFSET_2ND_CHANNEL==1) ? (HAL_VAR_DOT11CHANNEL-2) : (HAL_VAR_DOT11CHANNEL+2)) -1;
 
     u1Byte HAL_VAR_pwrlevelHT40_1S_X[4] = {HAL_VAR_pwrlevelHT40_1S_A(ch_idx), HAL_VAR_pwrlevelHT40_1S_B(ch_idx),
 		HAL_VAR_pwrlevelHT40_1S_C(ch_idx), HAL_VAR_pwrlevelHT40_1S_D(ch_idx)
@@ -3786,9 +3781,11 @@ CalOFDMTxPower2G_88XX_AC(
     s1Byte HAL_VAR_pwrdiff_40BW2S_20BW2S_X[4] = {HAL_VAR_pwrdiff_40BW2S_20BW2S_A(ch_idx), HAL_VAR_pwrdiff_40BW2S_20BW2S_B(ch_idx),
 		HAL_VAR_pwrdiff_40BW2S_20BW2S_C(ch_idx), HAL_VAR_pwrdiff_40BW2S_20BW2S_D(ch_idx)
 		};
+#if defined(CONFIG_WLAN_HAL_8814AE)
 	s1Byte HAL_VAR_pwrdiff_40BW3S_20BW3S_X[4] = {HAL_VAR_pwrdiff_40BW3S_20BW3S_A(ch_idx), HAL_VAR_pwrdiff_40BW3S_20BW3S_B(ch_idx),
 		HAL_VAR_pwrdiff_40BW3S_20BW3S_C(ch_idx), HAL_VAR_pwrdiff_40BW3S_20BW3S_D(ch_idx)
 		};
+#endif
 
     if (GetChipIDMIMO88XX(Adapter) == MIMO_4T4R) {
         bPathXEn[0] = 1;
@@ -4198,7 +4195,7 @@ phy_RFSerialRead_88XX_N
 	IN  u4Byte                      Offset
 )
 {
-	u4Byte  tmplong, tmplong2;
+	u4Byte  tmplong2;
 	u4Byte  retValue = 0;
 	u4Byte  NewOffset;
 
@@ -4269,7 +4266,7 @@ void PHY_SetRFReg_88XX_N
 {
 	u4Byte          Original_Value, BitShift, New_Value;
 	HAL_PADAPTER    priv     = Adapter;
-	u4Byte          flags;
+	unsigned long          flags;
 
 #if CFG_HAL_DISABLE_BB_RF
 	return;
@@ -4301,7 +4298,7 @@ PHY_QueryRFReg_88XX_N
 )
 {
 	HAL_PADAPTER    priv     = Adapter;
-	u4Byte          flags;
+	unsigned long          flags;
 	u4Byte          Original_Value, Readback_Value, BitShift;
 
 #if CFG_HAL_DISABLE_BB_RF
@@ -4323,7 +4320,7 @@ PHYSetOFDMTxPower88XX_N(
 	IN  u1Byte          channel
 )
 {
-	u4Byte writeVal, defValue = 0x28, pwrdiff = 0x06060606;
+	u4Byte writeVal, defValue = 0x28;
 	u1Byte offset, ch_idx=0, ch_idx_ht40=0;
 	u1Byte pwrlevelHT40_1S_A = 0;
 	u1Byte pwrlevelHT40_1S_B = 0;
@@ -4642,7 +4639,7 @@ PHYSetCCKTxPower88XX_N(
 	IN  u1Byte          channel
 )
 {
-	unsigned int writeVal = 0, pwrdiff = 0x06060606;
+	unsigned int writeVal = 0;
 	u1Byte byte, byte1, byte2;
 	u1Byte pwrlevelCCK_A = HAL_VAR_pwrlevelCCK_A(channel-1);
 	u1Byte pwrlevelCCK_B = HAL_VAR_pwrlevelCCK_B(channel-1);

@@ -416,7 +416,6 @@ config_phydm_write_txagc_8197f(
 	IN	u1Byte					HwRate
 	)
 {
-	u1Byte	readBack_data;	/*for 97F workaroud*/
 	/* Input need to be HW rate index, not driver rate index!!!! */
 
 	if (pDM_Odm->bDisablePhyApi) {
@@ -1034,8 +1033,6 @@ config_phydm_switch_channel_bw_8197f(
 	IN	ODM_BW_E				bandwidth
 	)
 {
-	u1Byte			eRFPath = 0;
-	u4Byte			RFValToWR , RFTmpVal, BitShift, BitMask;
 
 	/* Switch band */
 	/*97F no need*/
@@ -1059,8 +1056,6 @@ config_phydm_trx_mode_8197f(
 	IN	BOOLEAN					bTx2Path
 	)
 {
-	BOOLEAN		rf_reg_status = TRUE;
-	u1Byte		IGI;
 
 	ODM_RT_TRACE(pDM_Odm, ODM_PHY_CONFIG, ODM_DBG_TRACE, ("config_phydm_trx_mode_8197f()=====================>\n"));
 

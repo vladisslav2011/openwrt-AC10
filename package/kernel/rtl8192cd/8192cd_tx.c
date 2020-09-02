@@ -967,63 +967,63 @@ stop_proc:
 #ifdef TX_SHORTCUT
 static int rtl8192cd_tx_tkip(struct rtl8192cd_priv *priv, struct sk_buff *skb, struct stat_info*pstat, struct tx_insn *txcfg)
 {
-    struct wlan_ethhdr_t *pethhdr;
-    struct llc_snap	*pllc_snap = NULL;
-    unsigned char * da;
+	struct wlan_ethhdr_t *pethhdr;
+	struct llc_snap	*pllc_snap = NULL;
+	unsigned char * da;
 #ifdef SUPPORT_TX_AMSDU_SHORTCUT
-   if(txcfg->aggre_en >= FG_AGGRE_MSDU_FIRST)
-   	pethhdr = (struct wlan_ethhdr_t *)(skb->data);
-   else
+	if(txcfg->aggre_en >= FG_AGGRE_MSDU_FIRST)
+		pethhdr = (struct wlan_ethhdr_t *)(skb->data);
+	else
 #endif
-    pethhdr = (struct wlan_ethhdr_t *)(skb->data - WLAN_ETHHDR_LEN);
+		pethhdr = (struct wlan_ethhdr_t *)(skb->data - WLAN_ETHHDR_LEN);
 
-    da = pethhdr->daddr;
+	da = pethhdr->daddr;
 #ifdef MCAST2UI_REFINE
-    memcpy(pethhdr->daddr, &skb->cb[10], 6);
+	memcpy(pethhdr->daddr, &skb->cb[10], 6);
 #endif
 
 #ifdef A4_STA
-    if(pstat && (pstat->state & WIFI_A4_STA)) {
-        da = GetAddr3Ptr(txcfg->phdr);
-    }
+	if(pstat && (pstat->state & WIFI_A4_STA)) {
+		da = GetAddr3Ptr(txcfg->phdr);
+	}
 #endif
 
-    if(txcfg->llc) {
-        pllc_snap = (struct llc_snap *)((UINT8 *)(txcfg->phdr) + txcfg->hdr_len + txcfg->iv);
-    }
+	if(txcfg->llc) {
+		pllc_snap = (struct llc_snap *)((UINT8 *)(txcfg->phdr) + txcfg->hdr_len + txcfg->iv);
+	}
 
 #ifdef WIFI_WMM
-    if ((tkip_mic_padding(priv, da, pethhdr->saddr, ((QOS_ENABLE) && (pstat) && (pstat->QosEnabled))?skb->cb[1]:0, (UINT8 *)pllc_snap,
-            skb, txcfg)) == FALSE)
+	if ((tkip_mic_padding(priv, da, pethhdr->saddr, ((QOS_ENABLE) && (pstat) && (pstat->QosEnabled))?skb->cb[1]:0, (UINT8 *)pllc_snap,
+			skb, txcfg)) == FALSE)
 #else
-    if ((tkip_mic_padding(priv, da, pethhdr->saddr, 0, (UINT8 *)pllc_snap,
-            skb, txcfg)) == FALSE)
+	if ((tkip_mic_padding(priv, da, pethhdr->saddr, 0, (UINT8 *)pllc_snap,
+			skb, txcfg)) == FALSE)
 #endif
-    {
-        priv->ext_stats.tx_drops++;
+	{
+		priv->ext_stats.tx_drops++;
 #ifdef SUPPORT_TX_AMSDU_SHORTCUT
 	if(txcfg->aggre_en == FG_AGGRE_MSDU_LAST)
 		printk("%s(%d) impossible failed on AMSDU packets\n", __func__, __LINE__);
 #endif
-        DEBUG_ERR("TX DROP: Tkip mic padding fail!\n");
-        rtl_kfree_skb(priv, skb, _SKB_TX_);
-        release_wlanllchdr_to_poll(priv, txcfg->phdr);
-        goto stop_proc;
-    }
+		DEBUG_ERR("TX DROP: Tkip mic padding fail!\n");
+		rtl_kfree_skb(priv, skb, _SKB_TX_);
+		release_wlanllchdr_to_poll(priv, txcfg->phdr);
+		goto stop_proc;
+	}
 #ifdef SUPPORT_TX_AMSDU_SHORTCUT
 	if ((txcfg->aggre_en < FG_AGGRE_MSDU_FIRST) || (txcfg->aggre_en == FG_AGGRE_MSDU_LAST))
 #endif
 	{
-    skb_put((struct sk_buff *)txcfg->pframe, 8);
-    txcfg->fr_len += 8;	// for Michael padding.
+	skb_put((struct sk_buff *)txcfg->pframe, 8);
+	txcfg->fr_len += 8;	// for Michael padding.
 	}
 
-    /* Reply caller function : Continue process */
-    return TX_PROCEDURE_CTRL_CONTINUE;
+	/* Reply caller function : Continue process */
+	return TX_PROCEDURE_CTRL_CONTINUE;
 
 stop_proc:
-    /* Reply caller function : STOP process */
-    return TX_PROCEDURE_CTRL_STOP;
+	/* Reply caller function : STOP process */
+	return TX_PROCEDURE_CTRL_STOP;
 }
 
 
@@ -1102,7 +1102,8 @@ int get_tx_sc_free_entry(struct rtl8192cd_priv *priv, struct stat_info *pstat, u
 
 	// no free entry
 	i = pstat->tx_sc_replace_idx;
-	pstat->tx_sc_replace_idx = (++pstat->tx_sc_replace_idx) % TX_SC_ENTRY_NUM;
+	++pstat->tx_sc_replace_idx;
+	pstat->tx_sc_replace_idx %= TX_SC_ENTRY_NUM;
 	return i;
 }
 #endif // CONFIG_PCI_HCI
@@ -1753,7 +1754,9 @@ void amsdu_timeout(struct rtl8192cd_priv *priv, unsigned int current_time)
 	struct rtl8192cd_priv *priv_this=NULL;
 	int tid=0, head;
 	//DECLARE_TXCFG(txcfg, tx_insn);
+#ifdef SMP_SYNC
 	unsigned long flags;
+#endif
 
 	SMP_LOCK_XMIT(flags);
 
@@ -4894,14 +4897,13 @@ if((priv->pshare->rf_ft_var.txforce != 0xff || (txcfg->pstat && txcfg->pstat->fo
 #endif // WLAN_HAL_HW_TX_SHORTCUT_HDR_CONV
                 {
 #ifdef SUPPORT_TX_AMSDU_SHORTCUT
-                			if(txcfg->aggre_en == FG_AGGRE_MSDU_FIRST){
+					if(txcfg->aggre_en == FG_AGGRE_MSDU_FIRST){
 						memcpy((void *)&ethhdr, pbuf, 12);
 						memcpy((void *)&(ethhdr.type), pbuf+20, 2);
-						idx = get_tx_sc_free_entry(priv, txcfg->pstat, &ethhdr);
-                			}
-					else
+						idx = get_tx_sc_free_entry(priv, txcfg->pstat, (unsigned char *)&ethhdr);
+					}else
 #endif
-					idx = get_tx_sc_free_entry(priv, txcfg->pstat, pbuf - sizeof(struct wlan_ethhdr_t));
+						idx = get_tx_sc_free_entry(priv, txcfg->pstat, pbuf - sizeof(struct wlan_ethhdr_t));
 				}
 			}
 #ifdef CONFIG_RTK_MESH
@@ -7411,15 +7413,17 @@ void rtl8192cd_signin_txdesc(struct rtl8192cd_priv *priv, struct tx_insn* txcfg)
 #ifdef CONFIG_WLAN_HAL
 int rtl88XX_signin_txdesc_amsdu(struct rtl8192cd_priv *priv, struct tx_insn* txcfg)
 {
-    struct tx_desc *phdesc, *pdesc, *pfrstdesc;
     struct tx_desc_info *pswdescinfo, *pdescinfo;
     unsigned int  tx_len;
 	u2Byte  *tx_head;
     u4Byte  q_num;
+#ifndef CONFIG_WLAN_HAL
+    struct tx_desc *phdesc, *pdesc;
+    struct tx_desc  *pfrstdesc;
     unsigned long   tmpphyaddr;
+#endif
     unsigned char *pbuf;
     struct rtl8192cd_hw *phw;
-    unsigned long *dma_txhead;
 
 #ifdef CONFIG_WLAN_HAL
     PHCI_TX_DMA_MANAGER_88XX        ptx_dma;
@@ -7460,7 +7464,7 @@ int rtl88XX_signin_txdesc_amsdu(struct rtl8192cd_priv *priv, struct tx_insn* txc
 #endif
 #endif // CONFIG_WLAN_HAL
 
-    pdesc     = phdesc + (*tx_head);
+//    pdesc     = phdesc + (*tx_head);
     pdescinfo = pswdescinfo + *tx_head;
 
 #ifdef CONFIG_WLAN_HAL
@@ -8244,13 +8248,12 @@ __inline__ static int rtl8192cd_swq_dequeue(struct rtl8192cd_priv *priv, struct 
 
     while (1)
     {
-
+        struct sk_buff *tmpskb;
 		if(!releaseALL && rtl8192cd_swq_bdfull(priv, 0, qnum)){
 			netif_stop_queue(priv->dev);
 			break;
 		}
 
-        struct sk_buff *tmpskb;
         tmpskb = skb_dequeue(&pstat->swq.swq_queue[qnum]);
         if (tmpskb == NULL)
             break;
@@ -8381,7 +8384,7 @@ __inline__ static int rtl8192cd_swq_enqueue(struct rtl8192cd_priv *priv, struct 
 	unsigned char need_deque_mu = 0;
 	PRT_BEAMFORMING_INFO	pBeamInfo = &(priv->pshare->BeamformingInfo);
 #endif
-    UINT32 tri_time;
+    UINT32 tri_time = 0;
     int assoc_num;
     int i;
 
@@ -8512,8 +8515,6 @@ __inline__ static int rtl8192cd_swq_enqueue(struct rtl8192cd_priv *priv, struct 
 
 #if (MU_BEAMFORMING_SUPPORT == 1)
 	if (pBeamInfo->beamformee_mu_cnt >= 2 && psta_mu) {
-		unsigned int idx = 0;
-		struct stat_info* psta;
 		unsigned int qlen, qlen1;
 		unsigned char	need_fire = 1;
 
@@ -8552,7 +8553,7 @@ __inline__ static int rtl8192cd_swq_enqueue(struct rtl8192cd_priv *priv, struct 
 			if (priv->pshare->rf_ft_var.dqnum){
 				if(qlen >= psta[0]->mu_deq_num && qlen2 >= psta[1]->mu_deq_num){
 					int count = psta[0]->mu_deq_num, count2 = psta[1]->mu_deq_num;
-					int deq_num, sta_deq_num[2];
+					int deq_num = 0, sta_deq_num[2];
 
 					priv->cnt_sta1_sta2++;
 
@@ -8567,7 +8568,6 @@ __inline__ static int rtl8192cd_swq_enqueue(struct rtl8192cd_priv *priv, struct 
 
 					while (1)
 				    {
-				    	unsigned long drop_tmp;
 				    	if(rtl8192cd_swq_bdfull(priv, 0, q_num)) {
 							break;
 				    	}
@@ -9232,7 +9232,6 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 	struct rtl8192cd_priv *priv;
 	struct stat_info	*pstat=NULL;
 	unsigned char		*da;
-	unsigned int		ret;
 #if defined(__KERNEL__) || defined(__OSK__)
 #if defined(HS2_SUPPORT) || !defined(CONFIG_PCI_HCI)
 	struct sk_buff *newskb = NULL;
@@ -10250,7 +10249,7 @@ int __rtl8192cd_start_xmit_out(struct sk_buff *skb, struct stat_info *pstat
 		// normal packets
 		if (priv->pmib->dot11WdsInfo.wdsPure) {
 			priv->ext_stats.tx_drops++;
-			DEBUG_ERR("TX DROP: Sent normal pkt in Pure WDS mode!\n");
+			DEBUG_ERR("__rtl8192cd_start_xmit_out TX DROP: Sent normal pkt in Pure WDS mode!\n");
 			goto free_and_stop;
 		}
 	}
@@ -10272,7 +10271,7 @@ int __rtl8192cd_start_xmit_out(struct sk_buff *skb, struct stat_info *pstat
 			newskb = skb_copy(skb, GFP_ATOMIC);
 			if (newskb == NULL) {
 				priv->ext_stats.tx_drops++;
-				DEBUG_ERR("TX DROP: Can't copy the skb!\n");
+				DEBUG_ERR("__rtl8192cd_start_xmit_out TX DROP: Can't copy the skb!\n");
 				goto free_and_stop;
 			}
 			dev_kfree_skb_any(skb);
@@ -10310,15 +10309,15 @@ int __rtl8192cd_start_xmit_out(struct sk_buff *skb, struct stat_info *pstat
 
 			if (dz_queue(priv, pstat, skb) == TRUE)
 			{
-				DEBUG_INFO("queue up skb due to sleep mode\n");
+				DEBUG_INFO("__rtl8192cd_start_xmit_out queue up skb due to sleep mode\n");
 				goto stop_proc;
 			}
 			else {
 				if (pstat) {
-					DEBUG_WARN("ucst sleep queue full!!\n");
+					DEBUG_WARN("__rtl8192cd_start_xmit_out ucst sleep queue full!!\n");
 				}
 				else {
-					DEBUG_WARN("mcst sleep queue full!!\n");
+					DEBUG_WARN("__rtl8192cd_start_xmit_out mcst sleep queue full!!\n");
 				}
 				goto free_and_stop;
 			}
@@ -10591,7 +10590,7 @@ int __rtl8192cd_start_xmit_out(struct sk_buff *skb, struct stat_info *pstat
 				int reuse_txdesc = 0;
 #endif
 #ifdef CONFIG_WLAN_HAL
-				PHCI_TX_DMA_MANAGER_88XX    ptx_dma;
+				PHCI_TX_DMA_MANAGER_88XX    ptx_dma = NULL;
 				unsigned int                halQnum;
 #endif
 			int bUnAvail = FALSE;
@@ -10758,12 +10757,12 @@ int __rtl8192cd_start_xmit_out(struct sk_buff *skb, struct stat_info *pstat
 				{
 #ifdef CONFIG_WLAN_HAL
 					if(IS_HAL_CHIP(priv)) {
-						DEBUG_ERR("%s:%d: tx drop: %d hw Queue desc not available! head=%d, tail=%d request %d\n", __FUNCTION__, __LINE__,
+						DEBUG_ERR("__rtl8192cd_start_xmit_out %s:%d: tx drop: %d hw Queue desc not available! head=%d, tail=%d request %d\n", __FUNCTION__, __LINE__,
 							q_num, ptx_dma->tx_queue[q_num].host_idx,  ptx_dma->tx_queue[q_num].hw_idx,2);
 					}
 					else
 #endif
-						DEBUG_ERR("%d hw Queue desc not available! head=%d, tail=%d request %d\n",q_num,*tx_head,*tx_tail,2);
+						DEBUG_ERR("__rtl8192cd_start_xmit_out %d hw Queue desc not available! head=%d, tail=%d request %d\n",q_num,*tx_head,*tx_tail,2);
 
 					rtl8192cd_tx_xmitSkbFail(priv, skb, dev, wdsDev, txcfg);
 				}
@@ -10846,7 +10845,7 @@ int __rtl8192cd_start_xmit_out(struct sk_buff *skb, struct stat_info *pstat
 #ifndef TXSC_HDR
 				txcfg->phdr = (UINT8 *)get_wlanllchdr_from_poll(priv);
 				if (txcfg->phdr == NULL) {
-					DEBUG_ERR("Can't alloc wlan header!\n");
+					DEBUG_ERR("__rtl8192cd_start_xmit_out Can't alloc wlan header!\n");
 					rtl8192cd_tx_xmitSkbFail(priv, skb, dev, wdsDev, txcfg);
 					goto stop_proc;
 				}
@@ -10876,7 +10875,7 @@ int __rtl8192cd_start_xmit_out(struct sk_buff *skb, struct stat_info *pstat
 							memcpy(skb2->cb, skb->cb, sizeof(skb->cb));
 #endif
 							if (skb2 == NULL) {
-								printk("%s: %s, dev_alloc_skb() failed!\n", priv->dev->name, __FUNCTION__);
+								printk("__rtl8192cd_start_xmit_out %s: %s, dev_alloc_skb() failed!\n", priv->dev->name, __FUNCTION__);
 								rtl_kfree_skb(priv, skb, _SKB_TX_);
 								if(txcfg->aggre_en == FG_AGGRE_MSDU_FIRST)
 									release_wlanllchdr_to_poll(priv, txcfg->phdr);
@@ -11031,7 +11030,7 @@ int __rtl8192cd_start_xmit_out(struct sk_buff *skb, struct stat_info *pstat
 	                    {
 	                    	txcfg->phdr = (UINT8 *)get_wlanllchdr_from_poll(priv);
 	                    	if (txcfg->phdr == NULL) {
-	                    	    DEBUG_ERR("Can't alloc wlan header!\n");
+	                    	    DEBUG_ERR("__rtl8192cd_start_xmit_out Can't alloc wlan header!\n");
 	                    		rtl8192cd_tx_xmitSkbFail(priv, skb, dev, wdsDev, txcfg);
 	                    	    goto stop_proc;
 	                    	}
@@ -11061,7 +11060,7 @@ int __rtl8192cd_start_xmit_out(struct sk_buff *skb, struct stat_info *pstat
 		            } else {
 						txcfg->phdr = (UINT8 *)get_wlanllchdr_from_poll(priv);
 						if (txcfg->phdr == NULL) {
-						    DEBUG_ERR("Can't alloc wlan header!\n");
+						    DEBUG_ERR("__rtl8192cd_start_xmit_out Can't alloc wlan header!\n");
 							rtl8192cd_tx_xmitSkbFail(priv, skb, dev, wdsDev, txcfg);
 						    goto stop_proc;
 						}
@@ -11418,7 +11417,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 
 	if (skb->len < 15)
     {
-        _DEBUG_ERR("TX DROP: SKB len small:%d\n", skb->len);
+        _DEBUG_ERR("__rtl8192cd_start_xmit TX DROP: SKB len small:%d\n", skb->len);
         goto free_and_stop;
     }
 
@@ -11432,7 +11431,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 		mcast_skb = skb_copy(skb, GFP_ATOMIC);
 		if (mcast_skb == NULL) {
 			priv->ext_stats.tx_drops++;
-			DEBUG_ERR("TX DROP: Can't copy the skb!\n");
+			DEBUG_ERR("__rtl8192cd_start_xmit TX DROP: Can't copy the skb!\n");
 			goto free_and_stop;
 		}
 		dev_kfree_skb_any(skb);
@@ -11488,7 +11487,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 			if (isDHCPpkt(skb))
 			{
 				struct list_head *phead, *plist;
-                HS2_DEBUG_INFO("DHCP multicast to unicast\n");
+                HS2_DEBUG_INFO("__rtl8192cd_start_xmit DHCP multicast to unicast\n");
 				phead = &priv->asoc_list;
 				plist = phead->next;
 				while (phead && (plist != phead))
@@ -11558,7 +11557,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 		&& (priv->site_survey)
 		&& (priv->site_survey->hidden_ap_found != HIDE_AP_FOUND_DO_ACTIVE_SSAN)) {
 		priv->ext_stats.tx_drops++;
-		DEBUG_ERR("TX DROP: DFS probation period\n");
+		DEBUG_ERR("__rtl8192cd_start_xmit TX DROP: DFS probation period\n");
 		goto free_and_stop;
 	}
 #endif
@@ -11592,7 +11591,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 			newskb = skb_copy(skb, GFP_ATOMIC);
 			if (newskb == NULL) {
 				priv->ext_stats.tx_drops++;
-				DEBUG_ERR("TX DROP: Can't copy the skb!\n");
+				DEBUG_ERR("__rtl8192cd_start_xmit TX DROP: Can't copy the skb!\n");
 				goto free_and_stop;
 			}
 			dev_kfree_skb_any(skb);
@@ -11607,7 +11606,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 		// normal packets
 		if (priv->pmib->dot11WdsInfo.wdsPure) {
 			priv->ext_stats.tx_drops++;
-			DEBUG_ERR("TX DROP: Sent normal pkt in Pure WDS mode!\n");
+			DEBUG_ERR("__rtl8192cd_start_xmit TX DROP: Sent normal pkt in Pure WDS mode!\n");
 			goto free_and_stop;
 		}
 	}
@@ -11634,7 +11633,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 			if(!((OPMODE & WIFI_STATION_STATE) && priv->pmib->ethBrExtInfo.macclone_enable && !priv->macclone_completed)){
 #endif
 				priv->ext_stats.tx_drops++;
-				DEBUG_WARN("TX DROP: Non asoc tx request!\n");
+				DEBUG_WARN("__rtl8192cd_start_xmit TX DROP: Non asoc tx request!\n");
 				goto free_and_stop;
 #ifdef RTK_BR_EXT
 			}
@@ -11667,7 +11666,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
                 if(priv->nat25_filter) {
                     if(nat25_filter(priv, skb)== 1) {
                         priv->ext_stats.tx_drops++;
-                        DEBUG_ERR("TX DROP: nat25 filter out!\n");
+                        DEBUG_ERR("__rtl8192cd_start_xmit TX DROP: nat25 filter out!\n");
                         goto free_and_stop;
                     }
                 }
@@ -11715,7 +11714,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 				(*(unsigned int *)&(skb->cb[12]) != priv->pmib->miscEntry.groupID))		// check group ID
 			{
 				priv->ext_stats.tx_drops++;
-				DEBUG_ERR("TX DROP: not the same group!\n");
+				DEBUG_ERR("__rtl8192cd_start_xmit TX DROP: not the same group!\n");
 				goto free_and_stop;
 			}
 		}
@@ -11774,7 +11773,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 #ifdef DETECT_STA_EXISTANCE
 	if(pstat && pstat->leave)	{
 		priv->ext_stats.tx_drops++;
-		DEBUG_WARN("TX DROP: sta may leave! %02x%02x%02x%02x%02x%02x\n", pstat->hwaddr[0],pstat->hwaddr[1],pstat->hwaddr[2],pstat->hwaddr[3],pstat->hwaddr[4],pstat->hwaddr[5]);
+		DEBUG_WARN("__rtl8192cd_start_xmit TX DROP: sta may leave! %02x%02x%02x%02x%02x%02x\n", pstat->hwaddr[0],pstat->hwaddr[1],pstat->hwaddr[2],pstat->hwaddr[3],pstat->hwaddr[4],pstat->hwaddr[5]);
 		goto free_and_stop;
 	}
 #endif
@@ -11796,7 +11795,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 		newskb = copy_skb(skb);
 		if (newskb == NULL) {
 			priv->ext_stats.tx_drops++;
-			DEBUG_ERR("TX DROP: Can't copy the skb for list buffer!\n");
+			DEBUG_ERR("__rtl8192cd_start_xmit TX DROP: Can't copy the skb for list buffer!\n");
 			goto free_and_stop;
 		}
 		dev_kfree_skb_any(skb);
@@ -11832,7 +11831,7 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 			newskb = skb_copy(skb, GFP_ATOMIC);
 			if (newskb == NULL) {
 				priv->ext_stats.tx_drops++;
-				DEBUG_ERR("TX DROP: Can't copy the skb!\n");
+				DEBUG_ERR("__rtl8192cd_start_xmit TX DROP: Can't copy the skb!\n");
 				goto free_and_stop;
 			}
 			dev_kfree_skb_any(skb);
@@ -11892,16 +11891,16 @@ int __rtl8192cd_start_xmit(struct sk_buff *skb, struct net_device *dev, int tx_f
 
 			if (dz_queue(priv, pstat, txcfg) == TRUE)
 			{
-				DEBUG_INFO("queue up skb due to sleep mode\n");
+				DEBUG_INFO("__rtl8192cd_start_xmit queue up skb due to sleep mode\n");
 				xmit_preempt_enable(flags);
 				goto stop_proc;
 			}
 			else {
 				if (pstat) {
-					DEBUG_WARN("ucst sleep queue full!!\n");
+					DEBUG_WARN("__rtl8192cd_start_xmit ucst sleep queue full!!\n");
 				}
 				else {
-					DEBUG_WARN("mcst sleep queue full!!\n");
+					DEBUG_WARN("__rtl8192cd_start_xmit mcst sleep queue full!!\n");
 				}
 				xmit_preempt_enable(flags);
 				goto free_and_stop;
@@ -14466,10 +14465,10 @@ int __rtl8192cd_firetx(struct rtl8192cd_priv *priv, struct tx_insn* txcfg)
 int rtl8192cd_firetx(struct rtl8192cd_priv *priv, struct tx_insn* txcfg)
 {
 #ifdef RX_TASKLET
-//#ifndef SMP_SYNC
 	unsigned long x;
+#ifdef SMP_SYNC
 	int locked=0;
-//#endif
+#endif
 	int ret;
 
 	SAVE_INT_AND_CLI(x);
@@ -14698,7 +14697,7 @@ rtl88XX_tx_recycle(
 			}
 			else
 			{
-				DEBUG_ERR("Unknown tx frame type %d:%d\n", pdescinfo->buf_type[cnt]);
+				DEBUG_ERR("Unknown tx frame type %d:%d\n", pdescinfo->buf_type[cnt],cnt);
 			}
 
             //Reset to default value
@@ -14776,7 +14775,7 @@ rtl88XX_tx_recycle(
 			else
 			{
 			    printk("%s(%d): Unknow tx frame type for AMSDU: %d \n", __FUNCTION__, __LINE__, pdescinfo->buf_type_amsdu[cnt]);
-				DEBUG_ERR("Unknown tx frame type %d:%d\n", pdescinfo->buf_type_amsdu[cnt]);
+				DEBUG_ERR("Unknown tx frame type %d:%d\n", pdescinfo->buf_type_amsdu[cnt],cnt);
 			}
 
             //Reset to default value

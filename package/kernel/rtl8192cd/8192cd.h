@@ -4018,7 +4018,7 @@ struct priv_shared_info {
 	_queue tx_pending_sta_queue[MAX_HW_TX_QUEUE];
 	_queue tx_urb_waiting_queue[MAX_HW_TX_QUEUE];
 	struct tx_servq pspoll_sta_queue;
-	volatile unsigned long use_hw_queue_bitmap;	// each bit corresponds to one HW TX queue
+	/*volatile*/ unsigned long use_hw_queue_bitmap;	// each bit corresponds to one HW TX queue
 
 	_queue free_xmit_queue;
 	u8 *pallocated_frame_buf;
@@ -4041,7 +4041,7 @@ struct priv_shared_info {
 #endif
 #ifdef CONFIG_XMITBUF_TXAGG_ADV
 	unsigned long txagg_timeout[MAX_STA_TX_SERV_QUEUE];
-	volatile unsigned long need_sched_xmit;
+	/*volatile*/ unsigned long need_sched_xmit;
 	unsigned long low_traffic_xmit;
 	unsigned int low_traffic_xmit_stats[MAX_STA_TX_SERV_QUEUE];
 #endif
@@ -4115,7 +4115,7 @@ struct priv_shared_info {
 	_queue tx_pending_sta_queue[MAX_HW_TX_QUEUE];
 	_queue tx_xmitbuf_waiting_queue[MAX_HW_TX_QUEUE];
 	struct tx_servq pspoll_sta_queue;
-	volatile unsigned long use_hw_queue_bitmap;	// each bit corresponds to one HW TX queue
+	/*volatile*/ unsigned long use_hw_queue_bitmap;	// each bit corresponds to one HW TX queue
 
 	_queue free_xmit_queue;
 	u8 *pallocated_frame_buf;
@@ -4138,7 +4138,7 @@ struct priv_shared_info {
 #endif
 #ifdef CONFIG_XMITBUF_TXAGG_ADV
 	unsigned long txagg_timeout[MAX_STA_TX_SERV_QUEUE];
-	volatile unsigned long need_sched_xmit;
+	/*volatile*/ unsigned long need_sched_xmit;
 	unsigned long low_traffic_xmit;
 	unsigned int low_traffic_xmit_stats[MAX_STA_TX_SERV_QUEUE];
 #endif
@@ -4156,10 +4156,10 @@ struct priv_shared_info {
 
 	_queue pending_xmitbuf_queue;
 #ifdef CONFIG_SDIO_TX_INTERRUPT
-	volatile unsigned long freepage_updated;
+	/*volatile*/ unsigned long freepage_updated;
 #ifdef CONFIG_SDIO_TX_IN_INTERRUPT
-	volatile unsigned long freepage_updated_seq;
-	volatile int xmit_thread_state;
+	/*volatile*/ unsigned long freepage_updated_seq;
+	/*volatile*/ int xmit_thread_state;
 #endif
 #endif // CONFIG_SDIO_TX_INTERRUPT
 #ifdef __ECOS
@@ -4574,7 +4574,7 @@ struct priv_shared_info {
     struct rtl8192cd_priv	*root_repeater;
 #endif
 #if defined(RTK_NL80211)
-	volatile struct cfg80211_chan_def *dfs_chan_def;
+	/*volatile*/ struct cfg80211_chan_def *dfs_chan_def;
 #endif
 
 #if 0	//defined(HS2_SUPPORT) || defined(DOT11K) || defined(CH_LOAD_CAL) || defined(RTK_SMART_ROAMING)
@@ -4943,10 +4943,10 @@ struct priv_shared_info {
 #endif
 
 #ifdef B2B_TEST
-	volatile unsigned long	mp_rx_ok, mp_rx_sequence, mp_rx_lost_packet, mp_rx_dup;
-	volatile unsigned short	mp_cached_seq;
+	/*volatile*/ unsigned long	mp_rx_ok, mp_rx_sequence, mp_rx_lost_packet, mp_rx_dup;
+	/*volatile*/ unsigned short	mp_cached_seq;
 	int 					mp_rx_waiting;
-	volatile unsigned int	mp_mac_changed;
+	/*volatile*/ unsigned int	mp_mac_changed;
 	unsigned long			txrx_elapsed_time;
 	unsigned long			txrx_start_time;
 #endif
@@ -5411,7 +5411,7 @@ typedef struct rtl8192cd_priv {
 	//struct wiphy 			*wiphy;
 	struct rtknl 			*rtk;
 	struct wireless_dev		wdev;
-	volatile struct cfg80211_scan_request *scan_req;
+	/*volatile*/ struct cfg80211_scan_request *scan_req;
 	//struct pci_dev			*pdev;
 	//struct net 				init_net;
 	//dev_t 					rtk88e;

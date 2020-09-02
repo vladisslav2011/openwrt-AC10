@@ -323,7 +323,7 @@ hal_Associate_8197F(
     //
     pHalFunc->PHYSetCCKTxPowerHandler       = PHYSetCCKTxPower88XX_N;
     pHalFunc->PHYSetOFDMTxPowerHandler      = PHYSetOFDMTxPower88XX_N;
-    pHalFunc->PHYUpdateBBRFValHandler       = HalGeneralDummy;
+    pHalFunc->PHYUpdateBBRFValHandler       = (void *)HalGeneralDummy;
     pHalFunc->PHYSwBWModeHandler            = SwBWMode88XX_97F;
     // TODO: 8197F Power Tracking should be done
     pHalFunc->TXPowerTrackingHandler        = TXPowerTracking_ThermalMeter_Tmp8197F;

@@ -25,7 +25,6 @@ SetBeamformRfMode8197F(
 	u1Byte					idx
 	)
 {
-	u1Byte					i, Nr_index = 0;
 	BOOLEAN					bSelfBeamformer = FALSE;
 	RT_BEAMFORMING_ENTRY	BeamformeeEntry;
 	BEAMFORMING_CAP		BeamformCap = BEAMFORMING_CAP_NONE;
@@ -86,7 +85,6 @@ SetBeamformEnter8197F(
 	RT_BEAMFORMER_ENTRY	BeamformerEntry;
 	BEAMFORMING_CAP		BeamformCap = BEAMFORMING_CAP_NONE;
 	u2Byte					STAid = 0;
-	u1Byte					Nc_index = 0,Nr_index = 0, grouping = 0, codebookinfo = 0, coefficientsize = 0;
 
 	BeamformCap = Beamforming_GetBeamCap(priv, pBeamformingInfo);
 
@@ -236,11 +234,11 @@ SetBeamformStatus8197F(
 	}
 
 	if((BeamformEntry.BeamformEntryState == BEAMFORMING_ENTRY_STATE_PROGRESSED) && (priv->pshare->rf_ft_var.applyVmatrix)) {
-		if (BeamformEntry.BW == HT_CHANNEL_WIDTH_20)
+		if (BeamformEntry.BW == ODM_BW20M)
 			BeamCtrlVal |= BIT9;
-		else if (BeamformEntry.BW == HT_CHANNEL_WIDTH_20_40)
+		else if (BeamformEntry.BW <= ODM_BW40M)
 			BeamCtrlVal |= (BIT9 | BIT10);
-		else if (BeamformEntry.BW == HT_CHANNEL_WIDTH_80)
+		else if (BeamformEntry.BW == ODM_BW80M)
 			BeamCtrlVal |= (BIT9 | BIT10 | BIT11);
 	} else
 		BeamCtrlVal &= ~(BIT9|BIT10|BIT11|BIT8|BIT7|BIT6|BIT5|BIT4|BIT3|BIT2|BIT1|BIT0);

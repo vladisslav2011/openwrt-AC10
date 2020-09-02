@@ -28,8 +28,6 @@ InitPON8822BE(
     IN  u4Byte     	ClkSel
 )
 {
-    u32     bytetmp;
-    u32     retry;
     u1Byte	u1btmp;
 
     RT_TRACE_F( COMP_INIT, DBG_LOUD, ("\n"));
@@ -249,8 +247,8 @@ hal_Associate_8822BE(
 #endif
     pHalFunc->SetRsvdPageHandler	        = SetRsvdPage88XX;
     pHalFunc->GetRsvdPageLocHandler	        = GetRsvdPageLoc88XX;
-    pHalFunc->DownloadRsvdPageHandler	    = HalGeneralDummy;
-    pHalFunc->C2HHandler                    = HalGeneralDummy;
+    pHalFunc->DownloadRsvdPageHandler	    = (void*)HalGeneralDummy;
+    pHalFunc->C2HHandler                    = (void*)HalGeneralDummy;
     pHalFunc->C2HPacketHandler              = C2HPacket88XX;
     pHalFunc->GetTxRPTHandler               = GetTxRPTBuf88XX;
     pHalFunc->SetTxRPTHandler               = SetTxRPTBuf88XX;
@@ -353,7 +351,6 @@ halTxbf8822B_RfMode(
 	PDM_ODM_T	pDM_Odm = (PDM_ODM_T)pDM_VOID;
 	u1Byte				i;
 	PRT_BEAMFORMING_ENTRY	BeamformeeEntry;
-	struct rtl8192cd_priv *priv=pDM_Odm->priv;
 
 	if (idx < BEAMFORMEE_ENTRY_NUM)
 		BeamformeeEntry = &pBeamformingInfo->BeamformeeEntry[idx];
@@ -484,13 +481,13 @@ SetBeamformEnter8822B(
 	u1Byte					u1bTmp;
 	u4Byte					u4bTmp;
 	u1Byte					h2c_content[6] = {0};
-	u4Byte					flags;
+	unsigned long			flags;
 
 	SAVE_INT_AND_CLI(flags);
 
 	//RT_DISP(FBEAM, FBEAM_FUN, ("%s: BFerBFeeIdx=%d, BFerIdx=%d, BFeeIdx=%d\n", __func__, BFerBFeeIdx, BFerIdx, BFeeIdx));
 #if (MU_BEAMFORMING_SUPPORT == 1)
-	ODM_RT_TRACE(pDM_Odm, PHYDM_COMP_TXBF, ODM_DBG_TRACE, ("[%s] BFerBFeeIdx=%d, BFerIdx=%d, BFeeIdx=%d, beamformee_su_cnt=%d, beamformee_mu_cnt=%d, beamformee_su_reg_maping=%d, beamformee_mu_reg_maping\n", __func__, BFerBFeeIdx, BFerIdx, BFeeIdx, pBeamformingInfo->beamformee_su_cnt, pBeamformingInfo->beamformee_mu_cnt,pBeamformingInfo->beamformee_su_reg_maping, pBeamformingInfo->beamformee_mu_reg_maping));
+	ODM_RT_TRACE(pDM_Odm, PHYDM_COMP_TXBF, ODM_DBG_TRACE, ("[%s] BFerBFeeIdx=%d, BFerIdx=%d, BFeeIdx=%d, beamformee_su_cnt=%d, beamformee_mu_cnt=%d, beamformee_su_reg_maping=%d, beamformee_mu_reg_maping=%d\n", __func__, BFerBFeeIdx, BFerIdx, BFeeIdx, pBeamformingInfo->beamformee_su_cnt, pBeamformingInfo->beamformee_mu_cnt,pBeamformingInfo->beamformee_su_reg_maping, pBeamformingInfo->beamformee_mu_reg_maping));
 #endif
 	/*************SU BFer Entry Init*************/
 	if ((pBeamformingInfo->beamformer_su_cnt > 0) && (BFerIdx < BEAMFORMER_ENTRY_NUM)) {
@@ -576,7 +573,7 @@ SetBeamformEnter8822B(
 			/*CSI report parameters of Beamformee*/
 			if (pBeamformeeEntry->su_reg_index == 0) {
 				/*Get BIT24 & BIT25*/
-				u1Byte	tmp = ODM_Read1Byte(pDM_Odm, REG_ASSOCIATED_BFMEE_SEL_8822B+3) & 0x3;
+				//u1Byte	tmp = ODM_Read1Byte(pDM_Odm, REG_ASSOCIATED_BFMEE_SEL_8822B+3) & 0x3;
 
 				//ODM_Write1Byte(pDM_Odm, REG_ASSOCIATED_BFMEE_SEL_8822B + 3, tmp | 0x60);
 				ODM_Write2Byte(pDM_Odm, REG_ASSOCIATED_BFMEE_SEL_8822B, STAid);
@@ -815,7 +812,7 @@ SetBeamformEnter8822B(
 			}
 
 		}
-		ODM_RT_TRACE(pDM_Odm, PHYDM_COMP_TXBF, ODM_DBG_TRACE, ("[%s]MU BFee Entry End\n", __func__, pBeamformingInfo->RegMUTxCtrl));
+		ODM_RT_TRACE(pDM_Odm, PHYDM_COMP_TXBF, ODM_DBG_TRACE, ("[%s]MU BFee Entry End RegMUTxCtrl=%08x\n", __func__, pBeamformingInfo->RegMUTxCtrl));
 	}
 #endif // #if (MU_BEAMFORMING_SUPPORT == 1)
 	RESTORE_INT(flags);
@@ -979,8 +976,6 @@ SetBeamformStatus8822B(
 	u8 id1, id0;
 #if (MU_BEAMFORMING_SUPPORT == 1)
 	u32 gid_valid[6] = {0};
-	u32 user_position_lsb[6] = {0};
-	u32 user_position_msb[6] = {0};
 	u8  bSnding;
 #endif
 	u32 value32;

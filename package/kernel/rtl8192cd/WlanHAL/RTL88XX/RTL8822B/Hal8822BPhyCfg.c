@@ -40,8 +40,8 @@ PHY_QueryRFReg_8822(
 
 	HAL_PADAPTER    priv     = Adapter;
 	unsigned long   flags;
-	u4Byte          Original_Value, Readback_Value, BitShift;
-    u4Byte          temp_CCA;
+	u4Byte          Readback_Value;
+	u4Byte	Direct_Addr = 0;
 
 #if CFG_HAL_DISABLE_BB_RF
 	return 0;
@@ -58,8 +58,6 @@ PHY_QueryRFReg_8822(
 
 	HAL_SAVE_INT_AND_CLI(flags);
 
-	u4Byte	DataAndAddr = 0;
-	u4Byte	Direct_Addr;
 
 	RegAddr &= 0xff;
 	switch(eRFPath){
