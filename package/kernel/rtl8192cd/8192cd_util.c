@@ -11231,7 +11231,7 @@ u8* rtk_get_wps_ie(u8 *in_ie, int in_len, u8 *wps_ie, int *wps_ielen)
  * Returns: The address of the P2P IE found, or NULL
  */
 /*cfg p2p*/
-unsigned char*  rtk_get_p2p_ie(const unsigned char*  in_ie, int in_len, unsigned char*  p2p_ie, int* p2p_ielen)
+const unsigned char*  rtk_get_p2p_ie(const unsigned char*  in_ie, int in_len, unsigned char*  p2p_ie, int* p2p_ielen)
 {
 	int cnt=0;
 	const unsigned char* p2p_ptr=NULL;

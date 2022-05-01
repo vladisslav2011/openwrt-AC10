@@ -2725,7 +2725,9 @@ static void assoc_expire(struct rtl8192cd_priv *priv)
 				{
 					unsigned char txforce = priv->pshare->rf_ft_var.txforce;
 					unsigned char dot11_rate_table[]={2,4,11,22,12,18,24,36,48,72,96,108,0};
+#ifdef CONFIG_RTL_WLAN_DIAGNOSTIC
 					unsigned char args[200];
+#endif
 #if defined(TXRETRY_CNT)
 					SPRINTT(args, "[%d]%s%s%d%%%stxforce %s%s%s%s%s%d%s%s rx %s%s%s%s%s%d%s%s ",
 							pstat->aid, pstat->aid>9?"":" ", pstat->rssi<100?(pstat->rssi<10?"  ":" "):"", pstat->rssi, retry_str,
@@ -2814,7 +2816,9 @@ static void assoc_expire(struct rtl8192cd_priv *priv)
 				else
 #endif
 				{
+#ifdef CONFIG_RTL_WLAN_DIAGNOSTIC
 					unsigned char args[200];
+#endif
 
 #if defined(TXRETRY_CNT)
 					SPRINTT(args, "[%d]%s%s%d%%%stx %s%s%s%s%s%d%s%s rx %s%s%s%s%s%d%s%s ",
